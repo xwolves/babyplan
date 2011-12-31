@@ -9,6 +9,9 @@ public class Result {
 	
 	public static final int STATUS_SUCCESS=0;
 	public static final int STATUS_FAIL=-1;
+	public static final int STATUS_TIMEOUT=401;
+//	public static final int STATUS_FAIL=-1;
+//	public static final int STATUS_FAIL=-1;
 	
 	public int getStatus() {
 		return status;

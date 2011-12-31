@@ -7,7 +7,7 @@
   function AboutRouter($stateProvider, Constants, $urlRouterProvider) {
     'ngInject';
     $stateProvider
-    .state('about', {
+    .state('portal.about', {
       url: "/about",
       templateUrl: 'About/about.html',
       controller: 'AboutCtrl',

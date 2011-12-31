@@ -5,7 +5,11 @@
     'PortalModule',
     'LoginModule',
     'LogoutModule',
-    'DocumentModule',
-    'AboutModule'
+    'DepositListModule',
+    'AboutModule',
+    'DialogsModule',
+    'RegisterDePositModule',
+    'Ui'
+    
   ]);
 }());

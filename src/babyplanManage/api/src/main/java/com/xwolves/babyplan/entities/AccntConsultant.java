@@ -26,7 +26,7 @@ public class AccntConsultant {
 		// @SequenceGenerator(name = "DSP_DOCUMENT_seq", sequenceName =
 		// "DSP_DOCUMENT_seq", allocationSize = 1)
 		@Column(name = "AccountID")
-		int accountId;
+		Integer accountId;
 
 		@Column(name = "Name")
 		String name;
@@ -46,11 +46,11 @@ public class AccntConsultant {
 		@Column(name = "Password")
 		String password;
 		
-		public int getAccountId() {
+		public Integer getAccountId() {
 			return accountId;
 		}
 
-		public void setAccountId(int accountId) {
+		public void setAccountId(Integer accountId) {
 			this.accountId = accountId;
 		}
 

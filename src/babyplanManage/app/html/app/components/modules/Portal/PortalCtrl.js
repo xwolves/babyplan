@@ -13,16 +13,16 @@
             $scope.btnHide=AuthService.isAdmin;
 
             var menus_normal=[
-                {name:"托管机构列表",url:"document",active:0,icon:"glyphicon glyphicon-list",show:true},
-                {name:"指纹设备列表",url:"myDocument",active:0,icon:"glyphicon glyphicon-th-list",show:true},
-                {name:"广告列表",url:"mySign",active:0,icon:"glyphicon glyphicon-ok-sign",show:true},
-                {name:"关于应用",url:"about",active:0,icon:"glyphicon glyphicon-font",show:true}
+                {name:"托管机构列表",url:".depositList",active:0,icon:"glyphicon glyphicon-list",show:true},
+                {name:"指纹设备列表",url:".myDocument",active:0,icon:"glyphicon glyphicon-th-list",show:true},
+                {name:"广告列表",url:".mySign",active:0,icon:"glyphicon glyphicon-ok-sign",show:true},
+                {name:"关于应用",url:".about",active:0,icon:"glyphicon glyphicon-font",show:true}
             ];
             var menus_admin=[
-                {name:"托管机构列表",url:"document",active:0,icon:"glyphicon glyphicon-list",show:true},
-                {name:"指纹设备列表",url:"myDocument",active:0,icon:"glyphicon glyphicon-th-list",show:true},
-                {name:"广告列表",url:"mySign",active:0,icon:"glyphicon glyphicon-ok-sign",show:true},
-                {name:"关于应用",url:"about",active:0,icon:"glyphicon glyphicon-font",show:true}
+                {name:"托管机构列表",url:".depositList",active:0,icon:"glyphicon glyphicon-list",show:true},
+                {name:"指纹设备列表",url:".myDocument",active:0,icon:"glyphicon glyphicon-th-list",show:true},
+                {name:"广告列表",url:".mySign",active:0,icon:"glyphicon glyphicon-ok-sign",show:true},
+                {name:"关于应用",url:".about",active:0,icon:"glyphicon glyphicon-font",show:true}
             ];
 
             $scope.menus=menus_admin;

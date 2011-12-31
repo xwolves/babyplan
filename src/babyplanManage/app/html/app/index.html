@@ -15,6 +15,7 @@
 
 <!-- IF using Sass (run gulp sass first), then uncomment below and remove the CSS includes above -->
 <link href="www/css/app.min.css" rel="stylesheet">
+<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=pcaWtuyW2Qa0LDa7NqzdvlxS"></script>
 <!--IE８不支持的： classList.js for AngularPrint; swfobject.js & web_socket.js for websocket-->
 <!--[if lt IE 9]>
      <script src="www/js-ie/html5shiv.min.js"></script>
@@ -62,6 +63,16 @@
 <!-- your app's js -->
 <script src="www/app.js"></script>
 <script src="www/templates.js"></script>
+<style>
+    .page-list .pagination {float:left;}
+    .page-list .pagination span {cursor: pointer;}
+    .page-list .pagination .separate span{cursor: default; border-top:none;border-bottom:none;}
+    .page-list .pagination .separate span:hover {background: none;}
+    .page-list .page-total {float:left; margin: 25px 20px;}
+    .page-list .page-total input, .page-list .page-total select{height: 26px; border: 1px solid #ddd;}
+    .page-list .page-total input {width: 40px; padding-left:3px;}
+    .page-list .page-total select {width: 50px;}
+</style>
 </head>
 
 <body class="ng-app:xhStarter" id="ng-app" ng-app="xhStarter"

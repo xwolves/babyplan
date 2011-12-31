@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+
+<form class="form-inline">
+  <button type="button" class="btn btn-primary" ng-click="addDepost()">新增机构</button>
+</form>
+
+<div  style="margin-top: 20px;" class="table-responsive">
+    <p class="text-center" ng-if="isLoading">正在加载中 ... </p>
+    <table ng-table="tableParams" class="table table-striped  table-hover  table-bordered table-responsive" show-filter="true" >
+        <tr ng-repeat="doc in document" ng-click="editdeposit(doc.accountId)">
+            <td title="'机构名称'" filter="{ orgName:'text'}" sortable="'orgName'">
+                {{doc.orgName}}
+            </td>
+            <td title="'机构地址'" filter="{ address:'text'}" sortable="'address'">
+                {{doc.address}}
+            </td>
+             <td title="'联系人姓名'" filter="{ contactName:'text'}" sortable="'contactName'">
+                {{doc.contactName}}
+            </td>
+             <td title="'联系人电话 '" filter="{ contactPhone:'text'}" sortable="'contactPhone'">
+                {{doc.contactPhone}}
+            </td>
+            <td title="'执照类型'" filter="{ LicenseType:'text'}" sortable="'LicenseType'">
+                {{doc.licenseType}}
+            </td>
+             <td title="'场地类型'" filter="{ placeContractType:'text'}" sortable="'placeContractType'">
+                {{doc.placeContractType}}
+            </td>
+        </tr>
+    </table>
+    
+    <tm-pagination conf="paginationConf"></tm-pagination>
+</div>
+<!--<![endif]-->

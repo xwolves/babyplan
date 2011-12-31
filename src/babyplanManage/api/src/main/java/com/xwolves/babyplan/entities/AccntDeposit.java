@@ -23,7 +23,7 @@ public class AccntDeposit {
 	// @SequenceGenerator(name = "DSP_DOCUMENT_seq", sequenceName =
 	// "DSP_DOCUMENT_seq", allocationSize = 1)
 	@Column(name = "AccountID")
-	int accountId;
+	Integer accountId;
 
 	@Column(name = "OrgName")
 	String orgName;
@@ -40,11 +40,11 @@ public class AccntDeposit {
 	@Column(name = "ContactPhone")
 	String contactPhone;
 
-	@Column(name = "LicenseType")
-	int licenseType;
+	@Column(name = "LicenseType",nullable=false,columnDefinition="Integer  default 0")
+	Integer licenseType;
 
-	@Column(name = "PlaceContractType")
-	int placeContractType;
+	@Column(name = "PlaceContractType",nullable=false,columnDefinition="Integer  default 0")
+	Integer placeContractType;
 
 	@Column(name = "FrontDeskLink")
 	String frontDeskLink;
@@ -94,7 +94,7 @@ public class AccntDeposit {
 	@Column(name = "Password")
 	String password;
 
-	public int getAccountId() {
+	public Integer getAccountId() {
 		return accountId;
 	}
 
@@ -142,7 +142,7 @@ public class AccntDeposit {
 		this.contactPhone = contactPhone;
 	}
 
-	public int getLicenseType() {
+	public Integer getLicenseType() {
 		return licenseType;
 	}
 
@@ -150,12 +150,15 @@ public class AccntDeposit {
 		this.licenseType = licenseType;
 	}
 
-	public int getPlaceContractType() {
+	public Integer getPlaceContractType() {
 		return placeContractType;
 	}
 
-	public void setPlaceContractType(int placeContractType) {
+	public void setPlaceContractType(Integer placeContractType) {
+		//System.out.println("setPlaceContractType");
+		if(placeContractType!=null)
 		this.placeContractType = placeContractType;
+		else this.placeContractType =0;
 	}
 
 	public String getFrontDeskLink() {

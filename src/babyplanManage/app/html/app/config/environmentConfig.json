@@ -1,6 +1,6 @@
 {
   "Env": {
-    "AppName":"交文管理",
+    "AppName":"托管平台管理",
     "AppIcon":"img/favicon.ico",
     "AppVersion":"MyAppVersion1.0.0",
     "url_test" : "Api/",
