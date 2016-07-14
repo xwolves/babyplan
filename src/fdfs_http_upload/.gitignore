@@ -1,0 +1,4 @@
+*.log
+fdfs_http_upload
+upload-tmp
+*.txt
