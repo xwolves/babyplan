@@ -4,7 +4,7 @@
     angular.module('LoginService', [])
         .factory('LoginService', LoginService);
 
-    function LoginService($q, $http, ResultHandler, Constants,AuthService) {
+    function LoginService($q, $http, ResultHandler, Constants) {
         'ngInject';
         var service = {
             login: login,

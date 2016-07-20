@@ -1,39 +1,40 @@
 (function() {
     "use strict";
     angular.module('WXLoginCtrl', [])
-        .controller('WXLoginCtrl', function(AppServices, Constants, WeuiModalLoading, MessageToaster, LoginService, $timeout, $scope, Session, $stateParams, StateService, $ionicModal) {
+        .controller('WXLoginCtrl', function(Constants, AuthService, MessageToaster, LoginService, $timeout, $scope, Session, $stateParams, StateService, $ionicModal) {
             'ngInject';
+
             var vm = this;
             vm.isDev = Constants.ENVIRONMENT == 'dev' ? true : false;
             $scope.$on('$ionicView.beforeEnter', validate);
-            AppServices.updateWxTitle('托管系统');
 
             function validate() {
                 var user = $stateParams.user;
                 var token = $stateParams.token;
-
+                var role = $stateParams.role;
                 if (user && token) {
                     //login successed
-                    Session.create(user, token);
-                    StateService.clearAllAndGo('tabs');
+                    Session.create(user, token, role);
+                    StateService.clearAllAndGo(AuthService.getNextPath());
                 } else {
                     //login failed
-                    vm.info = "未登录，需要微信授权..."
+                    vm.info = "未登录，需要微信授权...";
                     vm.showLoginModal = showLoginModal;
                     vm.login = login;
                 }
             }
-
+            //WeuiModalLoading
             function login(user) {
-                WeuiModalLoading.show();
+                //WeuiModalLoading.show();
                 LoginService.login(user.userId, user.password).then(function(response) {
                     if (vm.modal)
                         vm.closeDetailsModal();
                     MessageToaster.success(response.message);
-                    Session.create(response.content.xsxh, response.content.token);
-                    StateService.clearAllAndGo('tabs');
+
+                    Session.create(response.content.userId, response.content.token,response.content.role);
+                    StateService.clearAllAndGo(AuthService.getNextPath());
                 }).finally(function() {
-                    WeuiModalLoading.hide();
+                    //WeuiModalLoading.hide();
                 });
             }
 

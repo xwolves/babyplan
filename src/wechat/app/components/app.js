@@ -41,7 +41,6 @@
             $ionicConfigProvider.backButton.text('返回').icon('ion-ios-arrow-left');
             $ionicConfigProvider.tabs.style("standard");
             $ionicConfigProvider.navBar.alignTitle('center');
-            $urlRouterProvider.otherwise('/tabs/children');
         })
         .factory('AuthInterceptor', function($rootScope, $q, AUTH_EVENTS) {
             return {

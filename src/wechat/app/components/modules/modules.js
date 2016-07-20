@@ -7,7 +7,7 @@
         'nearbyModule',
         'orderModule',
         'profileModule',
-        'orgnizeModule',
+        'organizerModule',
         'messageModule'
     ]);
 

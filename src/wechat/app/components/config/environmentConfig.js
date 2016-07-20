@@ -4,7 +4,6 @@
         .constant('Constants', {
             'serverUrl': 'http://10.20.0.72/duty-Api/Api/',
             'buildID': '20160627v2',
-            'ENVIRONMENT':'dev',
-            'reqListLimit': 20
+            'ENVIRONMENT':'dev'
         });
 }());

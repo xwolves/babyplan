@@ -1,13 +1,12 @@
 (function() {
   "use strict";
   angular.module('tabsCtrl', [])
-    .controller('tabsCtrl', function($scope,tabsService,StateService) {
+    .controller('tabsCtrl', function($scope,tabsService,StateService,AuthService) {
       'ngInject';
       var vm = this;
       vm.activated = false;
-      console.log("in tabs ctrl");
-      vm.who=3;
 
+      vm.who=AuthService.getUserRole();
       //vm.slideBoxImgs = homeService.getSlideBoxImgs();
       //vm.homeOptions = homeService.getHomeOptions();
       vm.goState = StateService.go;

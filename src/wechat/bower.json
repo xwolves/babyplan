@@ -11,6 +11,7 @@
     "ionic-ratings": "^0.2.0",
     "ion-alphabet-scroll": "*",
     "ionic-calendar":"*",
+    "AngularJS-Toaster": "^2.0.0",
     "ionic-weui": "https://github.com/jarden-liu/ionic-weui.git"
   }
 }

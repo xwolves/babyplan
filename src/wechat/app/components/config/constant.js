@@ -1,9 +1,20 @@
 (function() {
     "use strict";
     angular.module('constant', [])
+        .constant('Path',{
+            'ParentRolePath':'tabs.children',
+            'OrganizerRolePath':'tabs.organizer',
+            'TeacherRolePath':'tabs.message'
+        })
+        .constant('Role',{
+            'Organizer':'1',
+            'Parent':'2',
+            'Teacher':'3',
+            'Children':'4',
+            'ThirdParty':'5',
+            'Consultant':'6'
+        })
         .constant('Weixin', {
-            'appid': 'wx8839ace7048d181b',
-            'originalUrl': 'http%3A%2F%2Fitsmwx.xh.sustc.edu.cn%2F'
         })
         .constant('AUTH_EVENTS', {
             loginSuccess: 'auth-login-success',
@@ -12,5 +23,12 @@
             sessionTimeout: 'auth-session-timeout',
             notAuthenticated: 'auth-not-authenticated',
             notAuthorized: 'auth-not-authorized'
+        })
+        .constant('ErrorMessage', {
+            ACCESS_FAIL: '通讯异常，请稍后再试！',
+            TOKEN_INVALID: '连接超时，请重新登录！'
+        })
+        .constant('SuccessMessage', {
+            SUBMIT_SUCESS: '提交成功'
         });
 }());

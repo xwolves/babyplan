@@ -4,6 +4,7 @@
             'ionic',
             'templates',
             'ngStorage',
+            'toaster',
             'ui.rCalendar.tpls'
         ]);
 }());

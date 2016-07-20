@@ -5,7 +5,9 @@
     'StateService',
     'CacheData',
     'AuthService',
-    'LoadingAlert'
+    'LoadingAlert',
+    'ResultHandler',
+    'MessageToaster'
   ]);
 
 }());

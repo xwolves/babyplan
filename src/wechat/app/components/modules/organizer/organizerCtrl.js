@@ -1,7 +1,7 @@
 (function() {
     "use strict";
-    angular.module('orgnizeCtrl', [])
-        .controller('orgnizeCtrl', function($scope, Constants) {
+    angular.module('organizerCtrl', [])
+        .controller('organizerCtrl', function($scope, Constants) {
             'ngInject';
             var vm = this;
             vm.activated = false;
