@@ -1,0 +1,16 @@
+{
+  "name": "trusteeshipWechat",
+  "private": "true",
+  "devDependencies": {
+    "ionic": "driftyco/ionic-bower#1.3.1"
+  },
+  "dependencies": {
+    "angular": "angularjs#^1.5.5",
+    "ionic": "^1.2.4",
+    "ngstorage": "^0.3.10",
+    "ionic-ratings": "^0.2.0",
+    "ion-alphabet-scroll": "*",
+    "ionic-calendar":"*",
+    "ionic-weui": "https://github.com/jarden-liu/ionic-weui.git"
+  }
+}
