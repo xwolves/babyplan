@@ -7,6 +7,7 @@
             'TeacherRolePath':'tabs.message'
         })
         .constant('Role',{
+            'unknown':'-1',
             'Organizer':'1',
             'Parent':'2',
             'Teacher':'3',

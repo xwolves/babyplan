@@ -8,6 +8,8 @@
         $rootScope.$on('$stateChangeStart', function(event, next) {
           if (next.url.indexOf('login')>0 ) {
               console.log("login");
+          }else if(next.url.indexOf('register')>0){
+              console.log("register");
           }else{
             if (Session.userId && Session.token) {
                 //login successed

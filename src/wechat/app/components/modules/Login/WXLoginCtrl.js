@@ -1,7 +1,7 @@
 (function() {
     "use strict";
     angular.module('WXLoginCtrl', [])
-        .controller('WXLoginCtrl', function(Constants, AuthService, MessageToaster, LoginService, $timeout, $scope, Session, $stateParams, StateService, $ionicModal) {
+        .controller('WXLoginCtrl', function(Constants, AuthService, MessageToaster, LoginService, $timeout, $scope, Session, $stateParams, StateService, $ionicModal, Role) {
             'ngInject';
 
             var vm = this;
@@ -16,6 +16,9 @@
                     //login successed
                     Session.create(user, token, role);
                     StateService.clearAllAndGo(AuthService.getNextPath());
+                } else if (user && role==Role.unknown) {
+                    //有用户信息,角色为未知,注册
+                    StateService.go('register');
                 } else {
                     //login failed
                     vm.info = "未登录，需要微信授权...";

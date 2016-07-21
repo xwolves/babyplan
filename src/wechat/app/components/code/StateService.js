@@ -6,7 +6,7 @@
 
   StateService.$inject = ['$ionicViewSwitcher', '$state', '$ionicHistory', '$timeout'];
 
-  function StateService($ionicViewSwitcher, $state, $ionicHistory, $timeout) {
+  function StateService($ionicViewSwitcher, $state, $ionicHistory, $timeout,AuthService) {
     return {
       go: go,
       back: back,
@@ -46,7 +46,7 @@
       $ionicHistory.clearHistory();
       $ionicHistory.clearCache()
         .then(function() {
-          $state.go('tabs.children');
+          $state.go(AuthService.getNextPath());
         });
     }
 
