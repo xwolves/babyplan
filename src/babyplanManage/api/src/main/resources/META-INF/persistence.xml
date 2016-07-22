@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence xmlns="http://java.sun.com/xml/ns/persistence"
+	version="1.0">
+	<persistence-unit name="xhinfoPersistenceUnit" transaction-type="RESOURCE_LOCAL">
+		<provider>org.hibernate.ejb.HibernatePersistence</provider>
+		<properties>
+			<property name="hibernate.dialect" value="org.hibernate.dialect.MySQL5Dialect" />
+			<!-- <property name="hibernate.dialect" value="org.hibernate.dialect.OracleDialect" />  -->
+			<!-- <property name="hibernate.dialect" value="org.hibernate.dialect.Oracle10gDialect " /> -->
+			<property name="hibernate.show_sql" value="true"/>
+		</properties>
+	</persistence-unit>
+	<persistence-unit name="xhinfoPersistenceUnit-test" transaction-type="RESOURCE_LOCAL">
+		<provider>org.hibernate.ejb.HibernatePersistence</provider>
+		<properties>
+			<!--<property name="hibernate.dialect" value="org.hibernate.dialect.MySQL5Dialect" /> -->
+			<property name="hibernate.dialect" value="org.hibernate.dialect.OracleDialect" /> 
+			<property name="hibernate.show_sql" value="true"/>
+		</properties>
+	</persistence-unit>
+</persistence>

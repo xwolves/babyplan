@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="  
+     http://www.springframework.org/schema/beans   
+     http://www.springframework.org/schema/beans/spring-beans-3.0.xsd  
+     ">
+	
+	<bean class="com.xhinfo.nkd.dsp.util.MessageConfig">
+		<!-- 配置信息 -->
+		<property name="url">
+			<value>http://smsapi.its.sustc.edu.cn/sendMsg</value>
+		</property>
+		<property name="sender">
+			<value>交文管理</value>
+		</property>
+		<property name="user">
+			<value>jwmanage</value>
+		</property>
+		<property name="psw">
+			<value>Su39Gep@93VnW</value>
+		</property>		
+		<property name="msg_finish">
+			<value>你好，%s,你的文件：%s已完成审批，请到行政楼303办公室收文处领取。</value>
+		</property>
+		<property name="msg_sign">
+			<value>你好，%s,你的文件：%s 已被%s签收。</value>
+		</property>
+		<property name="msg_start">
+			<value>你好，%s,你的文件：%s已录入系统，我们将尽快为你完成审批工作。</value>
+		</property>		
+		
+	</bean>
+</beans>
