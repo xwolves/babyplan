@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+
+    <div class="modal-header">
+        <h3 class="modal-title">发文信息</h3>
+    </div>
+    <div class="modal-body">
+        <form class="form-horizontal">
+            <!--编号 BH-->
+            <!--发文人员工号，FWRYGH-->
+            <!--发文人名称，FWRYMC-->
+            <!--发文人部门，FWRYBM-->
+            <!--发文名称，FWMC-->
+            <!--发文描述，FWMS-->
+            <!--发文编号，FWBH-->
+            <!--收件人名称，SJRMC-->
+            <!--收件人工号，SJRGH-->
+            <!--收件人部门，SJRBM-->
+            <!--发文日期，FWRQ-->
+            <!--发文状态０：未办结，１：已办结, -１:删除 FWZT-->
+            <!--发文办结日期,FWJBRQ-->
+            <div class="form-group">
+                <label class="col-sm-2 control-label">发文编号</label>
+                <div class="col-sm-10">
+                    <label class="form-control">{{doc.fwbh}}</label>
+                </div>
+            </div>
+            <div class="form-group">
+                <label  class="col-sm-2 control-label">发文名称</label>
+                <div class="col-sm-10">
+                    <label class="form-control">{{doc.fwmc}}</label>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">发文描述</label>
+                <div class="col-sm-10">
+                    <label class="form-control" style="height: 100px;">{{doc.fwms}}</label>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">发文人</label>
+                <div class="col-sm-10">
+                    <label class="form-control">{{doc.fwrymc}}</label>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">发文部门</label>
+                <div class="col-sm-10">
+                    <label class="form-control">{{doc.fwrybm}}</label>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">发文人手机</label>
+                <div class="col-sm-10">
+                    <label class="form-control" >{{doc.fwrysj}}</label>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">发文状态</label>
+                <div class="col-sm-10">
+                    <label class="form-control">{{doc.fwzt|ZTchange}}</label>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">发文办结日期</label>
+                <div class="col-sm-10">
+                    <label class="form-control">{{doc.fwjbrq|date:'yyyy-MM-dd HH:mm'}}</label>
+                </div>
+            </div>
+        </form>
+        <hr>
+        <h4 style="color: #0e90d2;">签收流向</h4>
+        <div class="table-responsive">
+
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>序号</th>
+                    <th>签收人</th>
+                    <th>日期</th>
+                    <th>签收说明</th>
+                    <th ng-if="isRecevicer">操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="sign in signs">
+                    <td>{{$index+1}}</td>
+                    <td>{{sign.qsrmc}}</td>
+                    <td>{{sign.rq|date:'yyyy-MM-dd HH:mm'}}</td>
+                    <td>{{sign.qssm}}</td>
+                    <td ng-if="isRecevicer"><button class="glyphicon glyphicon-remove" ng-click="confirmDel($index)" ng-if="!sign.confirm">删除</button><button ng-if="sign.confirm" ng-click="deleteSignProcess(sign.bh)">确定删除</button></td>
+                </tr>
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" type="button" ng-show="labelPrintShow" ng-disabled="labelPrintDisable" ng-click="printLabel(doc.fwbh)">打印标签</button>
+        <button class="btn btn-primary" type="button" ng-show="true" ng-click="printDocument(doc.fwbh)">打印</button>
+        <button class="btn btn-primary" type="button" ng-click="signDocument(doc.fwbh)">发文签收</button>
+        <button class="btn btn-warning" type="button" ng-click="finishDocment(doc.fwbh)" ng-show="isRecevicer"  ng-disabled="noClick">发文办结</button>
+        <button class="btn invisible" type="button">隐藏</button>
+        <button class="btn " type="button" ng-click="cancel()">关闭窗口</button>
+    </div>

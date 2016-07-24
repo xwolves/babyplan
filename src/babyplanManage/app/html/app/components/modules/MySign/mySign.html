@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+
+<form class="form-inline">
+    <div class="form-group">
+        <label for="filterText" style="font-size: 18px;">快速查询&nbsp;&nbsp;</label>
+        <input type="text" class="form-control" autofocus="autofocus" id="filterText" placeholder="请输入查询交文的编号" ng-model="simpleFilter" ng-change="changePages()">
+        <button type="button" class="btn btn-primary" ng-click="simpleFilter='';">清除</button>
+    </div>
+</form>
+<h2 class="sub-header">收文列表</h2>
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th ng-click="order('fwbh')">交文编号<span class="sortorder" ng-show="predicate === 'fwbh'" ng-class="{reverse:reverse}"></span></th>
+            <th ng-click="order('fwmc')">交文名称<span class="sortorder" ng-show="predicate === 'fwmc'" ng-class="{reverse:reverse}"></span></th>
+            <th ng-click="order('fwrymc')">交文人<span class="sortorder" ng-show="predicate === 'fwrymc'" ng-class="{reverse:reverse}"></span></th>
+            <th ng-click="order('fwrybm')">交文部门<span class="sortorder" ng-show="predicate === 'fwrybm'" ng-class="{reverse:reverse}"></span></th>
+            <th ng-click="order('fwrq')">交文日期<span class="sortorder" ng-show="predicate === 'fwrq'" ng-class="{reverse:reverse}"></span></th>
+            <th ng-click="order('rq')">签收日期<span class="sortorder" ng-show="predicate === 'rq'" ng-class="{reverse:reverse}"></span></th>
+            <th ng-click="order('qssm')">签收说明<span class="sortorder" ng-show="predicate === 'qssm'" ng-class="{reverse:reverse}"></span></th>
+            <th ng-click="order('fwzt')">状态<span class="sortorder" ng-show="predicate === 'fwzt'" ng-class="{reverse:reverse}"></span></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-repeat="doc in querySignDocument | orderBy:predicate:reverse | filter:simpleFilter | limitPage : limit : startIndex" ng-click="checkDocument(doc.fwbh)">
+            <td>{{doc.fwbh}}</td>
+            <td>{{doc.fwmc}}</td>
+            <td>{{doc.fwrymc}}</td>
+            <td>{{doc.fwrybm}}</td>
+            <td>{{doc.fwrq|date:'yyyy-MM-dd HH:mm'}}</td>
+            <td>{{doc.rq|date:'yyyy-MM-dd HH:mm'}}</td>
+            <td>{{doc.qssm}}</td>
+            <td ng-class="{'textGreen':doc.fwzt=='1'}">{{doc.fwzt|ZTchange}}</td>
+        </tr>
+        </tbody>
+    </table>
+    <a style="float: right" ng-click="moreQuery()" ng-hide="isMore">更多...</a>
+</div>
+<div class="text-center">
+    <pagination boundary-links="true" total-items="totalItems" ng-model="currentPage"  ng-change="pageChanged()" max-size="9" items-per-page="limit" class="pagination-sm" previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;">
+    </pagination>
+</div>
+<hr>

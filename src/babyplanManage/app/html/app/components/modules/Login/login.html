@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+
+<div class="container" style="width: 80%">
+  <div >
+    <form class="form-signin">
+        <h2 class="form-signin-heading">欢迎使用托管平台管理</h2>
+        <label for="inputUser" class="sr-only">用户名</label>
+        <input type="text" id="inputUser" class="form-control" placeholder="请输入用户名" required autofocus ng-model="user">
+        <label for="inputPassword" class="sr-only">密码</label>
+        <input type="password" id="inputPassword" class="form-control" placeholder="请输入密码" required ng-model="password">
+        <div class="checkbox">
+            <label>
+                <input type="checkbox" value="remember-me"> 记住我
+            </label>
+        </div>
+        <button class="btn btn-lg btn-primary btn-block" type="submit" ng-click="login()">登录</button>
+    </form>
+  </div>
+</div> <!-- /container -->

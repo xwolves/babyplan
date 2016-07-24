@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+
+    <div class="modal-header">
+        <h3 class="modal-title">角色分配</h3>
+    </div>
+    <div class="modal-body">
+        <p>给{{mc}}老师 ({{bm}})分配角色为：</p>
+
+        <form class="form-horizontal">
+            <div class="radio">
+                <label>
+                    <input type="radio" ng-model="selected" value="2">
+                    普通人员
+                </label>
+            </div>
+            <div class="radio">
+                <label>
+                    <input type="radio" ng-model="selected" value="1">
+                    收件人员
+                </label>
+            </div>
+            <div class="radio disabled hide">
+                <label>
+                    <input type="radio" ng-model="selected" value="0" disabled>
+                    超级管理员
+                </label>
+            </div>
+
+        </form>
+
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" type="button" ng-click="save()">确定</button>
+        <button class="btn" type="button" ng-click="cancel()">关闭</button>
+    </div>

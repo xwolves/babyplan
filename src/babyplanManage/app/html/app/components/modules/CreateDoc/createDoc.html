@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+
+    <div class="page-header">
+        <h3 class="modal-title">提交文件</h3>
+    </div>
+    <div>
+        <form class="form-horizontal">
+            <div class="form-group">
+                <label for="documentNo" class="col-sm-2 control-label">交文编号</label>
+                <div class="col-sm-10">
+                    <input id="documentNo" type="text" placeholder="交文的收编编号" class="form-control" ng-model="fwbh" disabled="disabled">
+                </div>
+                <!--<div class="col-sm-10">
+                    <label id="documentNo" class="form-control">{{fwbh}}</label>
+                </div>-->
+            </div>
+            <div class="form-group">
+                <label for="documentName" class="col-sm-2 control-label">交文名称</label>
+                <div class="col-sm-10">
+                    <input id="documentName" type="text" placeholder="交文的名称" class="form-control"  ng-model="fwmc">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="documentDesc" class="col-sm-2 control-label">交文描述</label>
+                <div class="col-sm-10">
+                    <input id="documentDesc" type="text" placeholder="交文的详细说明" class="form-control"  ng-model="fwms">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="documentSender" class="col-sm-2 control-label">交文人</label>
+                <div class="col-sm-10">
+                    <input id="documentSender" type="text" placeholder="交文人名称" class="form-control"  ng-model="fwrymc">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="documentDept" class="col-sm-2 control-label">发文部门</label>
+                <div class="col-sm-10">
+                    <input id="documentDept" type="text" placeholder="交文人所属部门" class="form-control"  ng-model="fwrybm">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="documentMobile" class="col-sm-2 control-label">交文人手机</label>
+                <div class="col-sm-10">
+                    <input id="documentMobile" type="text" placeholder="交文人手机号码" class="form-control"  ng-model="fwrysj">
+                </div>
+            </div>
+        </form>
+
+    </div>
+<div class="text-center" style="margin-top: 50px;">
+    <hr>
+    <button class="btn btn-primary" type="button" ng-click="create()" style="width: 120px;">提交</button>
+    <button class="btn btn-primary" type="button" ng-click="createAndPrint()" style="width: 120px;">提交并打印</button>
+    <button class="btn" type="button" ng-click="cancel()" style="width: 100px;">返回</button>
+</div>

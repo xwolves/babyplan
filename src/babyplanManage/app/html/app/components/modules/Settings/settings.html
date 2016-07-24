@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+
+<div class="page-header">
+    <h3 class="modal-title">设置</h3>
+</div>
+
+<div>
+    <h4>人员管理</h4>
+
+    <div class="table-responsive">
+        <div style="float: left;border: 1px;">
+            <label>用户查询&nbsp;&nbsp;</label>
+            <input type="text" autofocus="autofocus" id="filterText" ng-model="simpleFilter" ng-change="changePages()">
+            <button type="button" class="btn btn-primary" ng-click="simpleFilter='';">清除</button>
+        </div>
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>序号</th>
+                <th ng-click="order('mc')">姓名<span class="sortorder" ng-show="predicate === 'mc'" ng-class="{reverse:reverse}"></span></th>
+                <th ng-click="order('bm')">部门<span class="sortorder" ng-show="predicate === 'bm'" ng-class="{reverse:reverse}"></span></th>
+                <th ng-click="order('sjhm')">手机号码<span class="sortorder" ng-show="predicate === 'sjhm'" ng-class="{reverse:reverse}"></span></th>
+                <th ng-click="order('js')">角色<span class="sortorder" ng-show="predicate === 'js'" ng-class="{reverse:reverse}"></span></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="user in users | orderBy:predicate:reverse | filter:simpleFilter | limitPage : limit : startIndex" ng-click="detail($index)">
+                <td>{{$index+1}}</td>
+                <td>{{user.mc}}</td>
+                <td>{{user.bm}}</td>
+                <td>{{user.sjhm}}</td>
+                <td>{{user.js|JSchange}}</td>
+            </tr>
+            </tbody>
+        </table>
+
+    </div>
+    <div class="text-center">
+        <pagination boundary-links="true" total-items="totalItems" ng-model="currentPage" max-size="9" items-per-page="limit" ng-change="pageChanged()" class="pagination-sm" previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;">
+        </pagination>
+    </div>
+</div>
+
+<div class="text-center" style="margin-top: 50px;">
+    <hr>
+    <button class="btn" type="button" ng-click="cancel()" style="width: 100px;">返回</button>
+</div>

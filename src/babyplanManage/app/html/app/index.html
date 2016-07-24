@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:ng="http://angularjs.org">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+<meta name="description" content="">
+<meta name="author" content="">
+<link rel="icon" href="www/img/favicon.ico">
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-cache">
+<META HTTP-EQUIV="Expires" CONTENT="0">
+<title>托管平台管理</title>
+
+<!-- IF using Sass (run gulp sass first), then uncomment below and remove the CSS includes above -->
+<link href="www/css/app.min.css" rel="stylesheet">
+<!--IE８不支持的： classList.js for AngularPrint; swfobject.js & web_socket.js for websocket-->
+<!--[if lt IE 9]>
+     <script src="www/js-ie/html5shiv.min.js"></script>
+     <script src="www/js-ie/respond.min.js"></script>
+     <script src="www/js-ie/json2.min.js"></script>
+     <script src="www/js-ie/classList.js"></script>
+     <script src="www/js-ie/swfobject.js"></script>
+     <script src="www/js-ie/web_socket.js"></script>
+
+     <script src="www/lib/vendor.js"></script>
+
+     <script>
+       document.createElement('ng-include');
+       document.createElement('ng-pluralize');
+       document.createElement('ng-view');
+       document.createElement('ng-controller');
+       document.createElement('ng-click');
+       document.createElement('ng-repeat');
+       document.createElement('ng-href');
+       document.createElement('ng-show');
+       document.createElement('ng-hide');
+       document.createElement('ng-class');
+       document.createElement('ui-sref');
+       document.createElement('ng-table');
+       document.createElement('show-filter');
+       document.createElement('filter');
+       document.createElement('sortable');
+       document.createElement('highchart');
+       document.createElement('config');
+       document.createElement('print-section');
+       document.createElement('print-hide');
+       document.createElement('print-btn');
+       document.createElement('pagination');
+
+       // Optionally these for CSS
+       document.createElement('ng:include');
+       document.createElement('ng:pluralize');
+       document.createElement('ng:view');
+     </script>
+   <![endif]-->
+<!-- bower js -->
+<!--[if !IE]><!-->
+<script src="www/lib/vendor.js"></script>
+<!--<![endif]-->
+<!-- your app's js -->
+<script src="www/app.js"></script>
+<script src="www/templates.js"></script>
+</head>
+
+<body class="ng-app:xhStarter" id="ng-app" ng-app="xhStarter"
+	ng-controller="PortalCtrl">
+	<toaster-container></toaster-container>
+
+
+	<div ui-view></div>
+
+	</div>
+
+
+</body>
+</html>

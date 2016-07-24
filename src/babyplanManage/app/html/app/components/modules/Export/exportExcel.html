@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+
+<div class="page-header">
+    <h3 class="modal-title">导出收文记录</h3>
+</div>
+<div>
+    <h4>起始日期</h4>
+
+    <div class="row">
+        <div>
+            <p class="input-group">
+                <input type="text" class="form-control" datepicker-popup="{{format}}" ng-model="dtStart" is-open="opened1"
+                       min-date="minDate" max-date="maxDate" datepicker-options="dateOptions"
+                       date-disabled="disabled(date, mode)" ng-required="true"
+                       close-text="关闭"　current-text="今天" clear-text="清空"/>
+                <span class="input-group-btn">
+                <button type="button" class="btn btn-default" ng-click="open(1,$event)"><i
+                        class="glyphicon glyphicon-calendar"></i></button>
+              </span>
+            </p>
+        </div>
+    </div>
+    <h4>截止日期</h4>
+
+    <div class="row">
+        <div>
+            <p class="input-group">
+                <input type="text" class="form-control" datepicker-popup="{{format}}" ng-model="dtEnd" is-open="opened2"
+                       min-date="minDate" max-date="maxDate" datepicker-options="dateOptions"
+                       date-disabled="disabled(date, mode)" ng-required="true"
+                       close-text="关闭"　current-text="今天" clear-text="清空"/>
+                <span class="input-group-btn">
+                <button type="button" class="btn btn-default" ng-click="open(2,$event)"><i
+                        class="glyphicon glyphicon-calendar"></i></button>
+              </span>
+            </p>
+        </div>
+    </div>
+    <br/>
+    <p>使用说明:</p>
+    <p class="textRed">&nbsp;&nbsp;1.数据记录将导出为excel文件，按签收日期为条件，在指定日期范围内导出数据</p>
+    <p class="textRed">&nbsp;&nbsp;2.起始日期为你需要导出从何日开始的数据记录，截止日期为你需要的数据为何日前的</p>
+    <p class="textRed">&nbsp;&nbsp;3.输入格式必须为'2016-01-01'</p>
+    <p class="textRed">&nbsp;&nbsp;4.数据量大，建议导出数据不超过3个月</p>
+
+</div>
+<div class="text-center" style="margin-top: 50px;">
+    <hr>
+    <button class="btn btn-primary" type="button" ng-click="confirm()" style="width: 120px;">提交</button>
+    <button class="btn" type="button" ng-click="cancel()" style="width: 100px;">返回</button>
+</div>

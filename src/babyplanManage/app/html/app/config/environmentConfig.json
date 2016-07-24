@@ -1,0 +1,15 @@
+{
+  "Env": {
+    "AppName":"交文管理",
+    "AppIcon":"img/favicon.ico",
+    "AppVersion":"MyAppVersion1.0.0",
+    "url_test" : "Api/",
+    "webSocket_Addr" : "ws://127.0.0.1",
+    "webSocket_port" : "8303",
+    "servletUrl" : "casInfo",
+    "url" : "/documentSignProcessAPI/Api/",
+    "url_test" : "http://10.20.68.73:8080/documentSignProcessAPI/Api/",
+    "login":"http://doc.xh.sustc.edu.cn:8080",
+    "login_test":"http://10.20.68.73:8080/documentSignProcess"
+  }
+}

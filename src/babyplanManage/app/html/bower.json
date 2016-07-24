@@ -1,0 +1,38 @@
+{
+  "name": "docSign",
+  "version": "1.0.0",
+  "homepage": "",
+  "authors": [
+    "sam"
+  ],
+  "description": "document sign process",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular": "~1.2.29",
+    "angular-touch": "~1.2.29",
+    "angular-animate": "~1.2.29",
+    "angular-cookies":"~1.2.29",
+    "angular-ui-router":"~0.2.18",
+    "angularjs-toaster":"~2.0.0",
+    "ng-table":"~0.8.3",
+    "bootstrap": "~3.3.6",
+    "bootstrap-css-only": "~3.3.6",
+    "components-font-awesome": "~4.6.3",
+    "jquery": "~1.11.3",
+    "angular-bootstrap": "~0.12.1",
+    "angular-print":"~0.3.8",
+    "highcharts-ng": "^0.0.11",
+    "highcharts": "highcharts-release#^4.2.4",
+    "jquery-barcode":"*"
+  }
+
+
+
+}

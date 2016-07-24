@@ -15,7 +15,7 @@ import com.xwolves.babyplan.entities.Result;
 @RequestMapping("/")
 public class MvcController {
 
-	@RequestMapping(value="/showIndex",method=RequestMethod.GET)
+	@RequestMapping(value="showIndex",method=RequestMethod.GET)
 	public Result showIndex(HttpServletRequest request, HttpServletResponse response) {
 		
 		HttpSession session = request.getSession(false);
