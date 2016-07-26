@@ -1,12 +1,16 @@
-<ion-view view-title="家长信息设置">
+<ion-view view-title="设置">
     <ion-content>
-        <div class="weui_msg">
-            <div class="weui_icon_area">
-              <img ng-src="img/title.png" />
-            </div>
-            <div class="weui_text_area">
-                <h2 class="weui_msg_title">家长信息设置</h2>
-            </div>
-        </div>
+        <ul class="list">
+            <li class="item" ng-click="vm.goTo('parent')">
+                <i class="icon ion-ios-contact"></i>&nbsp;&nbsp;家长信息</i>
+            </li>
+            <li class="item" ng-click="vm.goTo('childrenSetting')">
+                <i class="icon ion-ios-people"></i>&nbsp;&nbsp;孩子管理</i>
+            </li>
+            <li class="item" ng-click="vm.goTo('register')">
+                <i class="icon ion-ios-settings"></i>&nbsp;&nbsp;其它设置</i>
+            </li>
+
+        </ul>
     </ion-content>
 </ion-view>

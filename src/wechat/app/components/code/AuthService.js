@@ -7,7 +7,8 @@
       getLoginID: getLoginID,
       getLoginToken: getLoginToken,
       getUserRole: getUserRole,
-      getNextPath: getNextPath
+      getNextPath: getNextPath,
+      setSession:setSession
     };
 
     function getLoginID() {
@@ -20,6 +21,10 @@
 
     function getUserRole() {
       return Session.userRole;
+    };
+
+    function setSession(id,token,role){
+      Session.create(token,id,role);
     };
 
     function getNextPath() {

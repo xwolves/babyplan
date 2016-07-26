@@ -1,7 +1,7 @@
 (function() {
     "use strict";
-    angular.module('profileCtrl', [])
-        .controller('profileCtrl', function($scope, $state, Constants, StateService) {
+    angular.module('parentEditCtrl', [])
+        .controller('parentEditCtrl', function($scope, Constants) {
             'ngInject';
             var vm = this;
             vm.activated = false;
@@ -11,11 +11,5 @@
                 vm.activated = true;
                 vm.version = Constants.buildID;
             }
-
-            vm.goTo = function(addr){
-                console.log(addr);
-                StateService.go(addr);
-            };
-
         });
 }());

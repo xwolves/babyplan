@@ -7,7 +7,8 @@
     'AuthService',
     'LoadingAlert',
     'ResultHandler',
-    'MessageToaster'
+    'MessageToaster',
+    'CustomFilter'
   ]);
 
 }());

@@ -9,6 +9,7 @@
           if (next.url.indexOf('login')>0 ) {
               console.log("login");
           }else if(next.url.indexOf('register')>0){
+              //未绑定用户者,进入注册绑定页面
               console.log("register");
           }else{
             if (Session.userId && Session.token) {

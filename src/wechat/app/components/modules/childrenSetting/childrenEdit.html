@@ -1,0 +1,27 @@
+
+<ion-view view-title="孩子信息">
+
+    <ion-content>
+        <div class="list">
+            <label class="item item-input">
+                <span class="input-label">姓名</span>
+                <input type="text" ng-model="vm.child.name" required ng-readonly="!vm.isEditing">
+            </label>
+            <label class="item item-input">
+                <span class="input-label">性别</span>
+                <input type="text" ng-model="vm.child.gendar" required ng-readonly="!vm.isEditing">
+            </label>
+            <label class="item item-input">
+                <span class="input-label">备注</span>
+                <input type="text" ng-model="vm.child.remark" required ng-readonly="!vm.isEditing">
+            </label>
+        </div>
+    </ion-content>
+
+    <div class="bar bar-footer" ng-show="vm.isEditing">
+        <div class="button-bar">
+            <a class="button button-positive" style="margin-right: 1px;" ng-click="vm.save()">保存</a>
+            <a class="button button-positive" style="margin-left: 1px;" ng-click="vm.back()">取消</a>
+        </div>
+    </div>
+</ion-view>
