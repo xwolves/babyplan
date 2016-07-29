@@ -1,0 +1,333 @@
+exception 'ErrorException' with message 'Undefined variable: sql_db' in /var/www/html/babyplan/index.php:36
+Stack trace:
+#0 /var/www/html/babyplan/index.php(36): Slim\Slim::handleErrors(8, 'Undefined varia...', '/var/www/html/b...', 36, Array)
+#1 [internal function]: {closure}()
+#2 /var/www/html/babyplan/Slim/Route.php(468): call_user_func_array(Object(Closure), Array)
+#3 /var/www/html/babyplan/Slim/Slim.php(1357): Slim\Route->dispatch()
+#4 /var/www/html/babyplan/Slim/Middleware/Flash.php(85): Slim\Slim->call()
+#5 /var/www/html/babyplan/Slim/Middleware/MethodOverride.php(92): Slim\Middleware\Flash->call()
+#6 /var/www/html/babyplan/Slim/Middleware/PrettyExceptions.php(67): Slim\Middleware\MethodOverride->call()
+#7 /var/www/html/babyplan/Slim/Slim.php(1302): Slim\Middleware\PrettyExceptions->call()
+#8 /var/www/html/babyplan/index.php(52): Slim\Slim->run()
+#9 {main}
+exception 'ErrorException' with message 'Undefined variable: sql_db' in /var/www/html/babyplan/index.php:37
+Stack trace:
+#0 /var/www/html/babyplan/index.php(37): Slim\Slim::handleErrors(8, 'Undefined varia...', '/var/www/html/b...', 37, Array)
+#1 [internal function]: {closure}()
+#2 /var/www/html/babyplan/Slim/Route.php(468): call_user_func_array(Object(Closure), Array)
+#3 /var/www/html/babyplan/Slim/Slim.php(1357): Slim\Route->dispatch()
+#4 /var/www/html/babyplan/Slim/Middleware/Flash.php(85): Slim\Slim->call()
+#5 /var/www/html/babyplan/Slim/Middleware/MethodOverride.php(92): Slim\Middleware\Flash->call()
+#6 /var/www/html/babyplan/Slim/Middleware/PrettyExceptions.php(67): Slim\Middleware\MethodOverride->call()
+#7 /var/www/html/babyplan/Slim/Slim.php(1302): Slim\Middleware\PrettyExceptions->call()
+#8 /var/www/html/babyplan/index.php(53): Slim\Slim->run()
+#9 {main}
+exception 'ErrorException' with message 'Undefined variable: sql_db' in /var/www/html/babyplan/index.php:37
+Stack trace:
+#0 /var/www/html/babyplan/index.php(37): Slim\Slim::handleErrors(8, 'Undefined varia...', '/var/www/html/b...', 37, Array)
+#1 [internal function]: {closure}()
+#2 /var/www/html/babyplan/Slim/Route.php(468): call_user_func_array(Object(Closure), Array)
+#3 /var/www/html/babyplan/Slim/Slim.php(1357): Slim\Route->dispatch()
+#4 /var/www/html/babyplan/Slim/Middleware/Flash.php(85): Slim\Slim->call()
+#5 /var/www/html/babyplan/Slim/Middleware/MethodOverride.php(92): Slim\Middleware\Flash->call()
+#6 /var/www/html/babyplan/Slim/Middleware/PrettyExceptions.php(67): Slim\Middleware\MethodOverride->call()
+#7 /var/www/html/babyplan/Slim/Slim.php(1302): Slim\Middleware\PrettyExceptions->call()
+#8 /var/www/html/babyplan/index.php(53): Slim\Slim->run()
+#9 {main}
+exception 'ErrorException' with message 'Undefined variable: sql_db' in /var/www/html/babyplan/index.php:38
+Stack trace:
+#0 /var/www/html/babyplan/index.php(38): Slim\Slim::handleErrors(8, 'Undefined varia...', '/var/www/html/b...', 38, Array)
+#1 [internal function]: {closure}()
+#2 /var/www/html/babyplan/Slim/Route.php(468): call_user_func_array(Object(Closure), Array)
+#3 /var/www/html/babyplan/Slim/Slim.php(1357): Slim\Route->dispatch()
+#4 /var/www/html/babyplan/Slim/Middleware/Flash.php(85): Slim\Slim->call()
+#5 /var/www/html/babyplan/Slim/Middleware/MethodOverride.php(92): Slim\Middleware\Flash->call()
+#6 /var/www/html/babyplan/Slim/Middleware/PrettyExceptions.php(67): Slim\Middleware\MethodOverride->call()
+#7 /var/www/html/babyplan/Slim/Slim.php(1302): Slim\Middleware\PrettyExceptions->call()
+#8 /var/www/html/babyplan/index.php(54): Slim\Slim->run()
+#9 {main}
+exception 'ErrorException' with message 'Missing argument 1 for Account::__construct(), called in /var/www/html/babyplan/index.php on line 33 and defined' in /var/www/html/babyplan/accnt_function.php:4
+Stack trace:
+#0 /var/www/html/babyplan/accnt_function.php(4): Slim\Slim::handleErrors(2, 'Missing argumen...', '/var/www/html/b...', 4, Array)
+#1 /var/www/html/babyplan/index.php(33): Account->__construct()
+#2 [internal function]: {closure}()
+#3 /var/www/html/babyplan/Slim/Route.php(468): call_user_func_array(Object(Closure), Array)
+#4 /var/www/html/babyplan/Slim/Slim.php(1357): Slim\Route->dispatch()
+#5 /var/www/html/babyplan/Slim/Middleware/Flash.php(85): Slim\Slim->call()
+#6 /var/www/html/babyplan/Slim/Middleware/MethodOverride.php(92): Slim\Middleware\Flash->call()
+#7 /var/www/html/babyplan/Slim/Middleware/PrettyExceptions.php(67): Slim\Middleware\MethodOverride->call()
+#8 /var/www/html/babyplan/Slim/Slim.php(1302): Slim\Middleware\PrettyExceptions->call()
+#9 /var/www/html/babyplan/index.php(53): Slim\Slim->run()
+#10 {main}
+exception 'ErrorException' with message 'Use of undefined constant ERR_TYPE_PARAMS - assumed 'ERR_TYPE_PARAMS'' in /var/www/html/babyplan/accnt_function.php:12
+Stack trace:
+#0 /var/www/html/babyplan/accnt_function.php(12): Slim\Slim::handleErrors(8, 'Use of undefine...', '/var/www/html/b...', 12, Array)
+#1 /var/www/html/babyplan/index.php(35): Account->createParentAccount(0)
+#2 [internal function]: {closure}()
+#3 /var/www/html/babyplan/Slim/Route.php(468): call_user_func_array(Object(Closure), Array)
+#4 /var/www/html/babyplan/Slim/Slim.php(1357): Slim\Route->dispatch()
+#5 /var/www/html/babyplan/Slim/Middleware/Flash.php(85): Slim\Slim->call()
+#6 /var/www/html/babyplan/Slim/Middleware/MethodOverride.php(92): Slim\Middleware\Flash->call()
+#7 /var/www/html/babyplan/Slim/Middleware/PrettyExceptions.php(67): Slim\Middleware\MethodOverride->call()
+#8 /var/www/html/babyplan/Slim/Slim.php(1302): Slim\Middleware\PrettyExceptions->call()
+#9 /var/www/html/babyplan/index.php(55): Slim\Slim->run()
+#10 {main}
+exception 'ErrorException' with message 'array_change_key_case() expects parameter 1 to be array, null given' in /var/www/html/api/v1/account/index.php:35
+Stack trace:
+#0 [internal function]: Slim\Slim::handleErrors(2, 'array_change_ke...', '/var/www/html/a...', 35, Array)
+#1 /var/www/html/api/v1/account/index.php(35): array_change_key_case(NULL, 0)
+#2 [internal function]: {closure}()
+#3 /var/www/html/Slim/Slim/Route.php(468): call_user_func_array(Object(Closure), Array)
+#4 /var/www/html/Slim/Slim/Slim.php(1357): Slim\Route->dispatch()
+#5 /var/www/html/Slim/Slim/Middleware/Flash.php(85): Slim\Slim->call()
+#6 /var/www/html/Slim/Slim/Middleware/MethodOverride.php(92): Slim\Middleware\Flash->call()
+#7 /var/www/html/Slim/Slim/Middleware/PrettyExceptions.php(67): Slim\Middleware\MethodOverride->call()
+#8 /var/www/html/Slim/Slim/Slim.php(1302): Slim\Middleware\PrettyExceptions->call()
+#9 /var/www/html/api/v1/account/index.php(45): Slim\Slim->run()
+#10 {main}
+exception 'ErrorException' with message 'array_change_key_case() expects parameter 1 to be array, null given' in /var/www/html/api/v1/account/index.php:39
+Stack trace:
+#0 [internal function]: Slim\Slim::handleErrors(2, 'array_change_ke...', '/var/www/html/a...', 39, Array)
+#1 /var/www/html/api/v1/account/index.php(39): array_change_key_case(NULL, 0)
+#2 [internal function]: {closure}()
+#3 /var/www/html/Slim/Slim/Route.php(468): call_user_func_array(Object(Closure), Array)
+#4 /var/www/html/Slim/Slim/Slim.php(1357): Slim\Route->dispatch()
+#5 /var/www/html/Slim/Slim/Middleware/Flash.php(85): Slim\Slim->call()
+#6 /var/www/html/Slim/Slim/Middleware/MethodOverride.php(92): Slim\Middleware\Flash->call()
+#7 /var/www/html/Slim/Slim/Middleware/PrettyExceptions.php(67): Slim\Middleware\MethodOverride->call()
+#8 /var/www/html/Slim/Slim/Slim.php(1302): Slim\Middleware\PrettyExceptions->call()
+#9 /var/www/html/api/v1/account/index.php(49): Slim\Slim->run()
+#10 {main}
+exception 'ErrorException' with message 'array_change_key_case() expects parameter 1 to be array, null given' in /var/www/html/api/v1/account/index.php:40
+Stack trace:
+#0 [internal function]: Slim\Slim::handleErrors(2, 'array_change_ke...', '/var/www/html/a...', 40, Array)
+#1 /var/www/html/api/v1/account/index.php(40): array_change_key_case(NULL, 0)
+#2 [internal function]: {closure}()
+#3 /var/www/html/Slim/Slim/Route.php(468): call_user_func_array(Object(Closure), Array)
+#4 /var/www/html/Slim/Slim/Slim.php(1357): Slim\Route->dispatch()
+#5 /var/www/html/Slim/Slim/Middleware/Flash.php(85): Slim\Slim->call()
+#6 /var/www/html/Slim/Slim/Middleware/MethodOverride.php(92): Slim\Middleware\Flash->call()
+#7 /var/www/html/Slim/Slim/Middleware/PrettyExceptions.php(67): Slim\Middleware\MethodOverride->call()
+#8 /var/www/html/Slim/Slim/Slim.php(1302): Slim\Middleware\PrettyExceptions->call()
+#9 /var/www/html/api/v1/account/index.php(50): Slim\Slim->run()
+#10 {main}
+exception 'ErrorException' with message 'array_key_exists() expects parameter 2 to be array, null given' in /var/www/html/api/v1/account/accnt_function.php:13
+Stack trace:
+#0 [internal function]: Slim\Slim::handleErrors(2, 'array_key_exist...', '/var/www/html/a...', 13, Array)
+#1 /var/www/html/api/v1/account/accnt_function.php(13): array_key_exists('weixin', NULL)
+#2 /var/www/html/api/v1/account/index.php(44): Account->createParentAccount(NULL)
+#3 [internal function]: {closure}()
+#4 /var/www/html/Slim/Slim/Route.php(468): call_user_func_array(Object(Closure), Array)
+#5 /var/www/html/Slim/Slim/Slim.php(1357): Slim\Route->dispatch()
+#6 /var/www/html/Slim/Slim/Middleware/Flash.php(85): Slim\Slim->call()
+#7 /var/www/html/Slim/Slim/Middleware/MethodOverride.php(92): Slim\Middleware\Flash->call()
+#8 /var/www/html/Slim/Slim/Middleware/PrettyExceptions.php(67): Slim\Middleware\MethodOverride->call()
+#9 /var/www/html/Slim/Slim/Slim.php(1302): Slim\Middleware\PrettyExceptions->call()
+#10 /var/www/html/api/v1/account/index.php(52): Slim\Slim->run()
+#11 {main}
+exception 'ErrorException' with message 'Undefined variable: errCode' in /var/www/html/api/v1/account/accnt_function.php:15
+Stack trace:
+#0 /var/www/html/api/v1/account/accnt_function.php(15): Slim\Slim::handleErrors(8, 'Undefined varia...', '/var/www/html/a...', 15, Array)
+#1 /var/www/html/api/v1/account/index.php(44): Account->createParentAccount(Array)
+#2 [internal function]: {closure}()
+#3 /var/www/html/Slim/Slim/Route.php(468): call_user_func_array(Object(Closure), Array)
+#4 /var/www/html/Slim/Slim/Slim.php(1357): Slim\Route->dispatch()
+#5 /var/www/html/Slim/Slim/Middleware/Flash.php(85): Slim\Slim->call()
+#6 /var/www/html/Slim/Slim/Middleware/MethodOverride.php(92): Slim\Middleware\Flash->call()
+#7 /var/www/html/Slim/Slim/Middleware/PrettyExceptions.php(67): Slim\Middleware\MethodOverride->call()
+#8 /var/www/html/Slim/Slim/Slim.php(1302): Slim\Middleware\PrettyExceptions->call()
+#9 /var/www/html/api/v1/account/index.php(52): Slim\Slim->run()
+#10 {main}
+exception 'ErrorException' with message 'Undefined variable: errCode' in /var/www/html/api/v1/account/accnt_function.php:15
+Stack trace:
+#0 /var/www/html/api/v1/account/accnt_function.php(15): Slim\Slim::handleErrors(8, 'Undefined varia...', '/var/www/html/a...', 15, Array)
+#1 /var/www/html/api/v1/account/index.php(44): Account->createParentAccount(Array)
+#2 [internal function]: {closure}()
+#3 /var/www/html/Slim/Slim/Route.php(468): call_user_func_array(Object(Closure), Array)
+#4 /var/www/html/Slim/Slim/Slim.php(1357): Slim\Route->dispatch()
+#5 /var/www/html/Slim/Slim/Middleware/Flash.php(85): Slim\Slim->call()
+#6 /var/www/html/Slim/Slim/Middleware/MethodOverride.php(92): Slim\Middleware\Flash->call()
+#7 /var/www/html/Slim/Slim/Middleware/PrettyExceptions.php(67): Slim\Middleware\MethodOverride->call()
+#8 /var/www/html/Slim/Slim/Slim.php(1302): Slim\Middleware\PrettyExceptions->call()
+#9 /var/www/html/api/v1/account/index.php(52): Slim\Slim->run()
+#10 {main}
+exception 'ErrorException' with message 'Undefined variable: arr' in /var/www/html/api/v1/account/accnt_function.php:16
+Stack trace:
+#0 /var/www/html/api/v1/account/accnt_function.php(16): Slim\Slim::handleErrors(8, 'Undefined varia...', '/var/www/html/a...', 16, Array)
+#1 /var/www/html/api/v1/account/index.php(44): Account->createParentAccount(Array)
+#2 [internal function]: {closure}()
+#3 /var/www/html/Slim/Slim/Route.php(468): call_user_func_array(Object(Closure), Array)
+#4 /var/www/html/Slim/Slim/Slim.php(1357): Slim\Route->dispatch()
+#5 /var/www/html/Slim/Slim/Middleware/Flash.php(85): Slim\Slim->call()
+#6 /var/www/html/Slim/Slim/Middleware/MethodOverride.php(92): Slim\Middleware\Flash->call()
+#7 /var/www/html/Slim/Slim/Middleware/PrettyExceptions.php(67): Slim\Middleware\MethodOverride->call()
+#8 /var/www/html/Slim/Slim/Slim.php(1302): Slim\Middleware\PrettyExceptions->call()
+#9 /var/www/html/api/v1/account/index.php(52): Slim\Slim->run()
+#10 {main}
+exception 'ErrorException' with message 'Undefined variable: arr' in /var/www/html/api/v1/account/accnt_function.php:16
+Stack trace:
+#0 /var/www/html/api/v1/account/accnt_function.php(16): Slim\Slim::handleErrors(8, 'Undefined varia...', '/var/www/html/a...', 16, Array)
+#1 /var/www/html/api/v1/account/index.php(44): Account->createParentAccount(Array)
+#2 [internal function]: {closure}()
+#3 /var/www/html/Slim/Slim/Route.php(468): call_user_func_array(Object(Closure), Array)
+#4 /var/www/html/Slim/Slim/Slim.php(1357): Slim\Route->dispatch()
+#5 /var/www/html/Slim/Slim/Middleware/Flash.php(85): Slim\Slim->call()
+#6 /var/www/html/Slim/Slim/Middleware/MethodOverride.php(92): Slim\Middleware\Flash->call()
+#7 /var/www/html/Slim/Slim/Middleware/PrettyExceptions.php(67): Slim\Middleware\MethodOverride->call()
+#8 /var/www/html/Slim/Slim/Slim.php(1302): Slim\Middleware\PrettyExceptions->call()
+#9 /var/www/html/api/v1/account/index.php(52): Slim\Slim->run()
+#10 {main}
+exception 'ErrorException' with message 'array_key_exists() expects parameter 2 to be array, null given' in /var/www/html/api/v1/account/accnt_function.php:14
+Stack trace:
+#0 [internal function]: Slim\Slim::handleErrors(2, 'array_key_exist...', '/var/www/html/a...', 14, Array)
+#1 /var/www/html/api/v1/account/accnt_function.php(14): array_key_exists('weixin', NULL)
+#2 /var/www/html/api/v1/account/index.php(44): Account->createParentAccount(NULL)
+#3 [internal function]: {closure}()
+#4 /var/www/html/Slim/Slim/Route.php(468): call_user_func_array(Object(Closure), Array)
+#5 /var/www/html/Slim/Slim/Slim.php(1357): Slim\Route->dispatch()
+#6 /var/www/html/Slim/Slim/Middleware/Flash.php(85): Slim\Slim->call()
+#7 /var/www/html/Slim/Slim/Middleware/MethodOverride.php(92): Slim\Middleware\Flash->call()
+#8 /var/www/html/Slim/Slim/Middleware/PrettyExceptions.php(67): Slim\Middleware\MethodOverride->call()
+#9 /var/www/html/Slim/Slim/Slim.php(1302): Slim\Middleware\PrettyExceptions->call()
+#10 /var/www/html/api/v1/account/index.php(52): Slim\Slim->run()
+#11 {main}
+exception 'ErrorException' with message 'Undefined variable: errCode' in /var/www/html/api/v1/account/index.php:38
+Stack trace:
+#0 /var/www/html/api/v1/account/index.php(38): Slim\Slim::handleErrors(8, 'Undefined varia...', '/var/www/html/a...', 38, Array)
+#1 [internal function]: {closure}()
+#2 /var/www/html/Slim/Slim/Route.php(468): call_user_func_array(Object(Closure), Array)
+#3 /var/www/html/Slim/Slim/Slim.php(1357): Slim\Route->dispatch()
+#4 /var/www/html/Slim/Slim/Middleware/Flash.php(85): Slim\Slim->call()
+#5 /var/www/html/Slim/Slim/Middleware/MethodOverride.php(92): Slim\Middleware\Flash->call()
+#6 /var/www/html/Slim/Slim/Middleware/PrettyExceptions.php(67): Slim\Middleware\MethodOverride->call()
+#7 /var/www/html/Slim/Slim/Slim.php(1302): Slim\Middleware\PrettyExceptions->call()
+#8 /var/www/html/api/v1/account/index.php(54): Slim\Slim->run()
+#9 {main}
+exception 'ErrorException' with message 'Undefined variable: ret' in /var/www/html/api/v1/account/index.php:47
+Stack trace:
+#0 /var/www/html/api/v1/account/index.php(47): Slim\Slim::handleErrors(8, 'Undefined varia...', '/var/www/html/a...', 47, Array)
+#1 [internal function]: {closure}()
+#2 /var/www/html/Slim/Slim/Route.php(468): call_user_func_array(Object(Closure), Array)
+#3 /var/www/html/Slim/Slim/Slim.php(1357): Slim\Route->dispatch()
+#4 /var/www/html/Slim/Slim/Middleware/Flash.php(85): Slim\Slim->call()
+#5 /var/www/html/Slim/Slim/Middleware/MethodOverride.php(92): Slim\Middleware\Flash->call()
+#6 /var/www/html/Slim/Slim/Middleware/PrettyExceptions.php(67): Slim\Middleware\MethodOverride->call()
+#7 /var/www/html/Slim/Slim/Slim.php(1302): Slim\Middleware\PrettyExceptions->call()
+#8 /var/www/html/api/v1/account/index.php(54): Slim\Slim->run()
+#9 {main}
+exception 'ErrorException' with message 'Undefined variable: errCode' in /var/www/html/api/v1/account/accnt_function.php:15
+Stack trace:
+#0 /var/www/html/api/v1/account/accnt_function.php(15): Slim\Slim::handleErrors(8, 'Undefined varia...', '/var/www/html/a...', 15, Array)
+#1 /var/www/html/api/v1/account/index.php(44): Account->createParentAccount(Array)
+#2 [internal function]: {closure}()
+#3 /var/www/html/Slim/Slim/Route.php(468): call_user_func_array(Object(Closure), Array)
+#4 /var/www/html/Slim/Slim/Slim.php(1357): Slim\Route->dispatch()
+#5 /var/www/html/Slim/Slim/Middleware/Flash.php(85): Slim\Slim->call()
+#6 /var/www/html/Slim/Slim/Middleware/MethodOverride.php(92): Slim\Middleware\Flash->call()
+#7 /var/www/html/Slim/Slim/Middleware/PrettyExceptions.php(67): Slim\Middleware\MethodOverride->call()
+#8 /var/www/html/Slim/Slim/Slim.php(1302): Slim\Middleware\PrettyExceptions->call()
+#9 /var/www/html/api/v1/account/index.php(51): Slim\Slim->run()
+#10 {main}
+exception 'ErrorException' with message 'Undefined variable: errCode' in /var/www/html/api/v1/account/accnt_function.php:16
+Stack trace:
+#0 /var/www/html/api/v1/account/accnt_function.php(16): Slim\Slim::handleErrors(8, 'Undefined varia...', '/var/www/html/a...', 16, Array)
+#1 /var/www/html/api/v1/account/index.php(44): Account->createParentAccount(Array)
+#2 [internal function]: {closure}()
+#3 /var/www/html/Slim/Slim/Route.php(468): call_user_func_array(Object(Closure), Array)
+#4 /var/www/html/Slim/Slim/Slim.php(1357): Slim\Route->dispatch()
+#5 /var/www/html/Slim/Slim/Middleware/Flash.php(85): Slim\Slim->call()
+#6 /var/www/html/Slim/Slim/Middleware/MethodOverride.php(92): Slim\Middleware\Flash->call()
+#7 /var/www/html/Slim/Slim/Middleware/PrettyExceptions.php(67): Slim\Middleware\MethodOverride->call()
+#8 /var/www/html/Slim/Slim/Slim.php(1302): Slim\Middleware\PrettyExceptions->call()
+#9 /var/www/html/api/v1/account/index.php(51): Slim\Slim->run()
+#10 {main}
+exception 'ErrorException' with message 'Missing argument 2 for createAccountId(), called in /var/www/html/api/v1/account/accnt_function.php on line 12 and defined' in /var/www/html/api/v1/account/function.php:3
+Stack trace:
+#0 /var/www/html/api/v1/account/function.php(3): Slim\Slim::handleErrors(2, 'Missing argumen...', '/var/www/html/a...', 3, Array)
+#1 /var/www/html/api/v1/account/accnt_function.php(12): createAccountId(4)
+#2 /var/www/html/api/v1/account/index.php(44): Account->createParentAccount(Array, 4)
+#3 [internal function]: {closure}()
+#4 /var/www/html/Slim/Slim/Route.php(468): call_user_func_array(Object(Closure), Array)
+#5 /var/www/html/Slim/Slim/Slim.php(1357): Slim\Route->dispatch()
+#6 /var/www/html/Slim/Slim/Middleware/Flash.php(85): Slim\Slim->call()
+#7 /var/www/html/Slim/Slim/Middleware/MethodOverride.php(92): Slim\Middleware\Flash->call()
+#8 /var/www/html/Slim/Slim/Middleware/PrettyExceptions.php(67): Slim\Middleware\MethodOverride->call()
+#9 /var/www/html/Slim/Slim/Slim.php(1302): Slim\Middleware\PrettyExceptions->call()
+#10 /var/www/html/api/v1/account/index.php(52): Slim\Slim->run()
+#11 {main}
+exception 'ErrorException' with message 'Undefined variable: tmp_guid' in /var/www/html/api/v1/account/accnt_function.php:51
+Stack trace:
+#0 /var/www/html/api/v1/account/accnt_function.php(51): Slim\Slim::handleErrors(8, 'Undefined varia...', '/var/www/html/a...', 51, Array)
+#1 /var/www/html/api/v1/account/accnt_function.php(96): Account->guid()
+#2 /var/www/html/api/v1/index.php(76): Account->login('akina', Object(Redis))
+#3 [internal function]: {closure}()
+#4 /var/www/html/Slim/Slim/Route.php(468): call_user_func_array(Object(Closure), Array)
+#5 /var/www/html/Slim/Slim/Slim.php(1357): Slim\Route->dispatch()
+#6 /var/www/html/Slim/Slim/Middleware/Flash.php(85): Slim\Slim->call()
+#7 /var/www/html/Slim/Slim/Middleware/MethodOverride.php(92): Slim\Middleware\Flash->call()
+#8 /var/www/html/Slim/Slim/Middleware/PrettyExceptions.php(67): Slim\Middleware\MethodOverride->call()
+#9 /var/www/html/Slim/Slim/Slim.php(1302): Slim\Middleware\PrettyExceptions->call()
+#10 /var/www/html/api/v1/index.php(89): Slim\Slim->run()
+#11 {main}
+exception 'ErrorException' with message 'Undefined variable: guid' in /var/www/html/api/v1/account/accnt_function.php:51
+Stack trace:
+#0 /var/www/html/api/v1/account/accnt_function.php(51): Slim\Slim::handleErrors(8, 'Undefined varia...', '/var/www/html/a...', 51, Array)
+#1 /var/www/html/api/v1/account/accnt_function.php(96): Account->guid()
+#2 /var/www/html/api/v1/index.php(76): Account->login('akina', Object(Redis))
+#3 [internal function]: {closure}()
+#4 /var/www/html/Slim/Slim/Route.php(468): call_user_func_array(Object(Closure), Array)
+#5 /var/www/html/Slim/Slim/Slim.php(1357): Slim\Route->dispatch()
+#6 /var/www/html/Slim/Slim/Middleware/Flash.php(85): Slim\Slim->call()
+#7 /var/www/html/Slim/Slim/Middleware/MethodOverride.php(92): Slim\Middleware\Flash->call()
+#8 /var/www/html/Slim/Slim/Middleware/PrettyExceptions.php(67): Slim\Middleware\MethodOverride->call()
+#9 /var/www/html/Slim/Slim/Slim.php(1302): Slim\Middleware\PrettyExceptions->call()
+#10 /var/www/html/api/v1/index.php(89): Slim\Slim->run()
+#11 {main}
+exception 'ErrorException' with message 'Undefined variable: rsp_data' in /var/www/html/api/v1/index.php:80
+Stack trace:
+#0 /var/www/html/api/v1/index.php(80): Slim\Slim::handleErrors(8, 'Undefined varia...', '/var/www/html/a...', 80, Array)
+#1 [internal function]: {closure}()
+#2 /var/www/html/Slim/Slim/Route.php(468): call_user_func_array(Object(Closure), Array)
+#3 /var/www/html/Slim/Slim/Slim.php(1357): Slim\Route->dispatch()
+#4 /var/www/html/Slim/Slim/Middleware/Flash.php(85): Slim\Slim->call()
+#5 /var/www/html/Slim/Slim/Middleware/MethodOverride.php(92): Slim\Middleware\Flash->call()
+#6 /var/www/html/Slim/Slim/Middleware/PrettyExceptions.php(67): Slim\Middleware\MethodOverride->call()
+#7 /var/www/html/Slim/Slim/Slim.php(1302): Slim\Middleware\PrettyExceptions->call()
+#8 /var/www/html/api/v1/index.php(92): Slim\Slim->run()
+#9 {main}
+exception 'ErrorException' with message 'Array to string conversion' in /var/www/html/api/v1/index.php:84
+Stack trace:
+#0 /var/www/html/api/v1/index.php(84): Slim\Slim::handleErrors(8, 'Array to string...', '/var/www/html/a...', 84, Array)
+#1 [internal function]: {closure}()
+#2 /var/www/html/Slim/Slim/Route.php(468): call_user_func_array(Object(Closure), Array)
+#3 /var/www/html/Slim/Slim/Slim.php(1357): Slim\Route->dispatch()
+#4 /var/www/html/Slim/Slim/Middleware/Flash.php(85): Slim\Slim->call()
+#5 /var/www/html/Slim/Slim/Middleware/MethodOverride.php(92): Slim\Middleware\Flash->call()
+#6 /var/www/html/Slim/Slim/Middleware/PrettyExceptions.php(67): Slim\Middleware\MethodOverride->call()
+#7 /var/www/html/Slim/Slim/Slim.php(1302): Slim\Middleware\PrettyExceptions->call()
+#8 /var/www/html/api/v1/index.php(96): Slim\Slim->run()
+#9 {main}
+exception 'ErrorException' with message 'Array to string conversion' in /var/www/html/api/v1/index.php:85
+Stack trace:
+#0 /var/www/html/api/v1/index.php(85): Slim\Slim::handleErrors(8, 'Array to string...', '/var/www/html/a...', 85, Array)
+#1 [internal function]: {closure}()
+#2 /var/www/html/Slim/Slim/Route.php(468): call_user_func_array(Object(Closure), Array)
+#3 /var/www/html/Slim/Slim/Slim.php(1357): Slim\Route->dispatch()
+#4 /var/www/html/Slim/Slim/Middleware/Flash.php(85): Slim\Slim->call()
+#5 /var/www/html/Slim/Slim/Middleware/MethodOverride.php(92): Slim\Middleware\Flash->call()
+#6 /var/www/html/Slim/Slim/Middleware/PrettyExceptions.php(67): Slim\Middleware\MethodOverride->call()
+#7 /var/www/html/Slim/Slim/Slim.php(1302): Slim\Middleware\PrettyExceptions->call()
+#8 /var/www/html/api/v1/index.php(97): Slim\Slim->run()
+#9 {main}
+exception 'ErrorException' with message 'Array to string conversion' in /var/www/html/api/v1/index.php:84
+Stack trace:
+#0 /var/www/html/api/v1/index.php(84): Slim\Slim::handleErrors(8, 'Array to string...', '/var/www/html/a...', 84, Array)
+#1 [internal function]: {closure}()
+#2 /var/www/html/Slim/Slim/Route.php(468): call_user_func_array(Object(Closure), Array)
+#3 /var/www/html/Slim/Slim/Slim.php(1357): Slim\Route->dispatch()
+#4 /var/www/html/Slim/Slim/Middleware/Flash.php(85): Slim\Slim->call()
+#5 /var/www/html/Slim/Slim/Middleware/MethodOverride.php(92): Slim\Middleware\Flash->call()
+#6 /var/www/html/Slim/Slim/Middleware/PrettyExceptions.php(67): Slim\Middleware\MethodOverride->call()
+#7 /var/www/html/Slim/Slim/Slim.php(1302): Slim\Middleware\PrettyExceptions->call()
+#8 /var/www/html/api/v1/index.php(96): Slim\Slim->run()
+#9 {main}

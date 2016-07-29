@@ -9,7 +9,10 @@
         'orderModule',
         'profileModule',
         'organizerModule',
-        'messageModule'
+        'messageModule',
+        'parentModule',
+        'childrenSettingModule',
+        'teacherModule'
     ]);
 
 }());

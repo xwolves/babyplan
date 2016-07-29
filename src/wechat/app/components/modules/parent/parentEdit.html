@@ -1,0 +1,26 @@
+<ion-view view-title="家长信息编辑">
+    <ion-content>
+        <div class="list">
+            <label class="item item-input">
+                <span class="input-label">姓名</span>
+                <input type="text">
+            </label>
+            <label class="item item-input">
+                <span class="input-label">手机</span>
+                <input type="text">
+            </label>
+            <label class="item item-input">
+                <span class="input-label">称呼</span>
+                <select ng-bind="sexType">
+                    <option selected value="2">母亲</option>
+                    <option value="1">父亲</option>
+                </select>
+            </label>
+            <h4>孩子信息</h4>
+            <ul>
+               <li>小王   男孩</li>
+               <li>小公举 女孩</li>
+            </ul>
+        </div>
+    </ion-content>
+</ion-view>

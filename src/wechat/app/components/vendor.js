@@ -5,6 +5,7 @@
             'templates',
             'ngStorage',
             'toaster',
-            'ui.rCalendar.tpls'
+            'ui.rCalendar.tpls',
+            'baiduMap'
         ]);
 }());

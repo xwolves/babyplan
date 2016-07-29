@@ -1,0 +1,25 @@
+<ion-view view-title="老师列表">
+
+    <ion-nav-buttons side="left">
+        <a class="button button-icon icon ion-ios-arrow-back" ng-click="vm.back()"></a>
+    </ion-nav-buttons>
+    <ion-nav-buttons side="right">
+        <a class="button button-icon icon ion-person-add" ng-click="vm.new()"></a>
+    </ion-nav-buttons>
+
+    <ion-content>
+        <ion-list>
+            <ion-item class="item" ng-click="vm.goTo(item.sid)" collection-repeat="item in vm.items">
+                <p>{{item.name}}<span style="float: right">{{item.gendar|gendarChange}}</span></p>
+
+                <ion-option-button class="button-positive ion-edit" ng-click="vm.edit(item.sid)">&nbsp;编辑</ion-option-button>
+                <ion-option-button class="button-assertive ion-trash-a" ng-click="vm.del(item)">&nbsp;删除</ion-option-button>
+            </ion-item>
+
+            <div class="item" ng-if="vm.items !== undefined && !vm.items.length" class="no-results">
+                <p>无相关记录</p>
+            </div>
+        </ion-list>
+    </ion-content>
+
+</ion-view>

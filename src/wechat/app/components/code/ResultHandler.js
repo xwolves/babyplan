@@ -9,10 +9,11 @@
         };
 
         function successedFuc(response) {
-            if (response.data.status == 0) {
+            //if (response.data.status == 0) {
+            if (response.data.errno == 0){
                 return response.data;
             } else {
-                response.data.message ? MessageToaster.error(response.data.message) : MessageToaster.accessFail();;
+                response.data.error ? MessageToaster.error(response.data.error) : MessageToaster.accessFail();;
                 return $q.reject();
             }
         }

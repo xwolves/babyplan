@@ -2,8 +2,8 @@
     "use strict";
     angular.module('environmentConfig', [])
         .constant('Constants', {
-            'serverUrl': 'http://10.20.0.72/duty-Api/Api/',
-            'buildID': '20160627v2',
+            'serverUrl': '/api/v1/',
+            'buildID': '20160725v1',
             'ENVIRONMENT':'dev'
         });
 }());

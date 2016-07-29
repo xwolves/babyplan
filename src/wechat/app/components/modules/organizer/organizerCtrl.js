@@ -1,7 +1,7 @@
 (function() {
     "use strict";
     angular.module('organizerCtrl', [])
-        .controller('organizerCtrl', function($scope, Constants) {
+        .controller('organizerCtrl', function($scope, Constants, StateService) {
             'ngInject';
             var vm = this;
             vm.activated = false;
@@ -11,5 +11,9 @@
                 vm.activated = true;
                 vm.version = Constants.buildID;
             }
+
+            vm.goTo = function(addr){
+                StateService.go(addr);
+            };
         });
 }());

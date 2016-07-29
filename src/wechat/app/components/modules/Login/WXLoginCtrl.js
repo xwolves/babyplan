@@ -17,8 +17,8 @@
                     Session.create(user, token, role);
                     StateService.clearAllAndGo(AuthService.getNextPath());
                 } else if (user && role==Role.unknown) {
-                    //有用户信息,角色为未知,注册
-                    StateService.go('register');
+                    //有用户信息,但角色为未知,需要注册绑定
+                    StateService.clearAllAndGo('register');
                 } else {
                     //login failed
                     vm.info = "未登录，需要微信授权...";
@@ -29,6 +29,11 @@
             //WeuiModalLoading
             function login(user) {
                 //WeuiModalLoading.show();
+                //test
+                Session.create('1', '123', '2');
+                StateService.go(AuthService.getNextPath());
+                //test
+
                 LoginService.login(user.userId, user.password).then(function(response) {
                     if (vm.modal)
                         vm.closeDetailsModal();

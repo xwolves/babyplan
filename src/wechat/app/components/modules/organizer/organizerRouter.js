@@ -17,6 +17,19 @@
               controllerAs: 'vm'
             }
           }
-      });
+      })
+      .state('organizerInfo', {
+        url: "/organizerInfo",
+        templateUrl: 'organizer/organizerInfo.html',
+        controller: 'organizerInfoCtrl',
+        controllerAs: 'vm'
+      })
+      .state('organizerEdit', {
+        url: "/organizerEdit",
+        templateUrl: 'organizer/organizerEdit.html',
+        controller: 'organizerEditCtrl',
+        controllerAs: 'vm'
+      })
+    ;
   }
 }());
