@@ -8,7 +8,8 @@
         'ngInject';
         var service = {
             login: login,
-            logout: logout
+            logout: logout,
+            wxLogin: wxLogin
         };
 
         function logout() {
@@ -27,6 +28,40 @@
                 data: data
             }).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
         }
+
+        //POST /api/v1/login
+        //Request Body:
+        //{
+        //    "weixinno": "xxxxxx"
+        //}
+        //Response Body:
+        //{
+        //    "errno":0,
+        //    "error":"",
+        //    "data":{
+        //        "token":"fdddsdsdddsssssdfff",
+        //        "uid":"用户id",
+        //        "type":"用户类型"   uid的第一位数
+        //    }
+        //}
+        function wxLogin(wxId,type) {
+            var data = {
+                weixinno: wxId
+            }
+            if(type!=null)data.type=type;
+            var url = Constants.serverUrl + 'login';
+            return $http({
+                method: 'post',
+                url: url,
+                data: data
+            }).then(function (response) {
+                return response.data;
+            }, function (error) {
+                return $q.reject(error);
+            });
+        }
+
+
         return service;
 
 

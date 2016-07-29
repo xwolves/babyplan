@@ -8,7 +8,7 @@
       getLoginToken: getLoginToken,
       getUserRole: getUserRole,
       getNextPath: getNextPath,
-      setSession:setSession
+      setSession: setSession
     };
 
     function getLoginID() {

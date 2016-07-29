@@ -12,10 +12,9 @@ app.filter('gendarChange', function () {
 
 app.filter('JSchange', function () {
     return function (input) {
-        if (input == "1")return "收件人员";
-        else if (input == "0")return "超级管理员";
-        else if (input == "2")return "普通人员";
-        else if (input == "*")return "人员";
+        if (input == "1")return "托管机构";
+        else if (input == "3")return "老师";
+        else if (input == "2")return "家长";
         else return "未知人员";
     };
 });

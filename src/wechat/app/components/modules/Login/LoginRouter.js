@@ -9,11 +9,9 @@
     'ngInject';
     $stateProvider
     .state('wxlogin', {
-      url: "/wxlogin?:user&:role&:token",
+      url: "/wxlogin?:user",
       params:{
-        user:null,
-        role:null,
-        token:null
+        user:null
       },
       templateUrl: 'Login/wxlogin.html',
       controller: 'WXLoginCtrl',

@@ -5,32 +5,65 @@
             'ngInject';
 
             var vm = this;
+            vm.wxlogin = wxlogin;
             vm.isDev = Constants.ENVIRONMENT == 'dev' ? true : false;
             $scope.$on('$ionicView.beforeEnter', validate);
 
             function validate() {
-                var user = $stateParams.user;
-                var token = $stateParams.token;
-                var role = $stateParams.role;
-                if (user && token) {
-                    //login successed
-                    Session.create(user, token, role);
-                    StateService.clearAllAndGo(AuthService.getNextPath());
-                } else if (user && role==Role.unknown) {
-                    //有用户信息,但角色为未知,需要注册绑定
-                    StateService.clearAllAndGo('register');
-                } else {
+                vm.user = $stateParams.user;
+               // vm.user = "weichat";//test
+                MessageToaster.info('user = '+vm.user);
+                if (vm.user) {
                     //login failed
-                    vm.info = "未登录，需要微信授权...";
+                    MessageToaster.info('logining....');
+                    vm.info = "正在登录，请稍后...";
                     vm.showLoginModal = showLoginModal;
+                    //vm.roleList = [{type:1,user:'1111'}];//test
+                    vm.showChooseModal = showChooseModal;
                     vm.login = login;
+                    vm.select = selectChoose;
+                    vm.wxlogin(vm.user);
                 }
             }
+
+            function wxlogin(userid,type) {
+                MessageToaster.info('准备登录');
+                LoginService.wxLogin(userid,type).then(function(response) {
+                    if(response.errno==0) {
+                        var result = response.data;
+                        //alert(result instanceof Array);
+                        //alert(result.length);
+                        //if(typeof(result.uid) == "undefined" ){
+                        if (result instanceof Array && result.length > 1) {
+                            //modal select type
+                            vm.roleList=result;
+                            MessageToaster.info("have select "+result.length);
+                            vm.showChooseModal();
+                        }else{
+                            //alert(JSON.stringify(result));
+                            var u=result[0];
+                            if (u.uid != null && u.token != null && u.type != null) {
+                                AuthService.setSession(u.uid, u.token, u.type);
+                                StateService.clearAllAndGo(AuthService.getNextPath());
+                            }
+                        }
+                    }else{
+                        if(response.errno==12004){
+                            //no data found
+                            AuthService.setSession(userid, "", Role.unknown);
+
+                            StateService.clearAllAndGo("register");
+                        }
+                        MessageToaster.error(response.error);
+                    }
+                });
+            };
+
             //WeuiModalLoading
             function login(user) {
                 //WeuiModalLoading.show();
                 //test
-                Session.create('1', '123', '2');
+                AuthService.setSession('1', '123', '1');
                 StateService.go(AuthService.getNextPath());
                 //test
 
@@ -38,8 +71,7 @@
                     if (vm.modal)
                         vm.closeDetailsModal();
                     MessageToaster.success(response.message);
-
-                    Session.create(response.content.userId, response.content.token,response.content.role);
+                    AuthService.setSession(response.data.uid, response.data.token,response.data.type);
                     StateService.clearAllAndGo(AuthService.getNextPath());
                 }).finally(function() {
                     //WeuiModalLoading.hide();
@@ -61,6 +93,30 @@
                 $scope.$on('$ionicView.leave', function() {
                     vm.modal.remove();
                 });
+            }
+
+            function showChooseModal() {
+                $ionicModal.fromTemplateUrl('Login/ChooseModal.html', {
+                    scope: $scope,
+                    animation: 'slide-in-up'
+                }).then(function(modal) {
+                    vm.cmodal = modal;
+                    vm.cmodal.show();
+                });
+
+                vm.closeChooseModal = function() {
+                    vm.cmodal.remove();
+                };
+                $scope.$on('$ionicView.leave', function() {
+                    vm.cmodal.remove();
+                });
+            }
+
+            function selectChoose(){
+                if(vm.choose!=null){
+                    //know user choose then login agin with type
+                    wxlogin(vm.user, vm.choose);
+                }
             }
         });
 }());

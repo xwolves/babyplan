@@ -15,63 +15,86 @@
                 <select ng-model="vm.roleType">
                     <option value="2">孩子家长</option>
                     <option value="3">机构老师</option>
+                    <option value="1">托管机构</option>
                 </select>
             </label>
-            <label class="item item-input">
-                <span class="input-label">姓名</span>
-                <input type="text" ng-model="vm.user.name" required>
-            </label>
-            <label class="item item-input item-select">
-                <div class="input-label">
-                    用户性别
-                </div>
-                <div>
-                    <select ng-if="vm.roleType=='2'" ng-model="vm.user.gendar" required>
-                        <option value="" disabled>请选择</option>
-                        <option value="1">父亲</option>
-                        <option value="2">母亲</option>
-                    </select>
-                    <select ng-if="vm.roleType=='3'" ng-model="vm.user.gendar">
-                        <option value="" disabled>请选择</option>
-                        <option value="1">俊男</option>
-                        <option value="2">美女</option>
-                    </select>
-                </div>
-            </label>
-            <label class="item item-input">
-                <span class="input-label">手机号码</span>
-                <!--  ng-minlength="11"  ng-maxlength="11" -->
-                <input type="tel" ng-model="vm.user.mobile" required>
-            </label>
-            <label class="item item-input">
-                <span class="input-label">密码</span>
-                <!-- ng-minlength="8" -->
-                <input type="password" ng-model="vm.user.password" required>
-            </label>
-            <label class="item item-input">
-                <span class="input-label">密码确认</span>
-                <input type="password" ng-model="vm.user.pswConfirm" required>
-            </label>
-            <!--
-            <div class="item item-input-inset">
-                <label class="item-input-wrapper">
-                    <input type="text" placeholder="验证码">
+            <div ng-if="vm.roleType=='2'">
+                <label class="item item-input">
+                    <span class="input-label">姓名</span>
+                    <input type="text" ng-model="vm.user.name" required>
                 </label>
-                <button class="button button-small">
-                    获取验证
+                <label class="item item-input item-select">
+                    <div class="input-label">
+                        用户性别
+                    </div>
+                    <div>
+                        <select ng-if="vm.roleType=='2'" ng-model="vm.user.gendar" required>
+                            <option value="" disabled>请选择</option>
+                            <option value="1">父亲</option>
+                            <option value="2">母亲</option>
+                        </select>
+                        <select ng-if="vm.roleType=='3'" ng-model="vm.user.gendar">
+                            <option value="" disabled>请选择</option>
+                            <option value="1">俊男</option>
+                            <option value="2">美女</option>
+                        </select>
+                    </div>
+                </label>
+                <label class="item item-input">
+                    <span class="input-label">手机号码</span>
+                    <!--  ng-minlength="11"  ng-maxlength="11" -->
+                    <input type="tel" ng-model="vm.user.mobile" required>
+                </label>
+                <label class="item item-input">
+                    <span class="input-label">密码</span>
+                    <!-- ng-minlength="8" -->
+                    <input type="password" ng-model="vm.user.password" required>
+                </label>
+                <label class="item item-input">
+                    <span class="input-label">密码确认</span>
+                    <input type="password" ng-model="vm.user.pswConfirm" required>
+                </label>
+                <!--
+                <div class="item item-input-inset">
+                    <label class="item-input-wrapper">
+                        <input type="text" placeholder="验证码">
+                    </label>
+                    <button class="button button-small">
+                        获取验证
+                    </button>
+                </div>
+                -->
+                <label class="item item-input" ng-show="vm.error">
+                    <span class="input-label">错误提示</span>
+                    <p style="color: red">{{vm.error}}</p>
+                </label>
+                <br>
+                <br>
+
+                <button class="button button-block button-positive" ng-click="vm.register()">
+                    注&nbsp;&nbsp;&nbsp;&nbsp;册
                 </button>
             </div>
-            -->
-            <label class="item item-input" ng-show="vm.error">
-                <span class="input-label">错误提示</span>
-                <p style="color: red">{{vm.error}}</p>
-            </label>
-            <br>
-            <br>
+            <div ng-if="vm.roleType!='2'">
+                <label class="item item-input">
+                    <span class="input-label">账号</span>
+                    <input type="tel" ng-model="vm.org.account" placeholder="请输入手机号码或账号" required>
+                </label>
+                <label class="item item-input">
+                    <span class="input-label">密码</span>
+                    <input type="password" ng-model="vm.org.password" placeholder="默认密码为手机号码后6位" required>
+                </label>
+                <label class="item item-input" ng-show="vm.error">
+                    <span class="input-label">错误提示</span>
+                    <p style="color: red">{{vm.error}}</p>
+                </label>
+                <br>
+                <br>
 
-            <button class="button button-block button-positive" ng-click="vm.register()">
-                注&nbsp;&nbsp;&nbsp;&nbsp;册
-            </button>
+                <button class="button button-block button-positive" ng-disabled="vm.isLock" ng-click="vm.bind()">
+                    登&nbsp;&nbsp;&nbsp;&nbsp;录
+                </button>
+            </div>
         </div>
     </ion-content>
 </ion-view>

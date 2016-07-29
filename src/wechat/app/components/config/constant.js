@@ -30,6 +30,7 @@
             TOKEN_INVALID: '连接超时，请重新登录！'
         })
         .constant('SuccessMessage', {
-            SUBMIT_SUCESS: '提交成功'
+            SUBMIT_SUCESS: '提交成功',
+            OPERATION_SUCESS:'操作完成'
         });
 }());

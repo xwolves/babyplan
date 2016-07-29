@@ -20,6 +20,7 @@
             session.userId = null;
             session.userRole = null;
             console.log("session destroy");
+            alert("my session destroyed");
         }
 
         function updateRoles(roles) {

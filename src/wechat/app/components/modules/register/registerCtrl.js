@@ -1,11 +1,14 @@
 (function() {
     "use strict";
     angular.module('registerCtrl', [])
-        .controller('registerCtrl', function($scope, Constants,StateService,Session,AuthService,registerService) {
+        .controller('registerCtrl', function($scope, Constants,StateService,Session,AuthService,registerService,LoginService) {
             'ngInject';
             var vm = this;
             vm.activated = false;
             console.log("tabs come");
+            vm.count=0;
+            vm.isLock=false;
+            vm.org={mobile:'', password:''};
             vm.user={ gendar:'1', name:'', mobile:'', password:'', pswConfrim:''};
             vm.error=null;
             $scope.$on('$ionicView.afterEnter', activate);
@@ -74,21 +77,93 @@
                 }
             };
 
+            vm.simpleCheck = function(){
+                if(vm.org.password.length >= 6 && (vm.org.account.length == 11 || vm.org.account.length == 8 )){
+                    vm.error = "";
+                    return true;
+                } else vm.error = '数据未填完哦!';
+            };
+
+            function wxlogin(userid,type) {
+                LoginService.wxLogin(userid,type).then(function (response) {
+                    if (response.errno == 0) {
+                        var result = response.data;
+                        if(typeof(result.uid) == "undefined" ){
+                        //if (result instanceof Array && result.length > 1) {
+                            //modal select type
+                            vm.roleList = result;
+                            alert(JSON.stringify(result));
+                            MessageToaster.info("have select " + result.length);
+                            vm.showChooseModal();
+                        } else {
+                            if (result.uid != null && result.token != null && result.type != null) {
+                                AuthService.setSession(result.uid, result.token, result.type);
+                                StateService.clearAllAndGo(AuthService.getNextPath());
+                            }
+                        }
+                    } else {
+                        if (response.errno == 12004) {
+                            //no data found
+                            AuthService.setSession(userid, "", Role.unknown);
+                            StateService.clearAllAndGo("register");
+                        }
+                        MessageToaster.error(response.error);
+                    }
+                });
+            };
+
+            vm.bind = function(){
+                //检测输入数值是否正确
+                if(!vm.simpleCheck())return;
+                //再绑定
+                vm.count++;
+                if(vm.count>3){
+                    vm.isLock=true;
+                    vm.error="尝试过多,请稍后再试!";
+                    return;
+                }
+                //alert(AuthService.getLoginID());
+                if(vm.roleType=='3'){
+                    registerService.bindTeacher(vm.org,AuthService.getLoginID()).then(function(data) {
+                        if (data.errno == 0) {
+                            var userId = data.data.uid;
+                            if(userId!=null){
+                                wxlogin(userId);
+                            }
+                        }
+                    });
+                }else if(vm.roleType=='1'){
+                    registerService.bindOrganizer(vm.org,AuthService.getLoginID()).then(function(data) {
+                        if (data.errno == 0) {
+                            var userId = data.data.uid;
+                            if(userId!=null){
+                                wxlogin(userId);
+                            }
+                        }
+                    });
+                }
+                vm.error="密码或手机号码有误,请重试";
+
+            };
+
             vm.register = function(){
                 console.log(vm.roleType);
                 //检测输入数值是否正确
                 if(!vm.check())return;
                 //先注册
+                vm.user.wechat=AuthService.getLoginID();
                 if(vm.roleType=='2'){
                     registerService.registerParent(vm.user).then(function(data) {
                         if (data.errno == 0) {
                             //var userId = data.data.uid;
+                            wxlogin(vm.user.wechat);
                         }
                     });
                 }else if(vm.roleType=='3'){
                     registerService.registerTeacher(vm.user).then(function(data) {
                         if (data.errno == 0) {
                             //var userId = data.data.uid;
+                            wxlogin(vm.user.wechat);
                         }
                     });
                 };
@@ -96,12 +171,12 @@
                 //Session.userId="70000103";
                 //Session.token='111';
                 //Session.userRole='2';
-                var userId="70000103";
-                var token='111';
-                var userRole='2';
-                AuthService.setSession(userId, token, userRole);
+                //var userId="70000103";
+                //var token='111';
+                //var userRole='2';
+                //AuthService.setSession(userId, token, userRole);
 
-                StateService.clearAllAndGo(AuthService.getNextPath());
+                //StateService.clearAllAndGo(AuthService.getNextPath());
                 //if(vm.roleType=='1') {
                 //    StateService.go('organizerEdit');
                 //}else if(vm.roleType=='2'){
