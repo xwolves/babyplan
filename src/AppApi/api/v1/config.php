@@ -5,4 +5,7 @@ $SQL_DB_NAME = "dbname=db_deposit";
 $SQL_USER = "deposit";
 $SQL_PASSWORD= "123456";
 
+$APP_ID = "wxad65a9a69e3ae699";
+$SECRET = "668dae7c77defe5efb942f2b7ffda7b3";
+
 ?>
