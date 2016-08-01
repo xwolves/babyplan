@@ -103,6 +103,12 @@
 			<artifactId>spring-data-oracle</artifactId>
 			<version>1.0.0.RELEASE</version>
 		</dependency>
+<!-- https://mvnrepository.com/artifact/commons-fileupload/commons-fileupload -->
+<dependency>
+    <groupId>commons-fileupload</groupId>
+    <artifactId>commons-fileupload</artifactId>
+    <version>1.3.2</version>
+</dependency>
 
 
 

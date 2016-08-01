@@ -4,7 +4,7 @@
 	<h3 class="modal-title">注册托管机构</h3>
 </div>
 <hr>
-<div ng-show="isnew">
+<div ng-show="!showbaidu">
 	<form class="form-horizontal">
 		<div class="form-group">
 			<label for="orgName" class="col-sm-2 control-label">机构名称</label>
@@ -31,165 +31,160 @@
 			</div>
 		</div>
 		<div class="form-group">
+			<label for="iD2Number" class="col-sm-2 control-label">身份证号码</label>
+			<div class="col-sm-4">
+				<input id="iD2Number" type="text" placeholder="身份证号码"
+					class="form-control" ng-model="content.id2Number">
+			</div>
+			<div class="col-sm-4">
+				<button class="btn" type="button" ng-click="showBaidu()"
+					style="width: 100px;">查看所在位置</button>
+			</div>
+			<div ng-show="false" class="col-sm-4">
+				<input id="contactPhone" type="text" placeholder="地图坐标"
+					class="form-control" ng-model="content.markId">
+
+			</div>
+			<div ng-show="false" class="col-sm-4">
+				<input id="contactPhone" type="text" placeholder="地图坐标"
+					class="form-control" ng-model="content.longitude">
+
+			</div>
+			<div ng-show="false" class="col-sm-4">
+				<input id="contactPhone" type="text" placeholder="地图坐标"
+					class="form-control" ng-model="content.latitude">
+
+			</div>
+		</div>
+		<div class="form-group">
 			<label for="licenseType" class="col-sm-2 control-label">licencse类型</label>
 			<div class="col-sm-4">
 				<select class="form-control" ng-model="content.licenseType"
-					ng-options="n.licenseName for n in licenseTypedata">
+					ng-options="n.id as n.licenseName for n in licenseTypedata">
 					<option value="">-- 请选择 --</option>
 				</select>
 			</div>
 			<label for="placeContractType" class="col-sm-2 control-label">placeContractType</label>
 			<div class="col-sm-4">
 				<select class="form-control" ng-model="content.placeContractType"
-					ng-options="m.placeContractName for m in placeContractTypedata">
+					ng-options="m.id as m.placeContractName for m in placeContractTypedata">
 					<option value="">-- 请选择 --</option>
 				</select>
 			</div>
 		</div>
 
-
+		<!--  文件上传  -->
 		<div class="form-group">
 			<label for="frontDeskLink" class="col-sm-2 control-label">FrontDeskLink</label>
 			<div class="col-sm-4">
-				<img class="form-group col-sm-12"
-					ng-src={{content.frontDeskLink}} />
+				<img class="form-group col-sm-12" ng-src={{content.frontDeskLink}} />
 				<div class=" col-sm-12">
-					<input class="form-control" type="file" file-model="myFile"
-						accept="image/*">
+					<input class="form-group col-sm-12" type="file" id="file1" name="file" multiple
+					            ng-files="getTheFiles($files,'frontDeskLink')" />
 				</div>
-				<button class="btn btn-primary col-sm-12" ng-click="submit()">保存</button>
 			</div>
 
 			<label for="publicZoneLink" class="col-sm-2 control-label">PublicZoneLink</label>
 			<div class="col-sm-4">
-				<img class="form-group col-sm-12"
-					ng-src={{content.pubilcZoneLink}} />
+				<img class="form-group col-sm-12" ng-src={{content.pubilcZoneLink}} />
 				<div class=" col-sm-12">
-					<input class="form-control" type="file" file-model="myFile"
+					<input class="form-control"  type="file"  ng-files="getTheFiles($files,'pubilcZoneLink')"
 						accept="image/*">
 				</div>
-				<button class="btn btn-primary col-sm-12" ng-click="submit()">保存</button>
 			</div>
 		</div>
 
 		<div class="form-group">
 			<label for="kitchenLink" class="col-sm-2 control-label">kitchenLink</label>
 			<div class="col-sm-4">
-				<img class="form-group col-sm-12"
-					ng-src={{content.kitchenLink}} />
+				<img class="form-group col-sm-12" ng-src={{content.kitchenLink}} />
 				<div class=" col-sm-12">
-					<input class="form-control" type="file" file-model="myFile"
+					<input class="form-control"  type="file"  ng-files="getTheFiles($files,'kitchenLink')"
 						accept="image/*">
 				</div>
-				<button class="btn btn-primary col-sm-12" ng-click="submit()">保存</button>
 			</div>
 
 			<label for="diningRoomLink" class="col-sm-2 control-label">diningRoomLink</label>
 			<div class="col-sm-4">
-				<img class="form-group col-sm-12"
-					ng-src={{content.diningRoomLink}} />
+				<img class="form-group col-sm-12" ng-src={{content.diningRoomLink}} />
 				<div class=" col-sm-12">
-					<input class="form-control" type="file" file-model="myFile"
+					<input class="form-control"  type="file"  ng-files="getTheFiles($files,'diningRoomLink')"
 						accept="image/*">
 				</div>
-				<button class="btn btn-primary col-sm-12" ng-click="submit()">保存</button>
 			</div>
 		</div>
 
 		<div class="form-group">
 			<label for="restRoomLink1" class="col-sm-2 control-label">restRoomLink1</label>
 			<div class="col-sm-4">
-				<img class="form-group col-sm-12"
-					ng-src={{content.restRoomLink1}} />
+				<img class="form-group col-sm-12" ng-src={{content.restRoomLink1}} />
 				<div class=" col-sm-12">
-					<input class="form-control" type="file" file-model="myFile"
+					<input class="form-control"  type="file"  ng-files="getTheFiles($files,'restRoomLink1')"
 						accept="image/*">
 				</div>
-				<button class="btn btn-primary col-sm-12" ng-click="submit()">保存</button>
+
 			</div>
 
 			<label for="restRoomLink2" class="col-sm-2 control-label">restRoomLink2</label>
 			<div class="col-sm-4">
-				<img class="form-group col-sm-12"
-					ng-src={{content.restRoomLink2}} />
+				<img class="form-group col-sm-12" ng-src={{content.restRoomLink2}} />
 				<div class=" col-sm-12">
-					<input class="form-control" type="file" file-model="myFile"
+					<input class="form-control"  type="file"  ng-files="getTheFiles($files,'restRoomLink2')"
 						accept="image/*">
 				</div>
-				<button class="btn btn-primary col-sm-12" ng-click="submit()">保存</button>
 			</div>
 		</div>
 
 		<div class="form-group">
 			<label for="classRoomLink1" class="col-sm-2 control-label">classRoomLink1</label>
 			<div class="col-sm-4">
-				<img class="form-group col-sm-12"
-					ng-src={{content.classRoomLink1}} />
+				<img class="form-group col-sm-12" ng-src={{content.classRoomLink1}} />
 				<div class=" col-sm-12">
-					<input class="form-control" type="file" file-model="myFile"
+					<input class="form-control"  type="file"  ng-files="getTheFiles($files,'classRoomLink1')"
 						accept="image/*">
 				</div>
-				<button class="btn btn-primary col-sm-12" ng-click="submit()">保存</button>
 			</div>
 
 			<label for="classRoomLink2" class="col-sm-2 control-label">classRoomLink2</label>
 			<div class="col-sm-4">
-				<img class="form-group col-sm-12"
-					ng-src={{content.classRoomLink2}} />
+				<img class="form-group col-sm-12" ng-src={{content.classRoomLink2}} />
 				<div class=" col-sm-12">
-					<input class="form-control" type="file" file-model="myFile"
+					<input class="form-control"  type="file"  ng-files="getTheFiles($files,'classRoomLink2')"
 						accept="image/*">
 				</div>
-				<button class="btn btn-primary col-sm-12" ng-click="submit()">保存</button>
 			</div>
 		</div>
 
 		<div class="form-group">
 			<label for="otherRoomLink1" class="col-sm-2 control-label">otherRoomLink1</label>
 			<div class="col-sm-4">
-				<img class="form-group col-sm-12"
-					ng-src={{content.otherRoomLink1}} />
+				<img class="form-group col-sm-12" ng-src={{content.otherRoomLink1}} />
 				<div class=" col-sm-12">
-					<input class="form-control" type="file" file-model="myFile"
+					<input class="form-control"  type="file"  ng-files="getTheFiles($files,'otherRoomLink1')"
 						accept="image/*">
 				</div>
-				<button class="btn btn-primary col-sm-12" ng-click="submit()">保存</button>
 			</div>
 
 			<label for="otherRoomLink2" class="col-sm-2 control-label">otherRoomLink2</label>
 			<div class="col-sm-4">
-				<img class="form-group col-sm-12"
-					ng-src={{content.otherRoomLink2}} />
+				<img class="form-group col-sm-12" ng-src={{content.otherRoomLink2}} />
 				<div class=" col-sm-12">
-					<input class="form-control" type="file" file-model="myFile"
+					<input class="form-control"  type="file"  ng-files="getTheFiles($files,'otherRoomLink2')"
 						accept="image/*">
 				</div>
-				<button class="btn btn-primary col-sm-12" ng-click="submit()">保存</button>
 			</div>
 		</div>
 
-		<div class="form-group">
-			<label for="iD2Number" class="col-sm-2 control-label">身份证号码</label>
-			<div class="col-sm-4">
-				<input id="iD2Number" type="text" placeholder="身份证号码"
-					class="form-control" ng-model="content.id2Number">
-			</div>
-			<div ng-show="false" class="col-sm-4">
-				<input id="contactPhone" type="text" placeholder="联系电话"
-					class="form-control" ng-model="markId">
-			</div>
-		</div>
+
 
 		<div class="form-group">
 			<label for="otherRoomLink1" class="col-sm-2 control-label">身份证照</label>
 			<div class="col-sm-4">
-				<img class="form-group col-sm-12"
-					ng-src={{content.otherRoomLink1}} />
+				<img class="form-group col-sm-12" ng-src={{content.id2PhotoLink}} />
 				<div class=" col-sm-12">
-					<input class="form-control" type="file" file-model="myFile"
+					<input class="form-control"  type="file"  ng-files="getTheFiles($files,'iD2PhotoLink')"
 						accept="image/*">
 				</div>
-				<button class="btn btn-primary col-sm-12" ng-click="submit()">保存</button>
 			</div>
 		</div>
 
@@ -217,24 +212,35 @@
             -->
 	</form>
 
+
+	
+	<div class="text-center" style="margin-top: 50px;">
+		<hr>
+		<button class="btn btn-primary" type="button" ng-click="create()"
+			style="width: 120px;">保存</button>
+		<button class="btn" type="button" ng-click="cancel()"
+			style="width: 100px;">返回</button>
+	</div>
 </div>
 <!--
 百度地图控件 
  -->
-<div ng-show="false">
+<div ng-show="showbaidu">
 	<div id="r-result">
 		请输入:<input type="text" id="suggestId" size="20" value=""
 			style="width: 150px;" />
 	</div>
-	<div id="allmap" style="width: 100%; height:800px;"></div>
+	<div id="allmap" style="width: 100%; height: 600px;"></div>
 	<div id="searchResultPanel"
-		style="border: 1px solid #C0C0C0; width: 150px; height: auto; display: none;"></div>
+		style="border: 1px solid #C0C0C0; width: 150px; height: auto; display: none;">
+	</div>
+	<div class="text-center" style="margin-top: 50px;">
+		<hr>
+		<button class="btn btn-primary" type="button" ng-click="savePoint()"
+			style="width: 120px;">确定</button>
+		<button class="btn" type="button" ng-click="back()"
+			style="width: 100px;">返回</button>
+	</div>
 </div>
 
-<div class="text-center" style="margin-top: 50px;">
-	<hr>
-	<button class="btn btn-primary" type="button" ng-click="create()"
-		style="width: 120px;">保存</button>
-	<button class="btn" type="button" ng-click="cancel()"
-		style="width: 100px;">返回</button>
-</div>
+

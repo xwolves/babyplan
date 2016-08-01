@@ -93,13 +93,41 @@ public class AccntDeposit {
 
 	@Column(name = "Password")
 	String password;
+	
+	public Float getLongitude() {
+		return longitude;
+	}
+
+
+	@Column(name = "Longitude")
+	Float longitude;
+	
+	@Column(name = "Latitude")
+	Float latitude;
+	
+	public void setLongitude(Float longitude) {
+		this.longitude = longitude;
+	}
+
+	public Float getLatitude() {
+		return latitude;
+	}
+
+	public void setLatitude(Float latitude) {
+		this.latitude = latitude;
+	}
+
+	public void setAccountId(Integer accountId) {
+		this.accountId = accountId;
+	}
+
+	public void setLicenseType(Integer licenseType) {
+		this.licenseType = licenseType;
+	}
+
 
 	public Integer getAccountId() {
 		return accountId;
-	}
-
-	public void setAccountId(int accountId) {
-		this.accountId = accountId;
 	}
 
 	public String getOrgName() {
@@ -146,9 +174,7 @@ public class AccntDeposit {
 		return licenseType;
 	}
 
-	public void setLicenseType(int licenseType) {
-		this.licenseType = licenseType;
-	}
+
 
 	public Integer getPlaceContractType() {
 		return placeContractType;

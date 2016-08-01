@@ -141,15 +141,7 @@ angular.module('tm.pagination', []).directive('tmPagination',[function(){
                     }
                 }
 
-                if(scope.conf.onChange){
-                    
 
-                    // 防止初始化两次请求问题
-                    if(!(oldValue != newValue && oldValue[0] == 0)) {
-                        scope.conf.onChange();
-                    }
-                    
-                }
                 scope.$parent.conf = scope.conf;
             }
 
@@ -193,6 +185,31 @@ angular.module('tm.pagination', []).directive('tmPagination',[function(){
 
 
             }, getPagination);
+            
+            function datachage(newValue, oldValue)
+            {
+                if(scope.conf.onChange){
+                    // 防止初始化两次请求问题
+                    if(oldValue != newValue) {
+                        scope.conf.onChange();
+                    }
+                    
+                }
+            };
+            
+            scope.$watch(function() {
+                
+
+                if(!scope.conf.totalItems) {
+                    scope.conf.totalItems = 0;
+                }
+
+                var newValue = scope.conf.currentPage + ' ' + scope.conf.itemsPerPage;
+                
+                
+                return newValue;
+
+            }, datachage);
 
         }
     };
