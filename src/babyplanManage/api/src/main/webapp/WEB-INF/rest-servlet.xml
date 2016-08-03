@@ -13,15 +13,37 @@
 	<context:component-scan base-package="com.xwolves.babyplan"/>
 	
 	<!-- 访问静态资源 -->
-	<mvc:default-servlet-handler/>
-	
-	<mvc:annotation-driven /> 
+	<mvc:default-servlet-handler />
 
-	<bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter" />
-	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver" id="mvcResolver">
+	<mvc:annotation-driven />
+
+	<bean
+		class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter" />
+	<bean
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver"
+		id="mvcResolver">
 		<property name="prefix" value="/www/"></property>
 		<property name="suffix" value=".html"></property>
 	</bean>
-
-
+	<!-- <mvc:cors> <mvc:mapping path="/Api/**" allowed-origins="http://localhost:63344, 
+		http://localhost:8080, http://zssys.sustc.edu.cn:8080, http://zssys.sustc.edu.cn" 
+		allowed-methods="GET, POST, PUT, DELETE" allowed-headers="Origin, X-Requested-With, 
+		Content-Type, Accept" allow-credentials="false" max-age="3600" /> </mvc:cors> -->
+	<!-- <bean name="authenticationFilter" class="org.jasig.cas.client.authentication.AuthenticationFilter" 
+		p:casServerLoginUrl="http://weblogin.sustc.edu.cn/cas/login" p:renew="false" 
+		p:gateway="false" p:service="http://localhost:8080" > </bean> <bean name="ticketValidationFilter" 
+		class="org.jasig.cas.client.validation.Cas20ProxyReceivingTicketValidationFilter" 
+		p:service="http://localhost:8080"> <property name="ticketValidator"> <bean 
+		class="org.jasig.cas.client.validation.Cas20ServiceTicketValidator"> <constructor-arg 
+		index="0" value="http://weblogin.sustc.edu.cn/cas" /> </bean> </property> 
+		<property name="useSession" value="true" /> <property name="exceptionOnValidationFailure" 
+		value="true" /> <property name="redirectAfterValidation" value="true" /> 
+		</bean> <bean id="wrappingFilter" class="org.jasig.cas.client.util.HttpServletRequestWrapperFilter"> 
+		</bean> -->
+	<!-- 设置MultipartResolver用以文件上传 -->
+	<!-- p:defaultEncoding请求的编码格式，必须与JSP页面的编码一样 p:maxUploadSiz上传文件的大小。5MB p:uploadTempDir上传文件的临时路径，文件上传完后，临时目录中的临时文件会被自动清除 -->
+	<bean id="multipartResolver"
+		class="org.springframework.web.multipart.commons.CommonsMultipartResolver"
+		p:defaultEncoding="UTF-8" p:maxUploadSize="5242880" p:uploadTempDir="upload/temp">
+	</bean>
 </beans>

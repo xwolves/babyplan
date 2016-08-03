@@ -6,9 +6,9 @@
 
 <div  style="margin-top: 20px;" class="table-responsive">
     <p class="text-center" ng-if="isLoading">正在加载中 ... </p>
-    <table ng-table="tableParams" class="table table-striped  table-hover  table-bordered table-responsive" show-filter="true" >
-        <tr ng-repeat="doc in document" ng-click="editdeposit(doc.accountId)">
-            <td title="'机构名称'" filter="{ orgName:'text'}" sortable="'orgName'">
+    <table ng-table="tableParams" class="table table-striped  tr:active,table tr:visited{ background:red}  table-hover  table-bordered table-responsive" show-filter="true" >
+        <tr ng-repeat="doc in document" ng-Dblclick="editdeposit(doc.accountId)">
+            <td title="'机构名称'"  filter="{ orgName:'text'}" sortable="'orgName'">
                 {{doc.orgName}}
             </td>
             <td title="'机构地址'" filter="{ address:'text'}" sortable="'address'">

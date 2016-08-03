@@ -10,8 +10,8 @@
 						$scope.paginationConf = {
 							currentPage : 1,
 							totalItems : 8000,
-							itemsPerPage : 15,
-							pagesLength : 15,
+							itemsPerPage : 10,
+							pagesLength : 10,
 							perPageOptions : [ 10, 20, 30, 40, 50 ],
 							onChange : function() {
 								$scope.query();
@@ -49,7 +49,7 @@
 						$scope.$on('$stateChangeSuccess', function(event,
 								toState, toParams, fromState, fromParams) {
 
-							console.log("return to portal");
+							
 						});
 						
 					    $scope.editdeposit = function(indexid){

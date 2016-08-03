@@ -7,6 +7,20 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.sql.DataSource;
 
+import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.Date;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -22,6 +36,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.xwolves.babyplan.entities.AccntConsultant;
 import com.xwolves.babyplan.entities.AccntDeposit;
@@ -67,19 +82,20 @@ public class ApiRestService {
 	 * 
 	 * @param user
 	 * @param password
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	@RequestMapping(value = "/login", method = RequestMethod.POST, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
-	public Result login(@RequestBody AccntConsultant ac, HttpServletRequest request, HttpServletResponse response)  {
+	public Result login(@RequestBody AccntConsultant ac, HttpServletRequest request, HttpServletResponse response)
+			throws Exception {
 
 		logger.info("getName" + ac.getName() + "password" + ac.getPassword());
-		if((ac.getName()==null&& ac.getName().equals(""))||(ac.getPassword()==null&& ac.getPassword().equals("")))
-		{
+		if (ac.getName() == null || ac.getName().equals("") || ac.getPassword() == null
+				|| ac.getPassword().equals("")) {
 			response.setStatus(Result.STATUS_TIMEOUT);
-			//throw new Exception("i don't know");
+			throw new Exception("i don't know");
 		}
 		List<AccntConsultant> obj = acDao.findByNameAndPassword(ac.getName(), ac.getPassword());
-		
+
 		if (obj != null && obj.size() > 0) {
 
 			HttpSession session = request.getSession();
@@ -108,7 +124,20 @@ public class ApiRestService {
 		if (ad.getOrgName() == null) {
 			return new Result(Result.STATUS_FAIL, "orgname is null");
 		}
-		ad.setPassword("123456");// 默认密码
+		if (ad.getAccountId() == null || ad.getAccountId() == 0)// 新增接口
+		{
+			ad.setAccountId(accntDepostquery.getNewId());
+			ad.setPassword("123456");// 默认密码
+			ad.setModifyTime(new Date());
+			ad.setCreateTime(new Date());
+		} else// update
+		{
+			AccntDeposit accntdepoist = adDao.findByAccountId(ad.getAccountId());
+			ad.setPassword(accntdepoist.getPassword());
+			ad.setModifyTime(new Date());
+			ad.setCreateTime(accntdepoist.getCreateTime());
+		}
+
 		ad = adDao.saveAndFlush(ad);
 		logger.info("save obj " + ad);
 		return new Result(Result.STATUS_SUCCESS, "success", ad);
@@ -171,8 +200,8 @@ public class ApiRestService {
 	}
 
 	@RequestMapping(value = "/depositinfoOne", method = RequestMethod.GET)
-	public Result depositinfoOne(@RequestParam(value = "id", required = true) int id,
-			HttpServletRequest request, HttpServletResponse response) throws Exception {
+	public Result depositinfoOne(@RequestParam(value = "id", required = true) int id, HttpServletRequest request,
+			HttpServletResponse response) throws Exception {
 
 		if (issessionok(request) == false) {
 			response.setStatus(Result.STATUS_TIMEOUT);
@@ -193,6 +222,135 @@ public class ApiRestService {
 	public Result queryDepositinfo() {
 		List<AccntDeposit> obj = accntDepostquery.queryData();
 		return new Result(Result.STATUS_SUCCESS, "success", obj);
+	}
+
+	/**
+	 * @param request
+	 * @param file
+	 * @return
+	 */
+	@RequestMapping(value = "/upload", produces = { "application/json" }, method = RequestMethod.POST)
+	public String upload(HttpServletRequest request, @RequestParam("file") MultipartFile file) {
+		if (!file.isEmpty()) {
+			try {
+				System.out.println(file.getOriginalFilename());
+				String name = file.getOriginalFilename();
+				byte[] bytes = file.getBytes();
+				System.out.println(bytes.length);
+				String realPath = request.getSession().getServletContext().getRealPath("/")+ "upload/temp/" + name;
+				System.out.println(realPath);
+				BufferedOutputStream stream = new BufferedOutputStream(
+						new FileOutputStream(new File(realPath)));
+
+				logger.info("file " + realPath + "upload/temp/" + name);
+
+				stream.write(bytes);
+				stream.flush();
+				stream.close();
+
+				logger.info("success one ");
+				// PostMethod postMethod=new
+				// PostMethod("http://116.7.234.129/upload");
+
+				// 1.构造HttpClient的实例
+				String ret = FileFormUpload(realPath, "http://116.7.234.129/upload");
+				
+				logger.info("ret " + ret);
+				
+				return ret;
+			} catch (Exception e) {
+				return "You failed to upload " + " => " + e.getMessage();
+			}
+		} else {
+			return "You failed to upload " + " because the file was empty.";
+		}
+	}
+
+	// String url="http://116.7.234.129/upload";
+	public String FileFormUpload(String filePath, String url) throws IOException {
+
+		String result = null;
+
+		File file = new File(filePath);
+		if (!file.exists() || !file.isFile()) {
+			System.out.println("文件不存在！" );
+			throw new IOException("文件不存在");
+		}
+
+
+		
+
+		URL urlObj = new URL(url);
+
+		HttpURLConnection con = (HttpURLConnection) urlObj.openConnection();
+
+		con.setRequestMethod("POST");
+		con.setDoInput(true);
+		con.setDoOutput(true);
+		con.setUseCaches(false); // post方式不能使用缓存
+		con.setRequestProperty("Connection", "Keep-Alive");
+		con.setRequestProperty("Charset", "UTF-8");
+
+		String BOUNDARY = "----------" + System.currentTimeMillis();
+		con.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + BOUNDARY);
+
+		// 第一部分：
+		StringBuilder sb = new StringBuilder();
+		sb.append("--"); // 必须多两道线
+		sb.append(BOUNDARY);
+		sb.append("\r\n");
+		sb.append("Content-Disposition: form-data;name=\"file\";filename=\""+ file.getName() + "\"\r\n");
+		//sb.append("Content-Disposition: form-data;name=\"file\"" + "\"\r\n");
+		sb.append("Content-Type:application/octet-stream\r\n\r\n");
+		System.out.println("2222222222222222！");
+		byte[] head = sb.toString().getBytes("utf-8");
+
+		OutputStream out = new DataOutputStream(con.getOutputStream());
+		out.write(head);
+
+		// 文件正文部分
+		// 把文件已流文件的方式 推入到url中
+		DataInputStream in = new DataInputStream(new FileInputStream(file));
+		int bytes = 0;
+		byte[] bufferOut = new byte[1024];
+		while ((bytes = in.read(bufferOut)) != -1) {
+			out.write(bufferOut, 0, bytes);
+		}
+		in.close();
+
+		// 结尾部分
+		byte[] foot = ("\r\n--" + BOUNDARY + "--\r\n").getBytes("utf-8");// 定义最后数据分隔线
+		out.write(foot);
+		out.flush();
+		out.close();
+
+		StringBuffer buffer = new StringBuffer();
+		BufferedReader reader = null;
+		try {
+			// 定义BufferedReader输入流来读取URL的响应
+			reader = new BufferedReader(new InputStreamReader(con.getInputStream()));
+			String line = null;
+			while ((line = reader.readLine()) != null) {
+				// System.out.println(line);
+				buffer.append(line);
+			}
+			if (result == null) {
+				result = buffer.toString();
+				
+				System.out.println("result111=" + result);
+			}
+		} catch (IOException e) {
+			System.out.println("发送POST请求出现异常！" + e);
+			e.printStackTrace();
+			throw new IOException("数据读取异常");
+		} finally {
+			if (reader != null) {
+				reader.close();
+			}
+		}
+		
+		return result;
+
 	}
 
 	@ResponseStatus(reason = "no reason", value = HttpStatus.BAD_REQUEST)
