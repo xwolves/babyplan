@@ -103,7 +103,6 @@ class Account{
                 if(!$redis->set($token, json_encode($redisInfo)))
                     return 1070;
                 $info[0]['token'] = $token;
-                var_dump($token);
             }
 
             return $info;
@@ -356,6 +355,109 @@ class Account{
             }
 
             return $accountid;
+        }catch (PDOException $e) {
+            $errs = $e->getMessage();
+            return 10000;
+        }
+    }
+
+    public function queryParentInfo($parentid){
+        try{
+            $info = array();
+            $sql_str = "SELECT accountid, name, sex, mobile, weixinno, remark, nick FROM tb_accnt_parent where accountid=:parentid";
+            $stmt = $this->DB->prepare($sql_str);
+            $stmt->bindParam(":parentid", intval($parentid), PDO::PARAM_INT);
+            if (!$stmt->execute())
+                return 10001;
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+            if(empty($row))
+                return 10003;
+
+            $info['uid'] = $row['accountid'];
+            $info['name'] = $row['name'];
+            $info['sex'] = $row['sex'];
+            $info['mobile'] = $row['mobile'];
+            $info['weixinno'] = $row['weixinno'];
+            $info['remark'] = $row['remark'];
+
+            return $info;
+        }catch (PDOException $e) {
+            $errs = $e->getMessage();
+            return 10000;
+        }
+    }
+
+    public function queryChildrenInfo($parentid){
+        try{
+            $info = array();
+            $sql_str = "SELECT c.accountid, b.relationship, c.name, c.sex, c.fingerfeature, c.remark FROM 
+                (SELECT * FROM tb_parent_children a WHERE a.ParentID=:parentid) b LEFT JOIN tb_accnt_children c ON c.accountid=b.childrenid";
+            $stmt = $this->DB->prepare($sql_str);
+            $stmt->bindParam(":parentid", intval($parentid), PDO::PARAM_INT);
+            if (!$stmt->execute())
+                return 10001;
+            while($row = $stmt->fetch(PDO::FETCH_ASSOC)){
+                $tmp_info = array();
+                $tmp_info['uid'] = $row['accountid'];
+                $tmp_info['relationship'] = $row['relationship'];
+                $tmp_info['name'] = $row['name'];
+                $tmp_info['sex'] = $row['sex'];
+                $tmp_info['fingerfeature'] = $row['fingerfeature'];
+                $tmp_info['remark'] = $row['remark'];
+                $info[] = $tmp_info;
+            }
+
+            return $info;
+        }catch (PDOException $e) {
+            $errs = $e->getMessage();
+            return 10000;
+        }
+    }
+
+    public function queryDepositInfo($depositid){
+        try{
+            $info = array();
+            $sql_str = "SELECT * FROM tb_accnt_deposit WHERE accountid = :depositid";
+            $stmt = $this->DB->prepare($sql_str);
+            $stmt->bindParam(":depositid", intval($depositid), PDO::PARAM_INT);
+            if (!$stmt->execute())
+                return 10001;
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+            if(empty($row))
+                return 10003;
+
+            $info = $row;
+
+            return $info;
+        }catch (PDOException $e) {
+            $errs = $e->getMessage();
+            return 10000;
+        }
+    }
+
+    public function queryTeacherInfo($depositid){
+        try{
+            $info = array();
+            $sql_str = "SELECT c.accountid, c.name, c.sex, c.mobile, c.teachage, c.age, c.photolink, c.remark FROM 
+                (SELECT * FROM tb_deposit_teacher a WHERE a.depositid=:depositid) b LEFT JOIN tb_accnt_teacher c ON c.accountid=b.teacherid";
+            $stmt = $this->DB->prepare($sql_str);
+            $stmt->bindParam(":depositid", intval($depositid), PDO::PARAM_INT);
+            if (!$stmt->execute())
+                return 10001;
+            while($row = $stmt->fetch(PDO::FETCH_ASSOC)){
+                $tmp_info = array();
+                $tmp_info['uid'] = $row['accountid'];
+                $tmp_info['name'] = $row['name'];
+                $tmp_info['sex'] = $row['sex'];
+                $tmp_info['mobile'] = $row['mobile'];
+                $tmp_info['teachage'] = $row['teachage'];
+                $tmp_info['age'] = $row['age'];
+                $tmp_info['photolink'] = $row['photolink'];
+                $tmp_info['remark'] = $row['remark'];
+                $info[] = $tmp_info;
+            }
+
+            return $info;
         }catch (PDOException $e) {
             $errs = $e->getMessage();
             return 10000;
