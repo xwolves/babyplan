@@ -8,7 +8,12 @@ public class MyPageable implements Pageable {
 	int pageNumber=0;
 	int pageSize=0;
 	int Offset=0;	
+	Sort sort;
 	
+
+	public void setSort(Sort sort) {
+		this.sort = sort;
+	}
 
 	public void setPageNumber(int pageNumber) {
 		this.pageNumber = pageNumber;
@@ -19,7 +24,7 @@ public class MyPageable implements Pageable {
 	}
 
 	public void setOffset(int offset) {
-		Offset = offset;
+		this.Offset = offset;
 	}
 
 	@Override
@@ -43,7 +48,7 @@ public class MyPageable implements Pageable {
 	@Override
 	public Sort getSort() {
 		// TODO Auto-generated method stub
-		return null;
+		return sort;
 	}
 
 	@Override

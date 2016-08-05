@@ -65,8 +65,10 @@
 
 							if ($stateParams.accountID == null) {
 								// $scope.isnew = false;
+								$scope.title="新增托管机构";
 
 							} else {
+								$scope.title="编辑托管机构";
 								WebService
 										.queryDepostbyid($stateParams.accountID)
 										.then(
@@ -186,7 +188,7 @@
 							licenseName : '工商执照',
 						}, {
 							id : 3,
-							licenseName : '个体式无工商注册',
+							licenseName : '个体无注册',
 						} ];
 
 						$scope.placeContractType = '';
@@ -240,9 +242,13 @@
 						};
 
 						$scope.back = function() {
-							$scope.tempmarkId = $scope.content.markId;
-							$scope.templongitude = $scope.content.longitude;
-							$scope.templatitude = $scope.content.latitude;
+							if( $scope.content.markId)
+							{
+								$scope.tempmarkId = $scope.content.markId;
+								$scope.templongitude = $scope.content.longitude;
+								$scope.templatitude = $scope.content.latitude;
+							}
+
 							$scope.showbaidu = false;
 						};
 

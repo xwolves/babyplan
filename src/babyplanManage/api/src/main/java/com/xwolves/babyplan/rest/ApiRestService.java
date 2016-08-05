@@ -2,6 +2,7 @@ package com.xwolves.babyplan.rest;
 
 import java.util.logging.Logger;
 
+import javax.persistence.Column;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -22,6 +23,8 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Date;
 import java.util.List;
+
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -40,7 +43,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.xwolves.babyplan.entities.AccntConsultant;
 import com.xwolves.babyplan.entities.AccntDeposit;
+import com.xwolves.babyplan.entities.ChildrenInfoExt;
 import com.xwolves.babyplan.entities.Result;
+import com.xwolves.babyplan.entities.ResultComn;
 import com.xwolves.babyplan.repositories.AccntConsultantRepsitory;
 import com.xwolves.babyplan.repositories.AccntDepositRepsitory;
 import com.xwolves.babyplan.repositories.AccntDepostitSqlQuery;
@@ -51,6 +56,8 @@ import com.xwolves.babyplan.repositories.AccntDepostitSqlQuery;
 public class ApiRestService {
 
 	private final static Logger logger = Logger.getLogger(ApiRestService.class.getName());
+	
+	private final static String thirdupdload="http://116.7.234.129/upload";
 
 	@Autowired
 	AccntConsultantRepsitory acDao;// 顾问
@@ -91,8 +98,7 @@ public class ApiRestService {
 		logger.info("getName" + ac.getName() + "password" + ac.getPassword());
 		if (ac.getName() == null || ac.getName().equals("") || ac.getPassword() == null
 				|| ac.getPassword().equals("")) {
-			response.setStatus(Result.STATUS_TIMEOUT);
-			throw new Exception("i don't know");
+			return new Result(Result.STATUS_FAIL,"账号和密码不能为空");
 		}
 		List<AccntConsultant> obj = acDao.findByNameAndPassword(ac.getName(), ac.getPassword());
 
@@ -113,14 +119,16 @@ public class ApiRestService {
 	 * 
 	 * @param AccntDeposit
 	 *            body
+	 * @throws Exception 
 	 */
 
 	@RequestMapping(value = "/register", method = RequestMethod.POST, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
-	public Result register(@RequestBody AccntDeposit ad, HttpServletRequest request, HttpServletResponse response) {
+	public Result register(@RequestBody AccntDeposit ad, HttpServletRequest request, HttpServletResponse response) throws Exception {
 		if (issessionok(request) == false) {
 			response.setStatus(Result.STATUS_TIMEOUT);
-			return new Result(Result.STATUS_TIMEOUT, "session is time out");
+			throw new Exception("TIMEOUT");
 		}
+		
 		if (ad.getOrgName() == null) {
 			return new Result(Result.STATUS_FAIL, "orgname is null");
 		}
@@ -161,7 +169,7 @@ public class ApiRestService {
 		// Pageable pageable = new PageRequest(pageNumber, pageSize);
 
 		Sort sort = new Sort(Direction.DESC, "accountId");
-		;
+
 		if (sortString != null) {
 			if (sortType == 0) {
 				sort = new Sort(Direction.ASC, sortString);
@@ -186,9 +194,7 @@ public class ApiRestService {
 
 		if (issessionok(request) == false) {
 			response.setStatus(Result.STATUS_TIMEOUT);
-			// throw new Exception("出现壹！");
-			// responseStatusTest();
-			throw new Exception("i don't know");
+			throw new Exception("TIMEOUT");
 			// return null;
 			// return new Result(Result.STATUS_TIMEOUT, "session is time out");
 			// responseStatusTest();
@@ -204,13 +210,10 @@ public class ApiRestService {
 			HttpServletResponse response) throws Exception {
 
 		if (issessionok(request) == false) {
-			response.setStatus(Result.STATUS_TIMEOUT);
-			// throw new Exception("出现壹！");
-			// responseStatusTest();
-			throw new Exception("i don't know");
-			// return null;
-			// return new Result(Result.STATUS_TIMEOUT, "session is time out");
-			// responseStatusTest();
+			if (issessionok(request) == false) {
+				response.setStatus(Result.STATUS_TIMEOUT);
+				throw new Exception("TIMEOUT");
+			}
 		}
 
 		AccntDeposit obj = adDao.findByAccountId(id);
@@ -219,9 +222,59 @@ public class ApiRestService {
 	}
 
 	@RequestMapping(value = "/queryDepositinfo", method = RequestMethod.GET)
-	public Result queryDepositinfo() {
-		List<AccntDeposit> obj = accntDepostquery.queryData();
+	public Result queryDepositinfo(@RequestParam(value = "pageNumber", required = true) int pageNumber,
+			@RequestParam(value = "pageSize", required = true) int pageSize,
+			@RequestParam(value = "filter", required = false) String filter,
+			@RequestParam(value = "order", required = false) String order,
+			HttpServletRequest request, HttpServletResponse response) throws Exception {
+		
+		if (issessionok(request) == false) {
+			response.setStatus(Result.STATUS_TIMEOUT);
+			throw new Exception("TIMEOUT");
+		}
+		
+		ResultComn obj = accntDepostquery.queryDepositData(filter,order,pageNumber,pageSize);
 		return new Result(Result.STATUS_SUCCESS, "success", obj);
+		//return new Result(Result.STATUS_SUCCESS, "success", obj);
+	}
+	
+	
+	@RequestMapping(value = "/queryChildrenExtinfo", method = RequestMethod.GET)
+	public Result queryChildrenExtinfo(@RequestParam(value = "pageNumber", required = true) int pageNumber,
+			@RequestParam(value = "pageSize", required = true) int pageSize,
+			@RequestParam(value = "filter", required = false) String filter,
+			@RequestParam(value = "order", required = false) String order,
+			HttpServletRequest request, HttpServletResponse response
+			) throws Exception {
+		
+		if (issessionok(request) == false) {
+			response.setStatus(Result.STATUS_TIMEOUT);
+			throw new Exception("TIMEOUT");
+		}
+
+		ResultComn obj =  accntDepostquery.queryChildExtData(filter,order,pageNumber,pageSize);
+		return new Result(Result.STATUS_SUCCESS, "success", obj);
+		//return new Result(Result.STATUS_SUCCESS, "success", obj);
+	}
+	
+	
+	
+	@RequestMapping(value = "/queryTeacherExtinfo", method = RequestMethod.GET)
+	public Result queryTeacherExtinfo(@RequestParam(value = "pageNumber", required = true) int pageNumber,
+			@RequestParam(value = "pageSize", required = true) int pageSize,
+			@RequestParam(value = "filter", required = false) String filter,
+			@RequestParam(value = "order", required = false) String order,
+			HttpServletRequest request, HttpServletResponse response
+			) throws Exception {
+		
+		if (issessionok(request) == false) {
+			response.setStatus(Result.STATUS_TIMEOUT);
+			throw new Exception("TIMEOUT");
+		}
+		
+		ResultComn obj =  accntDepostquery.queryTeacherExtData(filter,order,pageNumber,pageSize);
+		return new Result(Result.STATUS_SUCCESS, "success", obj);
+		//return new Result(Result.STATUS_SUCCESS, "success", obj);
 	}
 
 	/**
@@ -237,10 +290,9 @@ public class ApiRestService {
 				String name = file.getOriginalFilename();
 				byte[] bytes = file.getBytes();
 				System.out.println(bytes.length);
-				String realPath = request.getSession().getServletContext().getRealPath("/")+ "upload/temp/" + name;
+				String realPath = request.getSession().getServletContext().getRealPath("/") + "upload/temp/" + name;
 				System.out.println(realPath);
-				BufferedOutputStream stream = new BufferedOutputStream(
-						new FileOutputStream(new File(realPath)));
+				BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(new File(realPath)));
 
 				logger.info("file " + realPath + "upload/temp/" + name);
 
@@ -253,17 +305,76 @@ public class ApiRestService {
 				// PostMethod("http://116.7.234.129/upload");
 
 				// 1.构造HttpClient的实例
-				String ret = FileFormUpload(realPath, "http://116.7.234.129/upload");
-				
+				String ret = FileFormUpload(realPath, thirdupdload);
+
 				logger.info("ret " + ret);
-				
+
 				return ret;
 			} catch (Exception e) {
-				return "You failed to upload " + " => " + e.getMessage();
+				logger.info("You failed to upload " + " => " + e.getMessage());
+				return null;
 			}
 		} else {
-			return "You failed to upload " + " because the file was empty.";
+			logger.info( "You failed to upload " + " because the file was empty.");
+			return null;
 		}
+	}
+
+	/**
+	 * @param request
+	 * @param file
+	 * @return
+	 */
+	@RequestMapping(value = "/uploadExt", produces = { "application/json" }, method = RequestMethod.POST)
+	public String uploadExt(HttpServletRequest request, @RequestParam("file") MultipartFile file,
+			@RequestParam("updatefield") String updatefield, @RequestParam("id") int id) {
+		String ret = upload(request, file);		
+		JSONObject jsonObject = new JSONObject(ret);
+		
+		int errno = jsonObject.getInt("errno");
+		logger.info("errno="+errno);
+		if(errno!=0)
+		{
+			return null;
+		}
+		JSONObject data = jsonObject.getJSONObject("data");
+		
+		String fileurl = data.getString("fileurl");
+		logger.info("fileurl="+fileurl);
+		if(fileurl== null)
+		{
+			return null;
+		}
+
+		AccntDeposit accntdepoist = adDao.findByAccountId(id);
+		if (("frontDeskLink").equalsIgnoreCase(updatefield)) {
+			accntdepoist.setFrontDeskLink(fileurl);
+		} else if (("pubilcZoneLink").equalsIgnoreCase(updatefield)) {
+			accntdepoist.setPubilcZoneLink(fileurl);
+		} else if (("kitchenLink").equalsIgnoreCase(updatefield)) {
+			accntdepoist.setKitchenLink(fileurl);
+		} else if (("diningRoomLink").equalsIgnoreCase(updatefield)) {
+			accntdepoist.setDiningRoomLink(fileurl);
+		} else if (("restRoomLink1").equalsIgnoreCase(updatefield)) {
+			accntdepoist.setRestRoomLink1(fileurl);
+		} else if (("restRoomLink2").equalsIgnoreCase(updatefield)) {
+			accntdepoist.setRestRoomLink2(fileurl);
+		} else if (("ClassRoomLink1").equalsIgnoreCase(updatefield)) {
+			accntdepoist.setClassRoomLink1(fileurl);
+		} else if (("ClassRoomLink2").equalsIgnoreCase(updatefield)) {
+			accntdepoist.setClassRoomLink2(fileurl);
+		} else if (("otherRoomLink1").equalsIgnoreCase(updatefield)) {
+			accntdepoist.setOtherRoomLink1(fileurl);
+		} else if (("otherRoomLink2").equalsIgnoreCase(updatefield)) {
+			accntdepoist.setOtherRoomLink2(fileurl);
+		} else if (("id2PhotoLink").equalsIgnoreCase(updatefield)) {
+			accntdepoist.setId2PhotoLink(fileurl);
+		}
+		
+
+		adDao.saveAndFlush(accntdepoist);
+
+		return ret;
 	}
 
 	// String url="http://116.7.234.129/upload";
@@ -273,12 +384,9 @@ public class ApiRestService {
 
 		File file = new File(filePath);
 		if (!file.exists() || !file.isFile()) {
-			System.out.println("文件不存在！" );
+			System.out.println("文件不存在！");
 			throw new IOException("文件不存在");
 		}
-
-
-		
 
 		URL urlObj = new URL(url);
 
@@ -299,8 +407,8 @@ public class ApiRestService {
 		sb.append("--"); // 必须多两道线
 		sb.append(BOUNDARY);
 		sb.append("\r\n");
-		sb.append("Content-Disposition: form-data;name=\"file\";filename=\""+ file.getName() + "\"\r\n");
-		//sb.append("Content-Disposition: form-data;name=\"file\"" + "\"\r\n");
+		sb.append("Content-Disposition: form-data;name=\"file\";filename=\"" + file.getName() + "\"\r\n");
+		// sb.append("Content-Disposition: form-data;name=\"file\"" + "\"\r\n");
 		sb.append("Content-Type:application/octet-stream\r\n\r\n");
 		System.out.println("2222222222222222！");
 		byte[] head = sb.toString().getBytes("utf-8");
@@ -336,7 +444,7 @@ public class ApiRestService {
 			}
 			if (result == null) {
 				result = buffer.toString();
-				
+
 				System.out.println("result111=" + result);
 			}
 		} catch (IOException e) {
@@ -348,7 +456,7 @@ public class ApiRestService {
 				reader.close();
 			}
 		}
-		
+
 		return result;
 
 	}

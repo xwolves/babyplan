@@ -2,8 +2,8 @@
   "use strict";
   angular.module('DialogsModule', [
     'CreateDocModalCtrl',
-    'DocDetailsModalCtrl',
-    'ChangeRoleModalCtrl',
+    'ParentDetailModalCtrl',
+    'TeacherDetailModalCtrl',
     'CustomDialog'
   ]);
 

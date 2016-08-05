@@ -8,8 +8,8 @@ angular.module('CustomDialog', [])
       var myDialog = {
           checkDocument: checkDocument,
           createDocument: createDocument,
-          signDocument: signDocument,
-          changeRole: changeRole
+          parentDetail: parentDetail,
+          teacherDetail: teacherDetail
       };
       return myDialog;
 
@@ -80,15 +80,37 @@ angular.module('CustomDialog', [])
       };
 
 
-      function changeRole (ry,confirm,cancel) {
+      function teacherDetail (teacherDetail,confirm,cancel) {
           var modalInstance = $modal.open({
               animation: true,
-              templateUrl: 'Dialogs/changeRoleModal.html',
-              controller: 'ChangeRoleModalCtrl',
-              size: 'sm',
+              templateUrl: 'Dialogs/teacherDetailModal.html',
+              controller: 'TeacherDetailModalCtrl',
+              size: 'lg',
               resolve: {
                   user: function () {
-                      return ry;
+                      return teacherDetail;
+                  }
+              }
+          });
+
+          modalInstance.result.then(function (item) {
+              console.log("back from item "+item);
+              confirm();
+          }, function () {
+              console.log('Modal dismissed at: ' + new Date());
+              cancel();
+          });
+      };
+      
+      function parentDetail (teacherDetail,confirm,cancel) {
+          var modalInstance = $modal.open({
+              animation: true,
+              templateUrl: 'Dialogs/parentDetailModal.html',
+              controller: 'ParentDetailModalCtrl',
+              size: 'lg',
+              resolve: {
+                  user: function () {
+                      return teacherDetail;
                   }
               }
           });

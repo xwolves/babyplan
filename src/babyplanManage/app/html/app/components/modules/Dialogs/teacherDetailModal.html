@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+
+<div class="modal-header">
+	<h3 class="modal-title">老师详情</h3>
+</div>
+<div class="modal-body">
+
+	<form class="form-horizontal">
+		<div class="form-group">
+			<label for="aAccountID" class="col-sm-2 control-label">老师账号</label>
+			<div class="col-sm-4">
+				<input id="AccountID" type="text" placeholder="老师账号"
+					class="form-control" ng-model="AccountID">
+			</div>
+			<label for="aName" class="col-sm-2 control-label">老师姓名</label>
+			<div class="col-sm-4">
+				<input id="Name" type="text" placeholder="老师姓名" class="form-control"
+					ng-model="Name">
+			</div>
+		</div>
+
+		<div class="form-group">
+			<label for="aSex" class="col-sm-2 control-label">性别</label>
+			<div class="col-sm-4">
+			 <label class="form-control">{{Sex|Sexchange}}</label>
+			</div>
+			<label for="aMobile" class="col-sm-2 control-label">手机号码</label>
+			<div class="col-sm-4">
+				<input id="Mobile" type="text" placeholder="手机号码"
+					class="form-control" ng-model="Mobile">
+			</div>
+		</div>
+
+		<div class="form-group">
+			<label for="aWeiXinNo" class="col-sm-2 control-label">微号</label>
+			<div class="col-sm-4">
+				<input id="WeiXinNo" type="text" placeholder="微号"
+					class="form-control" ng-model="WeiXinNo">
+			</div>
+			<label for="aTeachAge" class="col-sm-2 control-label">教龄</label>
+			<div class="col-sm-4">
+				<input id="TeachAge" type="text" placeholder="教龄"
+					class="form-control" ng-model="TeachAge">
+			</div>
+		</div>
+
+		<div class="form-group">
+			<label for="aAge" class="col-sm-2 control-label">年龄</label>
+			<div class="col-sm-4">
+				<input id="Age" type="text" placeholder="年龄" class="form-control"
+					ng-model="Age">
+			</div>
+			<label for="aRemark" class="col-sm-2 control-label">备注</label>
+			<div class="col-sm-4">
+				<input id="Remark" type="text" placeholder="备注"
+					class="form-control" ng-model="Remark">
+			</div>
+		</div>
+
+		<div class="form-group">
+			<label for="aCreateTime" class="col-sm-2 control-label">创建时间</label>
+			<div class="col-sm-4">
+				<input type="datetime-local"  id="CreateTime" type="text" placeholder="创建时间"
+					class="form-control" ng-model="CreateTime">
+			</div>
+			<label for="aModifyTime" class="col-sm-2 control-label">修改时间</label>
+			<div class="col-sm-4">
+				<input type="datetime-local" id="ModifyTime" type="text" placeholder="修改时间"
+					class="form-control" ng-model="ModifyTime">
+			</div>
+		</div>
+
+		<div class="form-group">
+			<label for="aCreateTime" class="col-sm-2 control-label">照片</label>
+			<div class="col-sm-4">
+				<img class="form-group col-sm-12" ng-src={{PhotoLink}} />
+			</div>
+		</div>
+</div>
+</div>
+
+
+</form>
+
+</div>
+<div class="modal-footer">
+<!-- 
+	<button class="btn btn-primary" type="button" ng-click="save()">确定</button>
+	-->
+	<button class="btn" type="button" ng-click="cancel()">关闭</button>
+</div>

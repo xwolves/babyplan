@@ -18,6 +18,7 @@ import org.springframework.jdbc.core.RowMapper;
 
 import com.xwolves.babyplan.entities.AccntDeposit;
 import com.xwolves.babyplan.entities.ChildrenInfoExt;
+import com.xwolves.babyplan.entities.ResultComn;
 
 
 
@@ -33,30 +34,56 @@ public class AccntDepostitSqlQuery {
 		this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
     
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-	public List<AccntDeposit> queryDepositData(){
+	public ResultComn queryDepositData(String filter ,String order,int pageNumber,int pagesize){
     	
-    	 List ttes = jdbcTemplate.queryForList("select * from tb_accnt_deposit ");
-    	 System.out.println(ttes.toString());
-		return ttes;
+//    	 List ttes = jdbcTemplate.queryForList("select * from tb_accnt_deposit ");
+//    	 System.out.println(ttes.toString());
+//		return ttes;
+    	String sqltemp ="select * from tb_accnt_deposit t";
+    	return queryComonData(sqltemp,filter,order,pageNumber,pagesize);
     }
     public int getNewId(){
 	   	 int id = jdbcTemplate.queryForInt("select max(t.AccountID)  from tb_accnt_deposit t")+1;
 	   	 return id;
     }
+    
+    
+    public ResultComn queryTeacherExtData(String filter ,String order,int pageNumber,int pagesize)
+    {
+    	
+    	String sqltemp = "select t.*,x.DepositID,m.OrgName from tb_accnt_teacher t "
+    			+ "left join tb_deposit_teacher x on x.TeacherID=t.AccountID "
+    	 		+ "left join tb_accnt_deposit m on m.AccountID=x.DepositID ";
+    	return queryComonData(sqltemp,filter,order,pageNumber,pagesize);
+    }
+    
+    public ResultComn queryChildExtData(String filter ,String order,int pageNumber,int pagesize)
+    {
+    	
+    	String sqltemp = " select t.AccountID,t.Name,t.Sex,t.FingerFeature,t.Remark,t.CreateTime,t.ModifyTime,n.Mobile as PMobile,x.ParentID,n.Name as PName,n.Sex as PSex ,n.WeiXinNo as PWeiXinNo, "
+    			+ " n.Remark as PRemark,n.CreateTime as PCreateTime , n.ModifyTime as PModifyTime,"
+    			+ "	x.RelationShip,n.Nick as PNick,m.DepositID,m.DepositStartTime,m.DepositEndTime,m.DepositType,v.OrgName "
+    	 		+ " from tb_accnt_children t "
+    	 		+ "left join  tb_parent_children x on x.ChildrenID = t.AccountID  "
+    	 		+ "left join tb_accnt_parent n on n.AccountID= x.ParentID  "
+    	 		+ "left join tb_deposit_children m on m.ChildrenID=t.AccountID "
+    	 		+ "left join  tb_accnt_deposit v on v.AccountID=m.DepositID " ;
+    	return queryComonData(sqltemp,filter,order,pageNumber,pagesize);
+    }
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-	public String queryChildExtData(String sql,  String filter ,String order,Pageable pageable){
+
+	public ResultComn queryComonData(String sql,  String filter ,String ordertemp,int pageNumber,int pagesize){
     	
     	String where="";
-    	if(filter!=null &&"".endsWith(filter))
+    	String order="";
+    	if(filter!=null &&!"".endsWith(filter))
     	{
     		where = "where " + filter;
      	}
     	
-    	if(order!=null &&"".endsWith(order))
+    	if(ordertemp!=null &&!"".endsWith(ordertemp))
     	{
-    		order = "order by  " + order;
+    		order = " order by  " + ordertemp;
      	}
     	
 //    	String sqltemp = " select t.AccountID,t.Name,t.Sex,t.FingerFeature,t.Remark,t.CreateTime,t.ModifyTime,n.AccountID as parentAccountID,n.Name as partentName,n.Sex as partentSex"
@@ -64,33 +91,31 @@ public class AccntDepostitSqlQuery {
 //    	 		+ "left join  tb_parent_children x on x.ChildrenID = t.AccountID  "
 //    	 		+ "left join tb_accnt_parent n on n.AccountID= x.ParentID  " ;
     	
+    	int start = (pageNumber-1)*pagesize;
+    	String sqltemp = "select count(*) from (" + sql+") t " + where ;
     	
-    	String sqltemp = "select count(*) from " + sql+" " + where ;
-    	
-    	
+    	System.out.println(sqltemp);
     	int TotalElements = jdbcTemplate.queryForInt(sqltemp);
+    	System.out.println(TotalElements);
+    	int totalPages=0;
+    	int	numberOfElements;
+    	if(TotalElements%pagesize==0)
+    	{
+    		numberOfElements=pagesize;
+    		totalPages= TotalElements/pagesize;
+    	}
+    	else
+    	{
+    		numberOfElements=TotalElements%pagesize;
+    		totalPages = TotalElements/pagesize+1;
+    	}
+    	
+    	sqltemp = "select * from (" + sql+") t " + where + order +" limit "+start+" , "+pagesize;
     	
     	
-    	 List list = jdbcTemplate.queryForList("sqltemp");
-    	 
-    	 int id = jdbcTemplate.queryForInt("select max(t.AccountID)  from tb_accnt_deposit t")+1;
-    	 
-    	String jsonStr = new JSONObject(list).toString();
-    	if (list.size() > 0) {
-    		
-    	    jsonStr ="{\"content\":" + jsonStr
-    	      + ",\"totalElements\":" + TotalElements
-    	      + ",\"last\":" + true
-    	      + ",\"totalPages\":" + page.getTotalPages()
-    	      + ",\"size\":" + page.getSize()
-    	      + ",\"number\":" + page.getNumber()
-    	            + ",\"numberOfElements\":" + page.getNumberOfElements()
-//    	            + ",\"sort\":" + page.getSort()
-    	            + ",\"first\":" + true
-    	      + ",\"currentPage\":" + currentPage + "}";
-    	   }
+    	List list = jdbcTemplate.queryForList(sqltemp);
     	
     	 System.out.println(list.toString());
-		 return jsonStr;
+		 return new ResultComn(0, "success", list,TotalElements,totalPages,numberOfElements,0, 0);
     }
 }

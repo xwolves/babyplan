@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+
+<div class="modal-header">
+	<h3 class="modal-title">家长详情</h3>
+</div>
+<div class="modal-body">
+
+	<form class="form-horizontal">
+		<div class="form-group">
+			<label for="aParentID" class="col-sm-2 control-label">家长账号</label>
+			<div class="col-sm-4">
+				<input id=ParentID type="text" placeholder="家长账号"
+					class="form-control" ng-model="ParentID">
+			</div>
+			<label for="aPName" class="col-sm-2 control-label">家长姓名</label>
+			<div class="col-sm-4">
+				<input id="PName" type="text" placeholder="家长姓名" class="form-control"
+					ng-model="PName">
+			</div>
+		</div>
+
+		<div class="form-group">
+			<label for="aPSex" class="col-sm-2 control-label">性别</label>
+			<div class="col-sm-4">
+			 	<label class="form-control">{{PSex|Sexchange}}</label>
+			</div>
+			<label for="aPMobile" class="col-sm-2 control-label">手机号码</label>
+			<div class="col-sm-4">
+				<input id="PMobile" type="text" placeholder="手机号码"
+					class="form-control" ng-model="PMobile">
+			</div>
+		</div>
+
+		<div class="form-group">
+			<label for="aPWeiXinNo" class="col-sm-2 control-label">微号</label>
+			<div class="col-sm-4">
+				<input id="PWeiXinNo" type="text" placeholder="微号"
+					class="form-control" ng-model="PWeiXinNo">
+			</div>
+			<label for="aRelationShip" class="col-sm-2 control-label">关系类型</label>
+			<div class="col-sm-4">
+				<input id="RelationShip" type="text" placeholder="关系类型"
+					class="form-control" ng-model="RelationShip">
+			</div>
+		</div>
+
+		<div class="form-group">
+			<label for="aPNick" class="col-sm-2 control-label">昵称</label>
+			<div class="col-sm-4">
+				<input id="PNick" type="text" placeholder="昵称" class="form-control"
+					ng-model="PNick">
+			</div>
+			<label for="aPRemark" class="col-sm-2 control-label">备注</label>
+			<div class="col-sm-4">
+				<input id="PRemark" type="text" placeholder="备注"
+					class="form-control" ng-model="PRemark">
+			</div>
+		</div>
+
+		<div class="form-group">
+			<label for="aPCreateTime" class="col-sm-2 control-label">创建时间</label>
+			<div class="col-sm-4">
+				<input type="datetime-local"  id="PCreateTime" type="text" placeholder="创建时间"
+					class="form-control" ng-model="PCreateTime">
+			</div>
+			<label for="aPModifyTime" class="col-sm-2 control-label">修改时间</label>
+			<div class="col-sm-4">
+				<input type="datetime-local" id="PModifyTime" type="text" placeholder="修改时间"
+					class="form-control" ng-model="PModifyTime">
+			</div>
+		</div>
+
+</div>
+</div>
+
+
+</form>
+
+</div>
+<div class="modal-footer">
+<!-- 
+	<button class="btn btn-primary" type="button" ng-click="save()">确定</button>
+	-->
+	<button class="btn" type="button" ng-click="cancel()">关闭</button>
+</div>

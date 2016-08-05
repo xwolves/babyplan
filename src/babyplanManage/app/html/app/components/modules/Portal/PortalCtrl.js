@@ -14,12 +14,17 @@
 
             var menus_normal=[
                 {name:"托管机构列表",url:".depositList",active:0,icon:"glyphicon glyphicon-list",show:true},
+                {name:"老师列表",url:".depositList",active:0,icon:"glyphicon glyphicon-list",show:true},
+                {name:"孩子列表",url:"portal.childrenList",active:0,icon:"glyphicon glyphicon-list",show:true},
+                {name:"不在托管结构的孩子列表",url:".depositList",active:0,icon:"glyphicon glyphicon-list",show:true},
                 {name:"指纹设备列表",url:".myDocument",active:0,icon:"glyphicon glyphicon-th-list",show:true},
                 {name:"广告列表",url:".mySign",active:0,icon:"glyphicon glyphicon-ok-sign",show:true},
                 {name:"关于应用",url:".about",active:0,icon:"glyphicon glyphicon-font",show:true}
             ];
             var menus_admin=[
                 {name:"托管机构列表",url:".depositList",active:0,icon:"glyphicon glyphicon-list",show:true},
+                {name:"老师列表",url:".teacherList",active:0,icon:"glyphicon glyphicon-list",show:true},
+                {name:"孩子列表",url:".childrenList",active:0,icon:"glyphicon glyphicon-list",show:true},
                 {name:"指纹设备列表",url:".myDocument",active:0,icon:"glyphicon glyphicon-th-list",show:true},
                 {name:"广告列表",url:".mySign",active:0,icon:"glyphicon glyphicon-ok-sign",show:true},
                 {name:"关于应用",url:".about",active:0,icon:"glyphicon glyphicon-font",show:true}
