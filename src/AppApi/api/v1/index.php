@@ -294,6 +294,86 @@ $app->post(
         }
     }
 );
+
+$app->get(
+    '/account/query/parent/:parent_accnt_id',
+    function ($parent_accnt_id) use ($app, $sql_db, $redis){
+        $response = $app->response;
+        $token = $app->request->headers('token');
+        $depositInfo = $redis->get($token);
+        if(!$depositInfo){
+            $response->setBody(rspData(10005));
+            return;
+        }
+        $account = new Account($sql_db);
+        $ret = $account->queryParentInfo($parent_accnt_id);
+        if(gettype($ret) != "array"){
+            $response->setBody(rspData($ret));
+        }else{
+            $response->setBody(rspData(0, $ret));
+        }
+    }
+);
+
+$app->get(
+    '/account/query/parentChildren/:parent_accnt_id',
+    function ($parent_accnt_id) use ($app, $sql_db, $redis){
+        $response = $app->response;
+        $token = $app->request->headers('token');
+        $depositInfo = $redis->get($token);
+        if(!$depositInfo){
+            $response->setBody(rspData(10005));
+            return;
+        }
+        $account = new Account($sql_db);
+        $ret = $account->queryChildrenInfo($parent_accnt_id);
+        if(count($ret) == 0)
+            $response->setBody(rspData(12005));
+        else
+            $response->setBody(rspData(0, $ret));
+        
+    }
+);
+
+$app->get(
+    '/account/query/deposit/:deposit_accnt_id',
+    function ($deposit_accnt_id) use ($app, $sql_db, $redis){
+        $response = $app->response;
+        $token = $app->request->headers('token');
+        $depositInfo = $redis->get($token);
+        if(!$depositInfo){
+            $response->setBody(rspData(10005));
+            return;
+        }
+        $account = new Account($sql_db);
+        $ret = $account->queryDepositInfo($deposit_accnt_id);
+        if(gettype($ret) != "array"){
+            $response->setBody(rspData($ret));
+        }else{
+            $response->setBody(rspData(0, $ret));
+        }
+    }
+);
+
+$app->get(
+    '/account/query/depositTeacher/:deposit_accnt_id',
+    function ($deposit_accnt_id) use ($app, $sql_db, $redis){
+        $response = $app->response;
+        $token = $app->request->headers('token');
+        $depositInfo = $redis->get($token);
+        if(!$depositInfo){
+            $response->setBody(rspData(10005));
+            return;
+        }
+        $account = new Account($sql_db);
+        $ret = $account->queryTeacherInfo($deposit_accnt_id);
+        if(count($ret) == 0)
+            $response->setBody(rspData(12006));
+        else
+            $response->setBody(rspData(0, $ret));
+        
+    }
+);
 //====================================================================================================
 
 $app->run();
