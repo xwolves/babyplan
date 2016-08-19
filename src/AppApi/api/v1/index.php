@@ -2,6 +2,8 @@
 require_once '../../Slim/Slim/Slim.php';
 require_once '../../Slim/Slim/LogWriter.php';
 require_once './account_moduls/accnt_function.php';
+require_once './finger_moduls/finger_function.php';
+require_once './info_moduls/info_function.php';
 require_once 'config.php';
 require_once 'common.php';
 require_once '../../Slim/WeiChat/WXBizMsgCrypt.php';
@@ -14,7 +16,7 @@ $app = new \Slim\Slim(array(
 $app->config('debug', true);
 $app->response->headers->set('Content-Type', 'application/json');
 $app->response->headers->set('Access-Control-Allow-Origin', '*');
-$app->response->headers->set('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+$app->response->headers->set('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept,token');
 $app->response->headers->set('Access-Control-Allow-Methods', 'GET, POST, PUT, OPTIONS');
 $app->response->headers->set('Access-Control-Max-Age', '60');
 
@@ -96,6 +98,7 @@ $app->post(
     }
 );
 
+$app->options('/account/register/children', function(){});
 $app->post(
     '/account/register/children',
     function () use ($app, $sql_db) {
@@ -294,7 +297,7 @@ $app->post(
         }
     }
 );
-
+$app->options('/account/query/parent/:parent_accnt_id', function(){});
 $app->get(
     '/account/query/parent/:parent_accnt_id',
     function ($parent_accnt_id) use ($app, $sql_db, $redis){
@@ -305,6 +308,7 @@ $app->get(
             $response->setBody(rspData(10005));
             return;
         }
+
         $account = new Account($sql_db);
         $ret = $account->queryParentInfo($parent_accnt_id);
         if(gettype($ret) != "array"){
@@ -315,6 +319,7 @@ $app->get(
     }
 );
 
+$app->options('/account/query/parentChildren/:parent_accnt_id', function(){});
 $app->get(
     '/account/query/parentChildren/:parent_accnt_id',
     function ($parent_accnt_id) use ($app, $sql_db, $redis){
@@ -335,6 +340,7 @@ $app->get(
     }
 );
 
+$app->options('/account/query/deposit/:deposit_accnt_id', function(){});
 $app->get(
     '/account/query/deposit/:deposit_accnt_id',
     function ($deposit_accnt_id) use ($app, $sql_db, $redis){
@@ -355,6 +361,7 @@ $app->get(
     }
 );
 
+$app->options('/account/query/depositTeacher/:deposit_accnt_id', function(){});
 $app->get(
     '/account/query/depositTeacher/:deposit_accnt_id',
     function ($deposit_accnt_id) use ($app, $sql_db, $redis){
@@ -374,6 +381,66 @@ $app->get(
         
     }
 );
-//====================================================================================================
+//=========================================== finger moduls==================================================
+/*
+$app->get(
+    '/manager/v1/finger/register',
+    function() use($app, $sql_db){
+        $response = $app->response;
+        $params = $app->request->params();
+        $params = array_change_key_case($params, CASE_LOWER);
+        if(empty($params) || !array_key_exists("orguid", $params)){
+            $response->setBody(rspData(13001));
+            return;
+        }
+        $orguid = $params['orguid'];
+        $deviceid = "";
+        if(array_key_exists("deviceid", $params))
+            $deviceid = $params['deviceid'];
+    }
+);
+ */
+//=========================================== info moduls==================================================
+$app->post(
+    '/deposit/publish',
+    function () use ($app, $sql_db){
+        $rsp_data = array();
+        $response = $app->response;
+        $request = $app->request->getBody();
+        $token = $app->request->headers('token');
+        $depositInfo = $redis->get($token);
+        if(!$depositInfo){
+            $response->setBody(rspData(10005));
+            return;
+        }
 
+        $a_request = json_decode($request, true);
+        if(empty($a_request)){
+            $response->setBody(rspData(12001));
+            return;
+        }
+        $a_request = array_change_key_case($a_request, CASE_LOWER);
+        $info = new Info($sql_db);
+        $ret = $info->publish($a_request);
+        $response->setBody(rspData($ret));
+        
+    }
+);
+
+$app->get(
+    '/parent/childrenList/:parentuid',
+    function ($parentuid) use ($app, $sql_db){
+        $rsp_data = array();
+        $response = $app->response;
+        $request = $app->request->getBody();
+        $token = $app->request->headers('token');
+        $depositInfo = $redis->get($token);
+        if(!$depositInfo){
+            $response->setBody(rspData(10005));
+            return;
+        }
+        $info = new Info($sql_db);
+        $ret = $info->getChldrenList($parentuid);
+    }
+);
 $app->run();

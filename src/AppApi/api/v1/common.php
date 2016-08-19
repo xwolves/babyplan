@@ -6,12 +6,13 @@ static $errCode = array(
     10003 => 'No Data',
     10004 => 'Redis Set Failed',
     10005 => 'Redis Get No Data',
-    12001 => 'Parames Empty',
-    12002 => 'Parames Required Defect',
+    12001 => 'Account Parames Empty',
+    12002 => 'Account Parames Required Defect',
     12003 => 'Choose Account',
-    12004 => 'Weixin Not Bound',
-    12005 => 'Have No Children Related',
-    12006 => 'Have No Teacher Related'
+    12004 => 'Account Weixin Not Bound',
+    12005 => 'Account Have No Children Related',
+    12006 => 'Account Have No Teacher Related',
+    13001 => 'Finger Parames Empty'
 );
 
 function rspData($ret, $data = ""){
