@@ -37,6 +37,7 @@
                     return $injector.get('AuthInterceptor');
                 }
             ]);
+            $ionicConfigProvider.platform.android.tabs.position('bottom');
             $ionicConfigProvider.views.transition('none');
             $ionicConfigProvider.backButton.text('返回').icon('ion-ios-arrow-left');
             $ionicConfigProvider.tabs.style("standard");

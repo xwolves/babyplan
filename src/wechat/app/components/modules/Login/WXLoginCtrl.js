@@ -11,7 +11,7 @@
 
             function validate() {
                 vm.user = $stateParams.user;
-               // vm.user = "weichat";//test
+                vm.user = "oVyGDuNPkAbtljfJKusP4oaCrYG0";//test
                 MessageToaster.info('user = '+vm.user);
                 if (vm.user) {
                     //login failed
@@ -27,12 +27,12 @@
             }
 
             function wxlogin(userid,type) {
+                console.log(userid+"  type = "+type);
                 MessageToaster.info('准备登录');
                 LoginService.wxLogin(userid,type).then(function(response) {
+                    console.log(response);
                     if(response.errno==0) {
                         var result = response.data;
-                        //alert(result instanceof Array);
-                        //alert(result.length);
                         //if(typeof(result.uid) == "undefined" ){
                         if (result instanceof Array && result.length > 1) {
                             //modal select type
@@ -40,7 +40,6 @@
                             MessageToaster.info("have select "+result.length);
                             vm.showChooseModal();
                         }else{
-                            //alert(JSON.stringify(result));
                             var u=result[0];
                             if (u.uid != null && u.token != null && u.type != null) {
                                 AuthService.setSession(u.uid, u.token, u.type);

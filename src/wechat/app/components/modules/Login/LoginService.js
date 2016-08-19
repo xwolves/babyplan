@@ -48,8 +48,13 @@
             var data = {
                 weixinno: wxId
             }
-            if(type!=null)data.type=type;
-            var url = Constants.serverUrl + 'login';
+            var end="";
+            if(type!=null){
+                //console.log("include type "+type);
+                data.type=type;
+                end="?type="+type;
+            }
+            var url = Constants.serverUrl + 'login'+end;
             return $http({
                 method: 'post',
                 url: url,

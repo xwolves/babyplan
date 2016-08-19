@@ -92,7 +92,7 @@
                         //if (result instanceof Array && result.length > 1) {
                             //modal select type
                             vm.roleList = result;
-                            alert(JSON.stringify(result));
+                            //alert(JSON.stringify(result));
                             MessageToaster.info("have select " + result.length);
                             vm.showChooseModal();
                         } else {

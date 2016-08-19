@@ -1,7 +1,7 @@
 (function() {
     "use strict";
     angular.module('teacherCtrl', [])
-        .controller('teacherCtrl', function($scope,Constants,StateService,$ionicListDelegate,$ionicPopup) {
+        .controller('teacherCtrl', function($scope,Constants,StateService,$ionicListDelegate,$ionicPopup,teacherService,AuthService,CacheData) {
             'ngInject';
             var vm = this;
             vm.activated = false;
@@ -10,16 +10,17 @@
             function activate() {
                 vm.activated = true;
                 vm.version = Constants.buildID;
-                vm.items = [{name:'girl B',gendar:'2',sid:'700001'},{name:'boy A',gendar:'1',sid:'222222'}];
+                vm.getOrganizerTeachers();
             }
 
             vm.back=function(){
                 StateService.back();
             };
 
-            vm.goTo=function(id){
+            vm.goTo=function(id,item){
                 //查看老师信息
                 $ionicListDelegate.closeOptionButtons();
+                CacheData.putObject(id,item);
                 StateService.go('teacherEdit',{cid:id,type:0});
             };
 
@@ -52,6 +53,15 @@
                         //delete(id);
                     } else {
                         console.log('cancel delete');
+                    }
+                });
+            };
+
+            vm.getOrganizerTeachers = function(){
+                teacherService.queryTeacher(AuthService.getLoginID()).then(function(data) {
+                    if (data.errno == 0) {
+                        console.log(data.data);
+                        vm.teachers = data.data;
                     }
                 });
             };

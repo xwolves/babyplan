@@ -1,7 +1,7 @@
 (function() {
     "use strict";
     angular.module('childrenEditCtrl', [])
-        .controller('childrenEditCtrl', function($scope, $stateParams, Constants, StateService,childrenSettingService) {
+        .controller('childrenEditCtrl', function($scope, $stateParams, Constants, StateService,childrenSettingService,AuthService) {
             'ngInject';
             var vm = this;
             vm.activated = false;
@@ -34,7 +34,7 @@
                 //save
                 if(vm.type=='1'){
                     //create
-                    childrenSettingService.registerChildren().then(function(data) {
+                    childrenSettingService.registerChildren(vm.child,AuthService.getLoginID()).then(function(data) {
                         if (data.errno == 0) {
                             //var userId = data.data.uid;
                             //wxlogin(vm.user.wechat);

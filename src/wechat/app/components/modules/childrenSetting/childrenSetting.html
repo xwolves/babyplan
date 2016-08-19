@@ -9,7 +9,7 @@
 
     <ion-content>
         <ion-list>
-            <ion-item class="item" ng-click="vm.goTo(item.sid)" collection-repeat="item in vm.children">
+            <ion-item class="item" ng-click="vm.goTo(item.uid)" collection-repeat="item in vm.children">
                 <p>{{item.name}}<span style="float: right">{{item.gendar|gendarChange}}</span></p>
 
                 <ion-option-button class="button-positive ion-edit" ng-click="vm.editChild(item.sid)">&nbsp;编辑</ion-option-button>

@@ -1,16 +1,72 @@
 <ion-view view-title="孩子托管信息">
     <ion-content>
-        <div class="teacher_msg">
-            <div class="weui_text_area">
-                <h2 class="weui_msg_title">老师信息通知</h2>
+        <div class="header" style="height: 20%;background-color: #10AEFF">
+            <div id="parent" style="text-align: center;">
+                <div style="display:inline-block;margin-top: 20px;">
+                    <!-- wechat.pic -->
+                    <img style="float: left;" ng-src="{{vm.parent.wechat.headimgurl}}"
+                         onload='if (this.width>64 || this.height>100) if (this.width/this.height>64/100) this.width=64; else this.height=100;' >
+                    <div style="float: left;margin-top: 10px; margin-left: 10px;">
+                        <!-- wechat.name -->
+                        <h4>{{vm.parent.wechat.nickname}}</h4>
+                        <p style="margin-top: -10px;">某某某小孩家长</p>
+                    </div>
+                </div>
             </div>
         </div>
-        <div class="fp_calendar">
-            <div class="weui_text_area">
-                <h2 class="weui_msg_title">指纹报道记录</h2>
-                <!--<calendar calendar-mode="mode" event-source="eventSource">-->
-
+        <div class="msg_flow">
+            <h4>小孩记录</h4>
+            <div class="weui_panel_bd">
+                <a class="weui_media_box weui_media_appmsg">
+                    <div class="weui_media_hd">
+                        <img class="weui_media_appmsg_thumb" src="./img/title.png" alt="">
+                    </div>
+                    <div class="weui_media_box weui_media_text">
+                        <h4 class="weui_media_title">标题一</h4>
+                        <p class="weui_media_desc">由各种物质组成的巨型球状天体，叫做星球。星球有一定的形状，有自己的运行轨道。</p>
+                        <div style="display:inline-block;">
+                            <img style="float: left;" ng-src="{{vm.parent.wechat.headimgurl}}"
+                                 onload='if (this.width>64 || this.height>100) if (this.width/this.height>64/100) this.width=64; else this.height=100;' >
+                            <img style="float: left;" ng-src="{{vm.parent.wechat.headimgurl}}"
+                                 onload='if (this.width>64 || this.height>100) if (this.width/this.height>64/100) this.width=64; else this.height=100;' >
+                            <img style="float: left;" ng-src="{{vm.parent.wechat.headimgurl}}"
+                                 onload='if (this.width>64 || this.height>100) if (this.width/this.height>64/100) this.width=64; else this.height=100;' >
+                            <img style="float: left;" ng-src="{{vm.parent.wechat.headimgurl}}"
+                                 onload='if (this.width>64 || this.height>100) if (this.width/this.height>64/100) this.width=64; else this.height=100;' >
+                        </div>
+                        <ul class="weui_media_info">
+                            <li class="weui_media_info_meta">文字来源</li>
+                            <li class="weui_media_info_meta">时间</li>
+                            <li class="weui_media_info_meta weui_media_info_meta_extra">其它信息</li>
+                        </ul>
+                    </div>
+                </a>
+                <a class="weui_media_box weui_media_appmsg">
+                    <div class="weui_media_hd">
+                        <img class="weui_media_appmsg_thumb" src="./img/title.png" alt="">
+                    </div>
+                    <div class="weui_media_box weui_media_text">
+                        <h4 class="weui_media_title">标题一</h4>
+                        <p class="weui_media_desc">由各种物质组成的巨型球状天体，叫做星球。星球有一定的形状，有自己的运行轨道。</p>
+                        <div style="display:inline-block;">
+                            <img style="float: left;" ng-src="{{vm.parent.wechat.headimgurl}}"
+                                 onload='if (this.width>64 || this.height>100) if (this.width/this.height>64/100) this.width=64; else this.height=100;' >
+                            <img style="float: left;" ng-src="{{vm.parent.wechat.headimgurl}}"
+                                 onload='if (this.width>64 || this.height>100) if (this.width/this.height>64/100) this.width=64; else this.height=100;' >
+                            <img style="float: left;" ng-src="{{vm.parent.wechat.headimgurl}}"
+                                 onload='if (this.width>64 || this.height>100) if (this.width/this.height>64/100) this.width=64; else this.height=100;' >
+                            <img style="float: left;" ng-src="{{vm.parent.wechat.headimgurl}}"
+                                 onload='if (this.width>64 || this.height>100) if (this.width/this.height>64/100) this.width=64; else this.height=100;' >
+                        </div>
+                        <ul class="weui_media_info">
+                            <li class="weui_media_info_meta">文字来源</li>
+                            <li class="weui_media_info_meta">时间</li>
+                            <li class="weui_media_info_meta weui_media_info_meta_extra">其它信息</li>
+                        </ul>
+                    </div>
+                </a>
             </div>
+
         </div>
     </ion-content>
 </ion-view>

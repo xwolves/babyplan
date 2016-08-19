@@ -4,9 +4,10 @@
   angular.module('childrenSettingService', [])
     .factory('childrenSettingService', childrenSettingService);
 
-  function childrenSettingService( $q, $http) {
+  function childrenSettingService( $q, $http, Constants, ResultHandler) {
     'ngInject';
     var service = {
+      registerChildren:registerChildren
     };
 
     //POST
@@ -26,8 +27,9 @@
     //    }
     //}
     //need token in headers
-    function registerChildren(child) {
+    function registerChildren(child,parentId) {
       var data = {
+        "p_uid":parentId,
         "name": child.name,
         "sex": child.gendar,
       };
