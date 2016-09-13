@@ -400,7 +400,166 @@ $app->get(
     }
 );
  */
-//=========================================== info moduls==================================================
+
+/*
+ * 孩子指纹注册
+ */
+$app->post(
+    '/finger/children/register/:childuid',
+    function ($childuid) use ($app, $sql_db){
+        $rsp_data = array();
+        $response = $app->response;
+        $request = $app->request->getBody();
+
+        $a_request = json_decode($request, true);
+        if(empty($a_request)){
+            $response->setBody(rspData(13001));
+            return;
+        }
+        $a_request = array_change_key_case($a_request, CASE_LOWER);
+        $a_request['childuid'] = $childuid;
+
+        $finger = new Finger($sql_db);
+        $ret = $finger->childrenRegister($a_request);
+        $response->setBody(rspData($ret));
+    }
+);
+
+/*
+ * 孩子指纹信息拉取
+ */
+$app->get(
+    '/finger/children/fetch/:childuid',
+    function ($childuid) use ($app, $sql_db){
+        $rsp_data = array();
+        $response = $app->response;
+
+        $finger = new Finger($sql_db);
+        $ret = $finger->childrenFetch($childuid);
+        if(gettype($ret) != "array"){
+            $response->setBody(rspData($ret));
+        }else{
+            $response->setBody(rspData(0, $ret));
+        }
+    }
+);
+
+/*
+ * 孩子打卡上报
+ */
+$app->post(
+    '/manager/v1/finger/signin',
+    function () use ($app, $sql_db){
+        $response = $app->response;
+        $request = $app->request->getBody();
+        $a_request = json_decode($request, true);
+        if(empty($a_request)){
+            $response->setBody(rspData(13001));
+            return;
+        }
+        $a_request = array_change_key_case($a_request, CASE_LOWER);
+
+        $finger = new Finger($sql_db);
+        $ret = $finger->childrenSignin($a_request);
+        if(gettype($ret) != "array"){
+            $response->setBody(rspData($ret));
+        }else{
+            $response->setBody(rspData(0, $ret));
+        }
+    }
+);
+
+/*
+ * 指纹机设置
+ */
+$app->post(
+    '/device/setting/set',
+    function () use ($app, $sql_db){
+        $response = $app->response;
+        $request = $app->request->getBody();
+        $a_request = json_decode($request, true);
+        if(empty($a_request)){
+            $response->setBody(rspData(13001));
+            return;
+        }
+        $a_request = array_change_key_case($a_request, CASE_LOWER);
+
+        $finger = new Finger($sql_db);
+        $ret = $finger->setDevice(1, $a_request);
+        if(gettype($ret) != "array"){
+            $response->setBody(rspData($ret));
+        }else{
+            $response->setBody(rspData(0, $ret));
+        }
+    }
+);
+
+/*
+ * 获取指纹机设置
+ */
+$app->get(
+    '/device/setting/fetch/:deviceid',
+    function ($deviceid) use ($app, $sql_db){
+        $rsp_data = array();
+        $response = $app->response;
+
+        $finger = new Finger($sql_db);
+        $ret = $finger->deviceSettingFetch($deviceid);
+        if(gettype($ret) != "array"){
+            $response->setBody(rspData($ret));
+        }else{
+            $response->setBody(rspData(0, $ret));
+        }
+    } 
+);
+
+/*
+ * 设备状态上报
+ */
+$app->post(
+    '/device/status/report',
+    function() use ($app, $sql_db){
+        $response = $app->response;
+        $request = $app->request->getBody();
+        $a_request = json_decode($request, true);
+        if(empty($a_request)){
+            $response->setBody(rspData(13001));
+            return;
+        }
+        $a_request = array_change_key_case($a_request, CASE_LOWER);
+
+        $finger = new Finger($sql_db);
+        $ret = $finger->DeviceReport($a_request);
+        if(gettype($ret) != "array"){
+            $response->setBody(rspData($ret));
+        }else{
+            $response->setBody(rspData(0, $ret));
+        }
+    }
+);
+
+/*
+ * 机构获取家长孩子信息
+ */
+$app->get(
+    '/deposit/parent/children/:depositid',
+    function ($depositid) use ($app, $sql_db){
+        $response = $app->response;
+
+        $finger = new Finger($sql_db);
+        $ret = $finger->deviceFetchParentChildre($depositid);
+        if(gettype($ret) != "array"){
+            $response->setBody(rspData($ret));
+        }else{
+            $response->setBody(rspData(0, $ret));
+        }
+    }
+);
+//===========================================info moduls==================================================
+
+/*
+ * 老师发布信息
+ */
 $app->post(
     '/deposit/publish',
     function () use ($app, $sql_db){
@@ -427,6 +586,10 @@ $app->post(
     }
 );
 
+/*
+ * 家长获取相关孩子的信息
+ */
+$app->options('/parent/childrenList/:parentuid', function(){});
 $app->get(
     '/parent/childrenList/:parentuid',
     function ($parentuid) use ($app, $sql_db){
@@ -434,13 +597,76 @@ $app->get(
         $response = $app->response;
         $request = $app->request->getBody();
         $token = $app->request->headers('token');
+        /*
         $depositInfo = $redis->get($token);
         if(!$depositInfo){
             $response->setBody(rspData(10005));
             return;
         }
+         */
         $info = new Info($sql_db);
         $ret = $info->getChldrenList($parentuid);
+        if(gettype($ret) != "array"){
+            $response->setBody(rspData($ret));
+        }else{
+            $response->setBody(rspData(0, $ret));
+        }
     }
 );
+
+/*
+ * 获取孩子所在机构的情况信息
+ */
+$app->get(
+    '/parent/children/information/:childuid',
+    function ($childuid) use ($app, $sql_db){
+        $rsp_data = array();
+        $response = $app->response;
+        $request = $app->request->getBody();
+        /*
+        $token = $app->request->headers('token');
+        $depositInfo = $redis->get($token);
+        if(!$depositInfo){
+            $response->setBody(rspData(10005));
+            return;
+        }
+         */
+        $info = new Info($sql_db);
+        $ret = $info->getDepositInfo($childuid);
+        if(gettype($ret) != "array"){
+            $response->setBody(rspData($ret));
+        }else{
+            $response->setBody(rspData(0, $ret));
+        }
+    }
+);
+
+/*
+ * 获取孩子的打卡信息
+ */
+$app->get(
+    '/parent/children/signin/:childuid',
+    function($childuid) use($app, $sql_db){
+        $rsp_data = array();
+        $response = $app->response;
+        $request = $app->request->getBody();
+        /*
+        $token = $app->request->headers('token');
+        $depositInfo = $redis->get($token);
+        if(!$depositInfo){
+            $response->setBody(rspData(10005));
+            return;
+        }
+         */
+        $info = new Info($sql_db);
+        $ret = $info->getSigninInfo($childuid);
+        if(gettype($ret) != "array"){
+            $response->setBody(rspData($ret));
+        }else{
+            $response->setBody(rspData(0, $ret));
+        }
+    }
+);
+
+
 $app->run();

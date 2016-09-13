@@ -53,7 +53,7 @@ class Account{
             $stmt = $this->DB->prepare($sql_str);
             $stmt->bindParam(":weixinno", $weixinno, PDO::PARAM_STR);
             if(!$stmt->execute())
-                return 1030;
+                return 10001;
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
             if($row){
                 $t_info['uid'] = $row['accountid'];
@@ -68,7 +68,7 @@ class Account{
             $stmt = $this->DB->prepare($sql_str);
             $stmt->bindParam(":weixinno", $weixinno, PDO::PARAM_STR);
             if(!$stmt->execute())
-                return 1030;
+                return 10001;
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
             if($row){
                 $d_info['uid'] = $row['accountid'];
@@ -101,7 +101,7 @@ class Account{
             if(count($info) == 1){
                 $token = strtolower($this->guid());
                 if(!$redis->set($token, json_encode($redisInfo)))
-                    return 1070;
+                    return 10004;
                 $info[0]['token'] = $token;
             }
 
@@ -280,7 +280,7 @@ class Account{
             if(!$stmt->execute())
                 return 10001;
             //if($stmt->rowCount() <= 0);
-            //    return 10002;
+            //    return 10003;
 
             return $accountid;
         }catch (PDOException $e) {
