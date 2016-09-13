@@ -24,8 +24,8 @@ static $sql_db;
 static $redis;
 try {
     $sql_db = new PDO($SQL_HOST.$SQL_DB_NAME, $SQL_USER, $SQL_PASSWORD);
-    $sql_db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);    
-    $sql_db->exec('set names utf8'); 
+    $sql_db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $sql_db->exec('set names utf8');
 } catch (PDOException $e) {
     $errs = "connect database failed, reason : " . $e->getMessage();
     die($errs);
@@ -33,11 +33,15 @@ try {
 
 try{
     $redis = new Redis();
-    $redis->connect('127.0.0.1', 6379); 
+    $redis->connect('127.0.0.1', 6379);
 } catch (PDOException $e) {
     $errs = "create redis instance failed, reson : " . $e->getMessage();
     die($errs);
 }
+
+//配对所有option
+//$app->options('/:a/:b/:c', function() {});
+$app->options('/:a/:b/:c/:d', function() {});
 
 $app->get(
     '/redirect/',
@@ -58,7 +62,7 @@ $app->get(
             $userInfo=redirectWechat($code, $APP_ID, $SECRET, $app);
             if (empty($userInfo)){
                 echo "no userid find";
-            }   
+            }
             $go2Url = urldecode($businessUrl);
             $tail = "#/wxlogin";
             $tmp_str = substr($go2Url, strlen($go2Url) - strlen($tail));
@@ -70,9 +74,9 @@ $app->get(
         }else{
             header("Location: ".$url);
             exit;
-        }   
-    }   
-);  
+        }
+    }
+);
 
 $app->post(
     '/account/register/parent',
@@ -98,7 +102,7 @@ $app->post(
     }
 );
 
-$app->options('/account/register/children', function(){});
+//$app->options('/account/register/children', function(){});
 $app->post(
     '/account/register/children',
     function () use ($app, $sql_db) {
@@ -297,7 +301,7 @@ $app->post(
         }
     }
 );
-$app->options('/account/query/parent/:parent_accnt_id', function(){});
+//$app->options('/account/query/parent/:parent_accnt_id', function(){});
 $app->get(
     '/account/query/parent/:parent_accnt_id',
     function ($parent_accnt_id) use ($app, $sql_db, $redis){
@@ -319,7 +323,7 @@ $app->get(
     }
 );
 
-$app->options('/account/query/parentChildren/:parent_accnt_id', function(){});
+//$app->options('/account/query/parentChildren/:parent_accnt_id', function(){});
 $app->get(
     '/account/query/parentChildren/:parent_accnt_id',
     function ($parent_accnt_id) use ($app, $sql_db, $redis){
@@ -336,11 +340,11 @@ $app->get(
             $response->setBody(rspData(12005));
         else
             $response->setBody(rspData(0, $ret));
-        
+
     }
 );
 
-$app->options('/account/query/deposit/:deposit_accnt_id', function(){});
+//$app->options('/account/query/deposit/:deposit_accnt_id', function(){});
 $app->get(
     '/account/query/deposit/:deposit_accnt_id',
     function ($deposit_accnt_id) use ($app, $sql_db, $redis){
@@ -361,7 +365,7 @@ $app->get(
     }
 );
 
-$app->options('/account/query/depositTeacher/:deposit_accnt_id', function(){});
+//$app->options('/account/query/depositTeacher/:deposit_accnt_id', function(){});
 $app->get(
     '/account/query/depositTeacher/:deposit_accnt_id',
     function ($deposit_accnt_id) use ($app, $sql_db, $redis){
@@ -378,7 +382,7 @@ $app->get(
             $response->setBody(rspData(12006));
         else
             $response->setBody(rspData(0, $ret));
-        
+
     }
 );
 //=========================================== finger moduls==================================================
@@ -510,7 +514,7 @@ $app->get(
         }else{
             $response->setBody(rspData(0, $ret));
         }
-    } 
+    }
 );
 
 /*
@@ -582,14 +586,14 @@ $app->post(
         $info = new Info($sql_db);
         $ret = $info->publish($a_request);
         $response->setBody(rspData($ret));
-        
+
     }
 );
 
 /*
  * 家长获取相关孩子的信息
  */
-$app->options('/parent/childrenList/:parentuid', function(){});
+//$app->options('/parent/childrenList/:parentuid', function(){});
 $app->get(
     '/parent/childrenList/:parentuid',
     function ($parentuid) use ($app, $sql_db){
