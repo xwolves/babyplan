@@ -40,7 +40,7 @@ try{
 }
 
 //配对所有option
-//$app->options('/:a/:b/:c', function() {});
+$app->options('/:a/:b/:c', function() {});
 $app->options('/:a/:b/:c/:d', function() {});
 
 $app->get(
@@ -51,6 +51,7 @@ $app->get(
         $queryStr = $_SERVER['QUERY_STRING'];
         $reUrl=$req->getUrl().$req->getPath();
         $businessUrl=$req->params("businessUrl");
+        $type=$req->params("type");
         if(strlen($queryStr)>0){
             $reUrl=$reUrl."?".$queryStr;
         }
@@ -69,7 +70,7 @@ $app->get(
             if($tail != $tmp_str)
                 $go2Url .= $tail;
 
-            header("Location: ".$go2Url."?user=".$userInfo['openid']);
+            header("Location: ".$go2Url."?user=".$userInfo['openid']."&type=".$type);
             exit;
         }else{
             header("Location: ".$url);
