@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.finger.activity"
+    android:versionCode="3"
+    android:versionName="3.0" >
+
+    <uses-sdk
+        android:minSdkVersion="16"
+        android:targetSdkVersion="19" />
+
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    
+	<uses-permission android:name="android.permission.INTERNET"/>   <!--必写-->
+	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+	<uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
+	<uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>  <!--必写-->
+	<uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+<!--  
+	<uses-permission android:name="android.permission.HARDWARE_TEST" />
+-->
+	<uses-feature android:name="android.hardware.usb.host" android:required="true"/>
+	
+    <application
+        android:name="com.finger.activity.Gdata"
+        android:allowBackup="true"
+        android:icon="@drawable/logo"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme" >
+        <activity
+            android:name="com.finger.activity.MainActivity"
+            android:screenOrientation="sensorPortrait" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.finger.activity.Setting"
+            android:label="@string/title_activity_setting" >
+        </activity>
+        <activity
+            android:name="com.finger.activity.RegistfingerActivity"
+            android:label="@string/title_activity_registfinger" >
+        </activity>
+        <activity
+            android:name="com.finger.activity.SearchChrildrenActivity"
+            android:label="@string/title_activity_search_chrildren" >
+        </activity>
+        
+           <receiver android:name="com.finger.activity.BootBroadcastReceiver">  
+             <intent-filter>  
+                 <action android:name="android.intent.action.BOOT_COMPLETED"></action>  
+                 <category android:name="android.intent.category.LAUNCHER" />  
+             </intent-filter>  
+         </receiver>  
+
+         <service android:name="com.finger.service.DeviceStateService" />
+         <service android:name="com.finger.service.MyService" />
+    </application>
+
+</manifest>

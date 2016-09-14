@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="text_base_color">#ffffffff</color>
+    <color name="text_block_color">#ff000000</color>
+    
+    <color name="preference_title_enable_color">#ffebebeb</color>
+    
+    <color name="preference_spinner_item_enable_color">#ffebebeb</color>
+    
+	<color name="preference_summary_enable_color">#ffababab</color>
+	
+	<color name="preference_press_color">#ff000000</color>
+	
+	<color name="preference_focus_color">#ff000000</color>
+	
+	<color name="preference_summary_focus_color">#ff000000</color>
+	
+	<color name="preference_disable_color">#55888888</color>
+</resources>

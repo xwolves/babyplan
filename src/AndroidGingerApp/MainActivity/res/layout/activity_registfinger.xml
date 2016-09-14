@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="40dp" >
+
+        <Button
+            android:id="@+id/choosechrildren"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/choicechrildren" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="40dp" >
+
+        <TextView
+            android:id="@+id/lchildrenid"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:paddingLeft="10dp"
+            android:paddingTop="10dp"
+            android:text="@string/chrildrenaccountid" />
+
+        <TextView
+            android:id="@+id/echildrenid"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="4"
+            android:hint="@string/lchrildrenaccountid" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="40dp" >
+
+        <TextView
+            android:id="@+id/lchildrenname"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:paddingLeft="10dp"
+            android:paddingTop="10dp"
+            android:text="@string/chrildname" />
+
+        <TextView
+            android:id="@+id/echildrenname"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="4"
+            android:hint="@string/lchrildname" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="40dp" >
+
+        <TextView
+            android:id="@+id/lparentname"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:paddingLeft="10dp"
+            android:paddingTop="10dp"
+            android:text="@string/parentgname" />
+
+        <TextView
+            android:id="@+id/eparentgname"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="4"
+            android:hint="@string/lparentgname" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="40dp" >
+
+        <TextView
+            android:id="@+id/lparentphone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:paddingLeft="10dp"
+            android:paddingTop="10dp"
+            android:text="@string/parentphone" />
+
+        <TextView
+            android:id="@+id/eparentphone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="4"
+            android:hint="@string/lparentphone" />
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/id_image_finger"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="@drawable/logo" />
+
+    <TextView
+        android:id="@+id/id_msg_info"
+        style="@style/info_text"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/base_widget_bg"
+        android:minHeight="@dimen/layout_info_min_height"
+        android:text="@string/hint_string" />
+
+</LinearLayout>

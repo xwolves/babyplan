@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@drawable/base_background"
+    android:orientation="vertical" >
+
+    <TextView
+        style="@style/Title_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:padding="10dp"
+        android:text="@string/devicinit" />
+
+     
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <TextView
+            style="@style/Title_text"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="4"
+            android:text="@string/deviceid" />
+
+
+        <TextView
+            android:id="@+id/editDeviceid"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:background="@drawable/base_widget_bg"
+            android:hint="@string/deviceid" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <TextView
+ 			style="@style/Title_text"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="4"
+            android:text="@string/accountid" />
+
+        <EditText
+            android:id="@+id/editAccountID"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:background="@drawable/base_widget_bg"
+            android:hint="@string/accountid" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <TextView
+             style="@style/Title_text"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="4"
+            android:text="@string/fdevice_status" />
+
+        <EditText
+            android:background="@drawable/base_widget_bg"
+            android:id="@+id/editfdevice_status"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:hint="@string/fdevice_status" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <TextView
+            style="@style/Title_text"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="4"
+            android:text="@string/maintainer_name" />
+
+        <EditText
+            android:background="@drawable/base_widget_bg"
+            android:id="@+id/editmaintainer_name"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:hint="@string/maintainer_name" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <TextView
+            style="@style/Title_text"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="4"
+            android:text="@string/maintainer_phone" />
+
+        <EditText
+            android:background="@drawable/base_widget_bg"
+            android:id="@+id/editmaintainer_phonenum"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:hint="@string/maintainer_phone" />
+    </LinearLayout>
+ 
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+       >
+
+        <TextView
+            android:id="@+id/set_btn_ok"
+            style="@style/button_text"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:drawableTop="@drawable/drawable_btn_recv_bitmap"
+            android:text="@string/button_ok" />
+
+        <TextView
+            android:id="@+id/set_btn_cancer"
+            style="@style/button_text"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:drawableTop="@drawable/drawable_btn_cancel"
+            android:text="@string/button_cancer" />
+    </LinearLayout>
+
+    
+</LinearLayout>

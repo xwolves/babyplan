@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <style name="preference_base" parent="@android:style/TextAppearance">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:paddingLeft">0dp</item>
+        <item name="android:gravity">left</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:textColorHint">?android:attr/textColorSecondary</item>
+    </style>
+
+    <style name="preference_title" parent="preference_base">
+        <item name="android:textSize">@dimen/txt_size</item>
+        <item name="android:textColor">@color/text_base_color</item>
+    </style>
+
+    <style name="spinner_text" parent="preference_base">
+        <item name="android:textSize">@dimen/txt_size</item>
+        <item name="android:textColor">@color/text_block_color</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:ellipsize">start</item>
+        <item name="android:singleLine">true</item>
+    </style>
+
+    <style name="widget_base_text" parent="spinner_text">
+        <item name="android:paddingTop">5dp</item>
+        <item name="android:paddingBottom">5dp</item>
+        <item name="android:paddingRight">5dp</item>
+    </style>
+
+    <style name="button_text" parent="spinner_text">
+        <item name="android:clickable">true</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:textColor">@color/text_base_color</item>
+        <item name="android:drawablePadding">@dimen/btn_padding_top</item>
+    </style>
+
+    <style name="info_text" parent="spinner_text">
+        <item name="android:singleLine">false</item>
+    </style>
+
+        <style name="Title_text" parent="info_text">
+        <item name="android:textColor">@color/text_base_color</item>
+    </style>
+    
+</resources>

@@ -1,0 +1,74 @@
+-dontwarn com.baidu.mapapi.**
+-keep class com.baidu.mapapi.**{
+*;
+}
+
+-dontwarn com.baidu.platform.**
+-keep class com.baidu.platform.**{
+*;
+}
+
+-dontwarn com.baidu.location.**
+-keep class com.baidu.location.**{
+*;
+}
+
+-dontwarn com.amap.api.services.**
+-keep class com.amap.api.services.**{
+*;
+}
+
+-dontwarn cn.kuwo.autosdk.**
+-keep class cn.kuwo.autosdk.**{
+*;
+}
+
+-dontwarn com.iflytek.**
+-keep class com.iflytek.**{
+*;
+}
+
+-dontwarn com.umeng.**
+-keep class com.umeng.**{
+*;
+}
+
+-dontwarn com.alimama.mobile.**
+-keep class com.alimama.mobile.**{
+*;
+}
+
+-dontwarn com.google.protobuf.**
+-keep class com.google.protobuf.**{
+*;
+}
+
+-dontwarn com.ta.utdid2.**
+-keep class com.ta.utdid2.**{
+*;
+}
+
+-dontwarn com.ut.device.**
+-keep class com.ut.device.**{
+*;
+}
+
+-dontwarn org.android.**
+-keep class org.android.**{
+*;
+}
+
+-dontwarn com.cardroid.robot.widget.view.MicrophoneButtonEx
+-keep class com.cardroid.robot.widget.view.MicrophoneButtonEx{
+*;
+}
+
+-dontwarn com.theme.robot.R.**
+-keep class com.theme.robot.R**{
+*;
+}
+
+-dontwarn com.theme.robot.view.voice.**
+-keep class com.theme.robot.view.voice**{
+*;
+}
