@@ -16,7 +16,7 @@ $app = new \Slim\Slim(array(
 $app->config('debug', true);
 $app->response->headers->set('Content-Type', 'application/json');
 $app->response->headers->set('Access-Control-Allow-Origin', '*');
-$app->response->headers->set('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept,token');
+$app->response->headers->set('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, token, if-modified-since, cache-control, pragma');
 $app->response->headers->set('Access-Control-Allow-Methods', 'GET, POST, PUT, OPTIONS');
 $app->response->headers->set('Access-Control-Max-Age', '60');
 
@@ -40,12 +40,14 @@ try{
 }
 
 //配对所有option
+$app->options('/:a', function() {});
+$app->options('/:a/:b', function() {});
 $app->options('/:a/:b/:c', function() {});
 $app->options('/:a/:b/:c/:d', function() {});
 
 $app->get(
     '/redirect/',
-    function () use ($app, $APP_ID, $SECRET, $REDIRECT_URL, $orc_db){
+    function () use ($app, $APP_ID, $SECRET, $REDIRECT_URL, $orc_db, $redis){
         $req=$app->request();
 
         $queryStr = $_SERVER['QUERY_STRING'];
@@ -60,7 +62,7 @@ $app->get(
         $redirect_url = urlencode($reUrl);
         $url = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=".$APP_ID."&redirect_uri=".$redirect_url."&response_type=code&scope=snsapi_userinfo&state=BABY_PLAN#wechat_redirect ";
         if($code!=null){
-            $userInfo=redirectWechat($code, $APP_ID, $SECRET, $app);
+            $userInfo=redirectWechat($code, $APP_ID, $SECRET, $app, $redis);
             if (empty($userInfo)){
                 echo "no userid find";
             }
@@ -302,6 +304,23 @@ $app->post(
         }
     }
 );
+
+$app->get(
+    '/wechat/:wechat_id',
+    function ($wechat_id) use ($app, $redis){
+        $response = $app->response;
+        $token = $app->request->headers('token');
+        $depositInfo = $redis->get($token);
+        if(!$depositInfo){
+            $response->setBody(rspData(10005));
+            return;
+        }
+        $data=$redis->get("wechat_user_".$wechat_id);
+        $arr_data = json_decode($data, true);
+        $response->setBody(rspData($arr_data));
+    }
+);
+
 //$app->options('/account/query/parent/:parent_accnt_id', function(){});
 $app->get(
     '/account/query/parent/:parent_accnt_id',

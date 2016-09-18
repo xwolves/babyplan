@@ -41,16 +41,16 @@ function redirectWechat($code, $app_id, $secret, $app)
     $accessInfo = getAccessToken($app_id, $secret, $code, $app);
     if (empty($accessInfo)){
         return;
-    }   
+    }
     $userInfo = getUserInfo($accessInfo['access_token'], $accessInfo['openid'], $app);
     if (empty($userInfo)){
         return;
-    }   
+    }
     return $userInfo;
 }
 
 function getAccessToken($app_id, $secret, $code, $app)
-{       
+{
     $access_token = "";
     $url = "https://api.weixin.qq.com/sns/oauth2/access_token?appid=".$app_id."&secret=".$secret."&code=".$code."&grant_type=authorization_code";
     $ch = curl_init();
@@ -63,9 +63,9 @@ function getAccessToken($app_id, $secret, $code, $app)
     $arr_data = json_decode($data, true);
 
     return $arr_data;
-}       
+}
 
-function getUserInfo($access_token, $open_id, $app)
+function getUserInfo($access_token, $open_id, $app, $redis)
 {
     $url = "https://api.weixin.qq.com/sns/userinfo?access_token=".$access_token."&openid=".$open_id."&lang=zh_CN";
 
@@ -77,7 +77,7 @@ function getUserInfo($access_token, $open_id, $app)
     curl_close($ch);
 
     $arr_data = json_decode($data, true);
-
+    $redis->set("wechat_user_".$open_id, $data);
     return $arr_data;
 }
 ?>
