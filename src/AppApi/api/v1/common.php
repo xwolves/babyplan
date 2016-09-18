@@ -34,7 +34,7 @@ function rspData($ret, $data = ""){
     return json_encode($ar_ret);
 }
 
-function redirectWechat($code, $app_id, $secret, $app)
+function redirectWechat($code, $app_id, $secret, $app, $redis)
 {
     $response = $app->response();
 
@@ -42,11 +42,40 @@ function redirectWechat($code, $app_id, $secret, $app)
     if (empty($accessInfo)){
         return;
     }
-    $userInfo = getUserInfo($accessInfo['access_token'], $accessInfo['openid'], $app);
+    $userInfo = getUserInfo($accessInfo['access_token'], $accessInfo['openid'], $app, $redis);
     if (empty($userInfo)){
         return;
     }
     return $userInfo;
+}
+
+function getWechatUserInfo($wid, $app_id, $secret, $app, $redis)
+{
+    $url = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=".$app_id."&secret=".$secret;
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_HEADER, 0);
+    $data = curl_exec($ch);
+    curl_close($ch);
+    $app->getLog()->write("accesstoken in getWechatUserInfo = ".$access_token,7);
+    $arr_data = json_decode($data, true);
+    $access_token=$arr_data[access_token];
+    if(!empty($access_token)){
+        $url = "https://api.weixin.qq.com/cgi-bin/user/info?access_token=".$access_token."&openid=".$wid."&lang=zh_CN";
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HEADER, 0);
+        $data = curl_exec($ch);
+        curl_close($ch);
+        $redis->set("wechat_user_".$wid, $data);
+        $userInfo = json_decode($data, true);
+        $app->getLog()->write("userInfo in getWechatUserInfo = ".$userInfo,7);
+        return $userInfo;
+    }else{
+      return null;
+    }
 }
 
 function getAccessToken($app_id, $secret, $code, $app)

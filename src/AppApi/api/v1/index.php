@@ -316,6 +316,9 @@ $app->get(
             return;
         }
         $data=$redis->get("wechat_user_".$wechat_id);
+        if(empty($data)){
+          $data=getWechatUserInfo($code, $APP_ID, $SECRET, $app, $redis);
+        }
         $arr_data = json_decode($data, true);
         $response->setBody(rspData($arr_data));
     }
