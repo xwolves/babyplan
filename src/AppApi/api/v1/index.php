@@ -1,4 +1,5 @@
 <?php
+date_default_timezone_set("Asia/Shanghai");
 require_once '../../Slim/Slim/Slim.php';
 require_once '../../Slim/Slim/LogWriter.php';
 require_once './account_moduls/accnt_function.php';
@@ -38,6 +39,10 @@ try{
     $errs = "create redis instance failed, reson : " . $e->getMessage();
     die($errs);
 }
+
+//log 日志案例
+//$app->getLog()->debug("Debug ".date('Y-m-d H:i:s')." : "."debug log");
+//$app->logWriter->write("log");
 
 //配对所有option
 $app->options('/:a', function() {});
@@ -307,7 +312,7 @@ $app->post(
 
 $app->get(
     '/wechat/:wechat_id',
-    function ($wechat_id) use ($app, $redis){
+    function ($wechat_id) use ($app, $APP_ID, $SECRET, $redis){
         $response = $app->response;
         $token = $app->request->headers('token');
         $depositInfo = $redis->get($token);
@@ -315,9 +320,17 @@ $app->get(
             $response->setBody(rspData(10005));
             return;
         }
+
         $data=$redis->get("wechat_user_".$wechat_id);
-        $arr_data = json_decode($data, true);
-        $response->setBody(rspData(0,$arr_data));
+        $app->getLog()->debug("Debug ".date('Y-m-d H:i:s')." : "." get wechat user info with ".$wechat_id);
+        $app->logWriter->write("get redis cache data : ".$data);
+        if(empty($data)){
+          $data=getWechatUserInfo($wechat_id, $APP_ID, $SECRET, $app, $redis);
+          $response->setBody(rspData(0,$data));
+        }else{
+          $arr_data = json_decode($data, true);
+          $response->setBody(rspData(0,$arr_data));
+        }
     }
 );
 
