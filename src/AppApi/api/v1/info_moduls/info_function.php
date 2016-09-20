@@ -170,9 +170,9 @@ class Info{
             $info = array();
             while($row = $stmt->fetch(PDO::FETCH_ASSOC)){
                 $tmp_ar = array();
-                $tmp_ar['childrenID'] = $row['childrenID'];
+                $tmp_ar['childrenID'] = $row['ChildrenID'];
                 $tmp_ar['parentID'] = $row['parentID'];
-                $tmp_ar['childrenName'] = $row['childrenName'];
+                $tmp_ar['childrenName'] = $row['childName'];
                 $tmp_ar['infoid'] = $row['InfoID'];
                 $tmp_ar['publisherid'] = $row['PublisherID'];
                 $tmp_ar['depositid'] = $row['DepositID'];
