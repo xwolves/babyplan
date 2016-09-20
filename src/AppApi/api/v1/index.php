@@ -307,7 +307,7 @@ $app->post(
 
 $app->get(
     '/wechat/:wechat_id',
-    function ($wechat_id) use ($app, $APP_ID, $SECRET, $redis){
+    function ($wechat_id) use ($app, $redis){
         $response = $app->response;
         $token = $app->request->headers('token');
         $depositInfo = $redis->get($token);
@@ -316,14 +316,8 @@ $app->get(
             return;
         }
         $data=$redis->get("wechat_user_".$wechat_id);
-        if(empty($data)){
-          $data=getWechatUserInfo($wechat_id, $APP_ID, $SECRET, $app, $redis);
-          $response->setBody(rspData(0,$data));
-        }else{
-          $arr_data = json_decode($data, true);
-          $response->setBody(rspData(0,$arr_data));
-        }
-
+        $arr_data = json_decode($data, true);
+        $response->setBody(rspData(0,$arr_data));
     }
 );
 
@@ -645,7 +639,7 @@ $app->get(
 );
 
 /*
- * 获取孩子所在机构的情况信息
+ * 获取孩子在机构的情况信息
  */
 $app->get(
     '/parent/children/information/:childuid',
@@ -662,7 +656,34 @@ $app->get(
         }
          */
         $info = new Info($sql_db);
-        $ret = $info->getDepositInfo($childuid);
+        $ret = $info->getChildrenDepositInfo($childuid);
+        if(gettype($ret) != "array"){
+            $response->setBody(rspData($ret));
+        }else{
+            $response->setBody(rspData(0, $ret));
+        }
+    }
+);
+
+/*
+ * 获取家长所有孩子在机构的情况信息
+ */
+$app->get(
+    '/parent/children/allInformation/:parentid',
+    function ($parentid) use ($app, $sql_db){
+        $rsp_data = array();
+        $response = $app->response;
+        $request = $app->request->getBody();
+        /*
+        $token = $app->request->headers('token');
+        $depositInfo = $redis->get($token);
+        if(!$depositInfo){
+            $response->setBody(rspData(10005));
+            return;
+        }
+         */
+        $info = new Info($sql_db);
+        $ret = $info->getParentDepositInfo($parentid);
         if(gettype($ret) != "array"){
             $response->setBody(rspData($ret));
         }else{
@@ -690,6 +711,33 @@ $app->get(
          */
         $info = new Info($sql_db);
         $ret = $info->getSigninInfo($childuid);
+        if(gettype($ret) != "array"){
+            $response->setBody(rspData($ret));
+        }else{
+            $response->setBody(rspData(0, $ret));
+        }
+    }
+);
+
+/*
+ * 获取所有孩子的打卡信息
+ */
+$app->get(
+    '/parent/children/allSignin/:parentid',
+    function($parentid) use($app, $sql_db){
+        $rsp_data = array();
+        $response = $app->response;
+        $request = $app->request->getBody();
+        /*
+        $token = $app->request->headers('token');
+        $depositInfo = $redis->get($token);
+        if(!$depositInfo){
+            $response->setBody(rspData(10005));
+            return;
+        }
+         */
+        $info = new Info($sql_db);
+        $ret = $info->getAllSigninInfo($parentid);
         if(gettype($ret) != "array"){
             $response->setBody(rspData($ret));
         }else{

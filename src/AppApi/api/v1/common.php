@@ -58,9 +58,9 @@ function getWechatUserInfo($wid, $app_id, $secret, $app, $redis)
     curl_setopt($ch, CURLOPT_HEADER, 0);
     $data = curl_exec($ch);
     curl_close($ch);
-    $app->getLog()->write("accesstoken in getWechatUserInfo = ".$access_token,7);
     $arr_data = json_decode($data, true);
-    $access_token=$arr_data[access_token];
+    $access_token=$arr_data['access_token'];
+    $app->getLog()->debug("accesstoken in getWechatUserInfo = ".$access_token);
     if(!empty($access_token)){
         $url = "https://api.weixin.qq.com/cgi-bin/user/info?access_token=".$access_token."&openid=".$wid."&lang=zh_CN";
         $ch = curl_init();
@@ -71,7 +71,7 @@ function getWechatUserInfo($wid, $app_id, $secret, $app, $redis)
         curl_close($ch);
         $redis->set("wechat_user_".$wid, $data);
         $userInfo = json_decode($data, true);
-        $app->getLog()->write("userInfo in getWechatUserInfo = ".$userInfo,7);
+        $app->getLog()->debug("userInfo in getWechatUserInfo = ".$data);
         return $userInfo;
     }else{
       return null;
