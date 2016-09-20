@@ -81,7 +81,7 @@ class Info{
 
     public function getChldrenList($parentuid){
         try{
-            $sql_str = "SELECT b.`AccountID`, b.`Name` FROM tb_accnt_children b WHERE b.`AccountID` IN 
+            $sql_str = "SELECT b.`AccountID`, b.`Name` FROM tb_accnt_children b WHERE b.`AccountID` IN
                 (SELECT a.`ChildrenID` FROM tb_parent_children a WHERE a.`ParentID`=:parentuid)";
             $stmt = $this->DB->prepare($sql_str);
             $stmt->bindParam(":parentuid", $parentuid, PDO::PARAM_STR);
@@ -117,7 +117,7 @@ class Info{
             $info['childuid'] = $childuid;
             $info['childname'] = $row['name'];
 
-            $sql_str = "SELECT * FROM tb_deposit_daily a WHERE a.`DepositID` = 
+            $sql_str = "SELECT * FROM tb_deposit_daily a WHERE a.`DepositID` =
                 (SELECT b.`DepositID` FROM tb_deposit_children b WHERE b.`ChildrenID` = :childuid)";
             $stmt = $this->DB->prepare($sql_str);
             $stmt->bindParam(":childuid", $childuid, PDO::PARAM_STR);
@@ -153,6 +153,51 @@ class Info{
         }
     }
 
+    public function getChldrenDailyFromParentId($parentuid){
+        try{
+            $sql_str =  "select * from tb_deposit_daily dd left join (
+                select dc.ChildrenID, dc.DepositID,
+                (select pc.ParentID from tb_parent_children pc WHERE pc.ChildrenID = dc.ChildrenID) as parentID,
+                (select ac.Name from tb_accnt_children ac WHERE ac.AccountID = dc.ChildrenID) as childName
+                from tb_deposit_children dc ) b
+                on b.DepositID = dd.DepositID
+                where a.parentID = :parentuid
+                ORDER BY CreateTime DESC;";
+            $stmt = $this->DB->prepare($sql_str);
+            $stmt->bindParam(":parentuid", $parentuid, PDO::PARAM_STR);
+            if(!$stmt->execute())
+                return 10001;
+            $info = array();
+            while($row = $stmt->fetch(PDO::FETCH_ASSOC)){
+                $tmp_ar = array();
+                $tmp_ar['childrenID'] = $row['childrenID'];
+                $tmp_ar['parentID'] = $row['parentID'];
+                $tmp_ar['childrenName'] = $row['childrenName'];
+                $tmp_ar['infoid'] = $row['InfoID'];
+                $tmp_ar['publisherid'] = $row['PublisherID'];
+                $tmp_ar['depositid'] = $row['DepositID'];
+                $tmp_ar['longitude'] = $row['Longitude'];
+                $tmp_ar['latitude'] = $row['Latitude'];
+                $tmp_ar['clickcount'] = $row['ClickCount'];
+                $tmp_ar['infotype'] = $row['InfoType'];
+                $tmp_ar['description'] = $row['Description'];
+                $tmp_ar['photolink1'] = $row['PhotoLink1'];
+                $tmp_ar['photolink2'] = $row['PhotoLink2'];
+                $tmp_ar['photolink3'] = $row['PhotoLink3'];
+                $tmp_ar['photolink4'] = $row['PhotoLink4'];
+                $tmp_ar['photolink5'] = $row['PhotoLink5'];
+                $tmp_ar['photolink6'] = $row['PhotoLink6'];
+                $tmp_ar['status'] = $row['Status'];
+                $tmp_ar['createtime'] = $row['CreateTime'];
+                $info[] = $tmp_ar;
+            }
+            return $info;
+        }catch (PDOException $e) {
+            $errs = $e->getMessage();
+            return 10000;
+        }
+    }
+
     public function getParentDepositInfo($parentid){
         try{
             $info = array();
@@ -177,7 +222,7 @@ class Info{
                 $child_ar['childuid'] = $childuid;
                 $child_ar['childname'] = $row['name'];
 
-                $sql_str = "SELECT * FROM tb_deposit_daily a WHERE a.`DepositID` = 
+                $sql_str = "SELECT * FROM tb_deposit_daily a WHERE a.`DepositID` =
                     (SELECT b.`DepositID` FROM tb_deposit_children b WHERE b.`ChildrenID` = :childuid)";
                 $stmt = $this->DB->prepare($sql_str);
                 $stmt->bindParam(":childuid", $childuid, PDO::PARAM_STR);
@@ -233,6 +278,36 @@ class Info{
 
             return $info;
 
+        }catch (PDOException $e) {
+            $errs = $e->getMessage();
+            return 10000;
+        }
+    }
+
+    public function getChldrenSignInFromParentId($parentuid){
+        try{
+            $sql_str =  "select * from (
+            select * ,
+            (select pc.ParentID from tb_parent_children pc WHERE pc.ChildrenID = cs.ChildID) as parentID,
+            (select ac.Name from tb_accnt_children ac WHERE ac.AccountID = cs.ChildID) as childName
+            from tb_children_signin cs ) a
+            where a.parentID = :parentuid ORDER BY SignInTime DESC;";
+            $stmt = $this->DB->prepare($sql_str);
+            $stmt->bindParam(":parentuid", $parentuid, PDO::PARAM_STR);
+            if(!$stmt->execute())
+                return 10001;
+            $info = array();
+            while($row = $stmt->fetch(PDO::FETCH_ASSOC)){
+                $tmp_ar = array();
+                $tmp_ar['childrenID'] = $row['ChildID'];
+                $tmp_ar['parentID'] = $row['parentID'];
+                $tmp_ar['childrenName'] = $row['childName'];
+                $tmp_ar['deviceid'] = $row['DeviceID'];
+                $tmp_ar['depositid'] = $row['DepositID'];
+                $tmp_ar['signintime'] = $row['SignInTime'];
+                $info[] = $tmp_ar;
+            }
+            return $info;
         }catch (PDOException $e) {
             $errs = $e->getMessage();
             return 10000;

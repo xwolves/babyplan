@@ -696,7 +696,8 @@ $app->get(
         }
          */
         $info = new Info($sql_db);
-        $ret = $info->getParentDepositInfo($parentid);
+        //$ret = $info->getParentDepositInfo($parentid);
+        $ret = $info->getChldrenDailyFromParentId($parentid);
         if(gettype($ret) != "array"){
             $response->setBody(rspData($ret));
         }else{
@@ -750,7 +751,8 @@ $app->get(
         }
          */
         $info = new Info($sql_db);
-        $ret = $info->getAllSigninInfo($parentid);
+        //$ret = $info->getAllSigninInfo($parentid);
+        $ret = $info->getChldrenSignInFromParentId($parentid);
         if(gettype($ret) != "array"){
             $response->setBody(rspData($ret));
         }else{
