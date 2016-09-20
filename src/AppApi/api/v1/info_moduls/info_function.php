@@ -161,7 +161,7 @@ class Info{
                 (select ac.Name from tb_accnt_children ac WHERE ac.AccountID = dc.ChildrenID) as childName
                 from tb_deposit_children dc ) b
                 on b.DepositID = dd.DepositID
-                where a.parentID = :parentuid
+                where b.parentID = :parentuid
                 ORDER BY CreateTime DESC;";
             $stmt = $this->DB->prepare($sql_str);
             $stmt->bindParam(":parentuid", $parentuid, PDO::PARAM_STR);
