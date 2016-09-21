@@ -155,13 +155,15 @@ class Info{
 
     public function getDailyWithDepositID($depositId){
       try{
-          $sql_str = "select *,
-              if(dd.PublisherID like '3%',
+          $sql_str = "select * ,if(dd.PublisherID like '3%',
               (select at.Name from tb_accnt_teacher at WHERE at.AccountID = dd.PublisherID) ,
               (select ad.ContactName from tb_accnt_deposit ad WHERE ad.AccountID = dd.PublisherID)
               ) as PublisherName
               from tb_deposit_daily dd
-              where DepositID = :depositId ORDER BY CreateTime DESC;";
+              where DepositID = (if( :depositId like '3%',
+              (select dt.DepositID from tb_deposit_teacher dt WHERE dt.TeacherID = :depositId) ,
+              :depositId
+              )) ORDER BY CreateTime DESC;";
           $stmt = $this->DB->prepare($sql_str);
           $stmt->bindParam(":depositId", $depositId, PDO::PARAM_STR);
           if(!$stmt->execute())
