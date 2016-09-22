@@ -155,9 +155,9 @@ class Info{
         try{
             $sql_str = "";
             if (strpos($tId, '3')===0) {
-              $sql_str = "select * from tb_accnt_deposit where AccountID = ( SELECT DepositID from tb_deposit_teacher  where TeacherID = :tId);";
+              $sql_str = "select * from tb_accnt_teacher where AccountID = ( SELECT DepositID from tb_deposit_teacher where TeacherID = :tId);";
             }else{
-              $sql_str = "select * from tb_accnt_deposit where AccountID = :tid";
+              $sql_str = "select * from tb_accnt_deposit where AccountID = :tId";
             }
             $stmt = $this->DB->prepare($sql_str);
             $stmt->bindParam(":tId", $tId, PDO::PARAM_STR);
