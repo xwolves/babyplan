@@ -624,6 +624,33 @@ $app->post(
 );
 
 /*
+ * 获取老师所在机构信息
+ */
+$app->get(
+    '/deposit/teacher/:tid',
+    function ($tid) use ($app, $sql_db){
+        $rsp_data = array();
+        $response = $app->response;
+        $request = $app->request->getBody();
+        /*
+        $token = $app->request->headers('token');
+        $depositInfo = $redis->get($token);
+        if(!$depositInfo){
+            $response->setBody(rspData(10005));
+            return;
+        }
+        */
+        $info = new Info($sql_db);
+        $ret = $info->getDepositWithTeacherID($tid);
+        if(gettype($ret) != "array"){
+            $response->setBody(rspData($ret));
+        }else{
+            $response->setBody(rspData(0, $ret));
+        }
+    }
+);
+
+/*
  * 获取所有机构发布过的信息
  */
 $app->get(

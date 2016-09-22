@@ -94,7 +94,6 @@ class Info{
                 $tmp_ar['name'] = $row['Name'];
                 $info[] = $tmp_ar;
             }
-
             return $info;
         }catch (PDOException $e) {
             $errs = $e->getMessage();
@@ -146,7 +145,37 @@ class Info{
             }
             $info['timeline'] = $rec_ar;
             return $info;
+        }catch (PDOException $e) {
+            $errs = $e->getMessage();
+            return 10000;
+        }
+    }
 
+    public function getDepositWithTeacherID($tId){
+        try{
+            $sql_str = "";
+            if (strpos($tId, '3')===0) {
+              $sql_str = "select * from tb_accnt_deposit where AccountID = ( SELECT DepositID from tb_deposit_teacher  where TeacherID = :tId);";
+            }else{
+              $sql_str = "select * from tb_accnt_deposit where AccountID = :tid";
+            }
+            $stmt = $this->DB->prepare($sql_str);
+            $stmt->bindParam(":tId", $tId, PDO::PARAM_STR);
+            if(!$stmt->execute())
+                return 10001;
+            $info = array();
+            while($row = $stmt->fetch(PDO::FETCH_ASSOC)){
+                $tmp_ar = array();
+                $tmp_ar['depositname'] = $row['OrgName'];
+                $tmp_ar['depositid'] = $row['AccountID'];
+                $tmp_ar['address'] = $row['Address'];
+                $tmp_ar['contactname'] = $row['ContactName'];
+                $tmp_ar['contactphone'] = $row['ContactPhone'];
+                $tmp_ar['longitude'] = $row['Longitude'];
+                $tmp_ar['latitude'] = $row['Latitude'];
+                $info[] = $tmp_ar;
+            }
+            return $info;
         }catch (PDOException $e) {
             $errs = $e->getMessage();
             return 10000;
