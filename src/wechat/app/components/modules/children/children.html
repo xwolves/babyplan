@@ -9,62 +9,56 @@
                     <div style="float: left;margin-top: 10px; margin-left: 10px;">
                         <!-- wechat.name -->
                         <h4>{{vm.parent.wechat.nickname}}</h4>
-                        <p style="margin-top: -10px;">某某某小孩家长</p>
+                        <p style="margin-top: -10px;">{{vm.parent.title}}</p>
                     </div>
                 </div>
             </div>
         </div>
         <div class="msg_flow">
-            <h4>小孩记录</h4>
+            <h4>打卡记录</h4>
+            <div class="weui_panel weui_panel_access">
             <div class="weui_panel_bd">
-                <a class="weui_media_box weui_media_appmsg">
+                <div class="weui_media_box weui_media_text" ng-repeat="item in vm.fingerprintLogSample">
+                    <h4 class="weui_media_title">{{item.childName}}</h4>
+                    <p class="weui_media_desc">{{item.signintime}} <br>于指纹机{{item.deviceid}}中记录指纹</p>
+                </div>
+            </div>
+            <a ui-sref="tabs.childrenSignIn" class="weui_panel_ft">查看更多</a>
+        </div>
+            <h4>托管情况</h4>
+            <div class="weui_panel_bd">
+
+                <a class="weui_media_box weui_media_appmsg" ng-repeat="item in vm.msg">
                     <div class="weui_media_hd">
-                        <img class="weui_media_appmsg_thumb" src="./img/title.png" alt="">
+                        <img class="weui_media_appmsg_thumb" src="./img/title.png" alt="小孩的头像">
                     </div>
                     <div class="weui_media_box weui_media_text">
-                        <h4 class="weui_media_title">标题一</h4>
-                        <p class="weui_media_desc">由各种物质组成的巨型球状天体，叫做星球。星球有一定的形状，有自己的运行轨道。</p>
-                        <div style="display:inline-block;">
-                            <img style="float: left;" ng-src="{{vm.parent.wechat.headimgurl}}"
+                        <h4 class="weui_media_title">{{item.childrenName}}</h4>
+                        <p class="weui_media_desc" ng-if="item.description">{{item.description}}</p>
+                        <div style="display:inline-block;" ng-if="item.photolink1">
+                            <img style="float: left;" ng-src="{{item.photolink1}}"
                                  onload='if (this.width>64 || this.height>100) if (this.width/this.height>64/100) this.width=64; else this.height=100;' >
-                            <img style="float: left;" ng-src="{{vm.parent.wechat.headimgurl}}"
+                            <img style="float: left;" ng-src="{{item.photolink2}}"  ng-if="item.photolink2"
                                  onload='if (this.width>64 || this.height>100) if (this.width/this.height>64/100) this.width=64; else this.height=100;' >
-                            <img style="float: left;" ng-src="{{vm.parent.wechat.headimgurl}}"
+                            <img style="float: left;" ng-src="{{item.photolink3}}"  ng-if="item.photolink3"
                                  onload='if (this.width>64 || this.height>100) if (this.width/this.height>64/100) this.width=64; else this.height=100;' >
-                            <img style="float: left;" ng-src="{{vm.parent.wechat.headimgurl}}"
+                        </div>
+                        <div style="display:inline-block;" ng-if="item.photolink4">
+                            <img style="float: left;" ng-src="{{item.photolink4}}"
+                                 onload='if (this.width>64 || this.height>100) if (this.width/this.height>64/100) this.width=64; else this.height=100;' >
+                            <img style="float: left;" ng-src="{{item.photolink5}}"  ng-if="item.photolink5"
+                                 onload='if (this.width>64 || this.height>100) if (this.width/this.height>64/100) this.width=64; else this.height=100;' >
+                            <img style="float: left;" ng-src="{{item.photolink6}}"  ng-if="item.photolink6"
                                  onload='if (this.width>64 || this.height>100) if (this.width/this.height>64/100) this.width=64; else this.height=100;' >
                         </div>
                         <ul class="weui_media_info">
-                            <li class="weui_media_info_meta">文字来源</li>
-                            <li class="weui_media_info_meta">时间</li>
-                            <li class="weui_media_info_meta weui_media_info_meta_extra">其它信息</li>
+                            <li class="weui_media_info_meta">来自{{item.publisherid}}老师</li>
+                            <li class="weui_media_info_meta weui_media_info_meta_extra">{{item.createtime|dateChange}}</li>
+                            <li class="weui_media_info_meta weui_media_info_meta_extra">{{item.clickcount}}</li>
                         </ul>
                     </div>
                 </a>
-                <a class="weui_media_box weui_media_appmsg">
-                    <div class="weui_media_hd">
-                        <img class="weui_media_appmsg_thumb" src="./img/title.png" alt="">
-                    </div>
-                    <div class="weui_media_box weui_media_text">
-                        <h4 class="weui_media_title">标题一</h4>
-                        <p class="weui_media_desc">由各种物质组成的巨型球状天体，叫做星球。星球有一定的形状，有自己的运行轨道。</p>
-                        <div style="display:inline-block;">
-                            <img style="float: left;" ng-src="{{vm.parent.wechat.headimgurl}}"
-                                 onload='if (this.width>64 || this.height>100) if (this.width/this.height>64/100) this.width=64; else this.height=100;' >
-                            <img style="float: left;" ng-src="{{vm.parent.wechat.headimgurl}}"
-                                 onload='if (this.width>64 || this.height>100) if (this.width/this.height>64/100) this.width=64; else this.height=100;' >
-                            <img style="float: left;" ng-src="{{vm.parent.wechat.headimgurl}}"
-                                 onload='if (this.width>64 || this.height>100) if (this.width/this.height>64/100) this.width=64; else this.height=100;' >
-                            <img style="float: left;" ng-src="{{vm.parent.wechat.headimgurl}}"
-                                 onload='if (this.width>64 || this.height>100) if (this.width/this.height>64/100) this.width=64; else this.height=100;' >
-                        </div>
-                        <ul class="weui_media_info">
-                            <li class="weui_media_info_meta">文字来源</li>
-                            <li class="weui_media_info_meta">时间</li>
-                            <li class="weui_media_info_meta weui_media_info_meta_extra">其它信息</li>
-                        </ul>
-                    </div>
-                </a>
+
             </div>
 
         </div>

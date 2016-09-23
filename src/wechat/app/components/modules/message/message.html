@@ -1,12 +1,43 @@
-<ion-view view-title="信息通知">
+<ion-view view-title="信息">
+
+    <ion-nav-buttons side="right">
+        <a class="button button-icon icon ion-edit" ng-click="vm.new()"></a>
+    </ion-nav-buttons>
+
     <ion-content>
-        <div class="weui_msg">
-            <div class="weui_icon_area">
-              <img ng-src="img/title.png" />
-            </div>
-            <div class="weui_text_area">
-                <h2 class="weui_msg_title">信息通知</h2>
-            </div>
+        <div class="weui_panel_bd">
+
+            <a class="weui_media_box weui_media_appmsg" ng-repeat="item in vm.msg">
+                <div class="weui_media_hd">
+                    <img class="weui_media_appmsg_thumb" src="./img/title.png" alt="小孩的头像">
+                </div>
+                <div class="weui_media_box weui_media_text">
+                    <h4 class="weui_media_title">{{item.childrenName}}</h4>
+                    <p class="weui_media_desc" ng-if="item.description">{{item.description}}</p>
+                    <div style="display:inline-block;" ng-if="item.photolink1">
+                        <img style="float: left;" ng-src="{{item.photolink1}}"
+                             onload='if (this.width>64 || this.height>100) if (this.width/this.height>64/100) this.width=64; else this.height=100;' >
+                        <img style="float: left;" ng-src="{{item.photolink2}}"  ng-if="item.photolink2"
+                             onload='if (this.width>64 || this.height>100) if (this.width/this.height>64/100) this.width=64; else this.height=100;' >
+                        <img style="float: left;" ng-src="{{item.photolink3}}"  ng-if="item.photolink3"
+                             onload='if (this.width>64 || this.height>100) if (this.width/this.height>64/100) this.width=64; else this.height=100;' >
+                    </div>
+                    <div style="display:inline-block;" ng-if="item.photolink4">
+                        <img style="float: left;" ng-src="{{item.photolink4}}"
+                             onload='if (this.width>64 || this.height>100) if (this.width/this.height>64/100) this.width=64; else this.height=100;' >
+                        <img style="float: left;" ng-src="{{item.photolink5}}"  ng-if="item.photolink5"
+                             onload='if (this.width>64 || this.height>100) if (this.width/this.height>64/100) this.width=64; else this.height=100;' >
+                        <img style="float: left;" ng-src="{{item.photolink6}}"  ng-if="item.photolink6"
+                             onload='if (this.width>64 || this.height>100) if (this.width/this.height>64/100) this.width=64; else this.height=100;' >
+                    </div>
+                    <ul class="weui_media_info">
+                        <li class="weui_media_info_meta">来自{{item.publisherid}}老师</li>
+                        <li class="weui_media_info_meta weui_media_info_meta_extra">{{item.createtime|dateChange}}</li>
+                        <li class="weui_media_info_meta weui_media_info_meta_extra">{{item.clickcount}}</li>
+                    </ul>
+                </div>
+            </a>
+
         </div>
     </ion-content>
 </ion-view>

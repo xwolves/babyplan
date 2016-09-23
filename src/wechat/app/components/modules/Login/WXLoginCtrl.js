@@ -11,7 +11,12 @@
 
             function validate() {
                 vm.user = $stateParams.user;
+                vm.type = $stateParams.type;
+                console.log("vm.type = "+vm.type+" with "+vm.user);
+            /////////////////////////////////////////////////////////
                 vm.user = "oVyGDuNPkAbtljfJKusP4oaCrYG0";//test
+                vm.type = 1;//test
+            ////////////////////////////////////////////////////////
                 MessageToaster.info('user = '+vm.user);
                 if (vm.user) {
                     //login failed
@@ -22,7 +27,12 @@
                     vm.showChooseModal = showChooseModal;
                     vm.login = login;
                     vm.select = selectChoose;
-                    vm.wxlogin(vm.user);
+                    //获取到微信uid后先尝试登陆对应的用户类型
+                    if(vm.type){
+                        vm.wxlogin(vm.user,vm.type);
+                    }else{
+                        vm.showChooseModal();
+                    }
                 }
             }
 
@@ -33,7 +43,6 @@
                     console.log(response);
                     if(response.errno==0) {
                         var result = response.data;
-                        //if(typeof(result.uid) == "undefined" ){
                         if (result instanceof Array && result.length > 1) {
                             //modal select type
                             vm.roleList=result;
@@ -42,14 +51,14 @@
                         }else{
                             var u=result[0];
                             if (u.uid != null && u.token != null && u.type != null) {
-                                AuthService.setSession(u.uid, u.token, u.type);
+                                AuthService.setSession(u.uid, u.token, u.type,userid);
                                 StateService.clearAllAndGo(AuthService.getNextPath());
                             }
                         }
                     }else{
                         if(response.errno==12004){
                             //no data found
-                            AuthService.setSession(userid, "", Role.unknown);
+                            AuthService.setSession(null, null, Role.unknown,userid);
 
                             StateService.clearAllAndGo("register");
                         }

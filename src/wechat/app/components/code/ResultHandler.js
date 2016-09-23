@@ -1,6 +1,6 @@
 (function() {
     "use strict";
-    angular.module('ResultHandler', []).service('ResultHandler', function($q, MessageToaster) {
+    angular.module('ResultHandler', []).service('ResultHandler', function($q) {
         'ngInject';
 
         var handler = {
@@ -9,21 +9,21 @@
         };
 
         function successedFuc(response) {
-            //if (response.data.status == 0) {
-            if (response.data.errno == 0){
-                return response.data;
-            } else {
-                response.data.error ? MessageToaster.error(response.data.error) : MessageToaster.accessFail();;
-                return $q.reject();
-            }
+            //console.log("successedFuc");
+            //console.log(response);
+            return response.data;
+            //if (response.data.errno == 0){
+            //    return response.data;
+            //} else {
+            //    return $q.reject(response.data.error);
+            //}
         }
-
 
         function failedFuc(error) {
-            MessageToaster.accessFail();
+            //console.log("failedFuc");
+            //console.log(error);
             return $q.reject(error);
         }
-
 
         return handler;
     });

@@ -31,6 +31,7 @@
     //    }
     //}
     function registerParent(user) {
+      console.log(user);
       var data = {
         "weixinno": user.wechat,
         "name": user.name,

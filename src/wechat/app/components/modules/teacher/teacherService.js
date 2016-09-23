@@ -9,7 +9,8 @@
     var service = {
       createTeacher:createTeacher,
       updateTeacher:updateTeacher,
-      queryTeacher:queryTeacher
+      queryTeacher:queryTeacher,
+      queryTeacherDeposit:queryTeacherDeposit
     };
 
 
@@ -75,6 +76,12 @@
     //}
     function queryTeacher(id) {
       var url = Constants.serverUrl + 'account/query/depositTeacher/'+id;
+      return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
+    };
+
+
+    function queryTeacherDeposit(id) {
+      var url = Constants.serverUrl + 'deposit/teacher/'+id;
       return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
     };
 

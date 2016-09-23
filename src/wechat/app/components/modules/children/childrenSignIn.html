@@ -1,0 +1,12 @@
+<ion-view view-title="打卡详情">
+    <ion-content>
+        <div class="weui_panel weui_panel_access">
+            <div class="weui_panel_bd">
+                <div class="weui_media_box weui_media_text" ng-repeat="item in vm.fingerprintLogs">
+                    <h4 class="weui_media_title">{{item.childName}}</h4>
+                    <p class="weui_media_desc">{{item.signintime}} 于指纹机{{item.deviceid}}中记录指纹</p>
+                </div>
+            </div>
+        </div>
+    </ion-content>
+</ion-view>

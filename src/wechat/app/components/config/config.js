@@ -3,7 +3,7 @@
   angular.module('config', [
     'environmentConfig',
     'constant',
-    'httpDevConfig'
+    'httpRelConfig'
   ]);
 
 }());

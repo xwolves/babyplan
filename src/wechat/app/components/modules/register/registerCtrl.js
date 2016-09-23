@@ -1,7 +1,7 @@
 (function() {
     "use strict";
     angular.module('registerCtrl', [])
-        .controller('registerCtrl', function($scope, Constants,StateService,Session,AuthService,registerService,LoginService) {
+        .controller('registerCtrl', function($scope, Constants,StateService,Session,AuthService,registerService,LoginService,MessageToaster,Role) {
             'ngInject';
             var vm = this;
             vm.activated = false;
@@ -9,7 +9,8 @@
             vm.count=0;
             vm.isLock=false;
             vm.org={mobile:'', password:''};
-            vm.user={ gendar:'1', name:'', mobile:'', password:'', pswConfrim:''};
+            //微信uid的初始化
+            vm.user={ gendar:'1', name:'', mobile:'', password:'', pswConfirm:'', wechat:AuthService.getWechatId()};
             vm.error=null;
             $scope.$on('$ionicView.afterEnter', activate);
 
@@ -17,6 +18,7 @@
                 vm.activated = true;
                 vm.version = Constants.buildID;
                 vm.roleType = '2';
+                console.log(vm.user);
             };
 
             $scope.$watch('vm.user.name', function(newValue, oldValue) {
@@ -85,27 +87,33 @@
             };
 
             function wxlogin(userid,type) {
+                console.log(userid+"..."+type);
                 LoginService.wxLogin(userid,type).then(function (response) {
+                    console.log(response);
                     if (response.errno == 0) {
                         var result = response.data;
-                        if(typeof(result.uid) == "undefined" ){
-                        //if (result instanceof Array && result.length > 1) {
+                        //if(typeof(result.uid) == "undefined" ){
+                        if (result instanceof Array && result.length > 1) {
                             //modal select type
                             vm.roleList = result;
                             //alert(JSON.stringify(result));
-                            MessageToaster.info("have select " + result.length);
-                            vm.showChooseModal();
+                            MessageToaster.info("undefine have select  " + result.length);
+                            //vm.showChooseModal();
+
                         } else {
-                            if (result.uid != null && result.token != null && result.type != null) {
-                                AuthService.setSession(result.uid, result.token, result.type);
+                            console.log(result[0]);
+                            if (result[0].uid != null && result[0].token != null && result[0].type != null) {
+                                console.log("goto next");
+                                AuthService.setSession(result[0].uid, result[0].token, result[0].type, userid);
                                 StateService.clearAllAndGo(AuthService.getNextPath());
                             }
                         }
+                        console.log(result);
+
                     } else {
                         if (response.errno == 12004) {
                             //no data found
-                            AuthService.setSession(userid, "", Role.unknown);
-                            StateService.clearAllAndGo("register");
+                            console.log("找不到任何信息");
                         }
                         MessageToaster.error(response.error);
                     }
@@ -122,23 +130,30 @@
                     vm.error="尝试过多,请稍后再试!";
                     return;
                 }
+                var wechatId=vm.user.wechat;
                 //alert(AuthService.getLoginID());
                 if(vm.roleType=='3'){
-                    registerService.bindTeacher(vm.org,AuthService.getLoginID()).then(function(data) {
+                    registerService.bindTeacher(vm.org,wechatId).then(function(data) {
                         if (data.errno == 0) {
                             var userId = data.data.uid;
-                            if(userId!=null){
-                                wxlogin(userId);
-                            }
+                            console.log("bind teacher uid = "+userId);
+                            //if(userId!=null){
+                            //    wxlogin(userId,vm.roleType);
+                            //}
+                            wxlogin(wechatId,vm.roleType);
+                        }else{
+                            console.log("bindTeacher get error");
                         }
                     });
                 }else if(vm.roleType=='1'){
-                    registerService.bindOrganizer(vm.org,AuthService.getLoginID()).then(function(data) {
+                    registerService.bindOrganizer(vm.org,wechatId).then(function(data) {
                         if (data.errno == 0) {
                             var userId = data.data.uid;
-                            if(userId!=null){
-                                wxlogin(userId);
-                            }
+                            console.log("bind teacher uid = "+userId);
+                            //if(userId!=null){
+                            //    wxlogin(userId,vm.roleType);
+                            //}
+                            wxlogin(wechatId,vm.roleType);
                         }
                     });
                 }
@@ -147,23 +162,28 @@
             };
 
             vm.register = function(){
-                console.log(vm.roleType);
                 //检测输入数值是否正确
                 if(!vm.check())return;
                 //先注册
-                vm.user.wechat=AuthService.getLoginID();
                 if(vm.roleType=='2'){
                     registerService.registerParent(vm.user).then(function(data) {
+                        console.log(data);
                         if (data.errno == 0) {
-                            //var userId = data.data.uid;
-                            wxlogin(vm.user.wechat);
+                            wxlogin(vm.user.wechat,vm.roleType);
+                        }else{
+                            if(data.errno==10000){
+                                vm.error = "请确认微信是否已经绑定过";
+                            }else vm.error = data.error;
                         }
                     });
                 }else if(vm.roleType=='3'){
                     registerService.registerTeacher(vm.user).then(function(data) {
                         if (data.errno == 0) {
-                            //var userId = data.data.uid;
-                            wxlogin(vm.user.wechat);
+                            wxlogin(vm.user.wechat,vm.roleType);
+                        }else{
+                            if(data.errno==10000){
+                                vm.error = "请确认微信是否已经绑定过";
+                            }else vm.error = data.error;
                         }
                     });
                 };

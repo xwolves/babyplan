@@ -17,6 +17,16 @@
               controllerAs: 'vm'
             }
           }
+      })
+      .state('tabs.childrenSignIn', {
+        url: "/childrenSignIn",
+        views: {
+          'tab-children': {
+            templateUrl: 'children/childrenSignIn.html',
+            controller: 'childrenCtrl',
+            controllerAs: 'vm'
+          }
+        }
       });
   }
 }());

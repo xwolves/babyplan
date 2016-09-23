@@ -18,6 +18,7 @@ $dark:                            #444 !default;
 $ionicons-font-path: "../lib/ionic/fonts" !default; // Include all of Ionic
 $positive: #38B2FF !default;
 @import "bower_components/ionic/scss/ionic";
+@import "bower_components/AngularJS-Toaster/toaster.scss";
 @import "./common.scss";
 @import "./platform.scss";
 .home_option_grid {

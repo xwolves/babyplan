@@ -33,19 +33,15 @@
             };
 
             vm.save=function(){
-                    console.log(vm.item);
-                console.log();
-                    //create
-                    teacherService.createTeacher(vm.item,AuthService.getLoginID()).then(function(data) {
-                        if (data.errno == 0) {
-                            //var userId = data.data.uid;
-                            //wxlogin(vm.user.wechat);
-                            StateService.back();
-                        }
-                    });
-                //}else{
-                //    StateService.back();
-                //}
+                console.log(vm.item);
+                //create
+                teacherService.createTeacher(vm.item,AuthService.getLoginID()).then(function(data) {
+                    if (data.errno == 0) {
+                        //var userId = data.data.uid;
+                        //wxlogin(vm.user.wechat);
+                        StateService.back();
+                    }
+                });
             };
 
 
