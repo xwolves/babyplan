@@ -74,8 +74,8 @@ $app->get(
             $go2Url = urldecode($businessUrl);
             $tail = "#/wxlogin";
             $tmp_str = substr($go2Url, strlen($go2Url) - strlen($tail));
-            if($tail != $tmp_str)
-                $go2Url .= $tail;
+            //if($tail != $tmp_str)
+            //    $go2Url .= $tail;
 
             header("Location: ".$go2Url."?user=".$userInfo['openid']."&type=".$type);
             exit;
@@ -815,5 +815,26 @@ $app->get(
     }
 );
 
+$app->put(
+    '/upload',
+    function () use ($app) {
+      $ch = curl_init(); //初始化CURL句柄
+      curl_setopt($ch, CURLOPT_URL, "http://localhost:8080/upload?filename=".$app->request->params('filename')); //设置请求的URL
+      curl_setopt($ch, CURLOPT_RETURNTRANSFER,1); //设为TRUE把curl_exec()结果转化为字串，而不是直接输出
+      curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT'); //设置请求方式
+
+      curl_setopt($ch,CURLOPT_HTTPHEADER,array("X-HTTP-Method-Override: PUT"));//设置HTTP头信息
+      curl_setopt($ch, CURLOPT_POSTFIELDS, $app->request->getBody());//设置提交的字符串
+      $document = curl_exec($ch);//执行预定义的CURL
+      if(!curl_errno($ch)){
+        $info = curl_getinfo($ch);
+        $app->getLog()->debug("Debug ".date('Y-m-d H:i:s')." : "."seconds to send a request to " . $info['url']);
+      } else {
+        $app->getLog()->debug("Debug ".date('Y-m-d H:i:s')." : "."Curl error: " . curl_error($ch));
+      }
+      curl_close($ch);
+      $response->setBody($document);
+    }
+);
 
 $app->run();
