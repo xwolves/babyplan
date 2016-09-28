@@ -9,11 +9,11 @@
 
     <ion-content>
         <ion-list>
-            <ion-item class="item" ng-click="vm.goTo(item.uid)" collection-repeat="item in vm.children">
-                <p>{{item.name}}<span style="float: right">{{item.gendar|gendarChange}}</span></p>
-
-                <ion-option-button class="button-positive ion-edit" ng-click="vm.editChild(item.sid)">&nbsp;编辑</ion-option-button>
-                <ion-option-button class="button-assertive ion-trash-a" ng-click="vm.delChild(item)">&nbsp;删除</ion-option-button>
+            <ion-item class="item" ng-click="vm.goTo(item.uid,item)" collection-repeat="item in vm.children">
+                <p>{{item.name}}<span style="float: right">{{item.sex|gendarChange}}</span></p>
+                <!--暂时不支持编辑与删除-->
+                <!--<ion-option-button class="button-positive ion-edit" ng-click="vm.editChild(item.uid,item)">&nbsp;编辑</ion-option-button>-->
+                <!--<ion-option-button class="button-assertive ion-trash-a" ng-click="vm.delChild(item)">&nbsp;删除</ion-option-button>-->
             </ion-item>
 
             <div class="item" ng-if="vm.children !== undefined && !vm.children.length" class="no-results">

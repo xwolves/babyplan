@@ -17,10 +17,10 @@
                 vm.user = "oVyGDuNPkAbtljfJKusP4oaCrYG0";//test
                 vm.type = 1;//test
             ////////////////////////////////////////////////////////
-                MessageToaster.info('user = '+vm.user);
+                //MessageToaster.info('user = '+vm.user);
                 if (vm.user) {
                     //login failed
-                    MessageToaster.info('logining....');
+                    //MessageToaster.info('logining....');
                     vm.info = "正在登录，请稍后...";
                     vm.showLoginModal = showLoginModal;
                     //vm.roleList = [{type:1,user:'1111'}];//test
@@ -38,7 +38,7 @@
 
             function wxlogin(userid,type) {
                 console.log(userid+"  type = "+type);
-                MessageToaster.info('准备登录');
+                //MessageToaster.info('准备登录');
                 LoginService.wxLogin(userid,type).then(function(response) {
                     console.log(response);
                     if(response.errno==0) {
@@ -46,7 +46,7 @@
                         if (result instanceof Array && result.length > 1) {
                             //modal select type
                             vm.roleList=result;
-                            MessageToaster.info("have select "+result.length);
+                            //MessageToaster.info("have select "+result.length);
                             vm.showChooseModal();
                         }else{
                             var u=result[0];

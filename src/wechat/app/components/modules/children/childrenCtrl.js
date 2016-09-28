@@ -1,7 +1,7 @@
 (function() {
     "use strict";
     angular.module('childrenCtrl', [])
-        .controller('childrenCtrl', function($scope, Constants,childrenService,AuthService) {
+        .controller('childrenCtrl', function($scope, Constants,childrenService,AuthService,Session, StateService) {
             'ngInject';
             console.log("childrenCtrl");
             var vm = this;
@@ -69,6 +69,11 @@
                         vm.parent.wechat = data.data;
                     }
                 });
+            };
+
+            vm.goPhoto=function(msgIndex,index){
+                Session.temp=vm.msg[msgIndex];
+                StateService.go("photo",{index:index});
             };
 
             // {childuid: "40000003", childname: "赵小萌", timeline: Array[1]}

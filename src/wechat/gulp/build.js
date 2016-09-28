@@ -5,8 +5,8 @@ var path = require('path');
 var moment = require("moment");
 var runSequence = require('run-sequence');
 
-var DEV_DOMAIN = 'http://10.20.0.72/duty-Api/Api/';
-var RELEASE_DOMAIN = 'http://itsmwx.xh.sustc.edu.cn/Api/';
+var DEV_DOMAIN = 'http://10.20.0.72/sMng/stuManage/www/Api/';
+var RELEASE_DOMAIN = './Api/';
 
 
 
@@ -64,6 +64,9 @@ gulp.task('build-release-config', function(done) {
         // console.log('BuildLog is not exists.');
     }
 
+    gulp.src('app/index.html')
+        .pipe(replace(/buildID=.*\"/g, 'buildID=' + today + 'v' + version + '\"'))
+        .pipe(gulp.dest('app/'));
 
     return gulp.src('app/components/config/environmentConfig.js')
         .pipe(replace(DEV_DOMAIN, RELEASE_DOMAIN))

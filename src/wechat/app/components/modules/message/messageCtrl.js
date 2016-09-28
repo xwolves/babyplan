@@ -1,7 +1,7 @@
 (function() {
     "use strict";
     angular.module('messageCtrl', [])
-        .controller('messageCtrl', function($scope, Constants, messageService, AuthService, StateService) {
+        .controller('messageCtrl', function($scope, Constants, messageService, AuthService, StateService,Session) {
             'ngInject';
             var vm = this;
             vm.activated = false;
@@ -15,6 +15,11 @@
                     vm.msg=data.data;
                 });
             }
+
+            vm.goPhoto=function(msgIndex,index){
+                Session.temp=vm.msg[msgIndex];
+                StateService.go("photo",{index:index});
+            };
 
             vm.new=function(id){
                 //创建信息

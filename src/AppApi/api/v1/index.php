@@ -824,7 +824,9 @@ $app->put(
       curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT'); //设置请求方式
 
       curl_setopt($ch,CURLOPT_HTTPHEADER,array("X-HTTP-Method-Override: PUT"));//设置HTTP头信息
-      curl_setopt($ch, CURLOPT_POSTFIELDS, $app->request->getBody());//设置提交的字符串
+      $data=$app->request->getBody();
+      var_dump($data);
+      curl_setopt($ch, CURLOPT_POSTFIELDS, $data);//设置提交的字符串
       $document = curl_exec($ch);//执行预定义的CURL
       if(!curl_errno($ch)){
         $info = curl_getinfo($ch);

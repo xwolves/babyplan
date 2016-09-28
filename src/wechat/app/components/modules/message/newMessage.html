@@ -25,8 +25,9 @@
                             <div class="weui_cell_ft">{{vm.imgs.length}}/6</div>
                         </div>
                         <div class="weui_uploader_bd">
+
                             <ul class="weui_uploader_files">
-                                <li ng-repeat="curImg in vm.imgs " class="weui_uploader_file" style="background-image:url({{curImg}})"></li>
+                                <li ng-repeat="curImg in vm.imgshow " class="weui_uploader_file" style="background-image:url({{curImg}})"></li>
 
                                 <!--
                                  <li class="weui_uploader_file" style="background-image:url(http://shp.qpic.cn/weixinsrc_pic/pScBR7sbqjOBJomcuvVJ6iacVrbMJaoJZkFUIq4nzQZUIqzTKziam7ibg/)"></li>
@@ -42,7 +43,7 @@
                                  </li>
                                 -->
                             </ul>
-                            <div class="weui_uploader_input_wrp">
+                            <div class="weui_uploader_input_wrp" ng-hide="vm.imgshow.length==6">
                                 <input class="weui_uploader_input" type="file" id="fileinput" accept="image/*" onchange="angular.element(this).scope().fileSelect(event)"/>
                             </div>
                         </div>
@@ -66,7 +67,7 @@
     </ion-content>
 
     <div class="bar bar-footer">
-        <button class="weui_btn weui_btn_primary" style="width: 100%;" ng-click="vm.save()">提交</button>
+        <button class="weui_btn weui_btn_primary" style="width: 100%;" ng-click="vm.save(0)">提交</button>
     </div>
 
 </ion-view>

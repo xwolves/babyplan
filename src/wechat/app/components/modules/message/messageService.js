@@ -26,12 +26,29 @@
       }).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
     };
 
+    //function postPhoto(data){
+    //  var url = Constants.serverUrl + 'upload?filename=photo'+new Date().getTime()+'.jpg';
+    //  return $http({
+    //    method: 'put',
+    //    url: url,
+    //    data: data
+    //  }).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
+    //};
+    //"Content-Type": "multipart/form-data"
+   // Content-Type	multipart/form-data; boundary=----WebKitFormBoundaryVCKz6Byvi4TF2rpa
     function postPhoto(data){
-        var url = Constants.dfsUrl + 'upload?filename=photo'+new Date().getTime()+'.jpg';
+      var fd = new FormData();
+      fd.append('file', data);
+      var url = Constants.dfsUrl + 'upload';
+      console.log(fd);
       return $http({
-        method: 'put',
+        method: 'post',
         url: url,
-        data: data
+        data: fd,
+        headers:{
+          'Content-Type':undefined
+        },
+        transformRequest: angular.identity
       }).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
     };
 

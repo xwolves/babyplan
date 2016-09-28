@@ -27,6 +27,7 @@
 
     .config(function($ionicConfigProvider, $urlRouterProvider, $stateProvider, $httpProvider, $sceDelegateProvider) {
             console.log("start app");
+
             if (!ionic.Platform.isIOS()) {
                 $ionicConfigProvider.scrolling.jsScrolling(false);
             }

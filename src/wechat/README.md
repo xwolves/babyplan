@@ -24,3 +24,18 @@
         }
     ]
 }
+
+{
+    "button": [
+        {
+            "type": "view",
+            "name": "家长入口",
+            "url": "http://120.76.226.47/api/v1/redirect?type=2&businessUrl=http://120.76.226.47/wechat"
+        },
+        {
+            "type": "view",
+            "name": "老师入口",
+            "url": "http://120.76.226.47/api/v1/redirect?type=1&businessUrl=http://120.76.226.47/wechat"
+        }
+    ]
+}

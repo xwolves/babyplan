@@ -19,6 +19,16 @@ app.filter('JSchange', function () {
     };
 });
 
+app.filter('relationshipChange', function () {
+    return function (input) {
+        if (input == "1")return "父亲";
+        else if (input == "2")return "母亲";
+        else if (input == "3")return "爷爷";
+        else if (input == "4")return "奶奶";
+        else return "其它";
+    };
+});
+
 app.filter('dateChange', function () {
     return function (input) {
         var d = new Date(input.replace(/-/g,   "/"));

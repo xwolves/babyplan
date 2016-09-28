@@ -12,13 +12,13 @@
             vm.imgPosition=0;
             vm.imgCal=0;
             vm.imgs=[];
+            vm.imgshow=[];
             function activate() {
                 vm.activated = true;
                 vm.version = Constants.buildID;
                 teacherService.queryTeacherDeposit(vm.id).then(function(data) {
                     console.log(data);
                     if(data!=null && data.data !=null && data.data.length>0)vm.deposit=data.data[0];
-                    //StateService.go('newMessage');
                 });
             }
 
@@ -27,12 +27,14 @@
                     var data=vm.imgs[which];
                     if(data!=null)messageService.postPhoto(data).then(function(e) {
                         console.log(e);
+                        console.log(e.data.fileurl);
                         vm.imgs[vm.imgCal]=e.data.fileurl;
                         vm.imgCal++;
                         if(vm.imgCal==vm.imgs.length){
+                            console.log(vm.imgs);
                             vm.saveData();
                         }else {
-                            vm.save(which);
+                            vm.save(vm.imgCal);
                         }
                     });
                 }else{
@@ -70,14 +72,18 @@
                 var files = event.target.files;
                 $scope.fileName=files[0].name;
                 var fileReader = new FileReader();
+                console.log(files);
+                vm.imgs[vm.imgPosition] = files[0];
+                console.log(files[0]);
+                //vm.imgPosition++;
+                $scope.$apply();
                 fileReader.readAsDataURL(files[0]);
                 fileReader.onload = function(e) {
                     //console.log(e);
-                    vm.imgs[vm.imgPosition] = this.result;
+                    vm.imgshow[vm.imgPosition] = this.result;
                     //console.log(this.result);
                     vm.imgPosition++;
                     $scope.$apply();
-                    //console.log(vm.imgs);
                 };
             }
         });
