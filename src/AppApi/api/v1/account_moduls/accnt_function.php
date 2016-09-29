@@ -135,7 +135,7 @@ class Account{
 
             }else if(3 == intval($type)){
                 $tb_name = "tb_accnt_teacher";
-                $column = array("accountid", "mobile", "password");
+                $column = array("accountid", "mobile", "password", "name", "sex", "teachage", "age");
                 $info['password'] = substr($info['mobile'], strlen($info['mobile']) - 6);
                 $sql_str = "insert into tb_deposit_teacher (depositid, teacherid, createtime) values (:depositid, :teacherid, now())";
                 $stmt = $this->DB->prepare($sql_str);
