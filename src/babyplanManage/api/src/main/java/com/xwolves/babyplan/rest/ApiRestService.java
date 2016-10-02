@@ -57,7 +57,7 @@ public class ApiRestService {
 
 	private final static Logger logger = Logger.getLogger(ApiRestService.class.getName());
 	
-	private final static String thirdupdload="http://116.7.234.129/upload";
+	private final static String thirdupdload="http://120.76.226.47/upload";
 
 	@Autowired
 	AccntConsultantRepsitory acDao;// 顾问
@@ -83,6 +83,18 @@ public class ApiRestService {
 		}
 		return true;
 	}
+	
+	@RequestMapping(value = "/logout", method = RequestMethod.GET)
+	public Result logout( HttpServletRequest request, HttpServletResponse response)
+	{
+		HttpSession session = request.getSession(false);
+		if (session == null) {
+			return new Result(Result.STATUS_SUCCESS,"注销成功");
+		}
+		session.invalidate();
+		return new Result(Result.STATUS_SUCCESS,"注销成功");
+	}
+	
 
 	/**
 	 * /api/v1/login //顾问登录 { "name": "test", "password": "123456" }
@@ -319,7 +331,82 @@ public class ApiRestService {
 			return null;
 		}
 	}
+	
+	@RequestMapping(value = "/queryDepositDaily", method = RequestMethod.GET)
+	public Result queryyDepositDaily(@RequestParam(value = "pageNumber", required = true) int pageNumber,
+			@RequestParam(value = "pageSize", required = true) int pageSize,
+			@RequestParam(value = "filter", required = false) String filter,
+			@RequestParam(value = "order", required = false) String order,
+			HttpServletRequest request, HttpServletResponse response
+			) throws Exception {
+		
+		if (issessionok(request) == false) {
+			response.setStatus(Result.STATUS_TIMEOUT);
+			throw new Exception("TIMEOUT");
+		}
 
+		ResultComn obj =  accntDepostquery.queryDepositDailyData(filter,order,pageNumber,pageSize);
+		return new Result(Result.STATUS_SUCCESS, "success", obj);
+		//return new Result(Result.STATUS_SUCCESS, "success", obj);
+	}
+
+	
+	@RequestMapping(value = "/queryParentOrder", method = RequestMethod.GET)
+	public Result queryParentOrder(@RequestParam(value = "pageNumber", required = true) int pageNumber,
+			@RequestParam(value = "pageSize", required = true) int pageSize,
+			@RequestParam(value = "filter", required = false) String filter,
+			@RequestParam(value = "order", required = false) String order,
+			HttpServletRequest request, HttpServletResponse response
+			) throws Exception {
+		
+		if (issessionok(request) == false) {
+			response.setStatus(Result.STATUS_TIMEOUT);
+			throw new Exception("TIMEOUT");
+		}
+
+		ResultComn obj =  accntDepostquery.queryParentOrderData(filter,order,pageNumber,pageSize);
+		return new Result(Result.STATUS_SUCCESS, "success", obj);
+		//return new Result(Result.STATUS_SUCCESS, "success", obj);
+	}
+	
+	@RequestMapping(value = "/queryDeviceDetail", method = RequestMethod.GET)
+	public Result queryDeviceDetail(@RequestParam(value = "pageNumber", required = true) int pageNumber,
+			@RequestParam(value = "pageSize", required = true) int pageSize,
+			@RequestParam(value = "filter", required = false) String filter,
+			@RequestParam(value = "order", required = false) String order,
+			HttpServletRequest request, HttpServletResponse response
+			) throws Exception {
+		
+		if (issessionok(request) == false) {
+			response.setStatus(Result.STATUS_TIMEOUT);
+			throw new Exception("TIMEOUT");
+		}
+
+		ResultComn obj =  accntDepostquery.queryDeviceDetailData(filter,order,pageNumber,pageSize);
+		return new Result(Result.STATUS_SUCCESS, "success", obj);
+		//return new Result(Result.STATUS_SUCCESS, "success", obj);
+	}
+	
+	@RequestMapping(value = "/queryChildrenSign", method = RequestMethod.GET)
+	public Result queryChildrenSign(@RequestParam(value = "pageNumber", required = true) int pageNumber,
+			@RequestParam(value = "pageSize", required = true) int pageSize,
+			@RequestParam(value = "filter", required = false) String filter,
+			@RequestParam(value = "order", required = false) String order,
+			HttpServletRequest request, HttpServletResponse response
+			) throws Exception {
+		
+		if (issessionok(request) == false) {
+			response.setStatus(Result.STATUS_TIMEOUT);
+			throw new Exception("TIMEOUT");
+		}
+
+		ResultComn obj =  accntDepostquery.queryChildrenSingData(filter,order,pageNumber,pageSize);
+		return new Result(Result.STATUS_SUCCESS, "success", obj);
+		//return new Result(Result.STATUS_SUCCESS, "success", obj);
+	}
+	
+	
+	
 	/**
 	 * @param request
 	 * @param file

@@ -1,14 +1,14 @@
 (function() {
 	"use strict";
-	angular.module('ChildrenListCtrl', []).controller(
-			'ChildrenListCtrl',
+	angular.module('MsgPostListCtrl', []).controller(
+			'MsgPostListCtrl',
 			function($scope, AuthService, NgTableParams, $state, $stateParams,
 					XHDialog, WebService, toaster) {
 
-				$scope.sortType = 'AccountID'; // set the default sort type
+				$scope.sortType = 'CreateTime'; // set the default sort type
 				$scope.sortReverse = false; // set the default sort order
 				$scope.filter = "";
-				$scope.order = "AccountID desc";
+				$scope.order = "CreateTime desc";
 
 				$scope.ALLfilter = "";
 				$scope.depfilter = "";
@@ -42,7 +42,7 @@
 
 					$scope.ALLfilter = temp.substring(0, temp.length - 4);
 					$scope.isLoading = true;
-					WebService.queryChildrenExt(
+					WebService.queryDepositDaily(
 							$scope.paginationConf.currentPage,
 							$scope.paginationConf.itemsPerPage, $scope.order,
 							$scope.ALLfilter).then(function(data) {
@@ -52,13 +52,10 @@
 					});
 				};
 
+				$scope.fingerRecord = function(event) {
 
-				$scope.fingerRecord = function(indexid) {
-					$state.go("portal.signList", {
-						"accountID" : indexid
-					});
-				};
-				
+					console.log(event);
+				}
 
 				$scope.depositdetial = function(event) {
 
@@ -86,9 +83,9 @@
 				
 				$scope.queryselect = function()
 				{
-					$scope.filter="( AccountID like '%"+$scope.simpleFilter +"%' "+" or Name like '%"+$scope.simpleFilter +"%' "
-					+" or PName like '%"+$scope.simpleFilter +"%' "+" or PMobile like '%"+$scope.simpleFilter +"%' "+
-					" or OrgName like '%"+$scope.simpleFilter +"%') " +" and ";
+					$scope.filter="( PublisherID like '%"+$scope.simpleFilter +"%' "+" or Name like '%"+$scope.simpleFilter +"%' "
+					+" or DepositID like '%"+$scope.simpleFilter +"%' "+" or OrgName like '%"+$scope.simpleFilter +"%' "+
+					" or InfoType like '%"+$scope.simpleFilter +"%') " +" and ";
 					
 				
 					$scope.query();

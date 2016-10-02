@@ -6,7 +6,7 @@
       $scope.login = function () {
           WebService.login($scope.user, $scope.password).then(function (data) {
               if(data.status==0) {
-            	  toaster.pop('success', "登录成功", data.message);
+            	  toaster.pop('', "登录成功");
                   //$uibModalInstance.close(data.message);
                   $state.go("portal");
               }else{

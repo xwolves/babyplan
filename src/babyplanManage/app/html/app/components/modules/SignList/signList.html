@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+
+<form class="form-inline">
+	<div class="form-group">
+		<label for="filterText" style="font-size: 18px;">模糊查询&nbsp;&nbsp;</label>
+		<input type="text" class="form-control" autofocus="autofocus"
+			id="filterText" placeholder="请输入查询内容" ng-model="simpleFilter">
+	</div>
+	<button type="button" class="btn btn-primary" ng-click="queryselect()">查询</button>
+</form>
+
+
+<div style="margin-top: 20px;" class="table-responsive">
+	<table class="table table-bordered table-striped">
+		<thead>
+			<tr>
+				<td><a
+					ng-click="sortType = 'DeviceID'; sortReverse = !sortReverse">
+						设备号 <span ng-show="sortType == 'DeviceID' && !sortReverse"
+						class="fa fa-caret-down"></span> <span
+						ng-show="sortType == 'DeviceID' && sortReverse"
+						class="fa fa-caret-up"></span>
+				</a></td>
+				<td><a
+					ng-click="sortType = 'DepositID'; sortReverse = !sortReverse">
+						机构账号 <span ng-show="sortType == 'DepositID' && !sortReverse"
+						class="fa fa-caret-down"></span> <span
+						ng-show="sortType == 'DepositID' && sortReverse"
+						class="fa fa-caret-up"></span>
+				</a></td>
+				
+				<td><a
+					ng-click="sortType = 'ChildID'; sortReverse = !sortReverse">
+						孩子账号 <span ng-show="sortType == 'ChildID' && !sortReverse"
+						class="fa fa-caret-down"></span> <span
+						ng-show="sortType == 'ChildID' && sortReverse"
+						class="fa fa-caret-up"></span>
+				</a></td>
+				
+				<td><a
+					ng-click="sortType = 'OrgName'; sortReverse = !sortReverse">
+						机构名称 <span ng-show="sortType == 'OrgName' && !sortReverse"
+						class="fa fa-caret-down"></span> <span
+						ng-show="sortType == 'OrgName' && sortReverse"
+						class="fa fa-caret-up"></span>
+				</a></td>
+				
+				<td><a
+					ng-click="sortType = 'Name'; sortReverse = !sortReverse">
+						孩子名称<span ng-show="sortType == 'Name' && !sortReverse"
+						class="fa fa-caret-down"></span> <span
+						ng-show="sortType == 'Name' && sortReverse"
+						class="fa fa-caret-up"></span>
+				</a></td>
+
+				<td><a
+					ng-click="sortType = 'SignInTime'; sortReverse = !sortReverse">
+						打卡时间 <span ng-show="sortType == 'SignInTime' && !sortReverse"
+						class="fa fa-caret-down"></span> <span
+						ng-show="sortType == 'SignInTime' && sortReverse"
+						class="fa fa-caret-up"></span>
+				</a></td>
+
+				<td><a
+					ng-click="sortType = 'CreateTime'; sortReverse = !sortReverse">
+						创建时间<span
+						ng-show="sortType == 'CreateTime' && !sortReverse"
+						class="fa fa-caret-down"></span> <span
+						ng-show="sortType == 'CreateTime' && sortReverse"
+						class="fa fa-caret-up"></span>
+				</a></td>
+
+			</tr>
+		</thead>
+
+		<tbody>
+			<tr ng-repeat="doc in document "
+				ng-Dblclick="editdeposit(doc.AccountID)">
+				<td>{{doc.DeviceID}}</td>
+				<td>{{doc.DepositID}}</td>
+				<td>{{doc.ChildID}}</td>
+				<td>{{doc.OrgName}}</td>
+				<td>{{doc.Name}}</td>
+				<td>{{doc.SignInTime|date:'yyyy-MM-dd HH:mm'}}</td>
+				<td>{{doc.CreateTime|date:'yyyy-MM-dd HH:mm'}}</td>
+			</tr>
+		</tbody>
+
+	</table>
+
+
+	<tm-pagination conf="paginationConf"></tm-pagination>
+</div>

@@ -2,10 +2,10 @@
 'use strict';
 
 var app = angular.module('CustomFilter', []);
-app.filter('ZTchange', function () {
+app.filter('DespTypechange', function () {
     return function (input) {
-        if (input == "1")return "已办结";
-        else if (input == "0")return "未办结";
+        if (input == "1")return "全托";
+        else if (input == "0")return "午托";
         else return "未知";
     };
 });
@@ -17,6 +17,34 @@ app.filter('JSchange', function () {
         else if (input == "2")return "用户";
         else if (input == "*")return "人员";
         else return "未知人员";
+    };
+});
+
+
+app.filter('LiceseTypechange', function () {
+    return function (input) {
+        if (input == "1")return "民非执照";
+        else if (input == "2")return "工商执照";
+        else if (input == "3")return "个体无注册";
+        else return "未知";
+    };
+});
+
+app.filter('PlaceContractTypechange', function () {
+    return function (input) {
+        if (input == "1")return "民非执照";
+        else if (input == "2")return "房屋租赁合同";
+        else if (input == "3")return "无任何合同类场地";
+        else return "未知";
+    };
+});
+
+
+app.filter('Sexchange', function () {
+    return function (input) {
+        if (input == "1")return "男";
+        else if (input == "2")return "女";
+        else return "未知";
     };
 });
 

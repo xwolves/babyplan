@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+
+<form class="form-inline">
+	<div class="form-group">
+		<label for="filterText" style="font-size: 18px;">模糊查询&nbsp;&nbsp;</label>
+		<input type="text" class="form-control" autofocus="autofocus"
+			id="filterText" placeholder="请输入查询内容" ng-model="simpleFilter">
+	</div>
+	<button type="button" class="btn btn-primary" ng-click="queryselect()">查询</button>
+</form>
+
+
+<div style="margin-top: 20px;" class="table-responsive">
+	<table class="table table-bordered table-striped">
+		<thead>
+			<tr>
+				<td><a
+					ng-click="sortType = 'DeviceID'; sortReverse = !sortReverse">
+						设备号 <span ng-show="sortType == 'DeviceID' && !sortReverse"
+						class="fa fa-caret-down"></span> <span
+						ng-show="sortType == 'DeviceID' && sortReverse"
+						class="fa fa-caret-up"></span>
+				</a></td>
+				<td><a
+					ng-click="sortType = 'DepositID'; sortReverse = !sortReverse">
+						机构账号 <span ng-show="sortType == 'DepositID' && !sortReverse"
+						class="fa fa-caret-down"></span> <span
+						ng-show="sortType == 'DepositID' && sortReverse"
+						class="fa fa-caret-up"></span>
+				</a></td>
+				<td><a
+					ng-click="sortType = 'OrgName'; sortReverse = !sortReverse">
+						机构名称 <span ng-show="sortType == 'OrgName' && !sortReverse"
+						class="fa fa-caret-down"></span> <span
+						ng-show="sortType == 'OrgName' && sortReverse"
+						class="fa fa-caret-up"></span>
+				</a></td>
+				<td><a
+					ng-click="sortType = 'Status'; sortReverse = !sortReverse">
+						设备类型<span ng-show="sortType == 'Status' && !sortReverse"
+						class="fa fa-caret-down"></span> <span
+						ng-show="sortType == 'Status' && sortReverse"
+						class="fa fa-caret-up"></span>
+				</a></td>
+
+				<td><a
+					ng-click="sortType = 'uploadtime'; sortReverse = !sortReverse">
+						最新上报时间 <span ng-show="sortType == 'OrgName' && !sortReverse"
+						class="fa fa-caret-down"></span> <span
+						ng-show="sortType == 'OrgName' && sortReverse"
+						class="fa fa-caret-up"></span>
+				</a></td>
+
+				<td><a
+					ng-click="sortType = 'MaintainerName'; sortReverse = !sortReverse">
+						维护人姓名 <span ng-show="sortType == 'MaintainerName' && !sortReverse"
+						class="fa fa-caret-down"></span> <span
+						ng-show="sortType == 'MaintainerName' && sortReverse"
+						class="fa fa-caret-up"></span>
+				</a></td>
+
+				<td><a
+					ng-click="sortType = 'MaintainerPhone'; sortReverse = !sortReverse">
+						维护人电话 <span
+						ng-show="sortType == 'MaintainerPhone' && !sortReverse"
+						class="fa fa-caret-down"></span> <span
+						ng-show="sortType == 'MaintainerPhone' && sortReverse"
+						class="fa fa-caret-up"></span>
+				</a></td>
+				
+				<td><a
+					ng-click="sortType = 'StartTime'; sortReverse = !sortReverse">
+						开始使用时间 <span
+						ng-show="sortType == 'StartTime' && !sortReverse"
+						class="fa fa-caret-down"></span> <span
+						ng-show="sortType == 'StartTime' && sortReverse"
+						class="fa fa-caret-up"></span>
+				</a></td>
+
+				<td></td>
+			</tr>
+		</thead>
+
+		<tbody>
+			<tr ng-repeat="doc in document "
+				ng-Dblclick="editdeposit(doc.DeviceID)">
+				<td>{{doc.DeviceID}}</td>
+				<td>{{doc.DepositID}}</td>
+				<td>{{doc.OrgName}}</td>
+				<td>{{doc.Status}}</td>
+				<td>{{doc.uploadtime|date:'yyyy-MM-dd HH:mm'}}</td>
+				<td>{{doc.MaintainerName}}</td>
+				<td>{{doc.MaintainerPhone}}</td>
+				<td>{{doc.StartTime|date:'yyyy-MM-dd HH:mm'}}</td>
+				<td><button class="btn btn-primary" type="button"
+						ng-click="fingerRecord(doc.DeviceID)">查看上报记录</button></td>
+
+			</tr>
+		</tbody>
+
+	</table>
+
+
+	<tm-pagination conf="paginationConf"></tm-pagination>
+</div>
+

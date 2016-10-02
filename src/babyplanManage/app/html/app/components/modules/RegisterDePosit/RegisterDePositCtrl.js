@@ -48,6 +48,7 @@
 						};
 
 						$scope.init = function($scope, $stateParams) {
+							$scope.content={};
 							$scope.showbaidu = false;
 							$scope.templongitude;
 							$scope.templatitude;
@@ -327,10 +328,10 @@
 						// 提交
 
 						$scope.submit = function(formdata) {
-
 							var request = {
 								method : 'POST',
-								url : "http://127.0.0.1:8080/babyplan/api/v1/uploadExt",
+								//url : "http://127.0.0.1:8080/manager/api/v1/uploadExt",
+								url : "../babyapi/api/v1/uploadExt",
 								data : formdata,
 								headers : {
 									'Content-Type' : undefined
@@ -345,7 +346,21 @@
 								.queryDepostbyid($stateParams.accountID)
 								.then(
 										function(data) {
-											$scope.content = data;
+
+											$scope.content.frontDeskLink =  data.frontDeskLink;
+											$scope.content.publicZoneLink =  data.publicZoneLink;
+											$scope.content.kitchenLink =  data.kitchenLink;
+											$scope.content.diningRoomLink =  data.diningRoomLink;
+											
+											$scope.content.restRoomLink1 =  data.restRoomLink1;
+											$scope.content.restRoomLink2 =  data.restRoomLink2;
+											$scope.content.classRoomLink1 =  data.classRoomLink1;
+											$scope.content.classRoomLink2 =  data.classRoomLink2;
+											
+											$scope.content.otherRoomLink1 =  data.otherRoomLink1;
+											$scope.content.otherRoomLink2 =  data.otherRoomLink2;											
+											$scope.content.iD2PhotoLink =  data.iD2PhotoLink;
+											
 											$scope.templongitude = $scope.content.longitude;
 											$scope.templatitude = $scope.content.latitude;
 

@@ -12,6 +12,10 @@
     'RegisterDePositModule',
     'ChildrenListModule',
     'TeacherListModule',
+    'SignListModule',
+    'DevicesListModule',
+    'MsgPostListModule', 
+    'ChargeListModule',  
     'Ui'
   ]);
 }());

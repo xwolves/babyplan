@@ -88,6 +88,7 @@
 				{
 					$scope.filter="( AccountID like '%"+$scope.simpleFilter +"%' "+" or Name like '%"+$scope.simpleFilter +"%' "
 					+" or Age like '%"+$scope.simpleFilter +"%' "+" or TeachAge like '%"+$scope.simpleFilter +"%' "+
+					" or Mobile like '%"+$scope.simpleFilter +"%') "+
 					" or OrgName like '%"+$scope.simpleFilter +"%') " +" and ";
 					
 				

@@ -1,26 +1,26 @@
 (function() {
 	"use strict";
-	angular.module('ChildrenListCtrl', []).controller(
-			'ChildrenListCtrl',
+	angular.module('SignListCtrl', []).controller(
+			'SignListCtrl',
 			function($scope, AuthService, NgTableParams, $state, $stateParams,
 					XHDialog, WebService, toaster) {
 
-				$scope.sortType = 'AccountID'; // set the default sort type
+				$scope.sortType = 'signintime'; // set the default sort type
 				$scope.sortReverse = false; // set the default sort order
 				$scope.filter = "";
-				$scope.order = "AccountID desc";
+				$scope.order = "signintime desc";
 
 				$scope.ALLfilter = "";
 				$scope.depfilter = "";
 				
 				console.log("TEST"+$stateParams.accountID);
 				if ($stateParams.accountID != null) {
-					$scope.depfilter = "DepositID=" + $stateParams.accountID
+					$scope.depfilter = "ChildID=" + $stateParams.accountID
 							+ " and ";
 				}
 				$scope.paginationConf = {
 					currentPage : 1,
-					totalItems : 8000,
+					totalItems : 0,
 					itemsPerPage : 10,
 					pagesLength : 10,
 					perPageOptions : [ 10, 20, 30, 40, 50 ],
@@ -42,7 +42,7 @@
 
 					$scope.ALLfilter = temp.substring(0, temp.length - 4);
 					$scope.isLoading = true;
-					WebService.queryChildrenExt(
+					WebService.queryChildrenSign(
 							$scope.paginationConf.currentPage,
 							$scope.paginationConf.itemsPerPage, $scope.order,
 							$scope.ALLfilter).then(function(data) {
@@ -52,13 +52,10 @@
 					});
 				};
 
+				$scope.fingerRecord = function(event) {
 
-				$scope.fingerRecord = function(indexid) {
-					$state.go("portal.signList", {
-						"accountID" : indexid
-					});
-				};
-				
+					console.log(event);
+				}
 
 				$scope.depositdetial = function(event) {
 
@@ -82,13 +79,13 @@
 						toParams, fromState, fromParams) {
 
 				});
-				
+	
 				
 				$scope.queryselect = function()
 				{
-					$scope.filter="( AccountID like '%"+$scope.simpleFilter +"%' "+" or Name like '%"+$scope.simpleFilter +"%' "
-					+" or PName like '%"+$scope.simpleFilter +"%' "+" or PMobile like '%"+$scope.simpleFilter +"%' "+
-					" or OrgName like '%"+$scope.simpleFilter +"%') " +" and ";
+					$scope.filter="(  DeviceID like '%"+$scope.simpleFilter +"%' "+" or DepositID like '%"+$scope.simpleFilter +"%' "
+					+" or ChildID like '%"+$scope.simpleFilter +"%' "+" or OrgName like '%"+$scope.simpleFilter +"%' "+
+					" or Name like '%"+$scope.simpleFilter +"%') " +" and ";
 					
 				
 					$scope.query();

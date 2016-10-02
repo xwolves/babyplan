@@ -71,7 +71,49 @@ public class AccntDepostitSqlQuery {
     	return queryComonData(sqltemp,filter,order,pageNumber,pagesize);
     }
 
+  
+    
+    
 
+    public ResultComn queryDeviceDetailData(String filter ,String order,int pageNumber,int pagesize)
+    {
+    	
+    	String sqltemp = "   SELECT t.*,ac_de.OrgName, de_st.uploadtime FROM tb_device_detail t "
+    			+ " left join tb_accnt_deposit ac_de on ac_de.AccountID=t.DepositID "
+    			+ "	LEFT JOIN (SELECT MAX(t.CreateTime)as uploadtime,t.DepositID FROM  tb_device_status t GROUP BY  t.DepositID ) de_st on de_st.DepositID=t.DepositID ";
+    	return queryComonData(sqltemp,filter,order,pageNumber,pagesize);
+    }
+    
+    public ResultComn queryChildrenSingData(String filter ,String order,int pageNumber,int pagesize)
+    {
+    	
+    	String sqltemp = " SELECT t.*,ac_ch.Name,ac_de.OrgName FROM tb_children_signin t  "
+    			+ " LEFT JOIN tb_accnt_children ac_ch on ac_ch.AccountID=t.ChildID"
+    			+ "	left join tb_accnt_deposit ac_de on ac_de.AccountID=t.DepositID ";
+    	return queryComonData(sqltemp,filter,order,pageNumber,pagesize);
+    }
+
+    
+    public ResultComn queryDepositDailyData(String filter ,String order,int pageNumber,int pagesize)
+    {
+    	
+    	String sqltemp = " SELECT t.*,ac_de.OrgName,ac_tea.Name FROM tb_deposit_daily t   "
+    			+ " left join tb_accnt_deposit ac_de on ac_de.AccountID=t.DepositID "
+    			+ "	LEFT JOIN tb_accnt_teacher ac_tea on ac_tea.AccountID=t.PublisherID ";
+    	return queryComonData(sqltemp,filter,order,pageNumber,pagesize);
+    }
+    
+    
+    public ResultComn queryParentOrderData(String filter ,String order,int pageNumber,int pagesize)
+    {
+    	
+    	String sqltemp = "SELECT t.*,ac_pa.Name,ac_pa.Mobile FROM tb_parent_order t "
+    			+ " LEFT JOIN tb_accnt_parent ac_pa on ac_pa.AccountID=t.ParentID ";
+    	return queryComonData(sqltemp,filter,order,pageNumber,pagesize);
+    } 
+    
+    
+    //通用查询函数
 	public ResultComn queryComonData(String sql,  String filter ,String ordertemp,int pageNumber,int pagesize){
     	
     	String where="";

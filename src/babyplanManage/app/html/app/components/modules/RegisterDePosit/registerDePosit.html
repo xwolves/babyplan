@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 
 <div class="page-header">
-	<h3 class="modal-title">{{title}}</h3>
+	<h3 ng-show="!showbaidu" class="modal-title">{{title}}</h3>
+	<h3 ng-show="showbaidu" class="modal-title">地图打点</h3>
 </div>
 
 <div ng-show="!showbaidu">
@@ -26,8 +27,8 @@
 			</div>
 			<label for="contactPhone" class="col-sm-2 control-label">联系电话</label>
 			<div class="col-sm-4">
-				<input id="contactPhone" type="text" placeholder="联系电话"
-					class="form-control" ng-model="content.contactPhone">
+				<input id="contactPhone" type="text" placeholder="联系电话，即微信登录时的账号"
+					class="col-sm-4 form-control" ng-model="content.contactPhone">
 			</div>
 		</div>
 		<div class="form-group">
@@ -36,10 +37,17 @@
 				<input id="iD2Number" type="text" placeholder="身份证号码"
 					class="form-control" ng-model="content.id2Number">
 			</div>
-			<div class="col-sm-4">
-				<button class="btn" type="button" ng-click="showBaidu()"
-					style="width: 100px;">查看所在位置</button>
+			<label for="iD2Number" class="col-sm-2 control-label">当前位置</label>
+
+			<div class="col-sm-2">
+			<input id="iD2Number" class="col-sm-12 form-control" type="text" placeholder="当前位置"
+					 ng-model="content.markId">
 			</div>
+			<div class="col-sm-2">
+			<button class="btn btn-primary" type="button" ng-click="showBaidu()"
+					style="width: 100px;">查看所在位置</button>
+			</div>	
+
 			<div ng-show="false" class="col-sm-4">
 				<input id="contactPhone" type="text" placeholder="地图坐标"
 					class="form-control" ng-model="content.markId">
@@ -226,7 +234,7 @@
  -->
 <div ng-show="showbaidu">
 	<div id="r-result">
-		请输入:<input type="text" id="suggestId" size="20" value=""
+		请输入查询地点:<input type="text" placeholder="请输入查询地点" id="suggestId" size="20" value=""
 			style="width: 150px;" />
 	</div>
 	<div id="allmap" style="width: 100%; height: 600px;"></div>

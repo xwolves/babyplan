@@ -36,20 +36,20 @@
 			$state.go(Constants.LoginStatePath);
 		});	
 		
-		AuthService.login(function(data) {
-			// if(AuthService.needLogin()) {
-			// debugger;
-			// $state.go(Constants.LoginStatePath,{needLogin:true});
-			// }else{
-			// debugger;
-			$state.go(Constants.LoginStatePath);
-			// }
-		}, function() {
-
-			$state.go(Constants.LoginStatePath, {
-				needLogin : true
-			});
-		});
+//		AuthService.login(function(data) {
+//			// if(AuthService.needLogin()) {
+//			// debugger;
+//			// $state.go(Constants.LoginStatePath,{needLogin:true});
+//			// }else{
+//			// debugger;
+//			//$state.go(Constants.LoginStatePath);
+//			// }
+//		}, function() {
+//
+////			$state.go(Constants.LoginStatePath, {
+////				needLogin : true
+////			});
+//		});
 	}
 
 	function appConfig($httpProvider) {
