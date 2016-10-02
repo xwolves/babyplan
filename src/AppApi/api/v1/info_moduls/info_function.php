@@ -230,7 +230,7 @@ class Info{
         try{
             $sql_str =  "select * from tb_deposit_daily dd left join (
                 select dc.ChildrenID, dc.DepositID,
-                (select pc.ParentID from tb_parent_children pc WHERE pc.ChildrenID = dc.ChildrenID) as parentID,
+                (select pc.ParentID from tb_parent_children pc WHERE pc.ChildrenID = dc.ChildrenID and pc.ParentID = :parentuid limit 0, 1) as parentID,
                 (select ac.Name from tb_accnt_children ac WHERE ac.AccountID = dc.ChildrenID) as childName
                 from tb_deposit_children dc ) b
                 on b.DepositID = dd.DepositID
