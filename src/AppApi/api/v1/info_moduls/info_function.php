@@ -361,10 +361,10 @@ class Info{
         try{
             $sql_str =  "select * from (
             select * ,
-            (select pc.ParentID from tb_parent_children pc WHERE pc.ChildrenID = cs.ChildID) as parentID,
+            (select pc.ParentID from tb_parent_children pc WHERE pc.ChildrenID = cs.ChildID and pc.parentID = :parentuid limit 0,1) as parentID,
             (select ac.Name from tb_accnt_children ac WHERE ac.AccountID = cs.ChildID) as childName
             from tb_children_signin cs ) a
-            where a.parentID = :parentuid ORDER BY SignInTime DESC;";
+            ORDER BY SignInTime DESC;";
             $stmt = $this->DB->prepare($sql_str);
             $stmt->bindParam(":parentuid", $parentuid, PDO::PARAM_STR);
             if(!$stmt->execute())
