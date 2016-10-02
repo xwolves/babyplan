@@ -52,7 +52,7 @@ $app->options('/:a/:b/:c/:d', function() {});
 
 $app->get(
     '/redirect/',
-    function () use ($app, $APP_ID, $SECRET, $REDIRECT_URL, $orc_db, $redis){
+    function () use ($app, $APP_ID, $SECRET, $REDIRECT_URL, $redis){
         $req=$app->request();
 
         $queryStr = $_SERVER['QUERY_STRING'];
@@ -76,7 +76,7 @@ $app->get(
             $tmp_str = substr($go2Url, strlen($go2Url) - strlen($tail));
             //if($tail != $tmp_str)
             //    $go2Url .= $tail;
-
+			$app->getLog()->debug("Debug ".date('Y-m-d H:i:s')." : "."?user=".$userInfo['openid']."&type=".$type);
             header("Location: ".$go2Url."?user=".$userInfo['openid']."&type=".$type);
             exit;
         }else{
@@ -576,6 +576,24 @@ $app->post(
 );
 
 /*
+ * 设备获取家长孩子信息
+ */
+$app->get(
+    '/device/parent/children/:deviceid',
+    function ($deviceid) use ($app, $sql_db){
+        $response = $app->response;
+
+        $finger = new Finger($sql_db);
+        $ret = $finger->deviceFetchParentChildre($deviceid);
+        if(gettype($ret) != "array"){
+            $response->setBody(rspData($ret));
+        }else{
+            $response->setBody(rspData(0, $ret));
+        }
+    }
+);
+
+/*
  * 机构获取家长孩子信息
  */
 $app->get(
@@ -584,7 +602,7 @@ $app->get(
         $response = $app->response;
 
         $finger = new Finger($sql_db);
-        $ret = $finger->deviceFetchParentChildre($depositid);
+        $ret = $finger->depositFetchParentChildre($depositid);
         if(gettype($ret) != "array"){
             $response->setBody(rspData($ret));
         }else{
@@ -603,14 +621,15 @@ $app->post(
         $rsp_data = array();
         $response = $app->response;
         $request = $app->request->getBody();
+/*
         $token = $app->request->headers('token');
         $depositInfo = $redis->get($token);
         if(!$depositInfo){
             $response->setBody(rspData(10005));
             return;
         }
-
-        $a_request = json_decode($request, true);
+*/
+        $a_request = json_decode($request,true);
         if(empty($a_request)){
             $response->setBody(rspData(12001));
             return;
@@ -819,14 +838,13 @@ $app->put(
     '/upload',
     function () use ($app) {
       $ch = curl_init(); //初始化CURL句柄
-      curl_setopt($ch, CURLOPT_URL, "http://localhost:8080/upload?filename=".$app->request->params('filename')); //设置请求的URL
+      curl_setopt($ch, CURLOPT_URL, "http://localhost/upload?filename=".$app->request->params('filename')); //设置请求的URL
       curl_setopt($ch, CURLOPT_RETURNTRANSFER,1); //设为TRUE把curl_exec()结果转化为字串，而不是直接输出
       curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT'); //设置请求方式
-
       curl_setopt($ch,CURLOPT_HTTPHEADER,array("X-HTTP-Method-Override: PUT"));//设置HTTP头信息
-      $data=$app->request->getBody();
-      var_dump($data);
-      curl_setopt($ch, CURLOPT_POSTFIELDS, $data);//设置提交的字符串
+	$data=$app->request->getBody();
+      curl_setopt($ch,CURLOPT_HTTPHEADER,array("Content-Length:".strlen($data)));
+	curl_setopt($ch, CURLOPT_POSTFIELDS, $data);//设置提交的字符串
       $document = curl_exec($ch);//执行预定义的CURL
       if(!curl_errno($ch)){
         $info = curl_getinfo($ch);
@@ -835,6 +853,7 @@ $app->put(
         $app->getLog()->debug("Debug ".date('Y-m-d H:i:s')." : "."Curl error: " . curl_error($ch));
       }
       curl_close($ch);
+	  $response = $app->response;
       $response->setBody($document);
     }
 );

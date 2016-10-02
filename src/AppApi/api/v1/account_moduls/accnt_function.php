@@ -90,6 +90,11 @@ class Account{
             if(intval($type) == 1){
                 if(!empty($d_info))
                     $info[] = $d_info;
+			else{
+			  if(!empty($t_info)){
+				$info[] = $t_info;	
+			  }	
+			}
             }else if(intval($type) == 2){
                 if(!empty($p_info))
                     $info[] = $p_info;
@@ -137,15 +142,14 @@ class Account{
                 $tb_name = "tb_accnt_teacher";
                 $column = array("accountid", "mobile", "password", "name", "sex", "teachage", "age");
                 $info['password'] = substr($info['mobile'], strlen($info['mobile']) - 6);
-                $sql_str = "insert into tb_deposit_teacher (depositid, teacherid, createtime) values (:depositid, :teacherid, now())";
-                $stmt = $this->DB->prepare($sql_str);
-                $stmt->bindParam(":depositid", intval($info['depositid']), PDO::PARAM_INT);
-                $stmt->bindParam(":teacherid", intval($accountId), PDO::PARAM_INT);
-                if(!$stmt->execute())
-                    return 10001;
-                if($stmt->rowCount() <= 0)
-                    return 10002;
-
+                //$sql_str = "insert into tb_deposit_teacher (depositid, teacherid, createtime) values (?, ?, now())";
+                //$stmt = $this->DB->prepare($sql_str);
+	        	//$stmt->bindParam(1, $info['depositid'], PDO::PARAM_INT);
+                //$stmt->bindParam(2, $accountId, PDO::PARAM_INT);
+                //if(!$stmt->execute())
+                //    return 10001;
+                //if($stmt->rowCount() <= 0)
+                //    return 10002;
             }else if(4 == intval($type)){
                 $tb_name = "tb_accnt_children";
                 $column = array("accountid", "name", "sex", "fingerfeature", "remark");
@@ -184,14 +188,22 @@ class Account{
             $vals = $val_col.$vals;
 
             $sql_str .= $tb_name.$keys.$vals.")";
-
             $stmt = $this->DB->prepare($sql_str);
             if(!$stmt->execute($ar_params))
                 return 10001;
-
             if($stmt->rowCount() <= 0)
                 return 10002;
 
+            if(3 == intval($type)){
+                $sql_str = "insert into tb_deposit_teacher (depositid, teacherid, createtime) values (?, ?, now())";
+                $stmt = $this->DB->prepare($sql_str);
+	        $stmt->bindParam(1, $info['depositid'], PDO::PARAM_INT);
+                $stmt->bindParam(2, $accountId, PDO::PARAM_INT);
+                if(!$stmt->execute())
+                    return 10001;
+                if($stmt->rowCount() <= 0)
+                    return 10002;
+	    }
             return $accountId;
         }catch (PDOException $e) {
             $errs = $e->getMessage();

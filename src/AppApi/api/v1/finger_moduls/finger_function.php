@@ -13,7 +13,7 @@ class Finger{
         try{
             $ar_params = array();
             $childuid = $params['childuid'];
-            $column = array('fingerfeature', 'fingerimglink1', 'fingerimglink2', 'fingerimglink3', 'fingerimglink4', 'fingerimglink5');
+            $column = array('fingerfeature', 'fingerimglink1', 'fingerimglink2', 'fingerimglink3', 'fingerimglink4', 'fingerimglink5', 'fingerindex');
             foreach($params as $key => $val){
                 if(in_array($key, $column))
                     $ar_params[$key] = $val;
@@ -62,16 +62,29 @@ class Finger{
 
     public function childrenSignin($params){
         try{
-            if(!array_key_exists("deviceid", $params) || !array_key_exists("signinid", $params)
-                || !array_key_exists("childid", $params) || !array_key_exists("depositid", $params))
+            if(!array_key_exists("deviceid", $params) || !array_key_exists("fingerindex", $params))
                 return 13002; 
-            $signinid = $params['signinid'];
             $deviceid = $params['deviceid'];
-            $childid = $params['childid'];
-            $depositid = $params['depositid'];
-            if(empty($signinid) || empty($deviceid) || empty($childid) || empty($depositid))
+            $fingerindex = $params['fingerindex'];
+            if(empty($deviceid) || empty($fingerindex))
                 return 13002;
-            $column = array('deviceid', 'signinid', 'childid', 'depositid');
+            $sql_str = "SELECT b.accountid, b.name, c.depositid FROM tb_deposit_children a LEFT JOIN tb_accnt_children b ON a.`ChildrenID`= b.accountid
+                LEFT JOIN tb_device_detail c ON c.`DepositID`= a.`DepositID` WHERE c.`DeviceID`=:deviceid AND b.fingerindex=:fingerindex";
+            $stmt = $this->DB->prepare($sql_str);
+            $stmt->bindParam(":deviceid", $deviceid, PDO::PARAM_STR);
+            $stmt->bindParam(":fingerindex", $fingerindex, PDO::PARAM_INT);
+            if(!$stmt->execute())
+                return 10001;
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+            if(!$row)
+                return 10004; 
+
+            $childid = $row['accountid'];
+            $childname = $row['name'];
+            $depositid = $row['depositid'];
+            $params['childid'] = $childid;
+            $params['depositid']= $depositid;
+            $column = array('deviceid', 'childid', 'depositid');
             $ar_params = array();
             foreach($params as $key => $val){
                 if(in_array($key, $column))
@@ -93,7 +106,10 @@ class Finger{
             if($stmt->rowCount() <= 0)
                 return 10002;
 
-            return 0;
+            $rsp_data = array();
+            $rsp_data['childid'] = $childid;
+            $rsp_data['childname'] = $childname;
+            return $rsp_data;
         }catch (PDOException $e) {
             $errs = $e->getMessage();
             return 10000;
@@ -229,10 +245,79 @@ class Finger{
         }
     }
 
-    public function deviceFetchParentChildre($depositid){
+    public function deviceFetchParentChildre($deviceid){
         try{
             $sql_str = "SELECT parentid, childrenid FROM tb_parent_children WHERE ChildrenID IN 
-                (SELECT  ChildrenID FROM tb_deposit_children WHERE depositid=:depositid)";
+                (SELECT  ChildrenID FROM tb_deposit_children WHERE depositid = (select depositid from tb_device_detail where deviceid=:deviceid))";
+            $stmt = $this->DB->prepare($sql_str);
+            $stmt->bindParam(":deviceid", $deviceid, PDO::PARAM_INT);
+            if(!$stmt->execute())
+                return 10001;
+            $person_ar = array();
+            while($row = $stmt->fetch(PDO::FETCH_ASSOC)){
+                $person_ar['p_id'] = $row['parentid'];
+                $person_ar['c_id'] = $row['childrenid'];
+            }
+            if(empty($person_ar))
+                return 10003; 
+
+            $rsp_data = array();
+            $p_c_ar = array();
+            foreach($person_ar as $key => $val){
+                if($key == "p_id"){
+                    $p_ar = array();
+                    $sql_str = "select name, sex, mobile from tb_accnt_parent where accountid=:pid";
+                    $stmt = $this->DB->prepare($sql_str);
+                    $stmt->bindParam(":pid", intval($val), PDO::PARAM_INT);
+                    if(!$stmt->execute())
+                        return 10001;
+                    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+                    if(!$row)
+                        return 10003;
+                    /*
+                    $p_ar['parentid'] = $val;
+                    $p_ar['name'] = $row['name'];
+                    $p_ar['sex'] = $row['sex'];
+                    $p_ar['mobile'] = $row['mobile'];
+                    $p_c_ar['parent'] = $p_ar;
+                     */
+                    $p_c_ar['parentname'] = $row['name'];
+                    $p_c_ar['parentmobile'] = $row['mobile'];
+                }else if($key == "c_id"){
+                    $c_ar = array();
+                    $sql_str = "select name, sex from tb_accnt_children where accountid=:cid";
+                    $stmt = $this->DB->prepare($sql_str);
+                    $stmt->bindParam(":cid", intval($val), PDO::PARAM_INT);
+                    if(!$stmt->execute())
+                        return 10001;
+                    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+                    if(!$row)
+                        return 10003;
+                    /*
+                    $c_ar['childid'] = $val;
+                    $c_ar['name'] = $row['name'];
+                    $c_ar['sex'] = $row['sex'];
+                    $p_c_ar['children'] = $c_ar;
+                     */
+                    $p_c_ar['childid'] = $val;
+                    $p_c_ar['childname'] = $row['name'];
+                    $p_c_ar['childsex'] = $row['sex'];
+                }
+            }
+
+            $rsp_data[] = $p_c_ar;
+            
+            return $rsp_data;
+        }catch (PDOException $e) {
+            $errs = $e->getMessage();
+            return 10000;
+        }
+    }
+
+    public function depositFetchParentChildre($depositid){
+        try{
+            $sql_str = "SELECT parentid, childrenid FROM tb_parent_children WHERE ChildrenID IN 
+                (SELECT  ChildrenID FROM tb_deposit_children WHERE depositid = :depositid)";
             $stmt = $this->DB->prepare($sql_str);
             $stmt->bindParam(":depositid", $depositid, PDO::PARAM_INT);
             if(!$stmt->execute())
@@ -242,6 +327,7 @@ class Finger{
                 $person_ar['p_id'] = $row['parentid'];
                 $person_ar['c_id'] = $row['childrenid'];
             }
+
             $rsp_data = array();
             $p_c_ar = array();
             foreach($person_ar as $key => $val){
@@ -285,7 +371,6 @@ class Finger{
             return 10000;
         }
     }
-
     private $DB;
 }
 ?>

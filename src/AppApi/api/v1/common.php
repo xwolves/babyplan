@@ -16,7 +16,8 @@ static $errCode = array(
 
     13001 => 'Finger Parames Empty',
     13002 => 'Finger Parames Required Defect',
-    13003 => 'Device Not Regist'
+    13003 => 'Device Not Register',
+    13004 => 'Finger Not register'
 );
 
 function rspData($ret, $data = ""){
