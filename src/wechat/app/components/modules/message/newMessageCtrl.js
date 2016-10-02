@@ -13,32 +13,42 @@
             vm.imgCal=0;
             vm.imgs=[];
             vm.imgshow=[];
+            vm.isClicked=false;
+            vm.btnText='提交';
             function activate() {
                 vm.activated = true;
                 vm.version = Constants.buildID;
                 teacherService.queryTeacherDeposit(vm.id).then(function(data) {
                     console.log(data);
                     if(data!=null && data.data !=null && data.data.length>0)vm.deposit=data.data[0];
+                    else MessageToaster.error('找不到老师的机构信息');
                 });
             }
 
             vm.save=function(which){
-                if(vm.imgs.length>0){
-                    var data=vm.imgs[which];
-                    if(data!=null)messageService.postPhoto(data).then(function(e) {
-                        console.log(e);
-                        console.log(e.data.fileurl);
-                        vm.imgs[vm.imgCal]=e.data.fileurl;
-                        vm.imgCal++;
-                        if(vm.imgCal==vm.imgs.length){
-                            console.log(vm.imgs);
-                            vm.saveData();
-                        }else {
-                            vm.save(vm.imgCal);
-                        }
-                    });
-                }else{
-                    vm.saveData();
+                if(vm.isClicked){
+                    console.log('waiting....');
+                }else {
+                    if (vm.imgs.length > 0) {
+                        vm.isClicked = true;
+                        vm.btnText='正在提交';
+                        MessageToaster.info('上传信息中，请稍等...');
+                        var data = vm.imgs[which];
+                        if (data != null)messageService.postPhoto(data).then(function (e) {
+                            console.log(e);
+                            console.log(e.data.fileurl);
+                            vm.imgs[vm.imgCal] = e.data.fileurl;
+                            vm.imgCal++;
+                            if (vm.imgCal == vm.imgs.length) {
+                                console.log(vm.imgs);
+                                vm.saveData();
+                            } else {
+                                vm.save(vm.imgCal);
+                            }
+                        });
+                    } else {
+                        vm.saveData();
+                    }
                 }
             };
 
@@ -55,6 +65,8 @@
                 };
                 messageService.newMsg(data).then(function(data) {
                     console.log(data);
+                    vm.isClicked=false;
+                    vm.btnText='提交';
                     if(data.errno==0){
                         StateService.back();
                     }else{

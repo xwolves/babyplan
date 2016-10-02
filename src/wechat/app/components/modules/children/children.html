@@ -36,19 +36,19 @@
                         <h4 class="weui_media_title">{{item.childrenName}}</h4>
                         <p class="weui_media_desc" ng-if="item.description">{{item.description}}</p>
                         <div style="display:inline-block;" ng-if="item.photolink1">
-                            <img style="float: left;" ng-src="{{item.photolink1}}" ng-click="vm.goPhoto($index,0)"
+                            <img style="float: left;" ng-src="{{item.photolink1}}" ng-click="goToSlide(0,item)"
                                  onload='if (this.width>64 || this.height>100) if (this.width/this.height>64/100) this.width=64; else this.height=100;' >
-                            <img style="float: left;" ng-src="{{item.photolink2}}"  ng-if="item.photolink2" ng-click="vm.goPhoto($index,1)"
+                            <img style="float: left;" ng-src="{{item.photolink2}}"  ng-if="item.photolink2" ng-click="goToSlide(1,item)"
                                  onload='if (this.width>64 || this.height>100) if (this.width/this.height>64/100) this.width=64; else this.height=100;' >
-                            <img style="float: left;" ng-src="{{item.photolink3}}"  ng-if="item.photolink3" ng-click="vm.goPhoto($index,2)"
+                            <img style="float: left;" ng-src="{{item.photolink3}}"  ng-if="item.photolink3" ng-click="goToSlide(2,item)"
                                  onload='if (this.width>64 || this.height>100) if (this.width/this.height>64/100) this.width=64; else this.height=100;' >
                         </div>
                         <div style="display:inline-block;" ng-if="item.photolink4">
-                            <img style="float: left;" ng-src="{{item.photolink4}}" ng-click="vm.goPhoto($index,3)"
+                            <img style="float: left;" ng-src="{{item.photolink4}}" ng-click="vm.goPhoto(3,item)"
                                  onload='if (this.width>64 || this.height>100) if (this.width/this.height>64/100) this.width=64; else this.height=100;' >
-                            <img style="float: left;" ng-src="{{item.photolink5}}"  ng-if="item.photolink5" ng-click="vm.goPhoto($index,4)"
+                            <img style="float: left;" ng-src="{{item.photolink5}}"  ng-if="item.photolink5" ng-click="goToSlide(4,item)"
                                  onload='if (this.width>64 || this.height>100) if (this.width/this.height>64/100) this.width=64; else this.height=100;' >
-                            <img style="float: left;" ng-src="{{item.photolink6}}"  ng-if="item.photolink6" ng-click="vm.goPhoto($index,5)"
+                            <img style="float: left;" ng-src="{{item.photolink6}}"  ng-if="item.photolink6" ng-click="goToSlide(5,item)"
                                  onload='if (this.width>64 || this.height>100) if (this.width/this.height>64/100) this.width=64; else this.height=100;' >
                         </div>
                         <ul class="weui_media_info">

@@ -40,7 +40,7 @@
                 console.log(vm.images);
                 vm.index=$stateParams.index;
                 console.log(vm.index);
-
+                //vm.image=vm.images[vm.index];
                 $timeout(function(){
                     $scope.slider.slideTo(vm.index);
                     $scope.slider.updateLoop();

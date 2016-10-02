@@ -1,13 +1,14 @@
 (function() {
     "use strict";
     angular.module('teacherEditCtrl', [])
-        .controller('teacherEditCtrl', function($scope, $stateParams, Constants, StateService, teacherService, AuthService, CacheData) {
+        .controller('teacherEditCtrl', function($scope, $stateParams, Constants, StateService, teacherService, AuthService, CacheData,MessageToaster) {
             'ngInject';
             var vm = this;
             vm.activated = false;
 
             vm.query = function(id){
                 vm.item =CacheData.getObject(vm.cid);
+                console.log(vm.item);
                 //vm.item = {name:'girl B',gendar:'2',sid:id,remark:'abcdefg'};
             };
 
@@ -40,7 +41,12 @@
                         //var userId = data.data.uid;
                         //wxlogin(vm.user.wechat);
                         StateService.back();
+                    }else{
+                        //MessageToaster.error(data.error);
+                        MessageToaster.error('无法添加，请确认手机号码是否已经使用过');
                     }
+                },function(data){
+                    MessageToaster.error(data);
                 });
             };
 

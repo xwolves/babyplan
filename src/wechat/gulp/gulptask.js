@@ -23,7 +23,8 @@ function getPath() {
     if (arg == 'build') {
         return 'www';
     } else {
-        return '/Library/WebServer/Documents/app';
+        //return '/Library/WebServer/Documents/app';
+        return 'www';
         //return 'dev';
     }
 }

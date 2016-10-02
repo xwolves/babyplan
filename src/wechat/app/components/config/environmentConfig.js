@@ -5,9 +5,10 @@
             'appTitle':'托管系统',
             'serverUrl': '/api/v1/',
             'dfsUrl': '/',
-            'buildID': '20160923v1',
+            'buildID': '20161002v1',
             'ENVIRONMENT':'release'
         });
 }());
 //'serverUrl': 'http://120.76.226.47/api/v2/',
 //    'dfsUrl': 'http://120.76.226.47/',
+//http://localhost:8090/

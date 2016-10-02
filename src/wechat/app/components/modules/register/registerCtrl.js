@@ -45,8 +45,8 @@
             });
             $scope.$watch('vm.user.password', function(newValue, oldValue) {
                 if(vm.user.password!=undefined) {
-                    if (vm.user.password.length < 8) {
-                        vm.error = '密码长度必须不小于8位';
+                    if (vm.user.password.length < 6) {
+                        vm.error = '密码长度必须不小于6位';
                     } else {
                         vm.error = null;
                     }

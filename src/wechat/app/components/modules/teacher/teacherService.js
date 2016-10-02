@@ -20,12 +20,13 @@
     function updateTeacher(teacher, teacherId) {
       var data = {};
       if(teacher.name!=null)data.name=teacher.name;
-      if(teacher.gendar!=null)data.sex=teacher.gendar;
+      if(teacher.sex!=null)data.sex=teacher.sex;
       if(teacher.mobile!=null)data.mobile=teacher.mobile;
       if(teacher.teachage!=null)data.teachage=teacher.teachage;
       if(teacher.age!=null)data.age=teacher.age;
       if(teacher.url!=null)data.photolink=teacher.url;
       if(teacher.password!=null)data.password=teacher.password;
+      if(teacher.remark!=null)data.remark=teacher.remark;
 
       var url = Constants.serverUrl + "account/teacher/"+teacherId+"/update";
       return $http({
@@ -41,11 +42,10 @@
     function createTeacher(teacher, orgId) {
       var data = {
         "name":teacher.name,
-        "sex":teacher.gendar,
+        "sex":teacher.sex,
         "mobile":teacher.mobile,
         "teachage":teacher.teachage,
-        "age":teacher.age,
-        "photolink":teacher.url
+        "age":teacher.age
       };
       var url = Constants.serverUrl + "deposit/"+orgId+"/addteacher";
       return $http({

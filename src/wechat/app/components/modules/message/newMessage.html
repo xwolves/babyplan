@@ -67,7 +67,7 @@
     </ion-content>
 
     <div class="bar bar-footer">
-        <button class="weui_btn weui_btn_primary" style="width: 100%;" ng-click="vm.save(0)">提交</button>
+        <button class="weui_btn" ng-class="{ 'weui-btn_disabled':vm.isClicked,'weui_btn_primary': !vm.isClicked}" style="width: 100%;" ng-click="vm.save(0)">提交</button>
     </div>
 
 </ion-view>

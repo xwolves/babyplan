@@ -13,6 +13,7 @@
         'parentModule',
         'childrenSettingModule',
         'teacherModule',
+        'depositChildrenModule',
         'photoModule'
     ]);
 
