@@ -9,11 +9,23 @@
             </label>
             <label class="item item-input">
                 <span class="input-label">性别</span>
-                <input type="text" ng-model="vm.item.gendar" required ng-readonly="!vm.isEditing">
+                <select ng-model="vm.item.sex" ng-disabled="!vm.isEditing">
+                    <option value='' selected>未知</option>
+                    <option value='1'>男</option>
+                    <option value='2'>女</option>
+                </select>
             </label>
             <label class="item item-input">
                 <span class="input-label">手机号</span>
-                <input type="text" ng-model="vm.item.mobile" required ng-readonly="!vm.isEditing">
+                <input type="tel" ng-model="vm.item.mobile" required ng-readonly="!vm.isEditing">
+            </label>
+            <label class="item item-input">
+                <span class="input-label">教龄</span>
+                <input type="text" ng-model="vm.item.teachage" required ng-readonly="!vm.isEditing">
+            </label>
+            <label class="item item-input">
+                <span class="input-label">年龄</span>
+                <input type="text" ng-model="vm.item.age" required ng-readonly="!vm.isEditing">
             </label>
         </div>
     </ion-content>

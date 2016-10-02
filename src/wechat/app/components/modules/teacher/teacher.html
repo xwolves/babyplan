@@ -10,9 +10,9 @@
     <ion-content>
         <ion-list>
             <ion-item class="item" ng-click="vm.goTo(item.uid,item)" collection-repeat="item in vm.teachers">
-                <p>{{item.name}}<span style="float: right">{{item.gendar|gendarChange}}</span></p>
+                <p>{{item.name}}<span style="float: right">{{item.sex|gendarChange}}</span></p>
 
-                <ion-option-button class="button-positive ion-edit" ng-click="vm.edit(item.sid)">&nbsp;编辑</ion-option-button>
+                <ion-option-button class="button-positive ion-edit" ng-click="vm.edit(item.uid)">&nbsp;编辑</ion-option-button>
                 <ion-option-button class="button-assertive ion-trash-a" ng-click="vm.del(item)">&nbsp;删除</ion-option-button>
             </ion-item>
 

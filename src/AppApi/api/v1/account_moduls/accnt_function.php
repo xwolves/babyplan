@@ -43,10 +43,10 @@ class Account{
             if($row){
                 $p_info['uid'] = $row['accountid'];
                 $p_info['type'] = substr($row['accountid'], 0, 1);
-                $redisInfo['uid'] = $row['accountid']; 
-                $redisInfo['name'] = $row['name']; 
-                $redisInfo['mobile'] = $row['mobile']; 
-                $redisInfo['weixinno'] = $row['weixinno']; 
+                $redisInfo['uid'] = $row['accountid'];
+                $redisInfo['name'] = $row['name'];
+                $redisInfo['mobile'] = $row['mobile'];
+                $redisInfo['weixinno'] = $row['weixinno'];
             }
 
             $sql_str = "SELECT accountid, name, mobile, weixinno FROM tb_accnt_teacher WHERE WeiXinNo = :weixinno";
@@ -58,10 +58,10 @@ class Account{
             if($row){
                 $t_info['uid'] = $row['accountid'];
                 $t_info['type'] = substr($row['accountid'], 0, 1);
-                $redisInfo['uid'] = $row['accountid']; 
-                $redisInfo['name'] = $row['name']; 
-                $redisInfo['mobile'] = $row['mobile']; 
-                $redisInfo['weixinno'] = $row['weixinno']; 
+                $redisInfo['uid'] = $row['accountid'];
+                $redisInfo['name'] = $row['name'];
+                $redisInfo['mobile'] = $row['mobile'];
+                $redisInfo['weixinno'] = $row['weixinno'];
             }
 
             $sql_str = "SELECT accountid, orgname, contactphone, weixinno  FROM tb_accnt_deposit WHERE WeiXinNo = :weixinno";
@@ -73,10 +73,10 @@ class Account{
             if($row){
                 $d_info['uid'] = $row['accountid'];
                 $d_info['type'] = substr($row['accountid'], 0, 1);
-                $redisInfo['uid'] = $row['accountid']; 
-                $redisInfo['name'] = $row['orgname']; 
-                $redisInfo['mobile'] = $row['contactphone']; 
-                $redisInfo['weixinno'] = $row['weixinno']; 
+                $redisInfo['uid'] = $row['accountid'];
+                $redisInfo['name'] = $row['orgname'];
+                $redisInfo['mobile'] = $row['contactphone'];
+                $redisInfo['weixinno'] = $row['weixinno'];
             }
 
             if(intval($type) == 0){
@@ -90,12 +90,17 @@ class Account{
             if(intval($type) == 1){
                 if(!empty($d_info))
                     $info[] = $d_info;
-            }else if(intval($type) == 2){ 
+			else{
+			  if(!empty($t_info)){
+				$info[] = $t_info;	
+			  }	
+			}
+            }else if(intval($type) == 2){
                 if(!empty($p_info))
                     $info[] = $p_info;
-            }else if(intval($type) == 3){ 
-                if(!empty($d_info))
-                    $info[] = $d_info;
+            }else if(intval($type) == 3){
+                if(!empty($t_info))
+                    $info[] = $t_info;//d_info or t_info ?
             }
 
             if(count($info) == 1){
@@ -110,7 +115,7 @@ class Account{
             $errs = $e->getMessage();
             return 10000;
         }
-        
+
     }
 
     public function createParentAccount($info, $type){
@@ -135,17 +140,16 @@ class Account{
 
             }else if(3 == intval($type)){
                 $tb_name = "tb_accnt_teacher";
-                $column = array("accountid", "mobile", "password");
-                $info['password'] = substr($info['mobile'], strlen($info['mobile']) - 6); 
-                $sql_str = "insert into tb_deposit_teacher (depositid, teacherid, createtime) values (:depositid, :teacherid, now())";
-                $stmt = $this->DB->prepare($sql_str);
-                $stmt->bindParam(":depositid", intval($info['depositid']), PDO::PARAM_INT);
-                $stmt->bindParam(":teacherid", intval($accountId), PDO::PARAM_INT);
-                if(!$stmt->execute())
-                    return 10001;
-                if($stmt->rowCount() <= 0)
-                    return 10002;
-
+                $column = array("accountid", "mobile", "password", "name", "sex", "teachage", "age");
+                $info['password'] = substr($info['mobile'], strlen($info['mobile']) - 6);
+                //$sql_str = "insert into tb_deposit_teacher (depositid, teacherid, createtime) values (?, ?, now())";
+                //$stmt = $this->DB->prepare($sql_str);
+	        	//$stmt->bindParam(1, $info['depositid'], PDO::PARAM_INT);
+                //$stmt->bindParam(2, $accountId, PDO::PARAM_INT);
+                //if(!$stmt->execute())
+                //    return 10001;
+                //if($stmt->rowCount() <= 0)
+                //    return 10002;
             }else if(4 == intval($type)){
                 $tb_name = "tb_accnt_children";
                 $column = array("accountid", "name", "sex", "fingerfeature", "remark");
@@ -184,14 +188,22 @@ class Account{
             $vals = $val_col.$vals;
 
             $sql_str .= $tb_name.$keys.$vals.")";
-
             $stmt = $this->DB->prepare($sql_str);
             if(!$stmt->execute($ar_params))
                 return 10001;
-            
             if($stmt->rowCount() <= 0)
                 return 10002;
-            
+
+            if(3 == intval($type)){
+                $sql_str = "insert into tb_deposit_teacher (depositid, teacherid, createtime) values (?, ?, now())";
+                $stmt = $this->DB->prepare($sql_str);
+	        $stmt->bindParam(1, $info['depositid'], PDO::PARAM_INT);
+                $stmt->bindParam(2, $accountId, PDO::PARAM_INT);
+                if(!$stmt->execute())
+                    return 10001;
+                if($stmt->rowCount() <= 0)
+                    return 10002;
+	    }
             return $accountId;
         }catch (PDOException $e) {
             $errs = $e->getMessage();
@@ -273,7 +285,7 @@ class Account{
                 $sql_str = "update tb_accnt_deposit set weixinno=:weixinno where accountid=:accountid";
             else if(intval($type) == 3)
                 $sql_str = "update tb_accnt_teacher set weixinno=:weixinno where accountid=:accountid";
-            
+
             $stmt = $this->DB->prepare($sql_str);
             $stmt->bindParam(":accountid", intval($accountid), PDO::PARAM_INT);
             $stmt->bindParam(":weixinno", $weixinno, PDO::PARAM_STR);
@@ -390,7 +402,7 @@ class Account{
     public function queryChildrenInfo($parentid){
         try{
             $info = array();
-            $sql_str = "SELECT c.accountid, b.relationship, c.name, c.sex, c.fingerfeature, c.remark FROM 
+            $sql_str = "SELECT c.accountid, b.relationship, c.name, c.sex, c.fingerfeature, c.remark FROM
                 (SELECT * FROM tb_parent_children a WHERE a.ParentID=:parentid) b LEFT JOIN tb_accnt_children c ON c.accountid=b.childrenid";
             $stmt = $this->DB->prepare($sql_str);
             $stmt->bindParam(":parentid", intval($parentid), PDO::PARAM_INT);
@@ -438,7 +450,7 @@ class Account{
     public function queryTeacherInfo($depositid){
         try{
             $info = array();
-            $sql_str = "SELECT c.accountid, c.name, c.sex, c.mobile, c.teachage, c.age, c.photolink, c.remark FROM 
+            $sql_str = "SELECT c.accountid, c.name, c.sex, c.mobile, c.teachage, c.age, c.photolink, c.remark FROM
                 (SELECT * FROM tb_deposit_teacher a WHERE a.depositid=:depositid) b LEFT JOIN tb_accnt_teacher c ON c.accountid=b.teacherid";
             $stmt = $this->DB->prepare($sql_str);
             $stmt->bindParam(":depositid", intval($depositid), PDO::PARAM_INT);

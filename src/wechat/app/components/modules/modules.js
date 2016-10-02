@@ -12,7 +12,9 @@
         'messageModule',
         'parentModule',
         'childrenSettingModule',
-        'teacherModule'
+        'teacherModule',
+        'depositChildrenModule',
+        'photoModule'
     ]);
 
 }());

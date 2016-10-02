@@ -14,8 +14,20 @@ var mainBowerFiles = require('gulp-main-bower-files');
 var uglify = require('gulp-uglify');
 var gulpFilter = require('gulp-filter');
 var paths = require('./path.js');
+var argv = require('yargs').argv;
 
 
+
+function getPath() {
+    var arg = argv._[0];
+    if (arg == 'build') {
+        return 'www';
+    } else {
+        //return '/Library/WebServer/Documents/app';
+        return 'www';
+        //return 'dev';
+    }
+}
 
 gulp.task('bowerMerge', function() {
     var filterJS = gulpFilter('**/*.js', {
@@ -27,7 +39,7 @@ gulp.task('bowerMerge', function() {
         .pipe(concat('vendor.js'))
         // .pipe(uglify())
         .pipe(filterJS.restore)
-        .pipe(gulp.dest('www/lib'));
+        .pipe(gulp.dest(getPath() + '/lib'));
 });
 
 gulp.task('sass', function(done) {
@@ -35,14 +47,14 @@ gulp.task('sass', function(done) {
         .pipe(sass({
             errLogToConsole: true
         }))
-        .pipe(gulp.dest('./www/css/'))
+        .pipe(gulp.dest(getPath() + '/css/'))
         .pipe(minifyCss({
             keepSpecialComments: 0
         }))
         .pipe(rename({
             extname: '.min.css'
         }))
-        .pipe(gulp.dest('./www/css/'))
+        .pipe(gulp.dest(getPath() + '/css/'))
         .on('end', done);
 });
 
@@ -53,17 +65,17 @@ gulp.task('scripts', function(done) {
         .pipe(remember('scripts'))
         .pipe(concat('app.js'))
         .pipe(sourcemaps.write('.'))
-        .pipe(gulp.dest('./www/'));
+        .pipe(gulp.dest(getPath() + '/'));
 });
 
 gulp.task('indexHtml', function() {
     return gulp.src(paths.indexHtml)
-        .pipe(gulp.dest('www/'));
+        .pipe(gulp.dest(getPath() + '/'));
 });
 
 gulp.task('images', function() {
     return gulp.src(paths.images)
-        .pipe(gulp.dest('www/img'));
+        .pipe(gulp.dest(getPath() + '/img'));
 });
 
 gulp.task('environmentConfig', function() {
@@ -83,5 +95,5 @@ gulp.task('templateCache', function(done) {
                 return newUrl;
             }
         }))
-        .pipe(gulp.dest('./www/'));
+        .pipe(gulp.dest(getPath() + '/'));
 });

@@ -20,7 +20,7 @@
             var data = {
                 id: md5(userId),
                 psw: md5(password)
-            }
+            };
             var url = Constants.serverUrl + 'login';
             return $http({
                 method: 'post',
@@ -47,7 +47,7 @@
         function wxLogin(wxId,type) {
             var data = {
                 weixinno: wxId
-            }
+            };
             var end="";
             if(type!=null){
                 //console.log("include type "+type);

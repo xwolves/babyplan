@@ -1,7 +1,7 @@
 (function() {
     "use strict";
     angular.module('childrenSettingCtrl', [])
-        .controller('childrenSettingCtrl', function($scope,Constants,StateService,$ionicListDelegate,$ionicPopup,AuthService,parentService) {
+        .controller('childrenSettingCtrl', function($scope,Constants,StateService,$ionicListDelegate,$ionicPopup,AuthService,parentService,Session) {
             'ngInject';
             var vm = this;
             vm.activated = false;
@@ -26,9 +26,10 @@
                 StateService.back();
             };
 
-            vm.goTo=function(id){
+            vm.goTo=function(id,child){
                 //查看孩子信息
                 $ionicListDelegate.closeOptionButtons();
+                Session.temp=child;
                 StateService.go('childrenEdit',{cid:id,type:0});
             };
 
@@ -38,9 +39,10 @@
                 StateService.go('childrenEdit',{type:1});
             };
 
-            vm.editChild=function(id){
+            vm.editChild=function(id,child){
                 //编辑孩子信息
                 $ionicListDelegate.closeOptionButtons();
+                Session.temp=child;
                 StateService.go('childrenEdit',{cid:id,type:2});
             };
 

@@ -2,8 +2,13 @@
     "use strict";
     angular.module('environmentConfig', [])
         .constant('Constants', {
-            'serverUrl': 'http://babyplan.sam911.cn/api/v1/',
-            'buildID': '20160812v1',
-            'ENVIRONMENT':'dev'
+            'appTitle':'托管系统',
+            'serverUrl': '/api/v1/',
+            'dfsUrl': '/',
+            'buildID': '20161002v1',
+            'ENVIRONMENT':'release'
         });
 }());
+//'serverUrl': 'http://120.76.226.47/api/v2/',
+//    'dfsUrl': 'http://120.76.226.47/',
+//http://localhost:8090/

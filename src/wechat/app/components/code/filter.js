@@ -19,6 +19,31 @@ app.filter('JSchange', function () {
     };
 });
 
+app.filter('relationshipChange', function () {
+    return function (input) {
+        if (input == "1")return "父亲";
+        else if (input == "2")return "母亲";
+        else if (input == "3")return "爷爷";
+        else if (input == "4")return "奶奶";
+        else return "其它";
+    };
+});
+
+app.filter('dateChange', function () {
+    return function (input) {
+        var d = new Date(input.replace(/-/g,   "/"));
+        var now = new Date();
+        var time=now.getTime()- d.getTime();
+        if(time>24*60*60*1000){
+            return d.Format('MM月dd日');
+        }else if(time>60*60*1000){
+            return d.Format('hh')+"小时前";
+        }else{
+            return d.Format('mm')+"分钟前";
+        }
+    };
+});
+
 app.filter('statusChange', function () {
     return function (input,rule) {
         //var rule=[{dm:"0",mc:"未办结"},{dm:"1",mc:"已办结"}];

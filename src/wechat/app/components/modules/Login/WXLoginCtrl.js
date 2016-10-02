@@ -11,45 +11,54 @@
 
             function validate() {
                 vm.user = $stateParams.user;
-                vm.user = "oVyGDuNPkAbtljfJKusP4oaCrYG0";//test
-                MessageToaster.info('user = '+vm.user);
+                vm.type = $stateParams.type;
+                console.log("vm.type = "+vm.type+" with "+vm.user);
+            /////////////////////////////////////////////////////////
+            //    vm.user = "oVyGDuNPkAbtljfJKusP4oaCrYG0";//test
+            //    vm.type = 3;//test
+            ////////////////////////////////////////////////////////
+                //MessageToaster.info('user = '+vm.user);
                 if (vm.user) {
                     //login failed
-                    MessageToaster.info('logining....');
+                    //MessageToaster.info('logining....');
                     vm.info = "正在登录，请稍后...";
                     vm.showLoginModal = showLoginModal;
                     //vm.roleList = [{type:1,user:'1111'}];//test
                     vm.showChooseModal = showChooseModal;
                     vm.login = login;
                     vm.select = selectChoose;
-                    vm.wxlogin(vm.user);
+                    //获取到微信uid后先尝试登陆对应的用户类型
+                    if(vm.type){
+                        vm.wxlogin(vm.user,vm.type);
+                    }else{
+                        vm.showChooseModal();
+                    }
                 }
             }
 
             function wxlogin(userid,type) {
                 console.log(userid+"  type = "+type);
-                MessageToaster.info('准备登录');
+                //MessageToaster.info('准备登录');
                 LoginService.wxLogin(userid,type).then(function(response) {
                     console.log(response);
                     if(response.errno==0) {
                         var result = response.data;
-                        //if(typeof(result.uid) == "undefined" ){
                         if (result instanceof Array && result.length > 1) {
                             //modal select type
                             vm.roleList=result;
-                            MessageToaster.info("have select "+result.length);
+                            //MessageToaster.info("have select "+result.length);
                             vm.showChooseModal();
                         }else{
                             var u=result[0];
                             if (u.uid != null && u.token != null && u.type != null) {
-                                AuthService.setSession(u.uid, u.token, u.type);
+                                AuthService.setSession(u.uid, u.token, u.type,userid);
                                 StateService.clearAllAndGo(AuthService.getNextPath());
                             }
                         }
                     }else{
                         if(response.errno==12004){
                             //no data found
-                            AuthService.setSession(userid, "", Role.unknown);
+                            AuthService.setSession(null, null, Role.unknown,userid);
 
                             StateService.clearAllAndGo("register");
                         }

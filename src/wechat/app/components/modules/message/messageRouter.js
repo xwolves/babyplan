@@ -4,7 +4,6 @@
   angular.module('messageRouter', [])
     .config(myRouter);
 
-
   function myRouter($stateProvider, $urlRouterProvider) {
     'ngInject';
     $stateProvider
@@ -17,6 +16,12 @@
               controllerAs: 'vm'
             }
           }
+      })
+      .state('newMessage', {
+          url: "/newMessage",
+          templateUrl: 'message/newMessage.html',
+          controller: 'newMessageCtrl',
+          controllerAs: 'vm'
       });
   }
 }());

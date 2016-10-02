@@ -8,6 +8,7 @@
       getLoginToken: getLoginToken,
       getUserRole: getUserRole,
       getNextPath: getNextPath,
+      getWechatId:getWechatId,
       setSession: setSession
     };
 
@@ -22,9 +23,12 @@
     function getUserRole() {
       return Session.userRole;
     };
+    function getWechatId(){
+      return Session.wechat;
+    }
 
-    function setSession(id,token,role){
-      Session.create(token,id,role);
+    function setSession(id,token,role,wechat){
+      Session.create(token,id,role,wechat);
     };
 
     function getNextPath() {

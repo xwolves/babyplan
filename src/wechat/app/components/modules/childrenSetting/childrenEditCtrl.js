@@ -1,13 +1,14 @@
 (function() {
     "use strict";
     angular.module('childrenEditCtrl', [])
-        .controller('childrenEditCtrl', function($scope, $stateParams, Constants, StateService,childrenSettingService,AuthService) {
+        .controller('childrenEditCtrl', function($scope, $stateParams, Constants, StateService,childrenSettingService,AuthService,Session) {
             'ngInject';
             var vm = this;
             vm.activated = false;
 
             vm.query = function(id){
-                vm.child = {name:'girl B',gendar:'2',sid:id,remark:'abcdefg'};
+                console.log("child id = "+id);
+                vm.child=Session.temp;
             };
 
             $scope.$on('$ionicView.afterEnter', activate);
@@ -24,6 +25,7 @@
                 vm.version = Constants.buildID;
 
                 if(vm.type!='1')vm.query(vm.cid);
+                else vm.child = {name:'',sex:'',remark:'',relationship:''};
             }
 
             vm.back=function(){

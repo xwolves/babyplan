@@ -31,8 +31,11 @@
       var data = {
         "p_uid":parentId,
         "name": child.name,
-        "sex": child.gendar,
+        "sex": child.sex,
+        "relationship": child.relationship,
+        "remark": child.remark
       };
+      console.log(data);
       var url = Constants.serverUrl + 'account/register/children';
       return $http({
         method: 'post',

@@ -35,7 +35,7 @@
         <ion-list>
 
             <ion-item class="weui_cell_bd weui_cell_primary" collection-repeat="item in vm.children">
-                <p style="font-size: 18px;font-weight:bold">{{item.name}}<span style="float: right;font-weight: normal">{{item.gendar|gendarChange}}</span></p>
+                <p style="font-size: 18px;font-weight:bold">{{item.name}}<span style="float: right;font-weight: normal">{{item.sex|gendarChange}}</span></p>
             </ion-item>
 
             <div class="item" ng-if="vm.children !== undefined && !vm.children.length" class="no-results">

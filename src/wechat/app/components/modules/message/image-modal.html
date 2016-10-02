@@ -1,0 +1,10 @@
+<div class="modal image-modal transparent"
+     ng-click="closeModal()">
+    <ion-slide-box on-slide-changed="slideChanged(index)"
+                   show-pager="false">
+        <ion-slide ng-repeat="Image in vm.images">
+            <img ng-src="{{Image.src}}" class="fullscreen-image" />
+            <p class="info">{{Image.msg}}</p>
+        </ion-slide>
+    </ion-slide-box>
+</div>

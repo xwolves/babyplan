@@ -5,16 +5,30 @@
         <div class="list">
             <label class="item item-input">
                 <span class="input-label">姓名</span>
-                <input type="text" ng-model="vm.children.name" required ng-readonly="!vm.isEditing">
+                <input type="text" ng-model="vm.child.name" required ng-readonly="!vm.isEditing">
             </label>
-            <label class="item item-input">
+            <label class="item item-input item-select">
                 <span class="input-label">性别</span>
-                <input type="text" ng-model="vm.children.sex" required ng-readonly="!vm.isEditing">
+                <select ng-model="vm.child.sex" ng-disabled="!vm.isEditing">
+                    <option value='' selected>未知</option>
+                    <option value='1'>男</option>
+                    <option value='2'>女</option>
+                </select>
             </label>
-            <!--<label class="item item-input">-->
-                <!--<span class="input-label">备注</span>-->
-                <!--<input type="text" ng-model="vm.child.remark" required ng-readonly="!vm.isEditing">-->
+            <!--<label class="item item-input item-select">-->
+                <!--<span class="input-label">关系</span>-->
+                <!--<select ng-model="vm.child.relationship" ng-disabled="!vm.isEditing">-->
+                    <!--<option value='' >其它</option>-->
+                    <!--<option value='1'>父亲</option>-->
+                    <!--<option value='2' selected>母亲</option>-->
+                    <!--<option value='3'>爷爷／外公</option>-->
+                    <!--<option value='4'>奶奶／外婆</option>-->
+                <!--</select>-->
             <!--</label>-->
+            <label class="item item-input">
+                <span class="input-label">备注</span>
+                <input type="text" ng-model="vm.child.remark" required ng-readonly="!vm.isEditing">
+            </label>
         </div>
     </ion-content>
 

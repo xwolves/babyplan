@@ -1,1 +1,35 @@
 test push
+
+
+
+ //查询家长下面的所有孩子在机构里打卡记录
+ select * from (
+ select * ,
+ (select pc.ParentID from tb_parent_children pc WHERE pc.ChildrenID = cs.ChildID) as parentID,
+ (select ac.Name from tb_accnt_children ac WHERE ac.AccountID = cs.ChildID) as childName
+ from tb_children_signin cs ) a
+ where parentID = 20000002 ;
+
+ //查询家长下面的孩子在机构里的信息日志
+ select * from (
+ select dc.ChildrenID,dc.DepositID  ,
+ (select pc.ParentID from tb_parent_children pc WHERE pc.ChildrenID = dc.ChildrenID) as parentID,
+ (select ac.Name from tb_accnt_children ac WHERE ac.AccountID = dc.ChildrenID) as childName
+ from tb_deposit_children dc ) a
+ LEFT join tb_deposit_daily dd on a.DepositID = dd.DepositID where a.ParentID =20000002;
+
+ select * from tb_deposit_daily dd left join (
+ select dc.ChildrenID, dc.DepositID,
+ (select pc.ParentID from tb_parent_children pc WHERE pc.ChildrenID = dc.ChildrenID) as parentID,
+ (select ac.Name from tb_accnt_children ac WHERE ac.AccountID = dc.ChildrenID) as childName
+ from tb_deposit_children dc ) b
+ on b.DepositID = dd.DepositID
+ where b.ParentID = 20000002
+ ORDER BY CreateTime DESC;
+
+ //机构下的孩子列表
+ select * ,
+(select pc.ParentID from tb_parent_children pc WHERE pc.ChildrenID = dc.ChildrenID limit 0,1 ) as parentID,
+(select ap.Name from tb_accnt_parent ap where ap.AccountID = ParentID ) as parentName,
+(select ac.Name from tb_accnt_children ac WHERE ac.AccountID = dc.ChildrenID) as childName
+from tb_deposit_children dc where dc.DepositID = 10000001;
