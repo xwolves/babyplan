@@ -51,7 +51,7 @@ class Finger{
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
             if(!$row)
                 return 10003;
-            
+
             return $row;
 
         }catch (PDOException $e) {
@@ -63,7 +63,7 @@ class Finger{
     public function childrenSignin($params){
         try{
             if(!array_key_exists("deviceid", $params) || !array_key_exists("fingerindex", $params))
-                return 13002; 
+                return 13002;
             $deviceid = $params['deviceid'];
             $fingerindex = $params['fingerindex'];
             if(empty($deviceid) || empty($fingerindex))
@@ -77,7 +77,7 @@ class Finger{
                 return 10001;
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
             if(!$row)
-                return 10004; 
+                return 10004;
 
             $childid = $row['accountid'];
             $childname = $row['name'];
@@ -120,7 +120,7 @@ class Finger{
         try{
             if(!array_key_exists("deviceid", $params) || !array_key_exists("depositid", $params)
                 ||  !array_key_exists("status", $params))
-                return 13002; 
+                return 13002;
             $deviceid = $params['deviceid'];
             $status = $params['status'];
             $depositid = $params['depositid'];
@@ -190,7 +190,7 @@ class Finger{
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
             if(!$row)
                 return 10003;
-            
+
             return $row;
         }catch (PDOException $e) {
             $errs = $e->getMessage();
@@ -247,7 +247,7 @@ class Finger{
 
     public function deviceFetchParentChildre($deviceid){
         try{
-            $sql_str = "SELECT parentid, childrenid FROM tb_parent_children WHERE ChildrenID IN 
+            $sql_str = "SELECT parentid, childrenid FROM tb_parent_children WHERE ChildrenID IN
                 (SELECT  ChildrenID FROM tb_deposit_children WHERE depositid = (select depositid from tb_device_detail where deviceid=:deviceid))";
             $stmt = $this->DB->prepare($sql_str);
             $stmt->bindParam(":deviceid", $deviceid, PDO::PARAM_INT);
@@ -259,7 +259,7 @@ class Finger{
                 $person_ar['c_id'] = $row['childrenid'];
             }
             if(empty($person_ar))
-                return 10003; 
+                return 10003;
 
             $rsp_data = array();
             $p_c_ar = array();
@@ -306,7 +306,7 @@ class Finger{
             }
 
             $rsp_data[] = $p_c_ar;
-            
+
             return $rsp_data;
         }catch (PDOException $e) {
             $errs = $e->getMessage();
@@ -316,7 +316,7 @@ class Finger{
 
     public function depositFetchParentChildre($depositid){
         try{
-            $sql_str = "SELECT parentid, childrenid FROM tb_parent_children WHERE ChildrenID IN 
+            $sql_str = "SELECT parentid, childrenid FROM tb_parent_children WHERE ChildrenID IN
                 (SELECT  ChildrenID FROM tb_deposit_children WHERE depositid = :depositid)";
             $stmt = $this->DB->prepare($sql_str);
             $stmt->bindParam(":depositid", $depositid, PDO::PARAM_INT);
@@ -364,8 +364,30 @@ class Finger{
             }
 
             $rsp_data[] = $p_c_ar;
-            
+
             return $rsp_data;
+        }catch (PDOException $e) {
+            $errs = $e->getMessage();
+            return 10000;
+        }
+    }
+
+    public function depositFetchChildren($depositid){
+        try{
+          $sql_str =  "select * ,
+            (select pc.ParentID from tb_parent_children pc WHERE pc.ChildrenID = dc.ChildrenID limit 0,1 ) as parentID,
+            (select ap.Name from tb_accnt_parent ap where ap.AccountID = ParentID ) as parentName,
+            (select ac.Name from tb_accnt_children ac WHERE ac.AccountID = dc.ChildrenID) as childName
+            from tb_deposit_children dc where dc.DepositID = :depositid ;";
+          $stmt = $this->DB->prepare($sql_str);
+          $stmt->bindParam(":depositid", $depositid, PDO::PARAM_STR);
+          if(!$stmt->execute())
+              return 10001;
+          $info = array();
+          while($row = $stmt->fetch(PDO::FETCH_ASSOC)){
+              $info[] = $row;
+          }
+          return $info;
         }catch (PDOException $e) {
             $errs = $e->getMessage();
             return 10000;

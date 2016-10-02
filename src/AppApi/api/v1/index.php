@@ -834,6 +834,34 @@ $app->get(
     }
 );
 
+/*
+ * 获取机构中所有孩子列表
+ */
+$app->get(
+    '/deposit/children/:depositid',
+    function($depositid) use($app, $sql_db){
+        $rsp_data = array();
+        $response = $app->response;
+        $request = $app->request->getBody();
+        /*
+        $token = $app->request->headers('token');
+        $depositInfo = $redis->get($token);
+        if(!$depositInfo){
+            $response->setBody(rspData(10005));
+            return;
+        }
+         */
+        $finger = new Finger($sql_db);
+        $ret = $finger->depositFetchChildren($depositid);
+        if(gettype($ret) != "array"){
+            $response->setBody(rspData($ret));
+        }else{
+            $response->setBody(rspData(0, $ret));
+        }
+    }
+);
+
+
 $app->put(
     '/upload',
     function () use ($app) {

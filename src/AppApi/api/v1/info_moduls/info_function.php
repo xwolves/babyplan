@@ -155,7 +155,7 @@ class Info{
         try{
             $sql_str = "";
             if (strpos($tId, '3')===0) {
-              $sql_str = "select * from tb_accnt_deposit where AccountID = ( SELECT DepositID from tb_deposit_teacher  where TeacherID = :tId);";
+              $sql_str = "select * from tb_accnt_deposit where AccountID = ( SELECT DepositID from tb_deposit_teacher  where TeacherID = :tId limit 0，1);";
             }else{
               $sql_str = "select * from tb_accnt_deposit where AccountID = :tId";
             }

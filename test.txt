@@ -26,3 +26,10 @@ test push
  on b.DepositID = dd.DepositID
  where b.ParentID = 20000002
  ORDER BY CreateTime DESC;
+
+ //机构下的孩子列表
+ select * ,
+(select pc.ParentID from tb_parent_children pc WHERE pc.ChildrenID = dc.ChildrenID limit 0,1 ) as parentID,
+(select ap.Name from tb_accnt_parent ap where ap.AccountID = ParentID ) as parentName,
+(select ac.Name from tb_accnt_children ac WHERE ac.AccountID = dc.ChildrenID) as childName
+from tb_deposit_children dc where dc.DepositID = 10000001;
