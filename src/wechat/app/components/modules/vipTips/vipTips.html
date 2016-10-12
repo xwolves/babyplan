@@ -1,0 +1,64 @@
+<ion-view view-title="VIP常见问题">
+    <ion-nav-buttons side="left">
+        <a class="button button-icon icon ion-ios-arrow-back" ng-click="vm.back()"></a>
+    </ion-nav-buttons>
+
+    <ion-content>
+        <div class="list">
+
+            <div class="item item-divider">
+                常见问题
+            </div>
+
+            <a class="item item-icon-right" ng-click="vm.expend1=!vm.expend1">
+                微信支付对账单的详细说明
+                <i class="icon" ng-class="{'ion-arrow-right-b':!vm.expend1,'ion-arrow-down-b':vm.expend1}"></i>
+                <div ng-show="vm.expend1" style="height: 40px; text-wrap: normal;">
+                    针对微信支付的对账单格式，这里进行一下详细的说明。
+                    <br>对账单表头和交易订单的关系交易时间
+                    <br>对应查询订单接口time_end
+                    <br>公众账号ID
+                    <br>appid...
+                </div>
+            </a>
+            <a class="item item-icon-right" ng-click="vm.expend2=!vm.expend2">
+                企业付款出现提示“余额不足”，充值后失败的订单自动完成转账
+                <i class="icon" ng-class="{'ion-arrow-right-b':!vm.expend2,'ion-arrow-down-b':vm.expend2}"></i>
+                <div ng-show="vm.expend2" style="height: 40px; text-wrap: normal;">
+                    近日，微信支付平台上挂出了公告，通知自9月12日期，退款规则将升级
+                </div>
+            </a>
+            <a class="item item-icon-right" ng-click="vm.expend3=!vm.expend3">
+                使用企业付款接口时，提示：参数错误:输入的商户号有误？
+                <i class="icon" ng-class="{'ion-arrow-right-b':!vm.expend3,'ion-arrow-down-b':vm.expend3}"></i>
+                <div ng-show="vm.expend3" style="height: 40px; text-wrap: normal;">
+                    如果商户第一次付款在充值前（此时c账户还没有创建），余额不足的情况，单据会被挂起，并保持系统重试。在商户充值后（c账户创建），之前的企业付款单据会被重试成功。
+                    之后的企业付款，若有余额不足的情况，需要商户充值后，用原单号重新付款
+                </div>
+            </a>
+
+            <div class="item item-divider">
+                其它说明
+            </div>
+
+            <a class="item" ng-click="vm.test()">
+                商户下发图文消息或者通过自定义菜单吸引用户点击进入商户网页
+            </a>
+            <a class="item" ng-click="vm.test()">
+                进入商户网页，用户选择购买，完成选购流程
+            </a>
+            <a class="item" ng-click="vm.test()">
+                调起微信支付控件，用户开始输入支付密码
+            </a>
+            <a class="item" ng-click="vm.test()">
+                密码验证通过，支付成功。商户后台得到支付成功的通知
+            </a>
+            <a class="item" ng-click="vm.test()">
+                返回商户页面，显示购买成功。该页面由商户自定义
+            </a>
+            <a class="item" ng-click="vm.test()">
+                公众号下发消息，提示发货成功。该步骤可选
+            </a>
+        </div>
+    </ion-content>
+</ion-view>

@@ -12,11 +12,20 @@
         url: "/nearby",
           views: {
             'tab-nearby': {
-              templateUrl: 'nearby/nearby.html',
+              templateUrl: 'nearby/nearbyList.html',
               controller: 'nearbyCtrl',
               controllerAs: 'vm'
             }
           }
+      })
+      .state('nearbyDepositInfo', {
+        url: "/nearbyDepositInfo?:id",
+        params: {
+          id : null
+        },
+        templateUrl: 'nearby/nearbyDepositInfo.html',
+        controller: 'nearbyDepositInfoCtrl',
+        controllerAs: 'vm'
       });
   }
 }());

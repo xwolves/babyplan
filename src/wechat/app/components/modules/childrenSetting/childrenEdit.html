@@ -7,6 +7,10 @@
                 <span class="input-label">姓名</span>
                 <input type="text" ng-model="vm.child.name" required ng-readonly="!vm.isEditing">
             </label>
+            <label class="item item-input">
+                <span class="input-label">帐号</span>
+                <input type="text" ng-model="vm.child.uid" required ng-readonly="!vm.isEditing">
+            </label>
             <label class="item item-input item-select">
                 <span class="input-label">性别</span>
                 <select ng-model="vm.child.sex" ng-disabled="!vm.isEditing">

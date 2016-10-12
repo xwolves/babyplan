@@ -44,6 +44,21 @@ app.filter('dateChange', function () {
     };
 });
 
+app.filter('ImageMin', function () {
+    return function (input) {
+        if(input!=null){
+            var fileExtension = input.substring(input.lastIndexOf('.') + 1);
+            var fileName = input.substring(0,input.lastIndexOf('.'));
+            if(fileExtension.toLowerCase()=='jpg' ||fileExtension.toLowerCase() =='png' || fileExtension.toLowerCase()=='gif'){
+                return fileName+"_64x64"+"."+fileExtension;
+            }return input;
+        }else{
+            return '';
+        }
+
+    };
+});
+
 app.filter('statusChange', function () {
     return function (input,rule) {
         //var rule=[{dm:"0",mc:"未办结"},{dm:"1",mc:"已办结"}];

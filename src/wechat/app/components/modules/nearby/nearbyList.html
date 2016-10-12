@@ -1,0 +1,38 @@
+<ion-view view-title="附近信息">
+    <ion-content>
+
+        <div style="margin-top: -20px;">
+            <div class="list list-inset item-input-inset">
+                <button class="button button-positive">
+                    地图
+                </button>
+                &nbsp;
+                <label class="item item-input" style="width: 80%;">
+                    <i class="icon ion-search placeholder-icon"></i>
+                    <input type="text" placeholder="搜索附近机构">
+                </label>
+            </div>
+        </div>
+
+        <ion-list>
+            <ion-item class="item item-thumbnail-left" collection-repeat="item in vm.list" ui-sref="nearbyDepositInfo" ng-click="vm.goto(item)">
+                <img ng-src="{{item.FrontDeskLink|ImageMin}}" />
+                <h2>{{item.OrgName}} &nbsp;&nbsp;{{item.Address}}</h2>
+                <p>{{item.OrgName}}</p>
+                <p>{{item.Address}}</p>
+                <div style="color: grey;">
+                    <i class="ion-android-favorite">&nbsp;</i><span>999</span>
+                    &nbsp;
+                    <i class="ion-ios-photos">&nbsp;</i><span>999</span>
+
+                    <span style="float: right">{{item.Dist/1000| number:1}}米</span>
+                </div>
+            </ion-item>
+
+            <div class="item" ng-if="vm.list !== undefined && !vm.list.length" class="no-results">
+                <p>无相关记录</p>
+            </div>
+        </ion-list>
+
+    </ion-content>
+</ion-view>

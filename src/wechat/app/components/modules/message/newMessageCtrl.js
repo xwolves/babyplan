@@ -26,29 +26,25 @@
             }
 
             vm.save=function(which){
-                if(vm.isClicked){
-                    console.log('waiting....');
-                }else {
-                    if (vm.imgs.length > 0) {
-                        vm.isClicked = true;
-                        vm.btnText='正在提交';
-                        MessageToaster.info('上传信息中，请稍等...');
-                        var data = vm.imgs[which];
-                        if (data != null)messageService.postPhoto(data).then(function (e) {
-                            console.log(e);
-                            console.log(e.data.fileurl);
-                            vm.imgs[vm.imgCal] = e.data.fileurl;
-                            vm.imgCal++;
-                            if (vm.imgCal == vm.imgs.length) {
-                                console.log(vm.imgs);
-                                vm.saveData();
-                            } else {
-                                vm.save(vm.imgCal);
-                            }
-                        });
-                    } else {
-                        vm.saveData();
-                    }
+                if (vm.imgs.length > 0) {
+                    vm.isClicked = true;
+                    vm.btnText='正在提交';
+                    MessageToaster.info('上传信息中，请稍等...');
+                    var data = vm.imgs[which];
+                    if (data != null)messageService.postPhoto(data).then(function (e) {
+                        console.log(e);
+                        console.log(e.data.fileurl);
+                        vm.imgs[vm.imgCal] = e.data.fileurl;
+                        vm.imgCal++;
+                        if (vm.imgCal == vm.imgs.length) {
+                            console.log(vm.imgs);
+                            vm.saveData();
+                        } else {
+                            vm.save(vm.imgCal);
+                        }
+                    });
+                } else {
+                    vm.saveData();
                 }
             };
 

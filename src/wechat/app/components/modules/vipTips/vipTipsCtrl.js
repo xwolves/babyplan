@@ -1,20 +1,23 @@
 (function() {
     "use strict";
-    angular.module('orderCtrl', [])
-        .controller('orderCtrl', function($scope, Constants, StateService) {
+    angular.module('vipTipsCtrl', [])
+        .controller('vipTipsCtrl', function($scope, $state, Constants, StateService) {
             'ngInject';
             var vm = this;
             vm.activated = false;
-            console.log("tabs come");
             $scope.$on('$ionicView.afterEnter', activate);
-
+            vm.expend1=false;
             function activate() {
                 vm.activated = true;
                 vm.version = Constants.buildID;
             }
 
-            vm.goTo=function(where){
-                StateService.go(where);
+            vm.back=function(){
+                StateService.back();
             };
+
+            vm.test=function(){
+                console.log('test');
+            }
         });
 }());

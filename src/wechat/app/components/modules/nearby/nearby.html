@@ -1,9 +1,25 @@
 <ion-view view-title="附近信息">
     <ion-content>
-
-        <div class="map-container">
-            <baidu-map options="mapOptions" style="width: 100%; height: 100%;display: block;" ak="pcaWtuyW2Qa0LDa7NqzdvlxS"></baidu-map>
+        <!--<div style="float: right"><i ng-class="{'ion-map':vm.isMapMode,'ion-ios-list':!vm.isMapMode}"></i></div>-->
+        <!--<div>-->
+        <div>
+            <form><input type="text" value="11222222"></form>
+        </div>
+        <div class="map-container" ng-show="vm.isMapMode">
+            <baidu-map options="mapOptions" style="width: 100%; height: 90%;display: block;" ak="pcaWtuyW2Qa0LDa7NqzdvlxS"></baidu-map>
         </div>
 
+            <!--<ion-list ng-show="!vm.isMapMode">-->
+                <!--<ion-item class="item" collection-repeat="item in vm.records">-->
+                    <!--<p>{{item.name}}</p>-->
+                    <!--<p>{{item.time}}</p>-->
+                <!--</ion-item>-->
+
+                <!--<div class="item" ng-if="vm.records !== undefined && !vm.records.length" class="no-results">-->
+                    <!--<p>无相关记录</p>-->
+                <!--</div>-->
+            <!--</ion-list>-->
+
+        <!--</div>-->
     </ion-content>
 </ion-view>

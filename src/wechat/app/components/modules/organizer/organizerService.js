@@ -8,6 +8,7 @@
       'ngInject';
       var service = {
         queryOrganizer:queryOrganizer,
+        queryDepositInfo:queryDepositInfo,
         updateOrganizer:updateOrganizer
       };
 
@@ -58,6 +59,13 @@
             return $q.reject(error);
           });
       };
+
+      function queryDepositInfo(id) {
+          //http://172.18.1.166/api/v1/depositInfo/fetch/:depositid
+          var url = Constants.serverUrl + 'depositInfo/fetch/'+id;
+          return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
+      };
+
       return service;
 
 
