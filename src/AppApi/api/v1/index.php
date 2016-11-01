@@ -66,7 +66,7 @@ $app->get(
         }
 
         $code=$req->params("code");
-        $redirect_url = urlencode($reUrl);
+        $redirect_url = urlencode(str_replace(":8500","",$reUrl));//将端口去掉，nginx会自动转回带端口的
         $url = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=".$APP_ID."&redirect_uri=".$redirect_url."&response_type=code&scope=snsapi_userinfo&state=BABY_PLAN#wechat_redirect ";
         if($code!=null){
             $userInfo=redirectWechat($code, $APP_ID, $SECRET, $app, $redis);
