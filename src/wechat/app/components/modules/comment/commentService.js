@@ -11,7 +11,7 @@
     };
 
     //http://172.18.1.166/api/v1/comment/deposit/fetch/:depositid
-    function queryDepositComment(Id) {
+    function queryDepositComment(id) {
         var url = Constants.serverUrl + 'comment/deposit/fetch/'+id;
         return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
     };

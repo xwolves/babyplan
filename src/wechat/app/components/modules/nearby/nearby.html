@@ -1,25 +1,50 @@
 <ion-view view-title="附近信息">
     <ion-content>
-        <!--<div style="float: right"><i ng-class="{'ion-map':vm.isMapMode,'ion-ios-list':!vm.isMapMode}"></i></div>-->
-        <!--<div>-->
-        <div>
-            <form><input type="text" value="11222222"></form>
+
+        <div class="view-container">
+
+
+            <div class="list">
+                <div class="item item-input-inset">
+                    <button class="button button-small button-positive" ng-click="vm.change()">
+                        &nbsp;{{vm.changeName}}&nbsp;
+                    </button>
+                    &nbsp;&nbsp;
+                    <label class="item-input-wrapper">
+                        <i class="icon ion-search placeholder-icon"></i>
+                        <input type="text" placeholder="搜索地点名称" ng-model="vm.inputData">
+                    </label>
+                    <button class="button button-small button-positive"  ng-click="vm.search()">
+                        &nbsp;搜索&nbsp;
+                    </button>
+                </div>
+            </div>
+
+            <div style="width:100%;height:100%;display:block;margin-top: -20px;">
+                <div  data-tap-disabled="true" style="width:100%;height:520px;position:absolute;" id="allmap" ng-show="!vm.show"></div><!-- 88% -->
+                <div id="r-result" ng-show="vm.show">
+                    <ion-list >
+                        <ion-item class="item item-thumbnail-left"  item-height="100px" item-width="100%" collection-repeat="item in vm.list" ng-click="vm.goto(item)">
+                            <img ng-src="{{item.FrontDeskLink|ImageMin}}" />
+                            <h2>{{item.OrgName}} &nbsp;&nbsp;{{item.Address}}</h2>
+                            <p>{{item.OrgName}}</p>
+                            <p>{{item.Address}}</p>
+                            <div style="color: grey;">
+                                <i class="ion-android-favorite">&nbsp;</i><span>999</span>
+                                &nbsp;
+                                <i class="ion-ios-photos">&nbsp;</i><span>999</span>
+
+                                <span style="float: right">{{item.Dist/1000| number:1}}公里</span>
+                            </div>
+                        </ion-item>
+
+                        <div class="item" ng-if="vm.list !== undefined && !vm.list.length" class="no-results">
+                            <p>无相关记录</p>
+                        </div>
+                    </ion-list>
+                </div>
+            </div>
         </div>
-        <div class="map-container" ng-show="vm.isMapMode">
-            <baidu-map options="mapOptions" style="width: 100%; height: 90%;display: block;" ak="pcaWtuyW2Qa0LDa7NqzdvlxS"></baidu-map>
-        </div>
 
-            <!--<ion-list ng-show="!vm.isMapMode">-->
-                <!--<ion-item class="item" collection-repeat="item in vm.records">-->
-                    <!--<p>{{item.name}}</p>-->
-                    <!--<p>{{item.time}}</p>-->
-                <!--</ion-item>-->
-
-                <!--<div class="item" ng-if="vm.records !== undefined && !vm.records.length" class="no-results">-->
-                    <!--<p>无相关记录</p>-->
-                <!--</div>-->
-            <!--</ion-list>-->
-
-        <!--</div>-->
     </ion-content>
 </ion-view>

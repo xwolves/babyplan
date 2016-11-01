@@ -4,7 +4,7 @@
   angular.module('organizerService', [])
     .factory('organizerService', organizerService);
 
-  function organizerService( $q, $http,Constants,ResultHandler) {
+  function organizerService($q, $http,Constants,ResultHandler) {
       'ngInject';
       var service = {
         queryOrganizer:queryOrganizer,

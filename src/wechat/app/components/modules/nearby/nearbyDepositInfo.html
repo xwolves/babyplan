@@ -13,16 +13,16 @@
                 <span class="myBorderFrame">工商执照</span> &nbsp;&nbsp;<span class="myBorderFrame">优质教育</span>
             </li>
             <li class="item">
-                <p>机构名称：aaaaaaaaaa</p>
-                <p>详细地址：bbbbbbbbbbbbbbbbbbbbb</p>
-                <p>联系电话：12222221111</p>
-                <p>托管对象：11-11岁</p>
+                <p>机构名称：{{vm.more.OrgName}}</p>
+                <p>详细地址：{{vm.more.Address}}</p>
+                <p>联系电话：{{vm.more.ContactPhone}}</p>
+                <p>托管对象：{{vm.more.Remark}}</p>
             </li>
             <li class="item">
                 <div style="color: grey;">
-                    <i class="ion-android-favorite">&nbsp;</i><span>999</span>
+                    <i class="ion-android-favorite">&nbsp;</i><span>{{vm.comments.length}}</span>
                     &nbsp;
-                    <i class="ion-ios-photos">&nbsp;</i><span>999</span>
+                    <i class="ion-ios-photos">&nbsp;</i><span>0</span>
                     <span>&nbsp;</span>
                     <span style="float: right"><i class="ion-ios-arrow-forward"></i></span>
                 </div>
