@@ -90,11 +90,11 @@ class Account{
             if(intval($type) == 1){
                 if(!empty($d_info))
                     $info[] = $d_info;
-			else{
-			  if(!empty($t_info)){
-				$info[] = $t_info;	
-			  }	
-			}
+                else{
+                    if(!empty($t_info)){
+                        $info[] = $t_info;	
+                    }	
+                }
             }else if(intval($type) == 2){
                 if(!empty($p_info))
                     $info[] = $p_info;
@@ -144,7 +144,7 @@ class Account{
                 $info['password'] = substr($info['mobile'], strlen($info['mobile']) - 6);
                 //$sql_str = "insert into tb_deposit_teacher (depositid, teacherid, createtime) values (?, ?, now())";
                 //$stmt = $this->DB->prepare($sql_str);
-	        	//$stmt->bindParam(1, $info['depositid'], PDO::PARAM_INT);
+	        //$stmt->bindParam(1, $info['depositid'], PDO::PARAM_INT);
                 //$stmt->bindParam(2, $accountId, PDO::PARAM_INT);
                 //if(!$stmt->execute())
                 //    return 10001;
@@ -197,13 +197,13 @@ class Account{
             if(3 == intval($type)){
                 $sql_str = "insert into tb_deposit_teacher (depositid, teacherid, createtime) values (?, ?, now())";
                 $stmt = $this->DB->prepare($sql_str);
-	        $stmt->bindParam(1, $info['depositid'], PDO::PARAM_INT);
+                $stmt->bindParam(1, $info['depositid'], PDO::PARAM_INT);
                 $stmt->bindParam(2, $accountId, PDO::PARAM_INT);
                 if(!$stmt->execute())
                     return 10001;
                 if($stmt->rowCount() <= 0)
                     return 10002;
-	    }
+            }
             return $accountId;
         }catch (PDOException $e) {
             $errs = $e->getMessage();
@@ -470,6 +470,40 @@ class Account{
             }
 
             return $info;
+        }catch (PDOException $e) {
+            $errs = $e->getMessage();
+            return 10000;
+        }
+    }
+
+    public function teacherExit($teacherid){
+        try{
+            $sql_str = "update tb_accnt_teacher set weixinno=null where accountid=:teacherid";
+            $stmt = $this->DB->prepare($sql_str);
+            $stmt->bindParam(":teacherid", intval($teacherid), PDO::PARAM_INT);
+            if (!$stmt->execute())
+                return 10001;
+            //if($stmt->rowCount() <= 0);
+            //    return 10003;
+
+            return 0;
+        }catch (PDOException $e) {
+            $errs = $e->getMessage();
+            return 10000;
+        }
+    }
+
+    public function depositExit($depositid){
+        try{
+            $sql_str = "update tb_accnt_deposit set weixinno=null where accountid=:depositid";
+            $stmt = $this->DB->prepare($sql_str);
+            $stmt->bindParam(":depositid", intval($depositid), PDO::PARAM_INT);
+            if (!$stmt->execute())
+                return 10001;
+            //if($stmt->rowCount() <= 0);
+            //    return 10003;
+
+            return 0;
         }catch (PDOException $e) {
             $errs = $e->getMessage();
             return 10000;

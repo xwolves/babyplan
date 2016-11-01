@@ -12,14 +12,15 @@ class Finger{
     public function childrenRegister($params){
         try{
             $ar_params = array();
+            if(!array_key_exists("deviceid", $params) || !array_key_exists("fingerindex", $params) || !array_key_exists("fingerfeature", $params))
+                return 13002;
+            $deviceid = $params['deviceid'];
             $childuid = $params['childuid'];
             $column = array('fingerfeature', 'fingerimglink1', 'fingerimglink2', 'fingerimglink3', 'fingerimglink4', 'fingerimglink5', 'fingerindex');
             foreach($params as $key => $val){
                 if(in_array($key, $column))
                     $ar_params[$key] = $val;
             }
-            if(!array_key_exists("fingerfeature", $ar_params) || empty($ar_params['fingerfeature']))
-                return 13002;
 
             $sql_str = "update tb_accnt_children set modifytime=now()";
             $tail = "";
@@ -29,6 +30,17 @@ class Finger{
             $sql_str .= $tail." where accountid=$childuid";
             $stmt = $this->DB->prepare($sql_str);
             if(!$stmt->execute($ar_params))
+                return 10001;
+
+            if($stmt->rowCount() <= 0)
+                return 10002;
+
+            $sql_str = "INSERT INTO tb_deposit_children (depositid, childrenid, createtime) VALUES 
+                ((SELECT a.`DepositID` FROM tb_device_detail a WHERE a.`DeviceID`=:deviceid), :childuid, NOW())";
+            $stmt = $this->DB->prepare($sql_str);
+            $stmt->bindParam(":deviceid", $deviceid, PDO::PARAM_STR);
+            $stmt->bindParam(":childuid", intval($childuid), PDO::PARAM_INT);
+            if(!$stmt->execute())
                 return 10001;
 
             if($stmt->rowCount() <= 0)
@@ -51,7 +63,7 @@ class Finger{
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
             if(!$row)
                 return 10003;
-
+            
             return $row;
 
         }catch (PDOException $e) {
@@ -63,7 +75,7 @@ class Finger{
     public function childrenSignin($params){
         try{
             if(!array_key_exists("deviceid", $params) || !array_key_exists("fingerindex", $params))
-                return 13002;
+                return 13002; 
             $deviceid = $params['deviceid'];
             $fingerindex = $params['fingerindex'];
             if(empty($deviceid) || empty($fingerindex))
@@ -77,7 +89,7 @@ class Finger{
                 return 10001;
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
             if(!$row)
-                return 10004;
+                return 10004; 
 
             $childid = $row['accountid'];
             $childname = $row['name'];
@@ -116,11 +128,11 @@ class Finger{
         }
     }
 
-    public function setDevice($type, $params){
+    public function setDevice($params){
         try{
             if(!array_key_exists("deviceid", $params) || !array_key_exists("depositid", $params)
                 ||  !array_key_exists("status", $params))
-                return 13002;
+                return 13002; 
             $deviceid = $params['deviceid'];
             $status = $params['status'];
             $depositid = $params['depositid'];
@@ -132,7 +144,26 @@ class Finger{
                 if(in_array($key, $column))
                     $ar_params[$key] = $val;
             }
-            $sql_str = "";
+
+            $sql_str = "select * from tb_accnt_deposit where accountid=:depositid";
+            $stmt = $this->DB->prepare($sql_str);
+            $stmt->bindParam(":depositid", intval($depositid), PDO::PARAM_INT);
+            if(!$stmt->execute())
+                return 10001;
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+            if(!$row)
+                return 12007; 
+
+            $type = 1;
+            $sql_str = "select * from tb_device_detail where deviceid=:did";
+            $stmt = $this->DB->prepare($sql_str);
+            $stmt->bindParam(":did", $deviceid, PDO::PARAM_STR);
+            if(!$stmt->execute())
+                return 10001;
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+            if($row)
+                $type = 0;
+ 
             if($type == 1){
                 $sql_str = "insert into tb_device_detail (createtime";
                 $keys = "";
@@ -148,23 +179,23 @@ class Finger{
                 $tail = ") values (now()";
                 $sql_str .= $keys.$tail.$vals.")";
             }else if($type == 0){
-                $ar_params['deviceid'];
-                $sql_str = "update tb_device_detail";
                 $con_str = "";
+                unset($ar_params['deviceid']);
+                $sql_str = "update tb_device_detail";
                 foreach($ar_params as $key => $val){
                     if(empty($con_str)){
                         if($key == "status" && $val == 1){
-                            $con_str .= " set starttime=now()";
-                        }
-                        $con_str .= " set $key=:$key";
+                            $con_str .= " set starttime=now(), $key=:$key";
+                        }else
+                            $con_str .= " set $key=:$key";
                     }else{
                         if($key == "status" && $val == 1){
-                            $con_str .= ", starttime=now()";
-                        }
-                        $con_str .= ", $key=:$key";
+                            $con_str .= ", starttime=now(), $key=:$key";
+                        }else
+                            $con_str .= ", $key=:$key";
                     }
                 }
-                $sql_str .= $con_str."where deviceid=$deviceid";
+                $sql_str .= $con_str." where deviceid='$deviceid'";
             }
             $stmt = $this->DB->prepare($sql_str);
             if(!$stmt->execute($ar_params))
@@ -190,7 +221,7 @@ class Finger{
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
             if(!$row)
                 return 10003;
-
+            
             return $row;
         }catch (PDOException $e) {
             $errs = $e->getMessage();
@@ -245,12 +276,11 @@ class Finger{
         }
     }
 
-    public function deviceFetchParentChildre($deviceid){
+    public function fetchParentChildreBychilduid($childuid){
         try{
-            $sql_str = "SELECT parentid, childrenid FROM tb_parent_children WHERE ChildrenID IN
-                (SELECT  ChildrenID FROM tb_deposit_children WHERE depositid = (select depositid from tb_device_detail where deviceid=:deviceid))";
+            $sql_str = "SELECT parentid, childrenid FROM tb_parent_children WHERE ChildrenID = :childuid";
             $stmt = $this->DB->prepare($sql_str);
-            $stmt->bindParam(":deviceid", $deviceid, PDO::PARAM_INT);
+            $stmt->bindParam(":childuid", $childuid, PDO::PARAM_INT);
             if(!$stmt->execute())
                 return 10001;
             $person_ar = array();
@@ -259,7 +289,7 @@ class Finger{
                 $person_ar['c_id'] = $row['childrenid'];
             }
             if(empty($person_ar))
-                return 10003;
+                return 10003; 
 
             $rsp_data = array();
             $p_c_ar = array();
@@ -274,13 +304,6 @@ class Finger{
                     $row = $stmt->fetch(PDO::FETCH_ASSOC);
                     if(!$row)
                         return 10003;
-                    /*
-                    $p_ar['parentid'] = $val;
-                    $p_ar['name'] = $row['name'];
-                    $p_ar['sex'] = $row['sex'];
-                    $p_ar['mobile'] = $row['mobile'];
-                    $p_c_ar['parent'] = $p_ar;
-                     */
                     $p_c_ar['parentname'] = $row['name'];
                     $p_c_ar['parentmobile'] = $row['mobile'];
                 }else if($key == "c_id"){
@@ -293,12 +316,6 @@ class Finger{
                     $row = $stmt->fetch(PDO::FETCH_ASSOC);
                     if(!$row)
                         return 10003;
-                    /*
-                    $c_ar['childid'] = $val;
-                    $c_ar['name'] = $row['name'];
-                    $c_ar['sex'] = $row['sex'];
-                    $p_c_ar['children'] = $c_ar;
-                     */
                     $p_c_ar['childid'] = $val;
                     $p_c_ar['childname'] = $row['name'];
                     $p_c_ar['childsex'] = $row['sex'];
@@ -306,7 +323,63 @@ class Finger{
             }
 
             $rsp_data[] = $p_c_ar;
+            
+            return $rsp_data;
+        }catch (PDOException $e) {
+            $errs = $e->getMessage();
+            return 10000;
+        }
+    }
 
+    public function deviceFetchParentChildre($deviceid){
+        try{
+            $sql_str = "SELECT parentid, childrenid FROM tb_parent_children WHERE ChildrenID IN 
+                (SELECT  ChildrenID FROM tb_deposit_children WHERE depositid = (select depositid from tb_device_detail where deviceid=:deviceid))";
+            $stmt = $this->DB->prepare($sql_str);
+            $stmt->bindParam(":deviceid", $deviceid, PDO::PARAM_INT);
+            if(!$stmt->execute())
+                return 10001;
+            $person_ar = array();
+            while($row = $stmt->fetch(PDO::FETCH_ASSOC)){
+                $person_ar['p_id'] = $row['parentid'];
+                $person_ar['c_id'] = $row['childrenid'];
+            }
+            if(empty($person_ar))
+                return 10003; 
+
+            $rsp_data = array();
+            $p_c_ar = array();
+            foreach($person_ar as $key => $val){
+                if($key == "p_id"){
+                    $p_ar = array();
+                    $sql_str = "select name, sex, mobile from tb_accnt_parent where accountid=:pid";
+                    $stmt = $this->DB->prepare($sql_str);
+                    $stmt->bindParam(":pid", intval($val), PDO::PARAM_INT);
+                    if(!$stmt->execute())
+                        return 10001;
+                    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+                    if(!$row)
+                        return 10003;
+                    $p_c_ar['parentname'] = $row['name'];
+                    $p_c_ar['parentmobile'] = $row['mobile'];
+                }else if($key == "c_id"){
+                    $c_ar = array();
+                    $sql_str = "select name, sex from tb_accnt_children where accountid=:cid";
+                    $stmt = $this->DB->prepare($sql_str);
+                    $stmt->bindParam(":cid", intval($val), PDO::PARAM_INT);
+                    if(!$stmt->execute())
+                        return 10001;
+                    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+                    if(!$row)
+                        return 10003;
+                    $p_c_ar['childid'] = $val;
+                    $p_c_ar['childname'] = $row['name'];
+                    $p_c_ar['childsex'] = $row['sex'];
+                }
+            }
+
+            $rsp_data[] = $p_c_ar;
+            
             return $rsp_data;
         }catch (PDOException $e) {
             $errs = $e->getMessage();
@@ -316,7 +389,7 @@ class Finger{
 
     public function depositFetchParentChildre($depositid){
         try{
-            $sql_str = "SELECT parentid, childrenid FROM tb_parent_children WHERE ChildrenID IN
+            $sql_str = "SELECT parentid, childrenid FROM tb_parent_children WHERE ChildrenID IN 
                 (SELECT  ChildrenID FROM tb_deposit_children WHERE depositid = :depositid)";
             $stmt = $this->DB->prepare($sql_str);
             $stmt->bindParam(":depositid", $depositid, PDO::PARAM_INT);
@@ -364,7 +437,7 @@ class Finger{
             }
 
             $rsp_data[] = $p_c_ar;
-
+            
             return $rsp_data;
         }catch (PDOException $e) {
             $errs = $e->getMessage();
@@ -372,7 +445,7 @@ class Finger{
         }
     }
 
-    public function depositFetchChildren($depositid){
+  public function depositFetchChildren($depositid){
         try{
           $sql_str =  "select * ,
             (select pc.ParentID from tb_parent_children pc WHERE pc.ChildrenID = dc.ChildrenID limit 0,1 ) as parentID,
@@ -393,6 +466,7 @@ class Finger{
             return 10000;
         }
     }
+
     private $DB;
 }
 ?>
