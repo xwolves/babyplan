@@ -10,6 +10,7 @@ require_once './comment_moduls/comment_function.php';
 require_once 'config.php';
 require_once 'common.php';
 require_once '../../Slim/WeiChat/WXBizMsgCrypt.php';
+require_once './wechatPay/function.php';
 \Slim\Slim::registerAutoloader();
 
 $log = new \Slim\LogWriter(fopen('../../Slim/Log/log', 'a'));
@@ -51,6 +52,13 @@ $app->options('/:a', function() {});
 $app->options('/:a/:b', function() {});
 $app->options('/:a/:b/:c', function() {});
 $app->options('/:a/:b/:c/:d', function() {});
+
+$app->post(
+      '/wechatPay/order',
+      function () use ($app, $sql_db) {
+        createOrder($app);
+      }
+);
 
 $app->get(
     '/redirect/',
@@ -801,8 +809,6 @@ $app->get(
             $response->setBody(rspData(10005));
             return;
         }
-        if(!getParentPurview($sql_db, $childuid))
-            return $response->setBody(rspData(16005));
         $info = new Info($sql_db);
         $ret = $info->getChildrenDepositInfo($childuid);
         if(gettype($ret) != "array"){
@@ -828,8 +834,6 @@ $app->get(
             $response->setBody(rspData(10005));
             return;
         }
-        if(!getParentPurview($sql_db, $parent))
-            return $response->setBody(rspData(16005));
         $info = new Info($sql_db);
         //$ret = $info->getParentDepositInfo($parentid);
         $ret = $info->getChldrenDailyFromParentId($parentid);
@@ -853,14 +857,10 @@ $app->get(
         $request = $app->request->getBody();
         $token = $app->request->headers('token');
         $depositInfo = $redis->get($token);
-        /*
         if(!$depositInfo){
             $response->setBody(rspData(10005));
             return;
         }
-         */
-        if(!getParentPurview($sql_db, $childuid))
-            return $response->setBody(rspData(16005));
         $info = new Info($sql_db);
         $ret = $info->getSigninInfo($childuid);
         if(gettype($ret) != "array"){
@@ -886,8 +886,6 @@ $app->get(
             $response->setBody(rspData(10005));
             return;
         }
-        if(!getParentPurview($sql_db, $parentid))
-            return $response->setBody(rspData(16005));
         $info = new Info($sql_db);
         $ret = $info->getChldrenSignInFromParentId($parentid);
         if(gettype($ret) != "array"){
@@ -1018,7 +1016,7 @@ $app->post(
         $a_request['commentby'] = $parentid;
         if(!getParentPurview($sql_db, $parentid))
             return $response->setBody(rspData(16005));
-            
+
         $comment = new Comment($sql_db);
         $ret = $comment->parentCommentDeposit($a_request);
         $response->setBody(rspData($ret));
@@ -1071,6 +1069,5 @@ $app->put(
       $response->setBody($document);
     }
 );
-
 
 $app->run();
