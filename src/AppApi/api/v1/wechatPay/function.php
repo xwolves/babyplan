@@ -59,3 +59,34 @@ function createOrder($app){
       $response->setBody(rspData(10001,  $order['return_msg']));
   }
 }
+
+function queryOrder($app,$orderId){
+	$response = $app->response();
+        //$request = $app->request->getBody();
+        $input = new WxPayOrderQuery();
+        $input->SetOut_trade_no($orderId);
+        $input->SetAppid(WxPayConfig::APPID);
+        $input->SetMch_id(WxPayConfig::MCHID);
+        $input->SetNonce_str(WxPayApi::getNonceStr());
+        $input->SetSign($input->MakeSign());
+        //var_dump($input);
+        $order=WxPayApi::orderQuery($input);
+        //var_dump($order);
+
+        if(!array_key_exists("return_code", $order) ){
+            $response->setBody(rspData(10000, "查询失败"));
+            return;
+        }
+        if($order['result_code']=='SUCCESS'){
+            $rsp_data = array();
+            $rsp_data['orderId'] = $order['out_trade_no'];
+            $rsp_data['wechatOrderId'] = $order['transaction_id'];
+            $rsp_data['totalFee'] = $order['total_fee'];
+            $rsp_data['payState'] = $order['trade_state'];
+            $rsp_data['payTime'] = $order['time_end'];
+            $response->setBody(rspData(0,  $rsp_data));
+        }else{
+            $response->setBody(rspData(10001,  $order['err_code_des']));
+        }
+}
+

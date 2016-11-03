@@ -61,9 +61,9 @@ $app->post(
 );
 
 $app->get(
-      '/wechatPay/order',
-      function () use ($app, $sql_db) {
-        echo 'hello world';
+      '/wechatPay/order/:orderId',
+      function ($orderId) use ($app, $sql_db) {
+        queryOrder($app,$orderId);
       }
 );
 
