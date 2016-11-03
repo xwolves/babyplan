@@ -120,12 +120,20 @@ function getUserInfo($access_token, $open_id, $app, $redis)
     return $arr_data;
 }
 
-function getParentPurview($sql_db, $parentid){
+function getParentPurview($sql_db, $uid){
     try{
-        $sql_str = "SELECT parentid, TIMESTAMPDIFF(DAY, NOW(), cutofftime) as retdays, businessid FROM tb_parent_order 
-            WHERE ordertype = 1 AND paystatus = 1 AND NOW() <= cutofftime AND parentid=:parentid";
+        $type = substr($uid, 0, 1);
+        if(intval($type) != 2 && intval($type) != 4)
+            return false;
+        if(intval($type) == 4){
+            $sql_str = "SELECT parentid, TIMESTAMPDIFF(DAY, NOW(), cutofftime) as retdays, businessid FROM tb_parent_order 
+                WHERE paystatus = 1 AND NOW() <= cutofftime AND parentid=(select parentid from tb_parent_children where childrenid=:uid)";
+        }else{
+            $sql_str = "SELECT parentid, TIMESTAMPDIFF(DAY, NOW(), cutofftime) as retdays, businessid FROM tb_parent_order 
+                WHERE paystatus = 1 AND NOW() <= cutofftime AND parentid=:uid";
+        }
         $stmt = $sql_db->prepare($sql_str);
-        $stmt->bindParam(":parentid", $parentid, PDO::PARAM_STR);
+        $stmt->bindParam(":uid", $uid, PDO::PARAM_STR);
         if(!$stmt->execute())
             return false;
         $row = $stmt->fetch(PDO::FETCH_ASSOC);

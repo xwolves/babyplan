@@ -801,6 +801,8 @@ $app->get(
             $response->setBody(rspData(10005));
             return;
         }
+        if(!getParentPurview($sql_db, $childuid))
+            return $response->setBody(rspData(16005));
         $info = new Info($sql_db);
         $ret = $info->getChildrenDepositInfo($childuid);
         if(gettype($ret) != "array"){
@@ -826,6 +828,8 @@ $app->get(
             $response->setBody(rspData(10005));
             return;
         }
+        if(!getParentPurview($sql_db, $parent))
+            return $response->setBody(rspData(16005));
         $info = new Info($sql_db);
         //$ret = $info->getParentDepositInfo($parentid);
         $ret = $info->getChldrenDailyFromParentId($parentid);
@@ -849,10 +853,14 @@ $app->get(
         $request = $app->request->getBody();
         $token = $app->request->headers('token');
         $depositInfo = $redis->get($token);
+        /*
         if(!$depositInfo){
             $response->setBody(rspData(10005));
             return;
         }
+         */
+        if(!getParentPurview($sql_db, $childuid))
+            return $response->setBody(rspData(16005));
         $info = new Info($sql_db);
         $ret = $info->getSigninInfo($childuid);
         if(gettype($ret) != "array"){
@@ -878,6 +886,8 @@ $app->get(
             $response->setBody(rspData(10005));
             return;
         }
+        if(!getParentPurview($sql_db, $parentid))
+            return $response->setBody(rspData(16005));
         $info = new Info($sql_db);
         $ret = $info->getChldrenSignInFromParentId($parentid);
         if(gettype($ret) != "array"){
@@ -1061,5 +1071,6 @@ $app->put(
       $response->setBody($document);
     }
 );
+
 
 $app->run();
