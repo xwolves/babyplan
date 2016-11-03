@@ -61,6 +61,13 @@ $app->post(
 );
 
 $app->get(
+      '/wechatPay/order',
+      function () use ($app, $sql_db) {
+        echo 'hello world';
+      }
+);
+
+$app->get(
     '/redirect/',
     function () use ($app, $APP_ID, $SECRET, $REDIRECT_URL, $redis){
         $req=$app->request();

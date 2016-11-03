@@ -32,18 +32,30 @@ function createOrder($app){
   //var_dump($input);
   $order = WxPayApi::unifiedOrder($input);
   //var_dump($order);
-  if(!array_key_exists("return_code", $order)){
-      $response->setBody(rspData(FAILED, "查询失败"));
+
+  //get pay sign
+  $jsapi = new WxPayJsApiPay();
+  $jsapi->SetAppid($order['appid']);
+  $jsapi->SetTimeStamp(time());
+  $jsapi->SetNonceStr(WxPayApi::getNonceStr());
+  $jsapi->SetPackage("prepay_id=" . $order['prepay_id']);
+  $jsapi->SetSignType("MD5");
+  $jsapi->SetPaySign($jsapi->MakeSign());
+  //var_dump($jsapi);
+
+  if(!array_key_exists("return_code", $order) || !$jsapi->IsPaySignSet()){
+      $response->setBody(rspData(10000, "查询失败"));
       return;
   }
   if($order['return_code']=='SUCCESS'){
       $rsp_data = array();
       $rsp_data['appId'] = $order['appid'];
-      $rsp_data['nonceStr'] = $order['nonce_str'];
+      $rsp_data['timeStamp'] = $jsapi->GetTimeStamp();
+      $rsp_data['nonceStr'] = $jsapi->GetReturn_code();
       $rsp_data['prepay_id'] = $order['prepay_id'];
-      $rsp_data['paySign'] = $order['sign'];
-      $response->setBody(rspData(SUCCESS,  $rsp_data));
+      $rsp_data['paySign'] = $jsapi->GetPaySign();
+      $response->setBody(rspData(0,  $rsp_data));
   }else{
-      $response->setBody(rspData(FAILED,  $order['return_msg']));
+      $response->setBody(rspData(10001,  $order['return_msg']));
   }
 }
