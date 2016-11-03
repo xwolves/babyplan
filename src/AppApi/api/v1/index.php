@@ -56,14 +56,14 @@ $app->options('/:a/:b/:c/:d', function() {});
 $app->post(
       '/wechatPay/order',
       function () use ($app, $sql_db) {
-        createOrder($app);
+        createOrder($app, $sql_db);
       }
 );
 
 $app->get(
       '/wechatPay/order/:orderId',
-      function ($orderId) use ($app, $sql_db) {
-        queryOrder($app,$orderId);
+      function ($orderId) use ($app) {
+        queryOrder($app, $orderId);
       }
 );
 
