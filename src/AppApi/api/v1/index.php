@@ -53,6 +53,7 @@ $app->options('/:a/:b', function() {});
 $app->options('/:a/:b/:c', function() {});
 $app->options('/:a/:b/:c/:d', function() {});
 
+//生成微信支付订单，并将订单存在我们的数据库
 $app->post(
       '/wechatPay/order',
       function () use ($app, $sql_db) {
@@ -60,6 +61,7 @@ $app->post(
       }
 );
 
+//查询微信支付里的订单信息
 $app->get(
       '/wechatPay/order/:orderId',
       function ($orderId) use ($app) {
@@ -816,6 +818,8 @@ $app->get(
             $response->setBody(rspData(10005));
             return;
         }
+        if(!getParentPurview($sql_db, $childuid))
+            return $response->setBody(rspData(16005));
         $info = new Info($sql_db);
         $ret = $info->getChildrenDepositInfo($childuid);
         if(gettype($ret) != "array"){
@@ -841,6 +845,8 @@ $app->get(
             $response->setBody(rspData(10005));
             return;
         }
+        if(!getParentPurview($sql_db, $parentid))
+            return $response->setBody(rspData(16005));
         $info = new Info($sql_db);
         //$ret = $info->getParentDepositInfo($parentid);
         $ret = $info->getChldrenDailyFromParentId($parentid);
@@ -864,10 +870,14 @@ $app->get(
         $request = $app->request->getBody();
         $token = $app->request->headers('token');
         $depositInfo = $redis->get($token);
+        /*
         if(!$depositInfo){
             $response->setBody(rspData(10005));
             return;
         }
+         */
+        if(!getParentPurview($sql_db, $childuid))
+            return $response->setBody(rspData(16005));
         $info = new Info($sql_db);
         $ret = $info->getSigninInfo($childuid);
         if(gettype($ret) != "array"){
@@ -893,6 +903,8 @@ $app->get(
             $response->setBody(rspData(10005));
             return;
         }
+        if(!getParentPurview($sql_db, $parentid))
+            return $response->setBody(rspData(16005));
         $info = new Info($sql_db);
         $ret = $info->getChldrenSignInFromParentId($parentid);
         if(gettype($ret) != "array"){
@@ -998,6 +1010,89 @@ $app->get(
     }
 );
 
+/*
+ * 查询parentid的订单
+ */
+$app->get(
+    '/charge/order/fetch/:parentid',
+    function ($parentid) use ($app, $sql_db, $redis){
+        $response = $app->response;
+        $token = $app->request->headers('token');
+        $depositInfo = $redis->get($token);
+        if(!$depositInfo){
+            $response->setBody(rspData(10005));
+            return;
+        }
+        $charge = new Charge($sql_db);
+        $ret = $charge->getOrderListByParentid($parentid);
+        if(gettype($ret) != "array"){
+            $response->setBody(rspData($ret));
+        }else{
+            $response->setBody(rspData(0, $ret));
+        }
+    }
+);
+
+/*
+ * 新增parent_order
+ */
+$app->post(
+    '/charge/order/insert/:parentid',
+    function($parentid) use ($app, $sql_db, $redis){
+        $rsp_data = array();
+        $response = $app->response;
+        $request = $app->request->getBody();
+        $token = $app->request->headers('token');
+        $depositInfo = $redis->get($token);
+        if(!$depositInfo){
+            $response->setBody(rspData(10005));
+            return;
+        }
+
+        $a_request = json_decode($request, true);
+        if(empty($a_request)){
+            $response->setBody(rspData(16001));
+            return;
+        }
+        $a_request = array_change_key_case($a_request, CASE_LOWER);
+        $a_request['parentid'] = $parentid;
+
+        $charge = new Charge($sql_db);
+        $ret = $charge->insertParentOrder($a_request);
+        $response->setBody(rspData($ret));
+    }
+);
+
+/*
+ * 更新parent_order
+ */
+$app->post(
+    '/charge/order/update/:parentid',
+    function ($parentid) use ($app, $sql_db, $redis){
+        $rsp_data = array();
+        $response = $app->response;
+        $request = $app->request->getBody();
+        $token = $app->request->headers('token');
+        $depositInfo = $redis->get($token);
+        if(!$depositInfo){
+            $response->setBody(rspData(10005));
+            return;
+        }
+
+        $a_request = json_decode($request, true);
+        if(empty($a_request)){
+            $response->setBody(rspData(16001));
+            return;
+        }
+        $a_request = array_change_key_case($a_request, CASE_LOWER);
+        $a_request['parentid'] = $parentid;
+
+        $charge = new Charge($sql_db);
+        $ret = $charge->updateParentOrder($a_request);
+        $response->setBody(rspData($ret));
+    }
+);
+
 //==========================================================comment moduls=========================================//
 /*
  * 家长评论机构
@@ -1076,5 +1171,6 @@ $app->put(
       $response->setBody($document);
     }
 );
+
 
 $app->run();
