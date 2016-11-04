@@ -4,22 +4,11 @@
     </ion-nav-buttons>
 
     <ion-content>
-        <div style="width: 100%; margin-top: 10px;">
-            <div class="vipSelction" ng-class="{vipSelctionSelcted:vm.isSelected}" ng-click="vm.isSelected=!vm.isSelected">
-                <span class="vipSelectionItem">30元 1.00元/天</span>
-                <div class="vipSelectionItemRight">30天</div>
-            </div>
-            <div class="vipSelction">
-                <span class="vipSelectionItem">50元 0.83元/天</span>
-                <div class="vipSelectionItemRight">60天</div>
-            </div>
-            <div class="vipSelction">
-                <span class="vipSelectionItem">75元 0.83元/天</span>
-                <div class="vipSelectionItemRight">90天</div>
-            </div>
-            <div class="vipSelction">
-                <span class="vipSelectionItem">150元 0.83元/天</span>
-                <div class="vipSelectionItemRight">180天</div>
+         <!-- ng-repeat="" -->
+        <div style="width: 100%; margin-top: 10px;"  ng-repeat="item in vm.menu">
+            <div class="vipSelction" ng-class="{vipSelctionSelcted:vm.isSelected==$index}" ng-click="vm.isSelected=$index">
+                <span class="vipSelectionItem">{{item.price/100}}元 {{item.uprice}}元／天</span>
+                <div class="vipSelectionItemRight">{{item.numofdays}}天</div>
             </div>
         </div>
 
@@ -27,7 +16,7 @@
 
     <div class="bar bar-footer">
         <div class="button-bar">
-            <a class="button button-positive" ng-disabled="!vm.isSelected" ng-click="vm.pay()">微信支付</a>
+            <a class="button button-positive" ng-disabled="vm.isSelected < 0" ng-click="vm.gotoBuy()">加入</a>
         </div>
     </div>
 </ion-view>
