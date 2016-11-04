@@ -7,7 +7,7 @@
 
             $scope.onBridgeReady=function () {
                 alert('wechat ok');
-                $scope.wechatPayReady=true;
+                vm.wechatPayReady=true;
             };
 
             if (typeof WeixinJSBridge == "undefined"){
