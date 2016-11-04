@@ -73,119 +73,6 @@
 
 (function() {
   "use strict";
-  angular.module('config', [
-    'environmentConfig',
-    'constant',
-    'httpRelConfig'
-  ]);
-
-}());
-
-(function() {
-    "use strict";
-    angular.module('constant', [])
-        .constant('Path',{
-            'ParentRolePath':'tabs.children',
-            'OrganizerRolePath':'tabs.organizer',
-            'TeacherRolePath':'tabs.message'
-        })
-        .constant('Role',{
-            'unknown':'-1',
-            'Organizer':'1',
-            'Parent':'2',
-            'Teacher':'3',
-            'Children':'4',
-            'ThirdParty':'5',
-            'Consultant':'6'
-        })
-        .constant('Weixin', {
-        })
-        .constant('AUTH_EVENTS', {
-            loginSuccess: 'auth-login-success',
-            loginFailed: 'auth-login-failed',
-            logoutSuccess: 'auth-logout-success',
-            sessionTimeout: 'auth-session-timeout',
-            notAuthenticated: 'auth-not-authenticated',
-            notAuthorized: 'auth-not-authorized'
-        })
-        .constant('ErrorMessage', {
-            ACCESS_FAIL: '通讯异常，请稍后再试！',
-            TOKEN_INVALID: '连接超时，请重新登录！'
-        })
-        .constant('SuccessMessage', {
-            SUBMIT_SUCESS: '提交成功',
-            OPERATION_SUCESS:'操作完成'
-        });
-}());
-
-(function() {
-    "use strict";
-    angular.module('environmentConfig', [])
-        .constant('Constants', {
-            'appTitle':'托管系统',
-            'serverUrl': '/api/v1/',
-            'dfsUrl': '/',
-            'buildID': '20161101v1',
-            'ENVIRONMENT':'release'
-        });
-}());
-//'serverUrl': 'http://120.76.226.47/api/v2/',
-//    'dfsUrl': 'http://120.76.226.47/',
-//http://localhost:8090/
-//http://wx.zxing-tech.cn
-(function() {
-    "use strict";
-    angular.module('httpDevConfig', [])
-        .config(function($httpProvider) {
-            $httpProvider.defaults.headers.post["Content-Type"] = "application/x-www-form-urlencoded";
-            $httpProvider.defaults.headers.put["Content-Type"] = "application/x-www-form-urlencoded";
-        });
-}());
-
-(function() {
-    "use strict";
-    angular.module('httpRelConfig', [])
-    .config(function($httpProvider) {
-        $httpProvider.defaults.cache = false;
-        if (!$httpProvider.defaults.headers.get) {
-           $httpProvider.defaults.headers.get = {};
-        }
-        // disable IE ajax request caching
-        $httpProvider.defaults.headers.get['If-Modified-Since'] = '0';
-
-        // Disable IE ajax request caching
-        $httpProvider.defaults.headers.get['Cache-Control'] = 'no-cache';
-        $httpProvider.defaults.headers.get['Pragma'] = 'no-cache';
-    });
-}());
-
-(function() {
-    "use strict";
-    angular.module('directive', [
-
-    ]);
-
-}());
-
-Date.prototype.Format = function(fmt) {
-    var o = {
-        "M+": this.getMonth() + 1, //月份
-        "d+": this.getDate(), //日
-        "h+": this.getHours(), //小时
-        "m+": this.getMinutes(), //分
-        "s+": this.getSeconds(), //秒
-        "q+": Math.floor((this.getMonth() + 3) / 3), //季度
-        "S": this.getMilliseconds() //毫秒
-    };
-    if (/(y+)/.test(fmt))
-        fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
-    for (var k in o)
-        if (new RegExp("(" + k + ")").test(fmt))
-            fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
-    return fmt;
-};
-(function() {
-  "use strict";
   angular.module('AuthService', []).factory('AuthService', function(Session,Path,Role) {
     'ngInject';
 
@@ -603,12 +490,117 @@ app.filter('statusChange', function () {
 
 (function() {
   "use strict";
-  angular.module('tools', [
-    
+  angular.module('config', [
+    'environmentConfig',
+    'constant',
+    'httpRelConfig'
   ]);
 
 }());
 
+(function() {
+    "use strict";
+    angular.module('constant', [])
+        .constant('Path',{
+            'ParentRolePath':'tabs.children',
+            'OrganizerRolePath':'tabs.organizer',
+            'TeacherRolePath':'tabs.message'
+        })
+        .constant('Role',{
+            'unknown':'-1',
+            'Organizer':'1',
+            'Parent':'2',
+            'Teacher':'3',
+            'Children':'4',
+            'ThirdParty':'5',
+            'Consultant':'6'
+        })
+        .constant('Weixin', {
+        })
+        .constant('AUTH_EVENTS', {
+            loginSuccess: 'auth-login-success',
+            loginFailed: 'auth-login-failed',
+            logoutSuccess: 'auth-logout-success',
+            sessionTimeout: 'auth-session-timeout',
+            notAuthenticated: 'auth-not-authenticated',
+            notAuthorized: 'auth-not-authorized'
+        })
+        .constant('ErrorMessage', {
+            ACCESS_FAIL: '通讯异常，请稍后再试！',
+            TOKEN_INVALID: '连接超时，请重新登录！'
+        })
+        .constant('SuccessMessage', {
+            SUBMIT_SUCESS: '提交成功',
+            OPERATION_SUCESS:'操作完成'
+        });
+}());
+
+(function() {
+    "use strict";
+    angular.module('environmentConfig', [])
+        .constant('Constants', {
+            'appTitle':'托管系统',
+            'serverUrl': '/api/v1/',
+            'dfsUrl': '/',
+            'buildID': '20161101v1',
+            'ENVIRONMENT':'release'
+        });
+}());
+//'serverUrl': 'http://120.76.226.47/api/v2/',
+//    'dfsUrl': 'http://120.76.226.47/',
+//http://localhost:8090/
+//http://wx.zxing-tech.cn
+(function() {
+    "use strict";
+    angular.module('httpDevConfig', [])
+        .config(function($httpProvider) {
+            $httpProvider.defaults.headers.post["Content-Type"] = "application/x-www-form-urlencoded";
+            $httpProvider.defaults.headers.put["Content-Type"] = "application/x-www-form-urlencoded";
+        });
+}());
+
+(function() {
+    "use strict";
+    angular.module('httpRelConfig', [])
+    .config(function($httpProvider) {
+        $httpProvider.defaults.cache = false;
+        if (!$httpProvider.defaults.headers.get) {
+           $httpProvider.defaults.headers.get = {};
+        }
+        // disable IE ajax request caching
+        $httpProvider.defaults.headers.get['If-Modified-Since'] = '0';
+
+        // Disable IE ajax request caching
+        $httpProvider.defaults.headers.get['Cache-Control'] = 'no-cache';
+        $httpProvider.defaults.headers.get['Pragma'] = 'no-cache';
+    });
+}());
+
+(function() {
+    "use strict";
+    angular.module('directive', [
+
+    ]);
+
+}());
+
+Date.prototype.Format = function(fmt) {
+    var o = {
+        "M+": this.getMonth() + 1, //月份
+        "d+": this.getDate(), //日
+        "h+": this.getHours(), //小时
+        "m+": this.getMinutes(), //分
+        "s+": this.getSeconds(), //秒
+        "q+": Math.floor((this.getMonth() + 3) / 3), //季度
+        "S": this.getMilliseconds() //毫秒
+    };
+    if (/(y+)/.test(fmt))
+        fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+    for (var k in o)
+        if (new RegExp("(" + k + ")").test(fmt))
+            fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+    return fmt;
+};
 (function() {
     "use strict";
     angular.module('modules', [
@@ -633,6 +625,14 @@ app.filter('statusChange', function () {
         'exitModule',
         'photoModule'
     ]);
+
+}());
+
+(function() {
+  "use strict";
+  angular.module('tools', [
+    
+  ]);
 
 }());
 
@@ -1322,37 +1322,6 @@ app.filter('statusChange', function () {
 }());
 
 (function() {
-  "use strict";
-  angular.module('commentModule', [
-    'commentService'
-  ]);
-
-}());
-
-(function() {
-  'use strict';
-
-  angular.module('commentService', [])
-    .factory('commentService', commentService);
-
-  function commentService($q, $http, Constants, ResultHandler) {
-    'ngInject';
-    var service = {
-        queryDepositComment:queryDepositComment
-    };
-
-    //http://172.18.1.166/api/v1/comment/deposit/fetch/:depositid
-    function queryDepositComment(id) {
-        var url = Constants.serverUrl + 'comment/deposit/fetch/'+id;
-        return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
-    };
-
-    return service;
-  }
-
-}());
-
-(function() {
     "use strict";
     angular.module('childrenEditCtrl', [])
         .controller('childrenEditCtrl', function($scope, $stateParams, Constants, StateService,childrenSettingService,AuthService,Session) {
@@ -1570,6 +1539,37 @@ app.filter('statusChange', function () {
     return service;
 
 
+  }
+
+}());
+
+(function() {
+  "use strict";
+  angular.module('commentModule', [
+    'commentService'
+  ]);
+
+}());
+
+(function() {
+  'use strict';
+
+  angular.module('commentService', [])
+    .factory('commentService', commentService);
+
+  function commentService($q, $http, Constants, ResultHandler) {
+    'ngInject';
+    var service = {
+        queryDepositComment:queryDepositComment
+    };
+
+    //http://172.18.1.166/api/v1/comment/deposit/fetch/:depositid
+    function queryDepositComment(id) {
+        var url = Constants.serverUrl + 'comment/deposit/fetch/'+id;
+        return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
+    };
+
+    return service;
   }
 
 }());
@@ -3291,6 +3291,363 @@ app.filter('statusChange', function () {
 
 (function() {
   "use strict";
+  angular.module('registerModule', [
+    'registerCtrl',
+    'registerRouter',
+    'registerService'
+  ]);
+
+}());
+
+(function() {
+    "use strict";
+    angular.module('registerCtrl', [])
+        .controller('registerCtrl', function($scope, Constants,StateService,Session,AuthService,registerService,LoginService,MessageToaster,Role) {
+            'ngInject';
+            var vm = this;
+            vm.activated = false;
+            console.log("tabs come");
+            vm.count=0;
+            vm.isLock=false;
+            vm.org={mobile:'', password:''};
+            //微信uid的初始化
+            vm.user={ gendar:'1', name:'', mobile:'', password:'', pswConfirm:'', wechat:AuthService.getWechatId()};
+            vm.error=null;
+            $scope.$on('$ionicView.afterEnter', activate);
+
+            function activate() {
+                vm.activated = true;
+                vm.version = Constants.buildID;
+                vm.roleType = '2';
+                console.log(vm.user);
+            };
+
+            $scope.$watch('vm.user.name', function(newValue, oldValue) {
+                if(vm.user.name!=undefined) {
+                    if (vm.user.name.length < 1) {
+                        vm.error = '姓名不能为空';
+                    } else {
+                        vm.error = null;
+                    }
+                }else{
+                    vm.error = '姓名必须填写';
+                }
+            });
+            $scope.$watch('vm.user.mobile', function(newValue, oldValue) {
+                if(vm.user.mobile!=undefined) {
+                    if (vm.user.mobile.length != 11) {
+                        vm.error = '手机长度必须为11位';
+                    } else {
+                        vm.error = null;
+                    }
+                }else{
+                    vm.error = '手机号码必须填写';
+                }
+            });
+            $scope.$watch('vm.user.password', function(newValue, oldValue) {
+                if(vm.user.password!=undefined) {
+                    if (vm.user.password.length < 8) {
+                        vm.error = '密码长度必须不小于8位';
+                    } else {
+                        vm.error = null;
+                    }
+                }else{
+                    vm.error = '密码必须填写';
+                }
+            });
+            $scope.$watch('vm.user.pswConfirm', function(newValue, oldValue) {
+                if(vm.user.pswConfirm!=undefined) {
+                    if (vm.user.password != '' && vm.user.password.length >= 8  && vm.user.pswConfirm != vm.user.password) {
+                        vm.error = '密码不一致';
+                    } else {
+                        vm.error = null;
+                    }
+                }else{
+                    vm.error = '';
+                }
+            });
+
+            vm.check = function(){
+                if(vm.error!=null){
+                    vm.error = '数据未完善哦!';
+                    return false;
+                }
+                else {
+                    if(vm.user.password.length >= 8 && vm.user.pswConfirm.length >= 8
+                        && vm.user.name.length > 0 && vm.user.mobile.length == 11
+                        && vm.user.password == vm.user.pswConfirm) return true;
+                    else vm.error = '数据未填完哦!';
+                }
+            };
+
+            vm.simpleCheck = function(){
+                if(vm.org.password.length >= 8 && (vm.org.account.length == 11 || vm.org.account.length == 8 )){
+                    vm.error = "";
+                    return true;
+                } else vm.error = '数据未填完哦!';
+            };
+
+            function wxlogin(userid,type) {
+                console.log(userid+"..."+type);
+                LoginService.wxLogin(userid,type).then(function (response) {
+                    console.log(response);
+                    if (response.errno == 0) {
+                        var result = response.data;
+                        //if(typeof(result.uid) == "undefined" ){
+                        if (result instanceof Array && result.length > 1) {
+                            //modal select type
+                            vm.roleList = result;
+                            //alert(JSON.stringify(result));
+                            MessageToaster.info("undefine have select  " + result.length);
+                            //vm.showChooseModal();
+
+                        } else {
+                            console.log(result[0]);
+                            if (result[0].uid != null && result[0].token != null && result[0].type != null) {
+                                console.log("goto next");
+                                AuthService.setSession(result[0].uid, result[0].token, result[0].type, userid);
+                                StateService.clearAllAndGo(AuthService.getNextPath());
+                            }
+                        }
+                        console.log(result);
+
+                    } else {
+                        if (response.errno == 12004) {
+                            //no data found
+                            console.log("找不到任何信息");
+                        }
+                        MessageToaster.error(response.error);
+                    }
+                });
+            };
+
+            vm.bind = function(){
+                //检测输入数值是否正确
+                if(!vm.simpleCheck())return;
+                //再绑定
+                vm.count++;
+                if(vm.count>3){
+                    vm.isLock=true;
+                    vm.error="尝试过多,请稍后再试!";
+                    return;
+                }
+                var wechatId=vm.user.wechat;
+                //alert(AuthService.getLoginID());
+                if(vm.roleType=='3'){
+                    registerService.bindTeacher(vm.org,wechatId).then(function(data) {
+                        if (data.errno == 0) {
+                            var userId = data.data.uid;
+                            console.log("bind teacher uid = "+userId);
+                            //if(userId!=null){
+                            //    wxlogin(userId,vm.roleType);
+                            //}
+                            wxlogin(wechatId,vm.roleType);
+                        }else{
+                            console.log("bindTeacher get error");
+                        }
+                    });
+                }else if(vm.roleType=='1'){
+                    registerService.bindOrganizer(vm.org,wechatId).then(function(data) {
+                        if (data.errno == 0) {
+                            var userId = data.data.uid;
+                            console.log("bind teacher uid = "+userId);
+                            //if(userId!=null){
+                            //    wxlogin(userId,vm.roleType);
+                            //}
+                            wxlogin(wechatId,vm.roleType);
+                        }
+                    });
+                }
+                vm.error="密码或手机号码有误,请重试";
+
+            };
+
+            vm.register = function(){
+                //检测输入数值是否正确
+                if(!vm.check())return;
+                //先注册
+                if(vm.roleType=='2'){
+                    registerService.registerParent(vm.user).then(function(data) {
+                        console.log(data);
+                        if (data.errno == 0) {
+                            wxlogin(vm.user.wechat,vm.roleType);
+                        }else{
+                            if(data.errno==10000){
+                                vm.error = "请确认微信是否已经绑定过";
+                            }else vm.error = data.error;
+                        }
+                    });
+                }else if(vm.roleType=='3'){
+                    registerService.registerTeacher(vm.user).then(function(data) {
+                        if (data.errno == 0) {
+                            wxlogin(vm.user.wechat,vm.roleType);
+                        }else{
+                            if(data.errno==10000){
+                                vm.error = "请确认微信是否已经绑定过";
+                            }else vm.error = data.error;
+                        }
+                    });
+                };
+                //注册成功后,使用账户去获取获取token,完成登录
+                //Session.userId="70000103";
+                //Session.token='111';
+                //Session.userRole='2';
+                //var userId="70000103";
+                //var token='111';
+                //var userRole='2';
+                //AuthService.setSession(userId, token, userRole);
+
+                //StateService.clearAllAndGo(AuthService.getNextPath());
+                //if(vm.roleType=='1') {
+                //    StateService.go('organizerEdit');
+                //}else if(vm.roleType=='2'){
+                //    StateService.go('parentEdit');
+                //}else if(vm.roleType=='3'){
+                //    StateService.go('teacherEdit');
+                //}
+            };
+        });
+}());
+
+(function() {
+  'use strict';
+
+  angular.module('registerRouter', [])
+    .config(myRouter);
+
+
+  function myRouter($stateProvider, $urlRouterProvider) {
+    'ngInject';
+    $stateProvider
+      .state('register', {
+        url: "/register",
+        templateUrl: 'register/register.html',
+        controller: 'registerCtrl',
+        controllerAs: 'vm'
+      });
+  }
+}());
+
+(function() {
+  'use strict';
+
+  angular.module('registerService', [])
+    .factory('registerService', registerService);
+
+  function registerService($http, Constants, ResultHandler) {
+    'ngInject';
+    var service = {
+      registerTeacher:registerTeacher,
+      registerParent:registerParent,
+      bindTeacher:bindTeacher,
+      bindOrganizer:bindOrganizer
+    };
+
+    //POST URL: /api/v1/account/register/parent
+    //{
+    //  "weixinno": "xxxxxx",
+    //    "name": "李寻欢",
+    //    "sex":1,
+    //    "mobile": "13812345678",
+    //    "nick":"小李飞刀",
+    //    "password":"abcd"
+    //}
+    //return
+    //{
+    //  "errno":0,
+    //    "error":"",
+    //    "data":{
+    //       "uid":21000001
+    //    }
+    //}
+    function registerParent(user) {
+      console.log(user);
+      var data = {
+        "weixinno": user.wechat,
+        "name": user.name,
+        "sex": user.gendar,
+        "mobile": user.mobile,
+        "password" : user.password
+      };
+      var url = Constants.serverUrl + 'account/register/parent';
+      return $http({
+        method: 'post',
+        url: url,
+        data: data
+      }).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
+    };
+
+    //POST URL: /api/v1/account/register/teacher
+    //{
+    //  "name":"小强",
+    //    "sex":1,
+    //    "mobile":"value",
+    //    "weixinno":"laoshi",
+    //    "teachage":5,
+    //    "age":29,
+    //    "photolink":"照片url",
+    //    "password":"123456"
+    //}
+    //return
+    //{
+    //  "errno":0,
+    //    "error":"",
+    //    "data":{
+    //       "uid":30000001
+    //    }
+    //}
+    function registerTeacher(user) {
+      var data = {
+        "weixinno": user.wechat,
+        "name": user.name,
+        "sex": user.gendar,
+        "mobile": user.mobile,
+        "password" : user.password
+      };
+      var url = Constants.serverUrl + 'account/register/teacher';
+      return $http({
+        method: 'post',
+        url: url,
+        data: data
+      }).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
+    };
+
+    function bindTeacher(user,wechatId) {
+      var data = {
+        "weixinno": wechatId,
+        "account": user.account,
+        "password" : user.password
+      };
+      var url = Constants.serverUrl + 'account/teacher/bind';
+      return $http({
+        method: 'post',
+        url: url,
+        data: data
+      }).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
+    };
+
+    function bindOrganizer(org,wechatId) {
+      var data = {
+        "weixinno": wechatId,
+        "account": org.account,
+        "password" : org.password
+      };
+      var url = Constants.serverUrl + 'account/deposit/bind';
+      return $http({
+        method: 'post',
+        url: url,
+        data: data
+      }).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
+    };
+
+
+    return service;
+  }
+
+}());
+
+(function() {
+  "use strict";
   angular.module('tabsModule', [
     'tabsCtrl',
     'tabsRouter',
@@ -3666,239 +4023,55 @@ app.filter('statusChange', function () {
 
 (function() {
   "use strict";
-  angular.module('registerModule', [
-    'registerCtrl',
-    'registerRouter',
-    'registerService'
+  angular.module('teacherSettingModule', [
+    'teacherSettingCtrl',
+    'teacherSettingRouter',
+    'teacherSettingService'
   ]);
 
 }());
 
 (function() {
     "use strict";
-    angular.module('registerCtrl', [])
-        .controller('registerCtrl', function($scope, Constants,StateService,Session,AuthService,registerService,LoginService,MessageToaster,Role) {
+    angular.module('teacherSettingCtrl', [])
+        .controller('teacherSettingCtrl', function($scope, $state, Constants, StateService) {
             'ngInject';
             var vm = this;
             vm.activated = false;
-            console.log("tabs come");
-            vm.count=0;
-            vm.isLock=false;
-            vm.org={mobile:'', password:''};
-            //微信uid的初始化
-            vm.user={ gendar:'1', name:'', mobile:'', password:'', pswConfirm:'', wechat:AuthService.getWechatId()};
-            vm.error=null;
             $scope.$on('$ionicView.afterEnter', activate);
 
             function activate() {
                 vm.activated = true;
                 vm.version = Constants.buildID;
-                vm.roleType = '2';
-                console.log(vm.user);
+            }
+
+            vm.goTo = function(addr){
+                console.log(addr);
+                StateService.go(addr);
             };
 
-            $scope.$watch('vm.user.name', function(newValue, oldValue) {
-                if(vm.user.name!=undefined) {
-                    if (vm.user.name.length < 1) {
-                        vm.error = '姓名不能为空';
-                    } else {
-                        vm.error = null;
-                    }
-                }else{
-                    vm.error = '姓名必须填写';
-                }
-            });
-            $scope.$watch('vm.user.mobile', function(newValue, oldValue) {
-                if(vm.user.mobile!=undefined) {
-                    if (vm.user.mobile.length != 11) {
-                        vm.error = '手机长度必须为11位';
-                    } else {
-                        vm.error = null;
-                    }
-                }else{
-                    vm.error = '手机号码必须填写';
-                }
-            });
-            $scope.$watch('vm.user.password', function(newValue, oldValue) {
-                if(vm.user.password!=undefined) {
-                    if (vm.user.password.length < 8) {
-                        vm.error = '密码长度必须不小于8位';
-                    } else {
-                        vm.error = null;
-                    }
-                }else{
-                    vm.error = '密码必须填写';
-                }
-            });
-            $scope.$watch('vm.user.pswConfirm', function(newValue, oldValue) {
-                if(vm.user.pswConfirm!=undefined) {
-                    if (vm.user.password != '' && vm.user.password.length >= 8  && vm.user.pswConfirm != vm.user.password) {
-                        vm.error = '密码不一致';
-                    } else {
-                        vm.error = null;
-                    }
-                }else{
-                    vm.error = '';
-                }
-            });
-
-            vm.check = function(){
-                if(vm.error!=null){
-                    vm.error = '数据未完善哦!';
-                    return false;
-                }
-                else {
-                    if(vm.user.password.length >= 8 && vm.user.pswConfirm.length >= 8
-                        && vm.user.name.length > 0 && vm.user.mobile.length == 11
-                        && vm.user.password == vm.user.pswConfirm) return true;
-                    else vm.error = '数据未填完哦!';
-                }
-            };
-
-            vm.simpleCheck = function(){
-                if(vm.org.password.length >= 8 && (vm.org.account.length == 11 || vm.org.account.length == 8 )){
-                    vm.error = "";
-                    return true;
-                } else vm.error = '数据未填完哦!';
-            };
-
-            function wxlogin(userid,type) {
-                console.log(userid+"..."+type);
-                LoginService.wxLogin(userid,type).then(function (response) {
-                    console.log(response);
-                    if (response.errno == 0) {
-                        var result = response.data;
-                        //if(typeof(result.uid) == "undefined" ){
-                        if (result instanceof Array && result.length > 1) {
-                            //modal select type
-                            vm.roleList = result;
-                            //alert(JSON.stringify(result));
-                            MessageToaster.info("undefine have select  " + result.length);
-                            //vm.showChooseModal();
-
-                        } else {
-                            console.log(result[0]);
-                            if (result[0].uid != null && result[0].token != null && result[0].type != null) {
-                                console.log("goto next");
-                                AuthService.setSession(result[0].uid, result[0].token, result[0].type, userid);
-                                StateService.clearAllAndGo(AuthService.getNextPath());
-                            }
-                        }
-                        console.log(result);
-
-                    } else {
-                        if (response.errno == 12004) {
-                            //no data found
-                            console.log("找不到任何信息");
-                        }
-                        MessageToaster.error(response.error);
-                    }
-                });
-            };
-
-            vm.bind = function(){
-                //检测输入数值是否正确
-                if(!vm.simpleCheck())return;
-                //再绑定
-                vm.count++;
-                if(vm.count>3){
-                    vm.isLock=true;
-                    vm.error="尝试过多,请稍后再试!";
-                    return;
-                }
-                var wechatId=vm.user.wechat;
-                //alert(AuthService.getLoginID());
-                if(vm.roleType=='3'){
-                    registerService.bindTeacher(vm.org,wechatId).then(function(data) {
-                        if (data.errno == 0) {
-                            var userId = data.data.uid;
-                            console.log("bind teacher uid = "+userId);
-                            //if(userId!=null){
-                            //    wxlogin(userId,vm.roleType);
-                            //}
-                            wxlogin(wechatId,vm.roleType);
-                        }else{
-                            console.log("bindTeacher get error");
-                        }
-                    });
-                }else if(vm.roleType=='1'){
-                    registerService.bindOrganizer(vm.org,wechatId).then(function(data) {
-                        if (data.errno == 0) {
-                            var userId = data.data.uid;
-                            console.log("bind teacher uid = "+userId);
-                            //if(userId!=null){
-                            //    wxlogin(userId,vm.roleType);
-                            //}
-                            wxlogin(wechatId,vm.roleType);
-                        }
-                    });
-                }
-                vm.error="密码或手机号码有误,请重试";
-
-            };
-
-            vm.register = function(){
-                //检测输入数值是否正确
-                if(!vm.check())return;
-                //先注册
-                if(vm.roleType=='2'){
-                    registerService.registerParent(vm.user).then(function(data) {
-                        console.log(data);
-                        if (data.errno == 0) {
-                            wxlogin(vm.user.wechat,vm.roleType);
-                        }else{
-                            if(data.errno==10000){
-                                vm.error = "请确认微信是否已经绑定过";
-                            }else vm.error = data.error;
-                        }
-                    });
-                }else if(vm.roleType=='3'){
-                    registerService.registerTeacher(vm.user).then(function(data) {
-                        if (data.errno == 0) {
-                            wxlogin(vm.user.wechat,vm.roleType);
-                        }else{
-                            if(data.errno==10000){
-                                vm.error = "请确认微信是否已经绑定过";
-                            }else vm.error = data.error;
-                        }
-                    });
-                };
-                //注册成功后,使用账户去获取获取token,完成登录
-                //Session.userId="70000103";
-                //Session.token='111';
-                //Session.userRole='2';
-                //var userId="70000103";
-                //var token='111';
-                //var userRole='2';
-                //AuthService.setSession(userId, token, userRole);
-
-                //StateService.clearAllAndGo(AuthService.getNextPath());
-                //if(vm.roleType=='1') {
-                //    StateService.go('organizerEdit');
-                //}else if(vm.roleType=='2'){
-                //    StateService.go('parentEdit');
-                //}else if(vm.roleType=='3'){
-                //    StateService.go('teacherEdit');
-                //}
-            };
         });
 }());
 
 (function() {
   'use strict';
 
-  angular.module('registerRouter', [])
+  angular.module('teacherSettingRouter', [])
     .config(myRouter);
 
 
   function myRouter($stateProvider, $urlRouterProvider) {
     'ngInject';
     $stateProvider
-      .state('register', {
-        url: "/register",
-        templateUrl: 'register/register.html',
-        controller: 'registerCtrl',
-        controllerAs: 'vm'
+      .state('tabs.teacherSetting', {
+        url: "/teacherSetting",
+          views: {
+            'tab-teacherSetting': {
+              templateUrl: 'teacherSetting/teacherSetting.html',
+              controller: 'teacherSettingCtrl',
+              controllerAs: 'vm'
+            }
+          }
       });
   }
 }());
@@ -3906,117 +4079,16 @@ app.filter('statusChange', function () {
 (function() {
   'use strict';
 
-  angular.module('registerService', [])
-    .factory('registerService', registerService);
+  angular.module('teacherSettingService', [])
+    .factory('teacherSettingService', myService);
 
-  function registerService($http, Constants, ResultHandler) {
+  function myService( $q, $http) {
     'ngInject';
     var service = {
-      registerTeacher:registerTeacher,
-      registerParent:registerParent,
-      bindTeacher:bindTeacher,
-      bindOrganizer:bindOrganizer
     };
-
-    //POST URL: /api/v1/account/register/parent
-    //{
-    //  "weixinno": "xxxxxx",
-    //    "name": "李寻欢",
-    //    "sex":1,
-    //    "mobile": "13812345678",
-    //    "nick":"小李飞刀",
-    //    "password":"abcd"
-    //}
-    //return
-    //{
-    //  "errno":0,
-    //    "error":"",
-    //    "data":{
-    //       "uid":21000001
-    //    }
-    //}
-    function registerParent(user) {
-      console.log(user);
-      var data = {
-        "weixinno": user.wechat,
-        "name": user.name,
-        "sex": user.gendar,
-        "mobile": user.mobile,
-        "password" : user.password
-      };
-      var url = Constants.serverUrl + 'account/register/parent';
-      return $http({
-        method: 'post',
-        url: url,
-        data: data
-      }).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
-    };
-
-    //POST URL: /api/v1/account/register/teacher
-    //{
-    //  "name":"小强",
-    //    "sex":1,
-    //    "mobile":"value",
-    //    "weixinno":"laoshi",
-    //    "teachage":5,
-    //    "age":29,
-    //    "photolink":"照片url",
-    //    "password":"123456"
-    //}
-    //return
-    //{
-    //  "errno":0,
-    //    "error":"",
-    //    "data":{
-    //       "uid":30000001
-    //    }
-    //}
-    function registerTeacher(user) {
-      var data = {
-        "weixinno": user.wechat,
-        "name": user.name,
-        "sex": user.gendar,
-        "mobile": user.mobile,
-        "password" : user.password
-      };
-      var url = Constants.serverUrl + 'account/register/teacher';
-      return $http({
-        method: 'post',
-        url: url,
-        data: data
-      }).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
-    };
-
-    function bindTeacher(user,wechatId) {
-      var data = {
-        "weixinno": wechatId,
-        "account": user.account,
-        "password" : user.password
-      };
-      var url = Constants.serverUrl + 'account/teacher/bind';
-      return $http({
-        method: 'post',
-        url: url,
-        data: data
-      }).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
-    };
-
-    function bindOrganizer(org,wechatId) {
-      var data = {
-        "weixinno": wechatId,
-        "account": org.account,
-        "password" : org.password
-      };
-      var url = Constants.serverUrl + 'account/deposit/bind';
-      return $http({
-        method: 'post',
-        url: url,
-        data: data
-      }).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
-    };
-
-
     return service;
+
+
   }
 
 }());
@@ -4244,7 +4316,7 @@ app.filter('statusChange', function () {
       getOrders:getOrders,
       checkOrder:checkOrder,
       createOrder:createOrder,
-      updateOrder:updatePayedOrder
+      updatePayedOrder:updatePayedOrder
     };
 
     function getMenu(){
@@ -4298,69 +4370,72 @@ app.filter('statusChange', function () {
 
 (function() {
   "use strict";
-  angular.module('teacherSettingModule', [
-    'teacherSettingCtrl',
-    'teacherSettingRouter',
-    'teacherSettingService'
+  angular.module('vipRecordModule', [
+    'vipRecordCtrl',
+    'vipRecordRouter',
+    'vipRecordService'
   ]);
 
 }());
 
 (function() {
     "use strict";
-    angular.module('teacherSettingCtrl', [])
-        .controller('teacherSettingCtrl', function($scope, $state, Constants, StateService) {
+    angular.module('vipRecordCtrl', [])
+        .controller('vipRecordCtrl', function($scope, $state, Constants, StateService,exitService,AuthService,MessageToaster,Session) {
             'ngInject';
             var vm = this;
             vm.activated = false;
+
             $scope.$on('$ionicView.afterEnter', activate);
 
             function activate() {
                 vm.activated = true;
                 vm.version = Constants.buildID;
+                vm.records=[{name:'骗你的数据',time:'2016-09-09 19:59:59'}];
             }
 
-            vm.goTo = function(addr){
-                console.log(addr);
-                StateService.go(addr);
+            vm.back=function(){
+                StateService.back();
             };
-
         });
 }());
 
 (function() {
   'use strict';
 
-  angular.module('teacherSettingRouter', [])
+  angular.module('vipRecordRouter', [])
     .config(myRouter);
 
 
   function myRouter($stateProvider, $urlRouterProvider) {
     'ngInject';
     $stateProvider
-      .state('tabs.teacherSetting', {
-        url: "/teacherSetting",
-          views: {
-            'tab-teacherSetting': {
-              templateUrl: 'teacherSetting/teacherSetting.html',
-              controller: 'teacherSettingCtrl',
-              controllerAs: 'vm'
-            }
-          }
-      });
+        .state('vipRecord', {
+          url: "/vipRecord",
+          templateUrl: 'vipRecord/vipRecord.html',
+          controller: 'vipRecordCtrl',
+          controllerAs: 'vm'
+        })
   }
 }());
 
 (function() {
   'use strict';
 
-  angular.module('teacherSettingService', [])
-    .factory('teacherSettingService', myService);
+  angular.module('vipRecordService', [])
+    .factory('vipRecordService', eService);
 
-  function myService( $q, $http) {
+  function eService( $q, $http,Constants,ResultHandler) {
     'ngInject';
     var service = {
+      exit:exit
     };
+
+    function exit(id) {
+      var url = Constants.serverUrl + 'account/exit/'+id;
+      return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
+    };
+
     return service;
 
 
@@ -4426,81 +4501,6 @@ app.filter('statusChange', function () {
 
   angular.module('vipTipsService', [])
     .factory('vipTipsService', eService);
-
-  function eService( $q, $http,Constants,ResultHandler) {
-    'ngInject';
-    var service = {
-      exit:exit
-    };
-
-    function exit(id) {
-      var url = Constants.serverUrl + 'account/exit/'+id;
-      return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
-    };
-
-    return service;
-
-
-  }
-
-}());
-
-(function() {
-  "use strict";
-  angular.module('vipRecordModule', [
-    'vipRecordCtrl',
-    'vipRecordRouter',
-    'vipRecordService'
-  ]);
-
-}());
-
-(function() {
-    "use strict";
-    angular.module('vipRecordCtrl', [])
-        .controller('vipRecordCtrl', function($scope, $state, Constants, StateService,exitService,AuthService,MessageToaster,Session) {
-            'ngInject';
-            var vm = this;
-            vm.activated = false;
-
-            $scope.$on('$ionicView.afterEnter', activate);
-
-            function activate() {
-                vm.activated = true;
-                vm.version = Constants.buildID;
-                vm.records=[{name:'骗你的数据',time:'2016-09-09 19:59:59'}];
-            }
-
-            vm.back=function(){
-                StateService.back();
-            };
-        });
-}());
-
-(function() {
-  'use strict';
-
-  angular.module('vipRecordRouter', [])
-    .config(myRouter);
-
-
-  function myRouter($stateProvider, $urlRouterProvider) {
-    'ngInject';
-    $stateProvider
-        .state('vipRecord', {
-          url: "/vipRecord",
-          templateUrl: 'vipRecord/vipRecord.html',
-          controller: 'vipRecordCtrl',
-          controllerAs: 'vm'
-        })
-  }
-}());
-
-(function() {
-  'use strict';
-
-  angular.module('vipRecordService', [])
-    .factory('vipRecordService', eService);
 
   function eService( $q, $http,Constants,ResultHandler) {
     'ngInject';
