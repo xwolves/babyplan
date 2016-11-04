@@ -73,6 +73,94 @@
 
 (function() {
   "use strict";
+  angular.module('config', [
+    'environmentConfig',
+    'constant',
+    'httpRelConfig'
+  ]);
+
+}());
+
+(function() {
+    "use strict";
+    angular.module('constant', [])
+        .constant('Path',{
+            'ParentRolePath':'tabs.children',
+            'OrganizerRolePath':'tabs.organizer',
+            'TeacherRolePath':'tabs.message'
+        })
+        .constant('Role',{
+            'unknown':'-1',
+            'Organizer':'1',
+            'Parent':'2',
+            'Teacher':'3',
+            'Children':'4',
+            'ThirdParty':'5',
+            'Consultant':'6'
+        })
+        .constant('Weixin', {
+        })
+        .constant('AUTH_EVENTS', {
+            loginSuccess: 'auth-login-success',
+            loginFailed: 'auth-login-failed',
+            logoutSuccess: 'auth-logout-success',
+            sessionTimeout: 'auth-session-timeout',
+            notAuthenticated: 'auth-not-authenticated',
+            notAuthorized: 'auth-not-authorized'
+        })
+        .constant('ErrorMessage', {
+            ACCESS_FAIL: '通讯异常，请稍后再试！',
+            TOKEN_INVALID: '连接超时，请重新登录！'
+        })
+        .constant('SuccessMessage', {
+            SUBMIT_SUCESS: '提交成功',
+            OPERATION_SUCESS:'操作完成'
+        });
+}());
+
+(function() {
+    "use strict";
+    angular.module('environmentConfig', [])
+        .constant('Constants', {
+            'appTitle':'托管系统',
+            'serverUrl': '/api/v1/',
+            'dfsUrl': '/',
+            'buildID': '20161101v1',
+            'ENVIRONMENT':'release'
+        });
+}());
+//'serverUrl': 'http://120.76.226.47/api/v2/',
+//    'dfsUrl': 'http://120.76.226.47/',
+//http://localhost:8090/
+//http://wx.zxing-tech.cn
+(function() {
+    "use strict";
+    angular.module('httpDevConfig', [])
+        .config(function($httpProvider) {
+            $httpProvider.defaults.headers.post["Content-Type"] = "application/x-www-form-urlencoded";
+            $httpProvider.defaults.headers.put["Content-Type"] = "application/x-www-form-urlencoded";
+        });
+}());
+
+(function() {
+    "use strict";
+    angular.module('httpRelConfig', [])
+    .config(function($httpProvider) {
+        $httpProvider.defaults.cache = false;
+        if (!$httpProvider.defaults.headers.get) {
+           $httpProvider.defaults.headers.get = {};
+        }
+        // disable IE ajax request caching
+        $httpProvider.defaults.headers.get['If-Modified-Since'] = '0';
+
+        // Disable IE ajax request caching
+        $httpProvider.defaults.headers.get['Cache-Control'] = 'no-cache';
+        $httpProvider.defaults.headers.get['Pragma'] = 'no-cache';
+    });
+}());
+
+(function() {
+  "use strict";
   angular.module('AuthService', []).factory('AuthService', function(Session,Path,Role) {
     'ngInject';
 
@@ -489,119 +577,6 @@ app.filter('statusChange', function () {
 }());
 
 (function() {
-  "use strict";
-  angular.module('config', [
-    'environmentConfig',
-    'constant',
-    'httpRelConfig'
-  ]);
-
-}());
-
-(function() {
-    "use strict";
-    angular.module('constant', [])
-        .constant('Path',{
-            'ParentRolePath':'tabs.children',
-            'OrganizerRolePath':'tabs.organizer',
-            'TeacherRolePath':'tabs.message'
-        })
-        .constant('Role',{
-            'unknown':'-1',
-            'Organizer':'1',
-            'Parent':'2',
-            'Teacher':'3',
-            'Children':'4',
-            'ThirdParty':'5',
-            'Consultant':'6'
-        })
-        .constant('Weixin', {
-        })
-        .constant('AUTH_EVENTS', {
-            loginSuccess: 'auth-login-success',
-            loginFailed: 'auth-login-failed',
-            logoutSuccess: 'auth-logout-success',
-            sessionTimeout: 'auth-session-timeout',
-            notAuthenticated: 'auth-not-authenticated',
-            notAuthorized: 'auth-not-authorized'
-        })
-        .constant('ErrorMessage', {
-            ACCESS_FAIL: '通讯异常，请稍后再试！',
-            TOKEN_INVALID: '连接超时，请重新登录！'
-        })
-        .constant('SuccessMessage', {
-            SUBMIT_SUCESS: '提交成功',
-            OPERATION_SUCESS:'操作完成'
-        });
-}());
-
-(function() {
-    "use strict";
-    angular.module('environmentConfig', [])
-        .constant('Constants', {
-            'appTitle':'托管系统',
-            'serverUrl': '/api/v1/',
-            'dfsUrl': '/',
-            'buildID': '20161101v1',
-            'ENVIRONMENT':'release'
-        });
-}());
-//'serverUrl': 'http://120.76.226.47/api/v2/',
-//    'dfsUrl': 'http://120.76.226.47/',
-//http://localhost:8090/
-//http://wx.zxing-tech.cn
-(function() {
-    "use strict";
-    angular.module('httpDevConfig', [])
-        .config(function($httpProvider) {
-            $httpProvider.defaults.headers.post["Content-Type"] = "application/x-www-form-urlencoded";
-            $httpProvider.defaults.headers.put["Content-Type"] = "application/x-www-form-urlencoded";
-        });
-}());
-
-(function() {
-    "use strict";
-    angular.module('httpRelConfig', [])
-    .config(function($httpProvider) {
-        $httpProvider.defaults.cache = false;
-        if (!$httpProvider.defaults.headers.get) {
-           $httpProvider.defaults.headers.get = {};
-        }
-        // disable IE ajax request caching
-        $httpProvider.defaults.headers.get['If-Modified-Since'] = '0';
-
-        // Disable IE ajax request caching
-        $httpProvider.defaults.headers.get['Cache-Control'] = 'no-cache';
-        $httpProvider.defaults.headers.get['Pragma'] = 'no-cache';
-    });
-}());
-
-(function() {
-    "use strict";
-    angular.module('directive', [
-
-    ]);
-
-}());
-
-Date.prototype.Format = function(fmt) {
-    var o = {
-        "M+": this.getMonth() + 1, //月份
-        "d+": this.getDate(), //日
-        "h+": this.getHours(), //小时
-        "m+": this.getMinutes(), //分
-        "s+": this.getSeconds(), //秒
-        "q+": Math.floor((this.getMonth() + 3) / 3), //季度
-        "S": this.getMilliseconds() //毫秒
-    };
-    if (/(y+)/.test(fmt))
-        fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
-    for (var k in o)
-        if (new RegExp("(" + k + ")").test(fmt))
-            fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
-    return fmt;
-};
-(function() {
     "use strict";
     angular.module('modules', [
         'LoginModule',
@@ -629,6 +604,14 @@ Date.prototype.Format = function(fmt) {
 }());
 
 (function() {
+    "use strict";
+    angular.module('directive', [
+
+    ]);
+
+}());
+
+(function() {
   "use strict";
   angular.module('tools', [
     
@@ -636,259 +619,23 @@ Date.prototype.Format = function(fmt) {
 
 }());
 
-(function() {
-    "use strict";
-    angular.module('childrenEditCtrl', [])
-        .controller('childrenEditCtrl', function($scope, $stateParams, Constants, StateService,childrenSettingService,AuthService,Session) {
-            'ngInject';
-            var vm = this;
-            vm.activated = false;
-
-            vm.query = function(id){
-                console.log("child id = "+id);
-                vm.child=Session.temp;
-            };
-
-            $scope.$on('$ionicView.afterEnter', activate);
-
-            function activate() {
-                console.log($stateParams);
-                vm.cid = $stateParams.cid;
-                //0:query 1:create 2:update
-                vm.type = $stateParams.type;
-                if(vm.type=='0')vm.isEditing = false;
-                else vm.isEditing = true;
-
-                vm.activated = true;
-                vm.version = Constants.buildID;
-
-                if(vm.type!='1')vm.query(vm.cid);
-                else vm.child = {name:'',sex:'',remark:'',relationship:''};
-            }
-
-            vm.back=function(){
-                StateService.back();
-            };
-
-            vm.save=function(){
-                //save
-                if(vm.type=='1'){
-                    //create
-                    childrenSettingService.registerChildren(vm.child,AuthService.getLoginID()).then(function(data) {
-                        if (data.errno == 0) {
-                            //var userId = data.data.uid;
-                            //wxlogin(vm.user.wechat);
-                            StateService.back();
-                        }
-                    });
-
-                }else{
-                    //update
-                    StateService.back();
-                }
-
-            };
-
-
-        });
-}());
-
-(function() {
-  "use strict";
-  angular.module('childrenSettingModule', [
-    'childrenSettingCtrl',
-    'childrenEditCtrl',
-    'childrenSettingRouter',
-    'childrenSettingService'
-  ]);
-
-}());
-
-(function() {
-    "use strict";
-    angular.module('childrenSettingCtrl', [])
-        .controller('childrenSettingCtrl', function($scope,Constants,StateService,$ionicListDelegate,$ionicPopup,AuthService,parentService,Session) {
-            'ngInject';
-            var vm = this;
-            vm.activated = false;
-            $scope.$on('$ionicView.afterEnter', activate);
-
-            function activate() {
-                vm.activated = true;
-                vm.version = Constants.buildID;
-                vm.getChildren();
-            }
-
-            vm.getChildren = function(){
-                parentService.queryChildren(AuthService.getLoginID()).then(function(data) {
-                    if (data.errno == 0) {
-                        console.log(data.data);
-                        vm.children = data.data;
-                    }
-                });
-            };
-
-            vm.back=function(){
-                StateService.back();
-            };
-
-            vm.goTo=function(id,child){
-                //查看孩子信息
-                $ionicListDelegate.closeOptionButtons();
-                Session.temp=child;
-                StateService.go('childrenEdit',{cid:id,type:0});
-            };
-
-            vm.newChild=function(){
-                //创建新的孩子信息
-                $ionicListDelegate.closeOptionButtons();
-                StateService.go('childrenEdit',{type:1});
-            };
-
-            vm.editChild=function(id,child){
-                //编辑孩子信息
-                $ionicListDelegate.closeOptionButtons();
-                Session.temp=child;
-                StateService.go('childrenEdit',{cid:id,type:2});
-            };
-
-            vm.delChild=function(child){
-                //删除孩子信息
-                $ionicListDelegate.closeOptionButtons();
-
-                var confirmPopup = $ionicPopup.confirm({
-                    title: '确定要删除此孩子:'+child.name,
-                    buttons: [
-                        {text: '取消', type: 'button-positive'},
-                        {text: '确定', type: 'button-assertive',onTap: function(e) { return true}}
-                    ]
-                });
-                confirmPopup.then(function(result) {
-                    if(result) {
-                        console.log('confirm to del this child '+child.sid);
-                        //delete(id);
-                    } else {
-                        console.log('cancel delete');
-                    }
-                });
-            };
-        });
-}());
-
-(function() {
-  'use strict';
-
-  angular.module('childrenSettingRouter', [])
-    .config(myRouter);
-
-
-  function myRouter($stateProvider, $urlRouterProvider) {
-    'ngInject';
-    $stateProvider
-      .state('childrenSetting', {
-        url: "/childrenSetting",
-        templateUrl: 'childrenSetting/childrenSetting.html',
-        controller: 'childrenSettingCtrl',
-        controllerAs: 'vm'
-      })
-      .state('childrenEdit', {
-        url: "/childrenEdit?:cid&:type",
-        params: {
-          cid : null,
-          type : '0'
-        },
-        templateUrl: 'childrenSetting/childrenEdit.html',
-        controller: 'childrenEditCtrl',
-        controllerAs: 'vm'
-      })
-    ;
-  }
-}());
-
-(function() {
-  'use strict';
-
-  angular.module('childrenSettingService', [])
-    .factory('childrenSettingService', childrenSettingService);
-
-  function childrenSettingService( $q, $http, Constants, ResultHandler) {
-    'ngInject';
-    var service = {
-      registerChildren:registerChildren
+Date.prototype.Format = function(fmt) {
+    var o = {
+        "M+": this.getMonth() + 1, //月份
+        "d+": this.getDate(), //日
+        "h+": this.getHours(), //小时
+        "m+": this.getMinutes(), //分
+        "s+": this.getSeconds(), //秒
+        "q+": Math.floor((this.getMonth() + 3) / 3), //季度
+        "S": this.getMilliseconds() //毫秒
     };
-
-    //POST
-    //URL: /api/v1/account/register/children
-    //Request Body:
-    //{
-    //  "name":"小强",
-    //    "sex":1,
-    //    "fingerfeature":"value"
-    //}
-    //Response Body:
-    //{
-    //  "errno":0,
-    //    "error":"",
-    //    "data":{
-    //      "uid":40000001
-    //    }
-    //}
-    //need token in headers
-    function registerChildren(child,parentId) {
-      var data = {
-        "p_uid":parentId,
-        "name": child.name,
-        "sex": child.sex,
-        "relationship": child.relationship,
-        "remark": child.remark
-      };
-      console.log(data);
-      var url = Constants.serverUrl + 'account/register/children';
-      return $http({
-        method: 'post',
-        url: url,
-        data: data
-      }).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
-    };
-
-    return service;
-
-
-  }
-
-}());
-
-(function() {
-  "use strict";
-  angular.module('commentModule', [
-    'commentService'
-  ]);
-
-}());
-
-(function() {
-  'use strict';
-
-  angular.module('commentService', [])
-    .factory('commentService', commentService);
-
-  function commentService($q, $http, Constants, ResultHandler) {
-    'ngInject';
-    var service = {
-        queryDepositComment:queryDepositComment
-    };
-
-    //http://172.18.1.166/api/v1/comment/deposit/fetch/:depositid
-    function queryDepositComment(id) {
-        var url = Constants.serverUrl + 'comment/deposit/fetch/'+id;
-        return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
-    };
-
-    return service;
-  }
-
-}());
-
+    if (/(y+)/.test(fmt))
+        fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+    for (var k in o)
+        if (new RegExp("(" + k + ")").test(fmt))
+            fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+    return fmt;
+};
 (function() {
     "use strict";
     angular.module('LoginModule', [
@@ -1169,6 +916,662 @@ Date.prototype.Format = function(fmt) {
                 }
             }
         });
+}());
+
+(function() {
+  "use strict";
+  angular.module('childrenModule', [
+    'childrenCtrl',
+    'childrenRouter',
+    'childrenService'
+  ]);
+
+}());
+
+(function() {
+    "use strict";
+    angular.module('childrenCtrl', [])
+        .controller('childrenCtrl', function($scope, Constants,childrenService,AuthService,Session, StateService,$ionicModal, $ionicSlideBoxDelegate) {
+            'ngInject';
+            console.log("childrenCtrl");
+            var vm = this;
+            vm.activated = false;
+            vm.parent={};
+            vm.fingerprintLogs=[];
+            vm.fingerprintLogSample=[];
+            vm.messages=[];
+
+            $scope.$on('$ionicView.afterEnter', activate);
+
+            function activate() {
+                vm.activated = true;
+                vm.version = Constants.buildID;
+                //从微信获取家长的基本信息
+                vm.getWechatInfo(AuthService.getWechatId());
+                //vm.parent.wechat={
+                //    "nickname": "Band",
+                //    "sex": 1,
+                //    "language": "zh_CN",
+                //    "city": "广州",
+                //    "province": "广东",
+                //    "country": "中国",
+                //    "headimgurl":  "http://wx.qlogo.cn/mmopen/g3MonUZtNHkdmzicIlibx6iaFqAc56vxLSUfpb6n5WKSYVY0ChQKkiaJSgQ1dZuTOgvLLrhJbERQQ4eMsv84eavHiaiceqxibJxCfHe/0"
+                //};
+                vm.getChildrenInfo(AuthService.getLoginID());
+
+                vm.getChildrenMsg(AuthService.getLoginID());
+
+                vm.getChildren();
+            };
+
+            vm.getChildrenInfo = function(pId){
+                childrenService.getChildrenSignIn(pId).then(function(data) {
+                    if (data.errno == 0) {
+                        console.log("getChildrenSignIn: ");
+                        console.log(data.data);
+                        vm.fingerprintLogs=data.data;
+                        for(var i=0;i<vm.fingerprintLogs.length;i++){
+                            vm.fingerprintLogSample[i]=vm.fingerprintLogs[i];
+                            if(i>=1){
+                                break;
+                            }
+                        }
+                        console.log(vm.fingerprintLogSample);
+                    }else{
+                        console.log(data);
+                    }
+                });
+            };
+            vm.getChildrenMsg = function(pId){
+                childrenService.getChildrenMsg(pId).then(function(data) {
+                    if (data.errno == 0) {
+                        console.log("getChildrenMsg: ");
+                        console.log(data.data);
+                        vm.msg = data.data;
+                    }
+                });
+            };
+
+            vm.getWechatInfo = function(wId){
+                console.log("wechat id : "+wId);
+                childrenService.getWechatInfo(wId).then(function(data) {
+                    if (data.errno == 0) {
+                        console.log("wechat info: ");
+                        console.log(data.data);
+                        vm.parent.wechat = data.data;
+                    }
+                });
+            };
+
+            vm.goPhoto=function(msgIndex,index){
+                Session.temp=vm.msg[msgIndex];
+                StateService.go("photo",{index:index});
+            };
+
+            // {childuid: "40000003", childname: "赵小萌", timeline: Array[1]}
+            //childname:"赵小萌"
+            //childuid:"40000003"
+            //timeline:Array[1]
+            //0:Object
+            //clickcount:"0"
+            //createtime:"2016-08-12 09:29:36"
+            //depositid:"10000001"
+            //description:null
+            //infoid:"1"
+            //infotype:null
+            //latitude:null
+            //longitude:null
+            //photolink1:"http://a"
+            //photolink2:"http://b"
+            //photolink3:null
+            //photolink4:null
+            //photolink5:null
+            //photolink6:null
+            //publisherid:"0"
+            //status:"1"
+            vm.getMsg = function(childId){
+                childrenService.getMsg(childId).then(function(data) {
+                    if (data.errno == 0) {
+                        console.log(data.data);
+                        vm.msg = data.data;
+                    }
+                });
+            };
+            vm.getChildSignIn = function(childId,name){
+                childrenService.getChildSignIn(childId).then(function(data) {
+                    if (data.errno == 0 ) {
+                        data.data.forEach(function(item){
+                            item.childId=childId;
+                            item.childName=name;
+                            vm.fingerprintLogs.push(item);
+                        });
+                    }
+                    console.log(JSON.stringify(vm.fingerprintLogs));
+                });
+            };
+
+            vm.getChildren = function(){
+                childrenService.getChildren(AuthService.getLoginID()).then(function(data) {
+                    var title="";
+                    if (data.errno == 0) {
+                        console.log(data.data);
+                        vm.childs = data.data;
+                        for(var i=0;i<vm.childs.length;i++){
+                            if(i==vm.childs.length-1)
+                                title+=(vm.childs[i].name+"的家长");
+                            else
+                                title+=(vm.childs[i].name+",");
+                            //vm.getMsg(vm.childs[i].uid);
+                            //vm.getChildSignIn(vm.childs[i].uid,vm.childs[i].name);
+                        }
+                        vm.parent.title=title;
+                    }
+                    //vm.fingerprintLogs.sort(function(a,b){return a.log-b.log});
+                });
+            };
+
+            vm.getImages=function(msg){
+                vm.imgCount=0;
+                if(msg.photolink1!=null && msg.photolink1!=""){
+                    var data={src:msg.photolink1,msg:''};
+                    vm.images[vm.imgCount]=data;
+                    vm.imgCount++;
+                }
+                if(msg.photolink2!=null && msg.photolink2!=""){
+                    var data={src:msg.photolink2,msg:''};
+                    vm.images[vm.imgCount]=data;
+                    vm.imgCount++;
+                }
+                if(msg.photolink3!=null && msg.photolink3!=""){
+                    var data={src:msg.photolink3,msg:''};
+                    vm.images[vm.imgCount]=data;
+                    vm.imgCount++;
+                }
+                if(msg.photolink4!=null && msg.photolink4!=""){
+                    var data={src:msg.photolink4,msg:''};
+                    vm.images[vm.imgCount]=data;
+                    vm.imgCount++;
+                }
+                if(msg.photolink5!=null && msg.photolink5!=""){
+                    var data={src:msg.photolink5,msg:''};
+                    vm.images[vm.imgCount]=data;
+                    vm.imgCount++;
+                }
+                if(msg.photolink6!=null && msg.photolink6!=""){
+                    var data={src:msg.photolink6,msg:''};
+                    vm.images[vm.imgCount]=data;
+                    vm.imgCount++;
+                }
+                console.log(vm.images);
+            };
+
+            $ionicModal.fromTemplateUrl('message/image-modal.html', {
+                scope: $scope,
+                animation: 'slide-in-up'
+            }).then(function(modal) {
+                $scope.modal = modal;
+            });
+
+            $scope.openModal = function() {
+                $ionicSlideBoxDelegate.slide(0);
+                $scope.modal.show();
+            };
+
+            $scope.closeModal = function() {
+                $scope.modal.hide();
+            };
+
+            // Cleanup the modal when we're done with it!
+            $scope.$on('$destroy', function() {
+                $scope.modal.remove();
+            });
+            // Execute action on hide modal
+            $scope.$on('modal.hide', function() {
+                // Execute action
+            });
+            // Execute action on remove modal
+            $scope.$on('modal.removed', function() {
+                // Execute action
+            });
+            $scope.$on('modal.shown', function() {
+                console.log('Modal is shown!');
+            });
+
+            // Call this functions if you need to manually control the slides
+            $scope.next = function() {
+                $ionicSlideBoxDelegate.next();
+            };
+
+            $scope.previous = function() {
+                $ionicSlideBoxDelegate.previous();
+            };
+
+            $scope.goToSlide = function(index,msg) {
+                vm.images=[];
+                vm.getImages(msg);
+                $scope.modal.show();
+                $ionicSlideBoxDelegate.slide(index);
+            };
+
+            // Called each time the slide changes
+            $scope.slideChanged = function(index) {
+                $scope.slideIndex = index;
+            };
+        });
+}());
+
+(function() {
+  'use strict';
+
+  angular.module('childrenRouter', [])
+    .config(myRouter);
+
+
+  function myRouter($stateProvider, $urlRouterProvider) {
+    'ngInject';
+    $stateProvider
+      .state('tabs.children', {
+        url: "/children",
+          views: {
+            'tab-children': {
+              templateUrl: 'children/children.html',
+              controller: 'childrenCtrl',
+              controllerAs: 'vm'
+            }
+          }
+      })
+      .state('tabs.childrenSignIn', {
+        url: "/childrenSignIn",
+        views: {
+          'tab-children': {
+            templateUrl: 'children/childrenSignIn.html',
+            controller: 'childrenCtrl',
+            controllerAs: 'vm'
+          }
+        }
+      });
+  }
+}());
+
+(function() {
+  'use strict';
+
+  angular.module('childrenService', [])
+    .factory('childrenService', childrenService);
+
+  function childrenService( $q, $http,Constants,ResultHandler) {
+    'ngInject';
+    var service = {
+      getMsg:getMsg,
+      getChildrenMsg:getChildrenMsg,
+      getChildren:getChildren,
+      getChildSignIn:getChildSignIn,
+      getChildrenSignIn:getChildrenSignIn,
+      getWechatInfo:getWechatInfo
+    };
+
+    //字段名	类型	备注
+    //InfoID 	int64 	信息编号，自增即可
+    //PublisherID 	int64 	发布老师的账号
+    //DepositID 	int64 	托管机构账号
+    //Longitude 	float 	信息发布的位置经度
+    //Latitude 	float 	信息发布的位置纬度
+    //ClickCount 	int64 	总浏览次数
+    //InfoType 	int32 	信息类型（1：就餐；2：培训；3：活动；4：作业）
+    //Description 	varchar2 	老师的描述，不超出1000字
+    //PhotoLink1 	varchar2 	照片/视频1的信息
+    //PhotoLink2 	varchar2 	照片/视频2的信息
+    //PhotoLink3 	varchar2 	照片/视频3的信息
+    //PhotoLink4 	varchar2 	照片/视频4的信息
+    //PhotoLink5 	varchar2 	照片/视频5的信息
+    //PhotoLink6 	varchar2 	照片/视频6的信息
+    //Status	int	1:正常发布，2:撤回,
+    //CreateTime 	datetime 	创建时间
+
+
+    /*
+     GET /api/v1/children/information/{$childuid}
+     return
+     {
+     "errno":0,
+     "error":"",
+     "data":{
+     "childuid":41000001,
+     "childname":"xxx",
+     "childavatarlink":"http://xxxxxxx.jpg",
+     "timeline":[
+     {
+     "timestamp":1468051200,
+     "actiontype":0,
+     "actionname":"signin",
+     "actiondata":{}
+     },
+     {
+     "timestamp":146805200,
+     "actiontype":1,
+     "actionname":"dining",
+     "actiondata":{
+     "imgs":["http://xxxxxxxxxx1.jpg", "http://xxxxxxxxx2.jpg",...],
+     "desc":"孩子们愉快的享受着美味"
+     }
+     },
+     ]
+     "signin":1468051200,
+     "name":"yyy",
+     "avatarlink":"http://yyyyyyyyyyy.jpg",
+     }
+     ]
+     }
+     */
+    function getMsg(childId) {
+        var url = Constants.serverUrl + 'parent/children/information/'+childId;
+        return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
+    };
+
+    /*
+     GET /api/v1/parent/childrenlist/{$parentuid}
+     return
+     {
+     "errno":0,
+     "error":"",
+     "data":[
+     {
+     "uid":41000001,
+     "name":"xxx",
+     "avatarlink":"http://xxxxxxx.jpg",
+     },
+     {
+     "uid":41000002,
+     "name":"yyy",
+     "avatarlink":"http://yyyyyyyyyyy.jpg",
+     }
+     ]
+     }
+     */
+    function getChildren(parentId) {
+        var url = Constants.serverUrl + 'parent/childrenList/'+parentId;
+        return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
+    };
+
+    function getChildSignIn(childId) {
+        var url = Constants.serverUrl + 'parent/children/signin/'+childId;
+        return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
+    };
+
+    function getChildrenMsg(parentId) {
+        var url = Constants.serverUrl + 'parent/children/allInformation/'+parentId;
+        return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
+    };
+
+    function getChildrenSignIn(parentId) {
+        var url = Constants.serverUrl + 'parent/children/allSignin/'+parentId;
+        return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
+    };
+
+    function getWechatInfo(wid) {
+        var url = Constants.serverUrl + 'wechat/'+wid;
+        return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
+    };
+
+    return service;
+
+
+  }
+
+
+}());
+
+(function() {
+    "use strict";
+    angular.module('childrenEditCtrl', [])
+        .controller('childrenEditCtrl', function($scope, $stateParams, Constants, StateService,childrenSettingService,AuthService,Session) {
+            'ngInject';
+            var vm = this;
+            vm.activated = false;
+
+            vm.query = function(id){
+                console.log("child id = "+id);
+                vm.child=Session.temp;
+            };
+
+            $scope.$on('$ionicView.afterEnter', activate);
+
+            function activate() {
+                console.log($stateParams);
+                vm.cid = $stateParams.cid;
+                //0:query 1:create 2:update
+                vm.type = $stateParams.type;
+                if(vm.type=='0')vm.isEditing = false;
+                else vm.isEditing = true;
+
+                vm.activated = true;
+                vm.version = Constants.buildID;
+
+                if(vm.type!='1')vm.query(vm.cid);
+                else vm.child = {name:'',sex:'',remark:'',relationship:''};
+            }
+
+            vm.back=function(){
+                StateService.back();
+            };
+
+            vm.save=function(){
+                //save
+                if(vm.type=='1'){
+                    //create
+                    childrenSettingService.registerChildren(vm.child,AuthService.getLoginID()).then(function(data) {
+                        if (data.errno == 0) {
+                            //var userId = data.data.uid;
+                            //wxlogin(vm.user.wechat);
+                            StateService.back();
+                        }
+                    });
+
+                }else{
+                    //update
+                    StateService.back();
+                }
+
+            };
+
+
+        });
+}());
+
+(function() {
+  "use strict";
+  angular.module('childrenSettingModule', [
+    'childrenSettingCtrl',
+    'childrenEditCtrl',
+    'childrenSettingRouter',
+    'childrenSettingService'
+  ]);
+
+}());
+
+(function() {
+    "use strict";
+    angular.module('childrenSettingCtrl', [])
+        .controller('childrenSettingCtrl', function($scope,Constants,StateService,$ionicListDelegate,$ionicPopup,AuthService,parentService,Session) {
+            'ngInject';
+            var vm = this;
+            vm.activated = false;
+            $scope.$on('$ionicView.afterEnter', activate);
+
+            function activate() {
+                vm.activated = true;
+                vm.version = Constants.buildID;
+                vm.getChildren();
+            }
+
+            vm.getChildren = function(){
+                parentService.queryChildren(AuthService.getLoginID()).then(function(data) {
+                    if (data.errno == 0) {
+                        console.log(data.data);
+                        vm.children = data.data;
+                    }
+                });
+            };
+
+            vm.back=function(){
+                StateService.back();
+            };
+
+            vm.goTo=function(id,child){
+                //查看孩子信息
+                $ionicListDelegate.closeOptionButtons();
+                Session.temp=child;
+                StateService.go('childrenEdit',{cid:id,type:0});
+            };
+
+            vm.newChild=function(){
+                //创建新的孩子信息
+                $ionicListDelegate.closeOptionButtons();
+                StateService.go('childrenEdit',{type:1});
+            };
+
+            vm.editChild=function(id,child){
+                //编辑孩子信息
+                $ionicListDelegate.closeOptionButtons();
+                Session.temp=child;
+                StateService.go('childrenEdit',{cid:id,type:2});
+            };
+
+            vm.delChild=function(child){
+                //删除孩子信息
+                $ionicListDelegate.closeOptionButtons();
+
+                var confirmPopup = $ionicPopup.confirm({
+                    title: '确定要删除此孩子:'+child.name,
+                    buttons: [
+                        {text: '取消', type: 'button-positive'},
+                        {text: '确定', type: 'button-assertive',onTap: function(e) { return true}}
+                    ]
+                });
+                confirmPopup.then(function(result) {
+                    if(result) {
+                        console.log('confirm to del this child '+child.sid);
+                        //delete(id);
+                    } else {
+                        console.log('cancel delete');
+                    }
+                });
+            };
+        });
+}());
+
+(function() {
+  'use strict';
+
+  angular.module('childrenSettingRouter', [])
+    .config(myRouter);
+
+
+  function myRouter($stateProvider, $urlRouterProvider) {
+    'ngInject';
+    $stateProvider
+      .state('childrenSetting', {
+        url: "/childrenSetting",
+        templateUrl: 'childrenSetting/childrenSetting.html',
+        controller: 'childrenSettingCtrl',
+        controllerAs: 'vm'
+      })
+      .state('childrenEdit', {
+        url: "/childrenEdit?:cid&:type",
+        params: {
+          cid : null,
+          type : '0'
+        },
+        templateUrl: 'childrenSetting/childrenEdit.html',
+        controller: 'childrenEditCtrl',
+        controllerAs: 'vm'
+      })
+    ;
+  }
+}());
+
+(function() {
+  'use strict';
+
+  angular.module('childrenSettingService', [])
+    .factory('childrenSettingService', childrenSettingService);
+
+  function childrenSettingService( $q, $http, Constants, ResultHandler) {
+    'ngInject';
+    var service = {
+      registerChildren:registerChildren
+    };
+
+    //POST
+    //URL: /api/v1/account/register/children
+    //Request Body:
+    //{
+    //  "name":"小强",
+    //    "sex":1,
+    //    "fingerfeature":"value"
+    //}
+    //Response Body:
+    //{
+    //  "errno":0,
+    //    "error":"",
+    //    "data":{
+    //      "uid":40000001
+    //    }
+    //}
+    //need token in headers
+    function registerChildren(child,parentId) {
+      var data = {
+        "p_uid":parentId,
+        "name": child.name,
+        "sex": child.sex,
+        "relationship": child.relationship,
+        "remark": child.remark
+      };
+      console.log(data);
+      var url = Constants.serverUrl + 'account/register/children';
+      return $http({
+        method: 'post',
+        url: url,
+        data: data
+      }).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
+    };
+
+    return service;
+
+
+  }
+
+}());
+
+(function() {
+  "use strict";
+  angular.module('commentModule', [
+    'commentService'
+  ]);
+
+}());
+
+(function() {
+  'use strict';
+
+  angular.module('commentService', [])
+    .factory('commentService', commentService);
+
+  function commentService($q, $http, Constants, ResultHandler) {
+    'ngInject';
+    var service = {
+        queryDepositComment:queryDepositComment
+    };
+
+    //http://172.18.1.166/api/v1/comment/deposit/fetch/:depositid
+    function queryDepositComment(id) {
+        var url = Constants.serverUrl + 'comment/deposit/fetch/'+id;
+        return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
+    };
+
+    return service;
+  }
+
 }());
 
 (function() {
@@ -1746,242 +2149,31 @@ Date.prototype.Format = function(fmt) {
 
 (function() {
   "use strict";
-  angular.module('childrenModule', [
-    'childrenCtrl',
-    'childrenRouter',
-    'childrenService'
+  angular.module('orderModule', [
+    'orderCtrl',
+    'orderRouter',
+    'orderService'
   ]);
 
 }());
 
 (function() {
     "use strict";
-    angular.module('childrenCtrl', [])
-        .controller('childrenCtrl', function($scope, Constants,childrenService,AuthService,Session, StateService,$ionicModal, $ionicSlideBoxDelegate) {
+    angular.module('orderCtrl', [])
+        .controller('orderCtrl', function($scope, Constants, StateService) {
             'ngInject';
-            console.log("childrenCtrl");
             var vm = this;
             vm.activated = false;
-            vm.parent={};
-            vm.fingerprintLogs=[];
-            vm.fingerprintLogSample=[];
-            vm.messages=[];
-
+            console.log("tabs come");
             $scope.$on('$ionicView.afterEnter', activate);
 
             function activate() {
                 vm.activated = true;
                 vm.version = Constants.buildID;
-                //从微信获取家长的基本信息
-                vm.getWechatInfo(AuthService.getWechatId());
-                //vm.parent.wechat={
-                //    "nickname": "Band",
-                //    "sex": 1,
-                //    "language": "zh_CN",
-                //    "city": "广州",
-                //    "province": "广东",
-                //    "country": "中国",
-                //    "headimgurl":  "http://wx.qlogo.cn/mmopen/g3MonUZtNHkdmzicIlibx6iaFqAc56vxLSUfpb6n5WKSYVY0ChQKkiaJSgQ1dZuTOgvLLrhJbERQQ4eMsv84eavHiaiceqxibJxCfHe/0"
-                //};
-                vm.getChildrenInfo(AuthService.getLoginID());
+            }
 
-                vm.getChildrenMsg(AuthService.getLoginID());
-
-                vm.getChildren();
-            };
-
-            vm.getChildrenInfo = function(pId){
-                childrenService.getChildrenSignIn(pId).then(function(data) {
-                    if (data.errno == 0) {
-                        console.log("getChildrenSignIn: ");
-                        console.log(data.data);
-                        vm.fingerprintLogs=data.data;
-                        for(var i=0;i<vm.fingerprintLogs.length;i++){
-                            vm.fingerprintLogSample[i]=vm.fingerprintLogs[i];
-                            if(i>=1){
-                                break;
-                            }
-                        }
-                        console.log(vm.fingerprintLogSample);
-                    }else{
-                        console.log(data);
-                    }
-                });
-            };
-            vm.getChildrenMsg = function(pId){
-                childrenService.getChildrenMsg(pId).then(function(data) {
-                    if (data.errno == 0) {
-                        console.log("getChildrenMsg: ");
-                        console.log(data.data);
-                        vm.msg = data.data;
-                    }
-                });
-            };
-
-            vm.getWechatInfo = function(wId){
-                console.log("wechat id : "+wId);
-                childrenService.getWechatInfo(wId).then(function(data) {
-                    if (data.errno == 0) {
-                        console.log("wechat info: ");
-                        console.log(data.data);
-                        vm.parent.wechat = data.data;
-                    }
-                });
-            };
-
-            vm.goPhoto=function(msgIndex,index){
-                Session.temp=vm.msg[msgIndex];
-                StateService.go("photo",{index:index});
-            };
-
-            // {childuid: "40000003", childname: "赵小萌", timeline: Array[1]}
-            //childname:"赵小萌"
-            //childuid:"40000003"
-            //timeline:Array[1]
-            //0:Object
-            //clickcount:"0"
-            //createtime:"2016-08-12 09:29:36"
-            //depositid:"10000001"
-            //description:null
-            //infoid:"1"
-            //infotype:null
-            //latitude:null
-            //longitude:null
-            //photolink1:"http://a"
-            //photolink2:"http://b"
-            //photolink3:null
-            //photolink4:null
-            //photolink5:null
-            //photolink6:null
-            //publisherid:"0"
-            //status:"1"
-            vm.getMsg = function(childId){
-                childrenService.getMsg(childId).then(function(data) {
-                    if (data.errno == 0) {
-                        console.log(data.data);
-                        vm.msg = data.data;
-                    }
-                });
-            };
-            vm.getChildSignIn = function(childId,name){
-                childrenService.getChildSignIn(childId).then(function(data) {
-                    if (data.errno == 0 ) {
-                        data.data.forEach(function(item){
-                            item.childId=childId;
-                            item.childName=name;
-                            vm.fingerprintLogs.push(item);
-                        });
-                    }
-                    console.log(JSON.stringify(vm.fingerprintLogs));
-                });
-            };
-
-            vm.getChildren = function(){
-                childrenService.getChildren(AuthService.getLoginID()).then(function(data) {
-                    var title="";
-                    if (data.errno == 0) {
-                        console.log(data.data);
-                        vm.childs = data.data;
-                        for(var i=0;i<vm.childs.length;i++){
-                            if(i==vm.childs.length-1)
-                                title+=(vm.childs[i].name+"的家长");
-                            else
-                                title+=(vm.childs[i].name+",");
-                            //vm.getMsg(vm.childs[i].uid);
-                            //vm.getChildSignIn(vm.childs[i].uid,vm.childs[i].name);
-                        }
-                        vm.parent.title=title;
-                    }
-                    //vm.fingerprintLogs.sort(function(a,b){return a.log-b.log});
-                });
-            };
-
-            vm.getImages=function(msg){
-                vm.imgCount=0;
-                if(msg.photolink1!=null && msg.photolink1!=""){
-                    var data={src:msg.photolink1,msg:''};
-                    vm.images[vm.imgCount]=data;
-                    vm.imgCount++;
-                }
-                if(msg.photolink2!=null && msg.photolink2!=""){
-                    var data={src:msg.photolink2,msg:''};
-                    vm.images[vm.imgCount]=data;
-                    vm.imgCount++;
-                }
-                if(msg.photolink3!=null && msg.photolink3!=""){
-                    var data={src:msg.photolink3,msg:''};
-                    vm.images[vm.imgCount]=data;
-                    vm.imgCount++;
-                }
-                if(msg.photolink4!=null && msg.photolink4!=""){
-                    var data={src:msg.photolink4,msg:''};
-                    vm.images[vm.imgCount]=data;
-                    vm.imgCount++;
-                }
-                if(msg.photolink5!=null && msg.photolink5!=""){
-                    var data={src:msg.photolink5,msg:''};
-                    vm.images[vm.imgCount]=data;
-                    vm.imgCount++;
-                }
-                if(msg.photolink6!=null && msg.photolink6!=""){
-                    var data={src:msg.photolink6,msg:''};
-                    vm.images[vm.imgCount]=data;
-                    vm.imgCount++;
-                }
-                console.log(vm.images);
-            };
-
-            $ionicModal.fromTemplateUrl('message/image-modal.html', {
-                scope: $scope,
-                animation: 'slide-in-up'
-            }).then(function(modal) {
-                $scope.modal = modal;
-            });
-
-            $scope.openModal = function() {
-                $ionicSlideBoxDelegate.slide(0);
-                $scope.modal.show();
-            };
-
-            $scope.closeModal = function() {
-                $scope.modal.hide();
-            };
-
-            // Cleanup the modal when we're done with it!
-            $scope.$on('$destroy', function() {
-                $scope.modal.remove();
-            });
-            // Execute action on hide modal
-            $scope.$on('modal.hide', function() {
-                // Execute action
-            });
-            // Execute action on remove modal
-            $scope.$on('modal.removed', function() {
-                // Execute action
-            });
-            $scope.$on('modal.shown', function() {
-                console.log('Modal is shown!');
-            });
-
-            // Call this functions if you need to manually control the slides
-            $scope.next = function() {
-                $ionicSlideBoxDelegate.next();
-            };
-
-            $scope.previous = function() {
-                $ionicSlideBoxDelegate.previous();
-            };
-
-            $scope.goToSlide = function(index,msg) {
-                vm.images=[];
-                vm.getImages(msg);
-                $scope.modal.show();
-                $ionicSlideBoxDelegate.slide(index);
-            };
-
-            // Called each time the slide changes
-            $scope.slideChanged = function(index) {
-                $scope.slideIndex = index;
+            vm.goTo=function(where){
+                StateService.go(where);
             };
         });
 }());
@@ -1989,32 +2181,22 @@ Date.prototype.Format = function(fmt) {
 (function() {
   'use strict';
 
-  angular.module('childrenRouter', [])
+  angular.module('orderRouter', [])
     .config(myRouter);
 
 
   function myRouter($stateProvider, $urlRouterProvider) {
     'ngInject';
     $stateProvider
-      .state('tabs.children', {
-        url: "/children",
+      .state('tabs.order', {
+        url: "/order",
           views: {
-            'tab-children': {
-              templateUrl: 'children/children.html',
-              controller: 'childrenCtrl',
+            'tab-order': {
+              templateUrl: 'order/order.html',
+              controller: 'orderCtrl',
               controllerAs: 'vm'
             }
           }
-      })
-      .state('tabs.childrenSignIn', {
-        url: "/childrenSignIn",
-        views: {
-          'tab-children': {
-            templateUrl: 'children/childrenSignIn.html',
-            controller: 'childrenCtrl',
-            controllerAs: 'vm'
-          }
-        }
       });
   }
 }());
@@ -2022,128 +2204,17 @@ Date.prototype.Format = function(fmt) {
 (function() {
   'use strict';
 
-  angular.module('childrenService', [])
-    .factory('childrenService', childrenService);
+  angular.module('orderService', [])
+    .factory('orderService', orderService);
 
-  function childrenService( $q, $http,Constants,ResultHandler) {
+  function orderService( $q, $http) {
     'ngInject';
     var service = {
-      getMsg:getMsg,
-      getChildrenMsg:getChildrenMsg,
-      getChildren:getChildren,
-      getChildSignIn:getChildSignIn,
-      getChildrenSignIn:getChildrenSignIn,
-      getWechatInfo:getWechatInfo
     };
-
-    //字段名	类型	备注
-    //InfoID 	int64 	信息编号，自增即可
-    //PublisherID 	int64 	发布老师的账号
-    //DepositID 	int64 	托管机构账号
-    //Longitude 	float 	信息发布的位置经度
-    //Latitude 	float 	信息发布的位置纬度
-    //ClickCount 	int64 	总浏览次数
-    //InfoType 	int32 	信息类型（1：就餐；2：培训；3：活动；4：作业）
-    //Description 	varchar2 	老师的描述，不超出1000字
-    //PhotoLink1 	varchar2 	照片/视频1的信息
-    //PhotoLink2 	varchar2 	照片/视频2的信息
-    //PhotoLink3 	varchar2 	照片/视频3的信息
-    //PhotoLink4 	varchar2 	照片/视频4的信息
-    //PhotoLink5 	varchar2 	照片/视频5的信息
-    //PhotoLink6 	varchar2 	照片/视频6的信息
-    //Status	int	1:正常发布，2:撤回,
-    //CreateTime 	datetime 	创建时间
-
-
-    /*
-     GET /api/v1/children/information/{$childuid}
-     return
-     {
-     "errno":0,
-     "error":"",
-     "data":{
-     "childuid":41000001,
-     "childname":"xxx",
-     "childavatarlink":"http://xxxxxxx.jpg",
-     "timeline":[
-     {
-     "timestamp":1468051200,
-     "actiontype":0,
-     "actionname":"signin",
-     "actiondata":{}
-     },
-     {
-     "timestamp":146805200,
-     "actiontype":1,
-     "actionname":"dining",
-     "actiondata":{
-     "imgs":["http://xxxxxxxxxx1.jpg", "http://xxxxxxxxx2.jpg",...],
-     "desc":"孩子们愉快的享受着美味"
-     }
-     },
-     ]
-     "signin":1468051200,
-     "name":"yyy",
-     "avatarlink":"http://yyyyyyyyyyy.jpg",
-     }
-     ]
-     }
-     */
-    function getMsg(childId) {
-        var url = Constants.serverUrl + 'parent/children/information/'+childId;
-        return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
-    };
-
-    /*
-     GET /api/v1/parent/childrenlist/{$parentuid}
-     return
-     {
-     "errno":0,
-     "error":"",
-     "data":[
-     {
-     "uid":41000001,
-     "name":"xxx",
-     "avatarlink":"http://xxxxxxx.jpg",
-     },
-     {
-     "uid":41000002,
-     "name":"yyy",
-     "avatarlink":"http://yyyyyyyyyyy.jpg",
-     }
-     ]
-     }
-     */
-    function getChildren(parentId) {
-        var url = Constants.serverUrl + 'parent/childrenList/'+parentId;
-        return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
-    };
-
-    function getChildSignIn(childId) {
-        var url = Constants.serverUrl + 'parent/children/signin/'+childId;
-        return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
-    };
-
-    function getChildrenMsg(parentId) {
-        var url = Constants.serverUrl + 'parent/children/allInformation/'+parentId;
-        return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
-    };
-
-    function getChildrenSignIn(parentId) {
-        var url = Constants.serverUrl + 'parent/children/allSignin/'+parentId;
-        return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
-    };
-
-    function getWechatInfo(wid) {
-        var url = Constants.serverUrl + 'wechat/'+wid;
-        return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
-    };
-
     return service;
 
 
   }
-
 
 }());
 
@@ -2593,77 +2664,6 @@ Date.prototype.Format = function(fmt) {
       return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
     };
 
-    return service;
-
-
-  }
-
-}());
-
-(function() {
-  "use strict";
-  angular.module('orderModule', [
-    'orderCtrl',
-    'orderRouter',
-    'orderService'
-  ]);
-
-}());
-
-(function() {
-    "use strict";
-    angular.module('orderCtrl', [])
-        .controller('orderCtrl', function($scope, Constants, StateService) {
-            'ngInject';
-            var vm = this;
-            vm.activated = false;
-            console.log("tabs come");
-            $scope.$on('$ionicView.afterEnter', activate);
-
-            function activate() {
-                vm.activated = true;
-                vm.version = Constants.buildID;
-            }
-
-            vm.goTo=function(where){
-                StateService.go(where);
-            };
-        });
-}());
-
-(function() {
-  'use strict';
-
-  angular.module('orderRouter', [])
-    .config(myRouter);
-
-
-  function myRouter($stateProvider, $urlRouterProvider) {
-    'ngInject';
-    $stateProvider
-      .state('tabs.order', {
-        url: "/order",
-          views: {
-            'tab-order': {
-              templateUrl: 'order/order.html',
-              controller: 'orderCtrl',
-              controllerAs: 'vm'
-            }
-          }
-      });
-  }
-}());
-
-(function() {
-  'use strict';
-
-  angular.module('orderService', [])
-    .factory('orderService', orderService);
-
-  function orderService( $q, $http) {
-    'ngInject';
-    var service = {
-    };
     return service;
 
 
@@ -4105,7 +4105,7 @@ Date.prototype.Format = function(fmt) {
             vm.information = "";
 
             $scope.onBridgeReady=function () {
-                alert('wechat ok');
+                //alert('wechat ok');
                 vm.wechatPayReady=true;
             };
 
@@ -4154,7 +4154,7 @@ Date.prototype.Format = function(fmt) {
                         var result=response.data;
                         var orderId=result.orderId;
                         vm.information = JSON.stringify(result);
-                        alert(JSON.stringify(result));
+                        //alert(JSON.stringify(result));
                         if(vm.wechatPayReady){
                             WeixinJSBridge.invoke(
                                 'getBrandWCPayRequest',
@@ -4185,7 +4185,7 @@ Date.prototype.Format = function(fmt) {
                                                     vipBuyService.updatePayedOrder(parentId,orderId,payTime).then(
                                                         function(updateResult) {
                                                             alert(JSON.stringify(updateResult));
-                                                            vm.information = " udpate success ";
+                                                            vm.information += " udpate success ";
                                                             //跳转页面
                                                         },
                                                         function(error) {
@@ -4207,7 +4207,8 @@ Date.prototype.Format = function(fmt) {
                             );
                         }
                     }, function (error) {
-                        alert(JSON.stringify(error));
+                        //alert(JSON.stringify(error));
+                        vm.information += " 请求付款失败 " + error;
                     });
             };
 
