@@ -73,94 +73,6 @@
 
 (function() {
   "use strict";
-  angular.module('config', [
-    'environmentConfig',
-    'constant',
-    'httpRelConfig'
-  ]);
-
-}());
-
-(function() {
-    "use strict";
-    angular.module('constant', [])
-        .constant('Path',{
-            'ParentRolePath':'tabs.children',
-            'OrganizerRolePath':'tabs.organizer',
-            'TeacherRolePath':'tabs.message'
-        })
-        .constant('Role',{
-            'unknown':'-1',
-            'Organizer':'1',
-            'Parent':'2',
-            'Teacher':'3',
-            'Children':'4',
-            'ThirdParty':'5',
-            'Consultant':'6'
-        })
-        .constant('Weixin', {
-        })
-        .constant('AUTH_EVENTS', {
-            loginSuccess: 'auth-login-success',
-            loginFailed: 'auth-login-failed',
-            logoutSuccess: 'auth-logout-success',
-            sessionTimeout: 'auth-session-timeout',
-            notAuthenticated: 'auth-not-authenticated',
-            notAuthorized: 'auth-not-authorized'
-        })
-        .constant('ErrorMessage', {
-            ACCESS_FAIL: '通讯异常，请稍后再试！',
-            TOKEN_INVALID: '连接超时，请重新登录！'
-        })
-        .constant('SuccessMessage', {
-            SUBMIT_SUCESS: '提交成功',
-            OPERATION_SUCESS:'操作完成'
-        });
-}());
-
-(function() {
-    "use strict";
-    angular.module('environmentConfig', [])
-        .constant('Constants', {
-            'appTitle':'托管系统',
-            'serverUrl': '/api/v1/',
-            'dfsUrl': '/',
-            'buildID': '20161101v1',
-            'ENVIRONMENT':'release'
-        });
-}());
-//'serverUrl': 'http://120.76.226.47/api/v2/',
-//    'dfsUrl': 'http://120.76.226.47/',
-//http://localhost:8090/
-//http://wx.zxing-tech.cn
-(function() {
-    "use strict";
-    angular.module('httpDevConfig', [])
-        .config(function($httpProvider) {
-            $httpProvider.defaults.headers.post["Content-Type"] = "application/x-www-form-urlencoded";
-            $httpProvider.defaults.headers.put["Content-Type"] = "application/x-www-form-urlencoded";
-        });
-}());
-
-(function() {
-    "use strict";
-    angular.module('httpRelConfig', [])
-    .config(function($httpProvider) {
-        $httpProvider.defaults.cache = false;
-        if (!$httpProvider.defaults.headers.get) {
-           $httpProvider.defaults.headers.get = {};
-        }
-        // disable IE ajax request caching
-        $httpProvider.defaults.headers.get['If-Modified-Since'] = '0';
-
-        // Disable IE ajax request caching
-        $httpProvider.defaults.headers.get['Cache-Control'] = 'no-cache';
-        $httpProvider.defaults.headers.get['Pragma'] = 'no-cache';
-    });
-}());
-
-(function() {
-  "use strict";
   angular.module('AuthService', []).factory('AuthService', function(Session,Path,Role) {
     'ngInject';
 
@@ -577,6 +489,94 @@ app.filter('statusChange', function () {
 }());
 
 (function() {
+  "use strict";
+  angular.module('config', [
+    'environmentConfig',
+    'constant',
+    'httpRelConfig'
+  ]);
+
+}());
+
+(function() {
+    "use strict";
+    angular.module('constant', [])
+        .constant('Path',{
+            'ParentRolePath':'tabs.children',
+            'OrganizerRolePath':'tabs.organizer',
+            'TeacherRolePath':'tabs.message'
+        })
+        .constant('Role',{
+            'unknown':'-1',
+            'Organizer':'1',
+            'Parent':'2',
+            'Teacher':'3',
+            'Children':'4',
+            'ThirdParty':'5',
+            'Consultant':'6'
+        })
+        .constant('Weixin', {
+        })
+        .constant('AUTH_EVENTS', {
+            loginSuccess: 'auth-login-success',
+            loginFailed: 'auth-login-failed',
+            logoutSuccess: 'auth-logout-success',
+            sessionTimeout: 'auth-session-timeout',
+            notAuthenticated: 'auth-not-authenticated',
+            notAuthorized: 'auth-not-authorized'
+        })
+        .constant('ErrorMessage', {
+            ACCESS_FAIL: '通讯异常，请稍后再试！',
+            TOKEN_INVALID: '连接超时，请重新登录！'
+        })
+        .constant('SuccessMessage', {
+            SUBMIT_SUCESS: '提交成功',
+            OPERATION_SUCESS:'操作完成'
+        });
+}());
+
+(function() {
+    "use strict";
+    angular.module('environmentConfig', [])
+        .constant('Constants', {
+            'appTitle':'托管系统',
+            'serverUrl': '/api/v1/',
+            'dfsUrl': '/',
+            'buildID': '20161101v1',
+            'ENVIRONMENT':'release'
+        });
+}());
+//'serverUrl': 'http://120.76.226.47/api/v2/',
+//    'dfsUrl': 'http://120.76.226.47/',
+//http://localhost:8090/
+//http://wx.zxing-tech.cn
+(function() {
+    "use strict";
+    angular.module('httpDevConfig', [])
+        .config(function($httpProvider) {
+            $httpProvider.defaults.headers.post["Content-Type"] = "application/x-www-form-urlencoded";
+            $httpProvider.defaults.headers.put["Content-Type"] = "application/x-www-form-urlencoded";
+        });
+}());
+
+(function() {
+    "use strict";
+    angular.module('httpRelConfig', [])
+    .config(function($httpProvider) {
+        $httpProvider.defaults.cache = false;
+        if (!$httpProvider.defaults.headers.get) {
+           $httpProvider.defaults.headers.get = {};
+        }
+        // disable IE ajax request caching
+        $httpProvider.defaults.headers.get['If-Modified-Since'] = '0';
+
+        // Disable IE ajax request caching
+        $httpProvider.defaults.headers.get['Cache-Control'] = 'no-cache';
+        $httpProvider.defaults.headers.get['Pragma'] = 'no-cache';
+    });
+}());
+
+(function() {
     "use strict";
     angular.module('directive', [
 
@@ -602,6 +602,14 @@ Date.prototype.Format = function(fmt) {
     return fmt;
 };
 (function() {
+  "use strict";
+  angular.module('tools', [
+    
+  ]);
+
+}());
+
+(function() {
     "use strict";
     angular.module('modules', [
         'LoginModule',
@@ -625,14 +633,6 @@ Date.prototype.Format = function(fmt) {
         'exitModule',
         'photoModule'
     ]);
-
-}());
-
-(function() {
-  "use strict";
-  angular.module('tools', [
-    
-  ]);
 
 }());
 
@@ -1727,6 +1727,108 @@ Date.prototype.Format = function(fmt) {
 
 (function() {
   "use strict";
+  angular.module('exitModule', [
+    'exitCtrl',
+    'exitRouter',
+    'exitService'
+  ]);
+
+}());
+
+(function() {
+    "use strict";
+    angular.module('exitCtrl', [])
+        .controller('exitCtrl', function($scope, $state, Constants, StateService,exitService,AuthService,MessageToaster,Session) {
+            'ngInject';
+            var vm = this;
+            vm.activated = false;
+            vm.text='确定要退出本微信用户绑定的业务';//'正在退出...';
+            $scope.$on('$ionicView.afterEnter', activate);
+
+            function activate() {
+                vm.activated = true;
+                vm.version = Constants.buildID;
+            }
+
+            vm.exit=function(){
+                vm.text='正在退出...';
+                exitService.exit(AuthService.getLoginID()).then(function(data) {
+                    if (data.errno == 0) {
+                        console.log(data.data);
+                        vm.text='退出';
+                        //需清楚缓存
+                        Session.destroy();
+                        StateService.clearAllAndGo("register");
+                        //StateService.clearAllAndGo(AuthService.getNextPath());
+                    }else{
+                        console.log(data.error);
+                        vm.text='未能退出';
+                        MessageToaster.error('退出失败');
+                    }
+                },function(error){
+                    console.log(error);
+                    vm.text='退出失败';
+                });
+            };
+
+            vm.back=function(){
+                StateService.back();
+            };
+        });
+}());
+
+(function() {
+  'use strict';
+
+  angular.module('exitRouter', [])
+    .config(myRouter);
+
+
+  function myRouter($stateProvider, $urlRouterProvider) {
+    'ngInject';
+    $stateProvider
+        .state('exit', {
+          url: "/exit",
+          templateUrl: 'exit/exit.html',
+          controller: 'exitCtrl',
+          controllerAs: 'vm'
+        })
+  }
+}());
+
+(function() {
+  'use strict';
+
+  angular.module('exitService', [])
+    .factory('exitService', eService);
+
+  function eService( $q, $http,Constants,ResultHandler) {
+    'ngInject';
+    var service = {
+      exit:exit
+    };
+
+    function exit(id) {
+        var url;
+        if(id.substring(0,1)=='3'){
+          url = Constants.serverUrl + 'exitTeacher/'+id;
+        }else if(id.substring(0,1)=='1'){
+          url = Constants.serverUrl + 'exitDeposit/'+id;
+        }else{
+          return $q.reject('不支持此业务');
+        }
+        return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
+    };
+
+    return service;
+
+
+  }
+
+}());
+
+(function() {
+  "use strict";
   angular.module('messageModule', [
     'messageCtrl',
     'newMessageCtrl',
@@ -2043,108 +2145,6 @@ Date.prototype.Format = function(fmt) {
                 };
             }
         });
-}());
-
-(function() {
-  "use strict";
-  angular.module('exitModule', [
-    'exitCtrl',
-    'exitRouter',
-    'exitService'
-  ]);
-
-}());
-
-(function() {
-    "use strict";
-    angular.module('exitCtrl', [])
-        .controller('exitCtrl', function($scope, $state, Constants, StateService,exitService,AuthService,MessageToaster,Session) {
-            'ngInject';
-            var vm = this;
-            vm.activated = false;
-            vm.text='确定要退出本微信用户绑定的业务';//'正在退出...';
-            $scope.$on('$ionicView.afterEnter', activate);
-
-            function activate() {
-                vm.activated = true;
-                vm.version = Constants.buildID;
-            }
-
-            vm.exit=function(){
-                vm.text='正在退出...';
-                exitService.exit(AuthService.getLoginID()).then(function(data) {
-                    if (data.errno == 0) {
-                        console.log(data.data);
-                        vm.text='退出';
-                        //需清楚缓存
-                        Session.destroy();
-                        StateService.clearAllAndGo("register");
-                        //StateService.clearAllAndGo(AuthService.getNextPath());
-                    }else{
-                        console.log(data.error);
-                        vm.text='未能退出';
-                        MessageToaster.error('退出失败');
-                    }
-                },function(error){
-                    console.log(error);
-                    vm.text='退出失败';
-                });
-            };
-
-            vm.back=function(){
-                StateService.back();
-            };
-        });
-}());
-
-(function() {
-  'use strict';
-
-  angular.module('exitRouter', [])
-    .config(myRouter);
-
-
-  function myRouter($stateProvider, $urlRouterProvider) {
-    'ngInject';
-    $stateProvider
-        .state('exit', {
-          url: "/exit",
-          templateUrl: 'exit/exit.html',
-          controller: 'exitCtrl',
-          controllerAs: 'vm'
-        })
-  }
-}());
-
-(function() {
-  'use strict';
-
-  angular.module('exitService', [])
-    .factory('exitService', eService);
-
-  function eService( $q, $http,Constants,ResultHandler) {
-    'ngInject';
-    var service = {
-      exit:exit
-    };
-
-    function exit(id) {
-        var url;
-        if(id.substring(0,1)=='3'){
-          url = Constants.serverUrl + 'exitTeacher/'+id;
-        }else if(id.substring(0,1)=='1'){
-          url = Constants.serverUrl + 'exitDeposit/'+id;
-        }else{
-          return $q.reject('不支持此业务');
-        }
-        return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
-    };
-
-    return service;
-
-
-  }
-
 }());
 
 (function() {
@@ -3291,120 +3291,6 @@ Date.prototype.Format = function(fmt) {
 
 (function() {
   "use strict";
-  angular.module('tabsModule', [
-    'tabsCtrl',
-    'tabsRouter',
-    'tabsService'
-  ]);
-
-}());
-
-(function() {
-  "use strict";
-  angular.module('tabsCtrl', [])
-    .controller('tabsCtrl', function($scope,tabsService,StateService,AuthService) {
-      'ngInject';
-      var vm = this;
-      vm.activated = false;
-
-      vm.who=AuthService.getUserRole();
-      //vm.slideBoxImgs = homeService.getSlideBoxImgs();
-      //vm.homeOptions = homeService.getHomeOptions();
-      vm.goState = StateService.go;
-      $scope.$on('$ionicView.afterEnter', activate);
-      function activate() {
-        vm.activated = true;
-      }
-      function goState(state){
-        StateService.go(state);
-      }
-    });
-}());
-
-(function() {
-  'use strict';
-
-  angular.module('tabsRouter', [])
-    .config(myRouter);
-
-
-  function myRouter($stateProvider, $urlRouterProvider) {
-    'ngInject';
-    $stateProvider
-      .state('tabs', {
-        url: '/tabs',
-        abstract: true,
-        templateUrl: 'tabs/tabs.html',
-        controller: 'tabsCtrl',
-        controllerAs: 'vm'
-      })
-  }
-
-}());
-
-(function() {
-    'use strict';
-
-    angular.module('tabsService', [])
-        .factory('tabsService', tabsService);
-
-    function tabsService($q, $http) {
-        'ngInject';
-        var service = {
-            getHomeOptions: getHomeOptions,
-            getSlideBoxImgs: getSlideBoxImgs
-        };
-
-        function getHomeOptions() {
-            return [{
-                label: '填写信息',
-                iconSrc: 'img/home_icon1.png',
-                state: 'PersonalDetails',
-                textColor:"#DC5858"
-            }, {
-                label: '到校方式',
-                iconSrc: 'img/home_icon2.png',
-                state: 'PersonalDetails',
-                textColor:"#5976DF"
-            }, {
-                label: '新生报到',
-                iconSrc: 'img/home_icon3.png',
-                state: 'Register',
-                textColor:"#27CAD4"
-            }, {
-                label: '修改密码',
-                iconSrc: 'img/home_icon4.png',
-                state: 'ModifyPsw',
-                textColor:"#DC75E0"
-            }, {
-                label: '关于应用',
-                iconSrc: 'img/home_icon5.png',
-                state: 'About',
-                textColor:"#75E084"
-            }]
-        }
-
-        function getSlideBoxImgs() {
-            return [{
-                index: 0,
-                src: "img/home_bg1.png"
-            }, {
-                index: 1,
-                src: "img/home_bg2.png"
-            }, {
-                index: 2,
-                src: "img/home_bg3.png"
-            }];
-        }
-        return service;
-
-
-    }
-
-}());
-
-(function() {
-  "use strict";
   angular.module('registerModule', [
     'registerCtrl',
     'registerRouter',
@@ -3757,6 +3643,120 @@ Date.prototype.Format = function(fmt) {
 
     return service;
   }
+
+}());
+
+(function() {
+  "use strict";
+  angular.module('tabsModule', [
+    'tabsCtrl',
+    'tabsRouter',
+    'tabsService'
+  ]);
+
+}());
+
+(function() {
+  "use strict";
+  angular.module('tabsCtrl', [])
+    .controller('tabsCtrl', function($scope,tabsService,StateService,AuthService) {
+      'ngInject';
+      var vm = this;
+      vm.activated = false;
+
+      vm.who=AuthService.getUserRole();
+      //vm.slideBoxImgs = homeService.getSlideBoxImgs();
+      //vm.homeOptions = homeService.getHomeOptions();
+      vm.goState = StateService.go;
+      $scope.$on('$ionicView.afterEnter', activate);
+      function activate() {
+        vm.activated = true;
+      }
+      function goState(state){
+        StateService.go(state);
+      }
+    });
+}());
+
+(function() {
+  'use strict';
+
+  angular.module('tabsRouter', [])
+    .config(myRouter);
+
+
+  function myRouter($stateProvider, $urlRouterProvider) {
+    'ngInject';
+    $stateProvider
+      .state('tabs', {
+        url: '/tabs',
+        abstract: true,
+        templateUrl: 'tabs/tabs.html',
+        controller: 'tabsCtrl',
+        controllerAs: 'vm'
+      })
+  }
+
+}());
+
+(function() {
+    'use strict';
+
+    angular.module('tabsService', [])
+        .factory('tabsService', tabsService);
+
+    function tabsService($q, $http) {
+        'ngInject';
+        var service = {
+            getHomeOptions: getHomeOptions,
+            getSlideBoxImgs: getSlideBoxImgs
+        };
+
+        function getHomeOptions() {
+            return [{
+                label: '填写信息',
+                iconSrc: 'img/home_icon1.png',
+                state: 'PersonalDetails',
+                textColor:"#DC5858"
+            }, {
+                label: '到校方式',
+                iconSrc: 'img/home_icon2.png',
+                state: 'PersonalDetails',
+                textColor:"#5976DF"
+            }, {
+                label: '新生报到',
+                iconSrc: 'img/home_icon3.png',
+                state: 'Register',
+                textColor:"#27CAD4"
+            }, {
+                label: '修改密码',
+                iconSrc: 'img/home_icon4.png',
+                state: 'ModifyPsw',
+                textColor:"#DC75E0"
+            }, {
+                label: '关于应用',
+                iconSrc: 'img/home_icon5.png',
+                state: 'About',
+                textColor:"#75E084"
+            }]
+        }
+
+        function getSlideBoxImgs() {
+            return [{
+                index: 0,
+                src: "img/home_bg1.png"
+            }, {
+                index: 1,
+                src: "img/home_bg2.png"
+            }, {
+                index: 2,
+                src: "img/home_bg3.png"
+            }];
+        }
+        return service;
+
+
+    }
 
 }());
 
@@ -4210,11 +4210,13 @@ Date.prototype.Format = function(fmt) {
                                                 alert("checkOrder error "+JSON.stringify(reason));
                                             }
                                         );
-                                    }else if(res.err_msg == "get_brand_wcpay_request:cancel"){
+                                    //}else if(res.err_msg == "get_brand_wcpay_request:cancel"){
+                                    }else if(res.err_msg.endsWith("cancel")){
                                         //alert("用户取消");
                                         //vm.information="用户取消";
                                         MessageToaster.info("微信支付已取消");
-                                    }else if(res.err_msg == "get_brand_wcpay_request:fail"){
+                                    //}else if(res.err_msg == "get_brand_wcpay_request:fail"){
+                                    }else if(res.err_msg.endsWith("fail")){
                                         alert("付款失败");
                                     }
                                 }
