@@ -602,14 +602,6 @@ Date.prototype.Format = function(fmt) {
     return fmt;
 };
 (function() {
-  "use strict";
-  angular.module('tools', [
-    
-  ]);
-
-}());
-
-(function() {
     "use strict";
     angular.module('modules', [
         'LoginModule',
@@ -633,6 +625,14 @@ Date.prototype.Format = function(fmt) {
         'exitModule',
         'photoModule'
     ]);
+
+}());
+
+(function() {
+  "use strict";
+  angular.module('tools', [
+    
+  ]);
 
 }());
 
@@ -4175,8 +4175,10 @@ Date.prototype.Format = function(fmt) {
                                 },
                                 function(res){
                                     alert(JSON.stringify(res));
-                                    //alert(res.err_msg);
-                                    if(res.err_msg == "get_brand_wcpay_request:ok" ) {
+                                    var msg = res.err_msg;
+                                    alert(msg);
+
+                                    if(msg == "get_brand_wcpay_request:ok" ) {
                                         //保存数据．跳转页面
                                         //check order make sure user had pay the order ready.
                                         vipBuyService.checkOrder(orderId).then(
@@ -4210,13 +4212,13 @@ Date.prototype.Format = function(fmt) {
                                                 alert("checkOrder error "+JSON.stringify(reason));
                                             }
                                         );
-                                    //}else if(res.err_msg == "get_brand_wcpay_request:cancel"){
-                                    }else if(res.err_msg.endsWith("cancel")){
+                                    }else if(msg == "get_brand_wcpay_request:cancel"){
+                                    //}else if(res.err_msg.endsWith("cancel")){
                                         //alert("用户取消");
                                         //vm.information="用户取消";
                                         MessageToaster.info("微信支付已取消");
-                                    //}else if(res.err_msg == "get_brand_wcpay_request:fail"){
-                                    }else if(res.err_msg.endsWith("fail")){
+                                    }else if(msg == "get_brand_wcpay_request:fail"){
+                                    //}else if(res.err_msg.endsWith("fail")){
                                         alert("付款失败");
                                     }
                                 }
