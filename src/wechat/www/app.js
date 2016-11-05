@@ -576,14 +576,6 @@ app.filter('statusChange', function () {
     });
 }());
 
-(function() {
-    "use strict";
-    angular.module('directive', [
-
-    ]);
-
-}());
-
 Date.prototype.Format = function(fmt) {
     var o = {
         "M+": this.getMonth() + 1, //月份
@@ -601,6 +593,14 @@ Date.prototype.Format = function(fmt) {
             fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
     return fmt;
 };
+(function() {
+    "use strict";
+    angular.module('directive', [
+
+    ]);
+
+}());
+
 (function() {
     "use strict";
     angular.module('modules', [
@@ -4212,13 +4212,13 @@ Date.prototype.Format = function(fmt) {
                                                 alert("checkOrder error "+JSON.stringify(reason));
                                             }
                                         );
-                                    }else if(msg == "get_brand_wcpay_request:cancel"){
-                                    //}else if(res.err_msg.endsWith("cancel")){
-                                        //alert("用户取消");
+                                    //}else if(msg == "get_brand_wcpay_request:cancel"){
+                                    }else if(msg.endsWith("cancel")){
+                                        alert("用户取消");
                                         //vm.information="用户取消";
                                         MessageToaster.info("微信支付已取消");
-                                    }else if(msg == "get_brand_wcpay_request:fail"){
-                                    //}else if(res.err_msg.endsWith("fail")){
+                                    //}else if(msg == "get_brand_wcpay_request:fail"){
+                                    }else if(msg.endsWith("fail")){
                                         alert("付款失败");
                                     }
                                 }
