@@ -79,9 +79,9 @@
                                     "paySign":result.paySign
                                 },
                                 function(res){
-                                    alert(JSON.stringify(res));
+                                    //alert(JSON.stringify(res));
                                     var msg = res.err_msg;
-                                    alert(msg);
+                                    //alert(msg);
 
                                     if(msg == "get_brand_wcpay_request:ok" ) {
                                         //保存数据．跳转页面
