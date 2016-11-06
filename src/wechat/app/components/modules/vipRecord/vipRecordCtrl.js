@@ -1,7 +1,7 @@
 (function() {
     "use strict";
     angular.module('vipRecordCtrl', [])
-        .controller('vipRecordCtrl', function($scope, $state, Constants, StateService,exitService,AuthService,MessageToaster,Session) {
+        .controller('vipRecordCtrl', function($scope, $state, Constants, StateService,vipBuyService,AuthService,MessageToaster,Session) {
             'ngInject';
             var vm = this;
             vm.activated = false;
@@ -11,11 +11,25 @@
             function activate() {
                 vm.activated = true;
                 vm.version = Constants.buildID;
-                vm.records=[{name:'骗你的数据',time:'2016-09-09 19:59:59'}];
+                vm.getRecords();
             }
 
             vm.back=function(){
                 StateService.back();
+            };
+
+            vm.goTo=function(id,item){
+                Session.temp=item;
+                StateService.go('record',{index:id});
+            };
+
+            vm.getRecords = function () {
+                vipBuyService.getOrders(AuthService.getLoginID()).then(function(data) {
+                    if (data.errno == 0) {
+                        console.log(data.data);
+                        vm.records = data.data;
+                    }
+                });
             };
         });
 }());

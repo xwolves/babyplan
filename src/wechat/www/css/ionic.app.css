@@ -10157,6 +10157,9 @@ button.toast-close-button {
   padding: 5px;
   border: 1px solid red; }
 
+.nopad {
+  color: red; }
+
 .platform-android .bar .title {
   font-size: 17px !important; }
 

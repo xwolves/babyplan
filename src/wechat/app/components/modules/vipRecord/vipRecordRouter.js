@@ -14,5 +14,14 @@
           controller: 'vipRecordCtrl',
           controllerAs: 'vm'
         })
+        .state('record', {
+          url: "/record?:index",
+          params:{
+            index:0
+          },
+          templateUrl: 'vipRecord/record.html',
+          controller: 'recordCtrl',
+          controllerAs: 'vm'
+        });
   }
 }());

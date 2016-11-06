@@ -19,6 +19,23 @@ app.filter('JSchange', function () {
     };
 });
 
+app.filter('PayStatus', function () {
+    return function (input) {
+        if (input == "1")return "已付款";
+        else if (input == "0")return "未付款";
+        else return "未知";
+    };
+});
+
+app.filter('PayType', function () {
+    return function (input) {
+        if (input == "1")return "支付宝支付";
+        else if (input == "0")return "微信支付";
+        else if (input == "2")return "其它";
+        else return "未知";
+    };
+});
+
 app.filter('relationshipChange', function () {
     return function (input) {
         if (input == "1")return "父亲";

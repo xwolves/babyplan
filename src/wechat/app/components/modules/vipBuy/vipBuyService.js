@@ -12,7 +12,7 @@
       getOrders:getOrders,
       checkOrder:checkOrder,
       createOrder:createOrder,
-      updateOrder:updatePayedOrder
+      updatePayedOrder:updatePayedOrder
     };
 
     function getMenu(){
@@ -44,8 +44,9 @@
       }).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
     };
 
-    function updatePayedOrder(parentId,orderId,payTime){
-      var data = {
+    function updatePayedOrder(parentId,orderId,payTime,endDate){
+        //  "cutofftime":endDate, //不确定是什么值
+        var data = {
         "paystatus":1,
         "paytime":payTime,
         "orderid":orderId

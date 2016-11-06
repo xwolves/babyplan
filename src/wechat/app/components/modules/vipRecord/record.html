@@ -1,0 +1,58 @@
+<ion-view view-title="订单详情">
+
+    <!--Amount: "1"                              Amount	int64	订单金额-->
+    <!--BusinessID: "1"                          BusinessID	int32	套餐ID-->
+    <!--CreateTime: "2016-11-03 20:06:44"        CreateTime	datetime	创建时间-->
+    <!--CutOffTime: null                         CutOffTime	int32	订单对应业务的截止时间-->
+    <!--ModifyTime: "2016-11-03 20:06:44"        ModifyTime	datetime	最后修改时间-->
+    <!--NumOfDays: "11"                          NumOfDays	int32	购买了多少个天-->
+    <!--OrderID: "20000069-20161103200644"       OrderID	varchar2	订单编号-->
+    <!--OrderType: "2"                           OrderType	int8	订单类型， 1：正式订单，2：测试订单-->
+    <!--ParentID: "20000069"                     ParentID	int64	家长账号-->
+    <!--PayStatus: "0"                           PayStatus	int32	支付状态，0：未支付，1：已支付-->
+    <!--PayTime: null                            PayTime	datetime	支付时间-->
+    <!--PayType: "0"                             PayType	int32	支付方式，0：微信支付，1：支付宝支付，2：其它-->
+    <ion-content>
+        <div class="list">
+            <div class="item">
+                订单套餐名称
+                <span class="item-note" style="color: #000066">
+                  {{vm.item.BusinessID}}
+                </span>
+            </div>
+            <div class="item">
+                付款金额
+                <span class="item-note" style="color: #000066">
+                  {{vm.item.Amount/100}}元
+                </span>
+            </div>
+            <div class="item">
+                套餐天数
+                <span class="item-note" style="color: #000066">
+                  {{vm.item.NumOfDays}}天
+                </span>
+            </div>
+            <div class="item">
+                支付状态
+                <span class="item-note" style="color: #000066">
+                  {{vm.item.PayStatus|PayStatus}}
+                </span>
+            </div>
+            <div class="item">
+                支付类型
+                <span class="item-note" style="color: #000066">
+                  {{vm.item.PayType|PayType}}
+                </span>
+            </div>
+            <div class="item">
+                支付时间
+                <span class="item-note" style="color: #000066">
+                  {{vm.item.PayTime}}
+                </span>
+            </div>
+
+        </div>
+        <p style="text-align: center;">{{vm.information}}</p>
+    </ion-content>
+
+</ion-view>

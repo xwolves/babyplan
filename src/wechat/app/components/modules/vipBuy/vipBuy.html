@@ -7,7 +7,7 @@
          <!-- ng-repeat="" -->
         <div style="width: 100%; margin-top: 10px;"  ng-repeat="item in vm.menu">
             <div class="vipSelction" ng-class="{vipSelctionSelcted:vm.isSelected==$index}" ng-click="vm.isSelected=$index">
-                <span class="vipSelectionItem">{{item.price/100}}元 {{item.uprice}}元／天</span>
+                <span class="vipSelectionItem">{{item.price/100}}元 {{item.uprice/100}}元／天</span>
                 <div class="vipSelectionItemRight">{{item.numofdays}}天</div>
             </div>
         </div>

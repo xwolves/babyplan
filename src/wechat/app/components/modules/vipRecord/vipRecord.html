@@ -6,9 +6,11 @@
 
     <ion-content>
         <ion-list>
-            <ion-item class="item" collection-repeat="item in vm.records">
-                <p>{{item.name}}</p>
-                <p>{{item.time}}</p>
+            <ion-item class="item" collection-repeat="item in vm.records" ng-click="vm.goTo(item.OrderID,item)">
+                <!--<p>{{item.BusinessName}}</p>-->
+                <!--<p>{{item.BusinessID}}</p>-->
+                <p>{{item.NumOfDays}}天合共{{item.Amount/100}}元套餐 <span style="float: right" ng-class="{nopad:item.PayStatus == 0}">{{item.PayStatus|PayStatus}}</span></p>
+                <p ng-show="item.PayStatus == 1">支付时间：{{item.PayTime}}</p>
             </ion-item>
 
             <div class="item" ng-if="vm.records !== undefined && !vm.records.length" class="no-results">

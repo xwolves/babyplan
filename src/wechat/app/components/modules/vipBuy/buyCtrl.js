@@ -5,8 +5,12 @@
             'ngInject';
             var vm = this;
 
+            vm.activated = false;
+            vm.wechatPayReady = false;
+            vm.information = "";
+
             $scope.onBridgeReady=function () {
-                alert('wechat ok');
+                //alert('wechat ok');
                 vm.wechatPayReady=true;
             };
 
@@ -23,10 +27,6 @@
                 console.log("WeixinJSBridge exist");
                 $scope.onBridgeReady();
             }
-
-            vm.activated = false;
-            vm.wechatPayReady = false;
-            vm.information = "";
 
             $scope.$on('$ionicView.afterEnter', activate);
 
@@ -47,9 +47,16 @@
 
             };
 
-            vm.back=function(){
+            vm.back = function(){
                 StateService.back();
                 Session.temp = null;
+            };
+
+            vm.getEndDate = function(payTime,numOfDays){
+                var date=new Date(payTime.substring(0,4),Number(payTime.substring(4,6))-1,payTime.substring(6,8),payTime.substring(8,10),payTime.substring(10,12),payTime.substring(14,16));
+                date.setTime(date.getTime()+numOfDays*24*60*60*1000);
+                return date.getTime();
+                //return ""+date.getFullYear()+(date.getMonth()+1)+(date.getDate()>9?date.getDate():('0'+date.getDate()))+'235959';
             };
 
             vm.pay=function(){
@@ -58,9 +65,9 @@
                     .then(function (response) {
                         var result=response.data;
                         var orderId=result.orderId;
-                        vm.information = JSON.stringify(result);
-                        alert(JSON.stringify(result));
-                        if($scope.wechatPayReady){
+                        //vm.information = JSON.stringify(result);
+                        //alert(JSON.stringify(result));
+                        if(vm.wechatPayReady){
                             WeixinJSBridge.invoke(
                                 'getBrandWCPayRequest',
                                 {
@@ -72,9 +79,11 @@
                                     "paySign":result.paySign
                                 },
                                 function(res){
-                                    //alert(JSON.stringify(res));
-                                    //alert(res.err_msg);
-                                    if(res.err_msg == "get_brand_wcpay_request:ok" ) {
+                                    alert(JSON.stringify(res));
+                                    var msg = res.err_msg;
+                                    alert(msg);
+
+                                    if(msg == "get_brand_wcpay_request:ok" ) {
                                         //保存数据．跳转页面
                                         //check order make sure user had pay the order ready.
                                         vipBuyService.checkOrder(orderId).then(
@@ -82,37 +91,47 @@
                                                 //{"errno":0,"error":"",
                                                 // "data":{"orderId":"139630530220161103152842","wechatOrderId":"4003682001201611038611986947",
                                                 // "totalFee":"1","payState":"SUCCESS","payTime":"20161103152851"}}
-                                                alert(JSON.stringify(result));
+                                                //alert(JSON.stringify(result));
                                                 var status = result.data.payState;
                                                 var payTime=result.data.payTime;
+                                                var endDate=vm.getEndDate(payTime,vm.item.numofdays);
                                                 if(status === 'SUCCESS'){
                                                     //保存数据．跳转页面
-                                                    vipBuyService.updatePayedOrder(parentId,orderId,payTime).then(
+                                                    vipBuyService.updatePayedOrder(parentId,orderId,payTime,endDate).then(
                                                         function(updateResult) {
-                                                            alert(JSON.stringify(updateResult));
-                                                            vm.information = " udpate success ";
+                                                            //alert("updatePayedOrder sucess "+JSON.stringify(updateResult));
+                                                            //vm.information += " udpate success ";
                                                             //跳转页面
+                                                            if(updateResult.errno===0) {
+                                                                MessageToaster.info("微信支付完成");
+                                                                StateService.clearAllAndGo(AuthService.getNextPath());
+                                                            }
                                                         },
                                                         function(error) {
-                                                            alert(JSON.stringify(error));
+                                                            alert("updatePayedOrder error "+JSON.stringify(error));
                                                         }
                                                     );
                                                 }
                                             },
                                             function (reason) {
-                                                alert(JSON.stringify(reason));
+                                                alert("checkOrder error "+JSON.stringify(reason));
                                             }
                                         );
-                                    }else if(res.err_msg == "get_brand_wcpay_request:cancel"){
-                                        alert("用户取消");
-                                    }else if(res.err_msg == "get_brand_wcpay_request:fail"){
+                                    //}else if(msg == "get_brand_wcpay_request:cancel"){
+                                    }else if(msg.endsWith("cancel")){
+                                        //alert("用户取消");
+                                        //vm.information="用户取消";
+                                        MessageToaster.info("微信支付已取消");
+                                    //}else if(msg == "get_brand_wcpay_request:fail"){
+                                    }else if(msg.endsWith("fail")){
                                         alert("付款失败");
                                     }
                                 }
                             );
                         }
                     }, function (error) {
-                        alert(JSON.stringify(error));
+                        //alert(JSON.stringify(error));
+                        vm.information += " 请求付款失败 " + error;
                     });
             };
 

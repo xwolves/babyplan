@@ -45,8 +45,8 @@
             });
             $scope.$watch('vm.user.password', function(newValue, oldValue) {
                 if(vm.user.password!=undefined) {
-                    if (vm.user.password.length < 6) {
-                        vm.error = '密码长度必须不小于6位';
+                    if (vm.user.password.length < 8) {
+                        vm.error = '密码长度必须不小于8位';
                     } else {
                         vm.error = null;
                     }
@@ -80,7 +80,7 @@
             };
 
             vm.simpleCheck = function(){
-                if(vm.org.password.length >= 6 && (vm.org.account.length == 11 || vm.org.account.length == 8 )){
+                if(vm.org.password.length >= 8 && (vm.org.account.length == 11 || vm.org.account.length == 8 )){
                     vm.error = "";
                     return true;
                 } else vm.error = '数据未填完哦!';
