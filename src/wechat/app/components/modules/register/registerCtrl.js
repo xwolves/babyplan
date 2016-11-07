@@ -1,24 +1,31 @@
 (function() {
     "use strict";
     angular.module('registerCtrl', [])
-        .controller('registerCtrl', function($scope, Constants,StateService,Session,AuthService,registerService,LoginService,MessageToaster,Role) {
+        .controller('registerCtrl', function($scope, Constants,StateService,Session,AuthService,registerService,LoginService,$stateParams) {
             'ngInject';
             var vm = this;
             vm.activated = false;
-            console.log("tabs come");
             vm.count=0;
             vm.isLock=false;
             vm.org={mobile:'', password:''};
             //微信uid的初始化
             vm.user={ gendar:'1', name:'', mobile:'', password:'', pswConfirm:'', wechat:AuthService.getWechatId()};
             vm.error=null;
+            vm.isParent=false;
             $scope.$on('$ionicView.afterEnter', activate);
 
             function activate() {
                 vm.activated = true;
                 vm.version = Constants.buildID;
-                vm.roleType = '2';
-                console.log(vm.user);
+                vm.type = $stateParams.type;
+                console.log("user type = "+vm.type);
+                if(vm.type==2) {
+                    vm.roleType = '2';
+                    vm.isParent = true;
+                }else{
+                    vm.roleType = '3';
+                    vm.isParent = false;
+                }
             };
 
             $scope.$watch('vm.user.name', function(newValue, oldValue) {
@@ -97,7 +104,7 @@
                             //modal select type
                             vm.roleList = result;
                             //alert(JSON.stringify(result));
-                            MessageToaster.info("undefine have select  " + result.length);
+                            //MessageToaster.info("undefine have select  " + result.length);
                             //vm.showChooseModal();
 
                         } else {
@@ -115,7 +122,7 @@
                             //no data found
                             console.log("找不到任何信息");
                         }
-                        MessageToaster.error(response.error);
+                        //MessageToaster.error(response.error);
                     }
                 });
             };

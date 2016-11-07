@@ -92,8 +92,8 @@ class Account{
                     $info[] = $d_info;
                 else{
                     if(!empty($t_info)){
-                        $info[] = $t_info;	
-                    }	
+                        $info[] = $t_info;
+                    }
                 }
             }else if(intval($type) == 2){
                 if(!empty($p_info))
@@ -411,7 +411,7 @@ class Account{
             while($row = $stmt->fetch(PDO::FETCH_ASSOC)){
                 $tmp_info = array();
                 $tmp_info['uid'] = $row['accountid'];
-                $tmp_info['relationship'] = $row['relationship'];
+                $tmp_info['relationship'] = $row['RelationShip'];
                 $tmp_info['name'] = $row['name'];
                 $tmp_info['sex'] = $row['sex'];
                 $tmp_info['fingerfeature'] = $row['fingerfeature'];
