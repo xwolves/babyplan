@@ -504,14 +504,6 @@ app.filter('statusChange', function () {
 }());
 
 (function() {
-    "use strict";
-    angular.module('directive', [
-
-    ]);
-
-}());
-
-(function() {
   "use strict";
   angular.module('config', [
     'environmentConfig',
@@ -597,6 +589,14 @@ app.filter('statusChange', function () {
         $httpProvider.defaults.headers.get['Cache-Control'] = 'no-cache';
         $httpProvider.defaults.headers.get['Pragma'] = 'no-cache';
     });
+}());
+
+(function() {
+    "use strict";
+    angular.module('directive', [
+
+    ]);
+
 }());
 
 Date.prototype.Format = function(fmt) {
@@ -3119,78 +3119,6 @@ Date.prototype.Format = function(fmt) {
 
 (function() {
   "use strict";
-  angular.module('profileModule', [
-    'profileCtrl',
-    'profileRouter',
-    'profileService'
-  ]);
-
-}());
-
-(function() {
-    "use strict";
-    angular.module('profileCtrl', [])
-        .controller('profileCtrl', function($scope, $state, Constants, StateService) {
-            'ngInject';
-            var vm = this;
-            vm.activated = false;
-            $scope.$on('$ionicView.afterEnter', activate);
-
-            function activate() {
-                vm.activated = true;
-                vm.version = Constants.buildID;
-            }
-
-            vm.goTo = function(addr){
-                console.log(addr);
-                StateService.go(addr);
-            };
-
-        });
-}());
-
-(function() {
-  'use strict';
-
-  angular.module('profileRouter', [])
-    .config(myRouter);
-
-
-  function myRouter($stateProvider, $urlRouterProvider) {
-    'ngInject';
-    $stateProvider
-      .state('tabs.profile', {
-        url: "/profile",
-          views: {
-            'tab-profile': {
-              templateUrl: 'profile/profile.html',
-              controller: 'profileCtrl',
-              controllerAs: 'vm'
-            }
-          }
-      });
-  }
-}());
-
-(function() {
-  'use strict';
-
-  angular.module('profileService', [])
-    .factory('profileService', profileService);
-
-  function profileService( $q, $http) {
-    'ngInject';
-    var service = {
-    };
-    return service;
-
-
-  }
-
-}());
-
-(function() {
-  "use strict";
   angular.module('photoModule', [
     'photoCtrl',
     'photoRouter'
@@ -3306,19 +3234,18 @@ Date.prototype.Format = function(fmt) {
 
 (function() {
   "use strict";
-  angular.module('teacherModule', [
-    'teacherCtrl',
-    'teacherEditCtrl',
-    'teacherRouter',
-    'teacherService'
+  angular.module('profileModule', [
+    'profileCtrl',
+    'profileRouter',
+    'profileService'
   ]);
 
 }());
 
 (function() {
     "use strict";
-    angular.module('teacherCtrl', [])
-        .controller('teacherCtrl', function($scope,Constants,StateService,$ionicListDelegate,$ionicPopup,teacherService,AuthService,CacheData) {
+    angular.module('profileCtrl', [])
+        .controller('profileCtrl', function($scope, $state, Constants, StateService) {
             'ngInject';
             var vm = this;
             vm.activated = false;
@@ -3327,116 +3254,12 @@ Date.prototype.Format = function(fmt) {
             function activate() {
                 vm.activated = true;
                 vm.version = Constants.buildID;
-                vm.getOrganizerTeachers();
             }
 
-            vm.back=function(){
-                StateService.back();
+            vm.goTo = function(addr){
+                console.log(addr);
+                StateService.go(addr);
             };
-
-            vm.goTo=function(id,item){
-                //查看老师信息
-                $ionicListDelegate.closeOptionButtons();
-                CacheData.putObject(id,item);
-                StateService.go('teacherEdit',{cid:id,type:0});
-            };
-
-            vm.new=function(){
-                //创建新的老师信息
-                $ionicListDelegate.closeOptionButtons();
-                StateService.go('teacherEdit',{type:1});
-            };
-
-            vm.edit=function(id){
-                //编辑老师信息
-                $ionicListDelegate.closeOptionButtons();
-                StateService.go('teacherEdit',{cid:id,type:2});
-            };
-
-            vm.del=function(item){
-                //删除老师信息
-                $ionicListDelegate.closeOptionButtons();
-
-                var confirmPopup = $ionicPopup.confirm({
-                    title: '确定要删除此老师:'+item.name,
-                    buttons: [
-                        {text: '取消', type: 'button-positive'},
-                        {text: '确定', type: 'button-assertive',onTap: function(e) { return true}}
-                    ]
-                });
-                confirmPopup.then(function(result) {
-                    if(result) {
-                        console.log('confirm to del this teacher '+item.sid);
-                        //delete(id);
-                    } else {
-                        console.log('cancel delete');
-                    }
-                });
-            };
-
-            vm.getOrganizerTeachers = function(){
-                teacherService.queryTeacher(AuthService.getLoginID()).then(function(data) {
-                    if (data.errno == 0) {
-                        console.log(data.data);
-                        vm.teachers = data.data;
-                    }
-                });
-            };
-        });
-}());
-
-(function() {
-    "use strict";
-    angular.module('teacherEditCtrl', [])
-        .controller('teacherEditCtrl', function($scope, $stateParams, Constants, StateService, teacherService, AuthService, CacheData,MessageToaster) {
-            'ngInject';
-            var vm = this;
-            vm.activated = false;
-
-            vm.query = function(id){
-                vm.item =CacheData.getObject(vm.cid);
-                console.log(vm.item);
-                //vm.item = {name:'girl B',gendar:'2',sid:id,remark:'abcdefg'};
-            };
-
-            $scope.$on('$ionicView.afterEnter', activate);
-
-            function activate() {
-                console.log($stateParams);
-                vm.cid = $stateParams.cid;
-                //0:query 1:create 2:update
-                vm.type = $stateParams.type;
-
-                if(vm.type=='0')vm.isEditing = false;
-                else vm.isEditing = true;
-
-                vm.activated = true;
-                vm.version = Constants.buildID;
-
-                if(vm.type!='1')vm.query(vm.cid);
-            }
-
-            vm.back=function(){
-                StateService.back();
-            };
-
-            vm.save=function(){
-                console.log(vm.item);
-                //create
-                teacherService.createTeacher(vm.item,AuthService.getLoginID()).then(function(data) {
-                    if (data.errno == 0) {
-                        //var userId = data.data.uid;
-                        //wxlogin(vm.user.wechat);
-                        StateService.back();
-                    }else{
-                        //MessageToaster.error(data.error);
-                        MessageToaster.error('无法添加，请确认手机号码是否已经使用过');
-                    }
-                },function(data){
-                    MessageToaster.error(data);
-                });
-            };
-
 
         });
 }());
@@ -3444,120 +3267,36 @@ Date.prototype.Format = function(fmt) {
 (function() {
   'use strict';
 
-  angular.module('teacherRouter', [])
+  angular.module('profileRouter', [])
     .config(myRouter);
 
 
   function myRouter($stateProvider, $urlRouterProvider) {
     'ngInject';
     $stateProvider
-      .state('teacher', {
-        url: "/teacher",
-        templateUrl: 'teacher/teacher.html',
-        controller: 'teacherCtrl',
-        controllerAs: 'vm'
-      })
-      .state('teacherEdit', {
-        url: "/teacherEdit?:cid&:type",
-        params: {
-          cid : null,
-          type : '0'
-        },
-        templateUrl: 'teacher/teacherEdit.html',
-        controller: 'teacherEditCtrl',
-        controllerAs: 'vm'
-      })
-    ;
+      .state('tabs.profile', {
+        url: "/profile",
+          views: {
+            'tab-profile': {
+              templateUrl: 'profile/profile.html',
+              controller: 'profileCtrl',
+              controllerAs: 'vm'
+            }
+          }
+      });
   }
 }());
 
 (function() {
   'use strict';
 
-  angular.module('teacherService', [])
-    .factory('teacherService', teacherService);
+  angular.module('profileService', [])
+    .factory('profileService', profileService);
 
-  function teacherService( $q, $http, Constants, ResultHandler) {
+  function profileService( $q, $http) {
     'ngInject';
     var service = {
-      createTeacher:createTeacher,
-      updateTeacher:updateTeacher,
-      queryTeacher:queryTeacher,
-      queryTeacherDeposit:queryTeacherDeposit
     };
-
-
-    //POST /api/v1/account/teacher/{$teacher_accnt_id}/update //老师账号信息更新，完善
-    //Request Body: { "name":"小强", "sex":1, "mobile":"13300001111", "teachage":5, "age":29, "photolink":"照片url", "password":"123456" }
-    //Response Body: { "errno":0, "error":"", "data":{ "uid":30000001 } }
-    function updateTeacher(teacher, teacherId) {
-      var data = {};
-      if(teacher.name!=null)data.name=teacher.name;
-      if(teacher.sex!=null)data.sex=teacher.sex;
-      if(teacher.mobile!=null)data.mobile=teacher.mobile;
-      if(teacher.teachage!=null)data.teachage=teacher.teachage;
-      if(teacher.age!=null)data.age=teacher.age;
-      if(teacher.url!=null)data.photolink=teacher.url;
-      if(teacher.password!=null)data.password=teacher.password;
-      if(teacher.remark!=null)data.remark=teacher.remark;
-
-      var url = Constants.serverUrl + "account/teacher/"+teacherId+"/update";
-      return $http({
-        method: 'post',
-        url: url,
-        data: data
-      }).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
-    }
-
-    //POST /api/v1/deposit/{$deposit_accnt_id}/addteacher
-    //Request Body: { "mobile":"13300001111" }
-    //Response Body: { "errno":0, "error":"", "data":{ "teacheruid":30000001, "passwd":"123456" } }
-    function createTeacher(teacher, orgId) {
-      var data = {
-        "name":teacher.name,
-        "sex":teacher.sex,
-        "mobile":teacher.mobile,
-        "teachage":teacher.teachage,
-        "age":teacher.age
-      };
-      var url = Constants.serverUrl + "deposit/"+orgId+"/addteacher";
-      return $http({
-        method: 'post',
-        url: url,
-        data: data
-      }).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
-    };
-
-    //GET /api/v1/account/query/depositTeacher/{deposit_accnt_id}
-    //return
-    //{
-    //  "errno":0,
-    //  "error":"",
-    //  "data":[
-    //    {
-    //      "uid":10000001,
-    //      "name":"赵大萌",
-    //      "sex":1,
-    //      "mobile":"15032145678",
-    //      "teachage":10,
-    //      "age":32,
-    //      "photolink":"xxxxx"
-    //      "remark":"xxxx"
-    //    },
-    //    ……
-    //  ]
-    //}
-    function queryTeacher(id) {
-      var url = Constants.serverUrl + 'account/query/depositTeacher/'+id;
-      return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
-    };
-
-
-    function queryTeacherDeposit(id) {
-      var url = Constants.serverUrl + 'deposit/teacher/'+id;
-      return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
-    };
-
     return service;
 
 
@@ -4048,6 +3787,267 @@ Date.prototype.Format = function(fmt) {
 
 (function() {
   "use strict";
+  angular.module('teacherModule', [
+    'teacherCtrl',
+    'teacherEditCtrl',
+    'teacherRouter',
+    'teacherService'
+  ]);
+
+}());
+
+(function() {
+    "use strict";
+    angular.module('teacherCtrl', [])
+        .controller('teacherCtrl', function($scope,Constants,StateService,$ionicListDelegate,$ionicPopup,teacherService,AuthService,CacheData) {
+            'ngInject';
+            var vm = this;
+            vm.activated = false;
+            $scope.$on('$ionicView.afterEnter', activate);
+
+            function activate() {
+                vm.activated = true;
+                vm.version = Constants.buildID;
+                vm.getOrganizerTeachers();
+            }
+
+            vm.back=function(){
+                StateService.back();
+            };
+
+            vm.goTo=function(id,item){
+                //查看老师信息
+                $ionicListDelegate.closeOptionButtons();
+                CacheData.putObject(id,item);
+                StateService.go('teacherEdit',{cid:id,type:0});
+            };
+
+            vm.new=function(){
+                //创建新的老师信息
+                $ionicListDelegate.closeOptionButtons();
+                StateService.go('teacherEdit',{type:1});
+            };
+
+            vm.edit=function(id){
+                //编辑老师信息
+                $ionicListDelegate.closeOptionButtons();
+                StateService.go('teacherEdit',{cid:id,type:2});
+            };
+
+            vm.del=function(item){
+                //删除老师信息
+                $ionicListDelegate.closeOptionButtons();
+
+                var confirmPopup = $ionicPopup.confirm({
+                    title: '确定要删除此老师:'+item.name,
+                    buttons: [
+                        {text: '取消', type: 'button-positive'},
+                        {text: '确定', type: 'button-assertive',onTap: function(e) { return true}}
+                    ]
+                });
+                confirmPopup.then(function(result) {
+                    if(result) {
+                        console.log('confirm to del this teacher '+item.sid);
+                        //delete(id);
+                    } else {
+                        console.log('cancel delete');
+                    }
+                });
+            };
+
+            vm.getOrganizerTeachers = function(){
+                teacherService.queryTeacher(AuthService.getLoginID()).then(function(data) {
+                    if (data.errno == 0) {
+                        console.log(data.data);
+                        vm.teachers = data.data;
+                    }
+                });
+            };
+        });
+}());
+
+(function() {
+    "use strict";
+    angular.module('teacherEditCtrl', [])
+        .controller('teacherEditCtrl', function($scope, $stateParams, Constants, StateService, teacherService, AuthService, CacheData,MessageToaster) {
+            'ngInject';
+            var vm = this;
+            vm.activated = false;
+
+            vm.query = function(id){
+                vm.item =CacheData.getObject(vm.cid);
+                console.log(vm.item);
+                //vm.item = {name:'girl B',gendar:'2',sid:id,remark:'abcdefg'};
+            };
+
+            $scope.$on('$ionicView.afterEnter', activate);
+
+            function activate() {
+                console.log($stateParams);
+                vm.cid = $stateParams.cid;
+                //0:query 1:create 2:update
+                vm.type = $stateParams.type;
+
+                if(vm.type=='0')vm.isEditing = false;
+                else vm.isEditing = true;
+
+                vm.activated = true;
+                vm.version = Constants.buildID;
+
+                if(vm.type!='1')vm.query(vm.cid);
+            }
+
+            vm.back=function(){
+                StateService.back();
+            };
+
+            vm.save=function(){
+                console.log(vm.item);
+                //create
+                teacherService.createTeacher(vm.item,AuthService.getLoginID()).then(function(data) {
+                    if (data.errno == 0) {
+                        //var userId = data.data.uid;
+                        //wxlogin(vm.user.wechat);
+                        StateService.back();
+                    }else{
+                        //MessageToaster.error(data.error);
+                        MessageToaster.error('无法添加，请确认手机号码是否已经使用过');
+                    }
+                },function(data){
+                    MessageToaster.error(data);
+                });
+            };
+
+
+        });
+}());
+
+(function() {
+  'use strict';
+
+  angular.module('teacherRouter', [])
+    .config(myRouter);
+
+
+  function myRouter($stateProvider, $urlRouterProvider) {
+    'ngInject';
+    $stateProvider
+      .state('teacher', {
+        url: "/teacher",
+        templateUrl: 'teacher/teacher.html',
+        controller: 'teacherCtrl',
+        controllerAs: 'vm'
+      })
+      .state('teacherEdit', {
+        url: "/teacherEdit?:cid&:type",
+        params: {
+          cid : null,
+          type : '0'
+        },
+        templateUrl: 'teacher/teacherEdit.html',
+        controller: 'teacherEditCtrl',
+        controllerAs: 'vm'
+      })
+    ;
+  }
+}());
+
+(function() {
+  'use strict';
+
+  angular.module('teacherService', [])
+    .factory('teacherService', teacherService);
+
+  function teacherService( $q, $http, Constants, ResultHandler) {
+    'ngInject';
+    var service = {
+      createTeacher:createTeacher,
+      updateTeacher:updateTeacher,
+      queryTeacher:queryTeacher,
+      queryTeacherDeposit:queryTeacherDeposit
+    };
+
+
+    //POST /api/v1/account/teacher/{$teacher_accnt_id}/update //老师账号信息更新，完善
+    //Request Body: { "name":"小强", "sex":1, "mobile":"13300001111", "teachage":5, "age":29, "photolink":"照片url", "password":"123456" }
+    //Response Body: { "errno":0, "error":"", "data":{ "uid":30000001 } }
+    function updateTeacher(teacher, teacherId) {
+      var data = {};
+      if(teacher.name!=null)data.name=teacher.name;
+      if(teacher.sex!=null)data.sex=teacher.sex;
+      if(teacher.mobile!=null)data.mobile=teacher.mobile;
+      if(teacher.teachage!=null)data.teachage=teacher.teachage;
+      if(teacher.age!=null)data.age=teacher.age;
+      if(teacher.url!=null)data.photolink=teacher.url;
+      if(teacher.password!=null)data.password=teacher.password;
+      if(teacher.remark!=null)data.remark=teacher.remark;
+
+      var url = Constants.serverUrl + "account/teacher/"+teacherId+"/update";
+      return $http({
+        method: 'post',
+        url: url,
+        data: data
+      }).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
+    }
+
+    //POST /api/v1/deposit/{$deposit_accnt_id}/addteacher
+    //Request Body: { "mobile":"13300001111" }
+    //Response Body: { "errno":0, "error":"", "data":{ "teacheruid":30000001, "passwd":"123456" } }
+    function createTeacher(teacher, orgId) {
+      var data = {
+        "name":teacher.name,
+        "sex":teacher.sex,
+        "mobile":teacher.mobile,
+        "teachage":teacher.teachage,
+        "age":teacher.age
+      };
+      var url = Constants.serverUrl + "deposit/"+orgId+"/addteacher";
+      return $http({
+        method: 'post',
+        url: url,
+        data: data
+      }).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
+    };
+
+    //GET /api/v1/account/query/depositTeacher/{deposit_accnt_id}
+    //return
+    //{
+    //  "errno":0,
+    //  "error":"",
+    //  "data":[
+    //    {
+    //      "uid":10000001,
+    //      "name":"赵大萌",
+    //      "sex":1,
+    //      "mobile":"15032145678",
+    //      "teachage":10,
+    //      "age":32,
+    //      "photolink":"xxxxx"
+    //      "remark":"xxxx"
+    //    },
+    //    ……
+    //  ]
+    //}
+    function queryTeacher(id) {
+      var url = Constants.serverUrl + 'account/query/depositTeacher/'+id;
+      return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
+    };
+
+
+    function queryTeacherDeposit(id) {
+      var url = Constants.serverUrl + 'deposit/teacher/'+id;
+      return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
+    };
+
+    return service;
+
+
+  }
+
+}());
+
+(function() {
+  "use strict";
   angular.module('teacherSettingModule', [
     'teacherSettingCtrl',
     'teacherSettingRouter',
@@ -4401,83 +4401,6 @@ Date.prototype.Format = function(fmt) {
 }());
 
 (function() {
-  "use strict";
-  angular.module('vipTipsModule', [
-    'vipTipsCtrl',
-    'vipTipsRouter',
-    'vipTipsService'
-  ]);
-
-}());
-
-(function() {
-    "use strict";
-    angular.module('vipTipsCtrl', [])
-        .controller('vipTipsCtrl', function($scope, $state, Constants, StateService) {
-            'ngInject';
-            var vm = this;
-            vm.activated = false;
-            $scope.$on('$ionicView.afterEnter', activate);
-            vm.expend1=false;
-            function activate() {
-                vm.activated = true;
-                vm.version = Constants.buildID;
-            }
-
-            vm.back=function(){
-                StateService.back();
-            };
-
-            vm.test=function(){
-                console.log('test');
-            }
-        });
-}());
-
-(function() {
-  'use strict';
-
-  angular.module('vipTipsRouter', [])
-    .config(myRouter);
-
-
-  function myRouter($stateProvider, $urlRouterProvider) {
-    'ngInject';
-    $stateProvider
-        .state('vipTips', {
-          url: "/vipTips",
-          templateUrl: 'vipTips/vipTips.html',
-          controller: 'vipTipsCtrl',
-          controllerAs: 'vm'
-        })
-  }
-}());
-
-(function() {
-  'use strict';
-
-  angular.module('vipTipsService', [])
-    .factory('vipTipsService', eService);
-
-  function eService( $q, $http,Constants,ResultHandler) {
-    'ngInject';
-    var service = {
-      exit:exit
-    };
-
-    function exit(id) {
-      var url = Constants.serverUrl + 'account/exit/'+id;
-      return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
-    };
-
-    return service;
-
-
-  }
-
-}());
-
-(function() {
     "use strict";
     angular.module('recordCtrl', [])
         .controller('recordCtrl', function($scope, $state, $stateParams, Constants, StateService, vipBuyService, AuthService, MessageToaster, Session) {
@@ -4594,6 +4517,83 @@ Date.prototype.Format = function(fmt) {
 
   angular.module('vipRecordService', [])
     .factory('vipRecordService', eService);
+
+  function eService( $q, $http,Constants,ResultHandler) {
+    'ngInject';
+    var service = {
+      exit:exit
+    };
+
+    function exit(id) {
+      var url = Constants.serverUrl + 'account/exit/'+id;
+      return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
+    };
+
+    return service;
+
+
+  }
+
+}());
+
+(function() {
+  "use strict";
+  angular.module('vipTipsModule', [
+    'vipTipsCtrl',
+    'vipTipsRouter',
+    'vipTipsService'
+  ]);
+
+}());
+
+(function() {
+    "use strict";
+    angular.module('vipTipsCtrl', [])
+        .controller('vipTipsCtrl', function($scope, $state, Constants, StateService) {
+            'ngInject';
+            var vm = this;
+            vm.activated = false;
+            $scope.$on('$ionicView.afterEnter', activate);
+            vm.expend1=false;
+            function activate() {
+                vm.activated = true;
+                vm.version = Constants.buildID;
+            }
+
+            vm.back=function(){
+                StateService.back();
+            };
+
+            vm.test=function(){
+                console.log('test');
+            }
+        });
+}());
+
+(function() {
+  'use strict';
+
+  angular.module('vipTipsRouter', [])
+    .config(myRouter);
+
+
+  function myRouter($stateProvider, $urlRouterProvider) {
+    'ngInject';
+    $stateProvider
+        .state('vipTips', {
+          url: "/vipTips",
+          templateUrl: 'vipTips/vipTips.html',
+          controller: 'vipTipsCtrl',
+          controllerAs: 'vm'
+        })
+  }
+}());
+
+(function() {
+  'use strict';
+
+  angular.module('vipTipsService', [])
+    .factory('vipTipsService', eService);
 
   function eService( $q, $http,Constants,ResultHandler) {
     'ngInject';
