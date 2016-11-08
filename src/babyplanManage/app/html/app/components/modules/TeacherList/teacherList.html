@@ -85,6 +85,7 @@
 						class="fa fa-caret-up"></span>
 				</a></td>
 				<td>打卡记录</td>
+				<td></td>
 			</tr>
 		</thead>
 
@@ -102,6 +103,8 @@
 				<td>{{doc.ModifyTime|date:'yyyy-MM-dd HH:mm'}}</td>
 				<td><button class="btn btn-primary" type="button"
 						ng-click="teacherdetail(doc)">老师详细信息</button></td>
+				<td><button class="btn btn-primary" type="button"
+						ng-click="outOrg(doc)">退出机构</button></td>
 			</tr>
 		</tbody>
 

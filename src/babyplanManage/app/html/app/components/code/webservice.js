@@ -22,6 +22,14 @@
 			queryChildrenSign:queryChildrenSign,
 			queryDeviceDetail:queryDeviceDetail,
 			queryParentOrder:queryParentOrder,
+			queryPriceList:queryPriceList,
+			priceSeting:priceSeting,
+			querySetingByBusinessId:querySetingByBusinessId,
+			queryPhotoListByDepId:queryPhotoListByDepId,
+			parentOrderDetial:parentOrderDetial,
+			outorg:outorg,
+			detelePhoto:detelePhoto,
+			findPidByPhone:findPidByPhone,
 		};
 		return service;
 		
@@ -308,7 +316,7 @@
 			
 			var descurl = encodeURI(url + "queryParentOrder/?"+tempvar);
 			
-			console.log(tempvar);
+			console.log(descurl);
 			return $http.get(descurl).then(function(response) {
 				if (response.data.status == 0) {
 					return response.data.content;
@@ -321,6 +329,199 @@
 		}
 		;
 		
+		function queryPriceList(pageNumber, pageSize, order, filter) {
+			
+			var tempvar = "pageNumber=" + pageNumber + "&pageSize=" + pageSize;
+			if (order != undefined) {
+				tempvar += "&order=" + order;
+
+			}
+
+			if (filter != undefined) {
+				tempvar += "&filter=" + filter;
+
+			}
+			
+			var descurl = encodeURI(url + "queryPriceSetting/?"+tempvar);
+			
+			return $http.get(descurl).then(function(response) {
+				if (response.data.status == 0) {
+					return response.data.content;
+				} else {
+					return $q.reject(response);
+				}
+			}, function(error) {
+				return $q.reject(error);
+			});
+		}
+		;
+		
+		function findPidByPhone(mobile) {
+						
+			var descurl = encodeURI(url + "findPidByPhone/?phone="+mobile);
+			
+			return $http.get(descurl).then(function(response) {
+				if (response.data.status == 0) {
+					return response.data.content;
+				} else {
+					return $q.reject(response);
+				}
+			}, function(error) {
+				return $q.reject(error);
+			});
+		}
+		;
+		
+		
+//		@Column(name = "BusinessID")
+//		String businessId;
+//
+//		@Column(name = "BusinessName")
+//		String businessName;
+//
+//		@Column(name = "BusinessDesc")
+//		String businessDesc;
+//
+//		@Column(name = "Price")
+//		Float price;
+//
+//		@Column(name = "Provide")
+//		Date provide;
+//		
+//		@Column(name = "Reason")
+//		String reason;
+//		
+//		@Column(name = "Status")
+//		Integer status;
+//		
+//		@Column(name = "CreateTime")
+//		Date CreateTime;
+		function priceSeting(content) {
+			console.log(content);
+			var json = {
+				"recordId" : content.RecordID,
+				"businessId" : content.BusinessID,
+				"businessName" : content.BusinessName,
+				"businessDesc" : content.BusinessDesc,
+				"price" : content.Price,
+				"provide" : content.Provide,
+				"reason" : content.Reason,
+				"status" : content.Status,
+				"numOfDays" : content.NumOfDays,
+				"createTime" : content.CreateTime
+			};
+
+			return $http.post(url + "priceseting", json).then(function(response) {
+				if (response.data.status == 0) {
+					return response.data;
+				} else {
+					return $q.reject(response.data);
+				}
+			}, function(error) {
+				return $q.reject(error);
+			});
+		}
+		;
+		
+		function querySetingByBusinessId(businessid) {
+			console.log(businessid);
+			
+			return $http.get(url + "findByBusinessId?businessid=" + businessid).then(
+					function(response) {
+						if (response.data.status == 0) {
+							return response.data.content;
+						} else {
+							return $q.reject(response);
+						}
+					}, function(error) {
+						return $q.reject(error);
+					});
+		}
+		;
+		
+		function queryPhotoListByDepId(depid) {
+			
+			
+			return $http.get(url + "depositPhotolist?depositid=" + depid).then(
+					function(response) {
+						if (response.data.status == 0) {
+							console.log(response.data.content);
+							return response.data.content;
+							
+						} else {
+							return $q.reject(response);
+						}
+					}, function(error) {
+						return $q.reject(error);
+					});
+		}
+		;
+		
+		function outorg(teacherid,depositid) {
+			console.log(teacherid);
+			
+			return $http.get(url + "outorg?teacherid=" + teacherid+"&depositid="+depositid).then(
+					function(response) {
+						if (response.data.status == 0) {
+							return response.data.content;
+						} else {
+							return $q.reject(response);
+						}
+					}, function(error) {
+						return $q.reject(error);
+					});
+		}
+		;
+		
+		
+		
+		function parentOrderDetial(content) {
+			console.log(content);
+			var json = {
+				"orderId" : content.OrderID,
+				"parentId" : content.ParentID,
+				"orderType" : content.OrderType,
+				"amount" : content.Amount,
+				"payStatus" : content.PayStatus,
+				"payType" : content.PayType,
+				"payTime" : content.PayTime,
+				"numOfDays" : content.NumOfDays,
+				"cutOffTime" : content.CutOffTime,
+				"businessID" : content.BusinessID,
+				"createTime" : content.CreateTime,
+				"modifyTime" : content.ModifyTime
+			};
+
+			return $http.post(url + "parentOrder", json).then(function(response) {
+				if (response.data.status == 0) {
+					return response.data;
+				} else {
+					return $q.reject(response.data);
+				}
+			}, function(error) {
+				return $q.reject(error);
+			});
+		}
+		;
+		
+		function detelePhoto(photoid) {
+
+			return $http.get(url + "detelePhoto?photoid=" + photoid).then(
+					function(response) {
+						if (response.data.status == 0) {
+							return response.data.content;
+						} else {
+							return $q.reject(response);
+						}
+					}, function(error) {
+						return $q.reject(error);
+					});
+		}
+		;
+		
+		//parentOrder
+		
+			
 		// 下面的都是没有用的
 
 		function queryDocument() {
@@ -695,6 +896,8 @@
 					});
 		}
 		;
+		
+		
 
 		function getExportExcel(start, end) {
 			if (start.length != 8 || isNaN(start) || isNaN(end)

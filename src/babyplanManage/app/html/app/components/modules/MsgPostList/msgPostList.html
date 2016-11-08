@@ -67,6 +67,15 @@ InfoType	int32	信息类型（1：就餐；2：培训；3：活动；4：作业�
 				</a></td>
 
 				<td><a
+					ng-click="sortType = 'Status'; sortReverse = !sortReverse">
+						发布状态 <span ng-show="sortType == 'Status' && !sortReverse"
+						class="fa fa-caret-down"></span> <span
+						ng-show="sortType == 'Status' && sortReverse"
+						class="fa fa-caret-up"></span>
+				</a></td>
+				
+				
+				<td><a
 					ng-click="sortType = 'StarCount'; sortReverse = !sortReverse">
 						点赞的个数 <span
 						ng-show="sortType == 'StarCount' && !sortReverse"
@@ -96,11 +105,12 @@ InfoType	int32	信息类型（1：就餐；2：培训；3：活动；4：作业�
 				<td>{{doc.DepositID}}</td>
 				<td>{{doc.OrgName}}</td>
 				<td>{{doc.ClickCount}}</td>
-				<td>{{doc.InfoType}}</td>
+				<td>{{doc.InfoType|dailyinfoTypefilter}}</td>
+				<td>{{doc.Status|dailyStatusfilter}}</td>
 				<td>{{doc.StarCount}}</td>
 				<td>{{doc.CreateTime|date:'yyyy-MM-dd HH:mm'}}</td>
 				<td><button class="btn btn-primary" type="button"
-						ng-click="fingerRecord(doc.PublisherID)">信息详情</button></td>
+						ng-click="msgPostDetial(doc)">信息详情</button></td>
 
 			</tr>
 		</tbody>

@@ -9,7 +9,7 @@
 				$scope.sortReverse = false; // set the default sort order
 				$scope.filter = "";
 				$scope.order = "CreateTime desc";
-
+				$scope.simpleFilter="";
 				$scope.ALLfilter = "";
 				$scope.depfilter = "";
 				
@@ -52,9 +52,13 @@
 					});
 				};
 
-				$scope.fingerRecord = function(event) {
-
-					console.log(event);
+				$scope.msgPostDetial = function(event) {
+					XHDialog.msgDetail(event, function() {
+						$scope.query();
+						$scope.focus();
+					}, function() {
+						$scope.focus();
+					});
 				}
 
 				$scope.depositdetial = function(event) {
@@ -71,6 +75,7 @@
 						$scope.focus();
 					});
 				}
+				
 
 				$scope.focus();
 				$scope.query($stateParams);

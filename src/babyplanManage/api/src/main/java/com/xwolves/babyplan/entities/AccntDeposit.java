@@ -4,10 +4,7 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 @Entity
@@ -50,7 +47,7 @@ public class AccntDeposit {
 	String frontDeskLink;
 
 	@Column(name = "PublicZoneLink")
-	String pubilcZoneLink;
+	String publicZoneLink;
 
 	@Column(name = "KitchenLink")
 	String kitchenLink;
@@ -195,12 +192,12 @@ public class AccntDeposit {
 		this.frontDeskLink = frontDeskLink;
 	}
 
-	public String getPubilcZoneLink() {
-		return pubilcZoneLink;
+	public String getPublicZoneLink() {
+		return publicZoneLink;
 	}
 
-	public void setPubilcZoneLink(String pubilcZoneLink) {
-		this.pubilcZoneLink = pubilcZoneLink;
+	public void setPubliccZoneLink(String publicZoneLink) {
+		this.publicZoneLink = publicZoneLink;
 	}
 
 	public String getKitchenLink() {
@@ -320,7 +317,7 @@ public class AccntDeposit {
 		return "AccntDeposit [accountId=" + accountId + ", orgName=" + orgName + ", address=" + address + ", markId="
 				+ markId + ", contactName=" + contactName + ", contactPhone=" + contactPhone + ", licenseType="
 				+ licenseType + ", placeContractType=" + placeContractType + ", frontDeskLink=" + frontDeskLink
-				+ ", pubilcZoneLink=" + pubilcZoneLink + ", kitchenLink=" + kitchenLink + ", diningRoomLink="
+				+ ", publicZoneLink=" + publicZoneLink + ", kitchenLink=" + kitchenLink + ", diningRoomLink="
 				+ diningRoomLink + ", restRoomLink1=" + restRoomLink1 + ", restRoomLink2=" + restRoomLink2
 				+ ", classRoomLink1=" + classRoomLink1 + ", classRoomLink2=" + classRoomLink2 + ", otherRoomLink1="
 				+ otherRoomLink1 + ", otherRoomLink2=" + otherRoomLink2 + ", id2Number=" + id2Number + ", id2PhotoLink="

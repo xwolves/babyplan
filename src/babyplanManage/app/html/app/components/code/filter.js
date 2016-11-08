@@ -48,6 +48,79 @@ app.filter('Sexchange', function () {
     };
 });
 
+app.filter('priceStatus', function () {
+    return function (input) {
+        if (input == "0")return "套餐无效";
+        else if (input == "1")return "套餐生效中";
+        else if (input == "2")return "套餐过期";
+        else if (input == "3")return "套餐取消";
+        
+        else return "";
+    };
+});
+
+app.filter('orderTypefilter', function () {
+    return function (input) {
+        if (input == "1")return "正式订单";
+        else if (input == "2")return "测试订单";
+        
+        else return "未知";
+    };
+});
+
+
+
+app.filter('payTypefilter', function () {
+    return function (input) {
+        if (input == "0")return "微信支付";
+        else if (input == "1")return "支付宝支付";
+        else if (input == "2")return "其它";
+        else return "未知";
+    };
+});
+
+app.filter('payStatusfilter', function () {
+    return function (input) {
+        if (input == "0")return "未支付";
+        else if (input == "1")return "已支付";
+        
+        else return "未知";
+    };
+});
+
+//1：就餐；2：培训；3：活动；4：作业；5：接入；6：送达
+app.filter('dailyinfoTypefilter', function () {
+    return function (input) {
+        if (input == "1")return "就餐";
+        else if (input == "2")return "培训";
+        else if (input == "3")return "活动";
+        else if (input == "4")return "作业";
+        else if (input == "5")return "接入";
+        else if (input == "6")return "送达";
+        else return "未知";
+    };
+});
+
+
+app.filter('dailyStatusfilter', function () {
+    return function (input) {
+        if (input == "1")return "正常发布";
+        else if (input == "2")return "撤回";
+        else return "未知";
+    };
+});
+
+
+app.filter('deviceStatusfilter', function () {
+    return function (input) {
+        if (input == "0")return "备用";
+        else if (input == "1")return "正在使用";
+        else return "未知";
+    };
+});
+
+
+
 app.filter('statusChange', function () {
     return function (input,rule) {
         //var rule=[{dm:"0",mc:"未办结"},{dm:"1",mc:"已办结"}];
@@ -58,6 +131,19 @@ app.filter('statusChange', function () {
         }else{
             return input;
         }
+    };
+});
+
+
+app.filter('picTypefilter', function () {
+    return function (input) {
+        if (input == "111")return "消防验收合格证";
+        else if (input == "112")return "卫生许可证";
+        else if (input == "121")return "工商执照";
+        else if (input == "211")return "房管所备案的房屋证或租赁证";
+        else if (input == "212")return "场地租赁合同（已备案）";
+        else if (input == "221")return "房屋租赁合同";
+        else return "未知";
     };
 });
 

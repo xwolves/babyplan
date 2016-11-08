@@ -1,23 +1,12 @@
 package com.xwolves.babyplan.repositories;
 
-import java.sql.ResultSet;
 
-import java.sql.SQLException;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import javax.sql.DataSource;
-
-import org.json.JSONObject;
-import org.springframework.dao.DataAccessException;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.ResultSetExtractor;
-import org.springframework.jdbc.core.RowMapper;
-
-import com.xwolves.babyplan.entities.AccntDeposit;
-import com.xwolves.babyplan.entities.ChildrenInfoExt;
 import com.xwolves.babyplan.entities.ResultComn;
 
 
@@ -47,6 +36,16 @@ public class AccntDepostitSqlQuery {
 	   	 return id;
     }
     
+    public int getNewPriceSetId(){
+	   	 int id = jdbcTemplate.queryForInt("select max(t.RecordID)  from  tb_price_setting t")+1;
+	   	 return id;
+   }
+    
+    
+    public int getNewDepositPhotosId(){
+	   	 int id = jdbcTemplate.queryForInt("select max(t.PhotoID)  from  tb_deposit_photos t")+1;
+	   	 return id;
+   }
     
     public ResultComn queryTeacherExtData(String filter ,String order,int pageNumber,int pagesize)
     {
@@ -56,6 +55,31 @@ public class AccntDepostitSqlQuery {
     	 		+ "left join tb_accnt_deposit m on m.AccountID=x.DepositID ";
     	return queryComonData(sqltemp,filter,order,pageNumber,pagesize);
     }
+    
+    
+    public int  queryparentExist(String mobile)
+    {
+    	
+    	String sqltemp = "select t.* from tb_accnt_parent t where t.Mobile='"+mobile+"'";
+    	List list = jdbcTemplate.queryForList(sqltemp);
+    	
+    	if (list.isEmpty())
+    	{
+    		return -1;
+    	}
+    	Iterator it = list.iterator(); 
+    	if(it.hasNext()) {  
+    	    Map userMap = (Map) it.next();  
+    	    System.out.println("AccountID="+userMap.get("AccountID"));
+    	    return (Integer) userMap.get("AccountID");
+//    	    System.out.print(userMap.get("user_id") + "\t");  
+//    	    System.out.print(userMap.get("name") + "\t");  
+//    	    System.out.print(userMap.get("sex") + "\t");  
+//    	    System.out.println(userMap.get("age") + "\t");  
+    	}  
+    	return -1;
+    }
+    
     
     public ResultComn queryChildExtData(String filter ,String order,int pageNumber,int pagesize)
     {
@@ -94,6 +118,8 @@ public class AccntDepostitSqlQuery {
     }
 
     
+    
+    
     public ResultComn queryDepositDailyData(String filter ,String order,int pageNumber,int pagesize)
     {
     	
@@ -107,13 +133,40 @@ public class AccntDepostitSqlQuery {
     public ResultComn queryParentOrderData(String filter ,String order,int pageNumber,int pagesize)
     {
     	
-    	String sqltemp = "SELECT t.*,ac_pa.Name,ac_pa.Mobile FROM tb_parent_order t "
+    	String sqltemp = "SELECT t.*,ac_pa.Name,ac_pa.Mobile,pr_se.BusinessName FROM tb_parent_order t "
+    			+"LEFT JOIN tb_price_setting pr_se on pr_se.BusinessID=t.BusinessID"
     			+ " LEFT JOIN tb_accnt_parent ac_pa on ac_pa.AccountID=t.ParentID ";
     	return queryComonData(sqltemp,filter,order,pageNumber,pagesize);
     } 
     
+    //涓婃姤璁板綍
+    public ResultComn queryDeviceStatusData(String filter ,String order,int pageNumber,int pagesize)
+    {
+    	
+    	String sqltemp = "SELECT t.*,ac_de.OrgName,ac_de.ContactName,ac_de.ContactPhone FROM tb_device_status t "
+    			+ " LEFT JOIN tb_accnt_deposit ac_de on ac_de.AccountID=t.DepositID ";
+    	return queryComonData(sqltemp,filter,order,pageNumber,pagesize);
+    } 
     
-    //通用查询函数
+    //price table
+    public ResultComn queryPriceSettingData(String filter ,String order,int pageNumber,int pagesize)
+    {
+    	
+    	String sqltemp = "SELECT t.* FROM tb_price_setting t ";
+    	return queryComonData(sqltemp,filter,order,pageNumber,pagesize);
+    } 
+    
+    //insert table
+    
+    public int execomand(String sql)
+    {
+    	System.out.println(sql);
+    	int ret = jdbcTemplate.update(sql);
+    	System.out.println("ret="+ret);
+    	return ret;
+    	
+    }
+    
 	public ResultComn queryComonData(String sql,  String filter ,String ordertemp,int pageNumber,int pagesize){
     	
     	String where="";
@@ -160,4 +213,6 @@ public class AccntDepostitSqlQuery {
     	 System.out.println(list.toString());
 		 return new ResultComn(0, "success", list,TotalElements,totalPages,numberOfElements,0, 0);
     }
+	
+	
 }

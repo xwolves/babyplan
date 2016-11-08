@@ -9,7 +9,7 @@
 				$scope.sortReverse = false; // set the default sort order
 				$scope.filter = "";
 				$scope.order = "signintime desc";
-
+				$scope.simpleFilter="";
 				$scope.ALLfilter = "";
 				$scope.depfilter = "";
 				

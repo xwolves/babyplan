@@ -11,7 +11,7 @@ import javax.persistence.Table;
 @Table(name = "tb_accnt_consultant")
 public class AccntConsultant {
 	
-//	  `AccountID` int(11) NOT NULL,
+//	  `AccountID` Integer(11) NOT NULL,
 //	  `Name` varchar(128) DEFAULT NULL,
 //	  `Mobile` varchar(128) DEFAULT NULL,
 //	  `WeiXinNo` varchar(128) DEFAULT NULL,

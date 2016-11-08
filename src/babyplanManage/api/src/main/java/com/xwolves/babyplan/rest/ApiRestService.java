@@ -21,6 +21,8 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -32,6 +34,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.HttpStatus;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -43,12 +46,17 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.xwolves.babyplan.entities.AccntConsultant;
 import com.xwolves.babyplan.entities.AccntDeposit;
-import com.xwolves.babyplan.entities.ChildrenInfoExt;
+import com.xwolves.babyplan.entities.DepositPhotos;
+import com.xwolves.babyplan.entities.ParentOrder;
+import com.xwolves.babyplan.entities.PriceSetting;
 import com.xwolves.babyplan.entities.Result;
 import com.xwolves.babyplan.entities.ResultComn;
 import com.xwolves.babyplan.repositories.AccntConsultantRepsitory;
 import com.xwolves.babyplan.repositories.AccntDepositRepsitory;
 import com.xwolves.babyplan.repositories.AccntDepostitSqlQuery;
+import com.xwolves.babyplan.repositories.DepositPhotosRepsitory;
+import com.xwolves.babyplan.repositories.ParentOrderRepsitory;
+import com.xwolves.babyplan.repositories.PriceSettingRepsitory;
 
 //@CrossOrigin(origins = {"http://zssys.sustc.edu.cn:8080","http://zssys.sustc.edu.cn","http://localhost:63344","http://localhost:8080"}, methods={RequestMethod.GET,RequestMethod.POST,RequestMethod.PUT})
 @RestController
@@ -64,8 +72,19 @@ public class ApiRestService {
 
 	@Autowired
 	AccntDepositRepsitory adDao;// 托管结构
+	
+	@Autowired
+	PriceSettingRepsitory priceset;// 顾问
+
+	@Autowired
+	DepositPhotosRepsitory depositphrep;// 顾问
+
+	@Autowired
+	ParentOrderRepsitory parentOrderRep;//
 
 	AccntDepostitSqlQuery accntDepostquery;
+	
+
 
 	@Autowired
 	public void setDataSource(DataSource dataSource) {
@@ -95,17 +114,170 @@ public class ApiRestService {
 		return new Result(Result.STATUS_SUCCESS,"注销成功");
 	}
 	
+	@RequestMapping(value = "/outorg", method = RequestMethod.GET)
+	public Result outorg( @RequestParam(value = "teacherid", required = true) int teacherid, @RequestParam(value = "depositid", required = true) int depositid, HttpServletRequest request, HttpServletResponse response) throws Exception
+	{
+		if (issessionok(request) == false) {
+			response.setStatus(Result.STATUS_TIMEOUT);
+			throw new Exception("TIMEOUT");
+		}
+		accntDepostquery.execomand("UPDATE  tb_deposit_teacher t set t.DepositID=0 WHERE t.TeacherID="+teacherid+" and t.DepositID="+depositid);
+		return new Result(Result.STATUS_SUCCESS,"success","");
+	}
+	
+	
+	@RequestMapping(value = "/findByBusinessId", method = RequestMethod.GET)
+	public Result findByBusinessId( @RequestParam(value = "businessid", required = true) int businessid,  HttpServletRequest request, HttpServletResponse response) throws Exception
+	{
+		if (issessionok(request) == false) {
+			response.setStatus(Result.STATUS_TIMEOUT);
+			throw new Exception("TIMEOUT");
+		}
+		PriceSetting psetting = priceset.findByBusinessId(businessid);
+		return new Result(Result.STATUS_SUCCESS,"success",psetting);
+	}
+	
+	
+	@RequestMapping(value = "/findPidByPhone", method = RequestMethod.GET)
+	public Result findPidByPhone( @RequestParam(value = "phone", required = true) String phone,  HttpServletRequest request, HttpServletResponse response) throws Exception
+	{
+		if (issessionok(request) == false) {
+			response.setStatus(Result.STATUS_TIMEOUT);
+			throw new Exception("TIMEOUT");
+		}
+		int ret = accntDepostquery.queryparentExist(phone);
+		if(ret==-1)
+		{
+			return new Result(Result.STATUS_FAIL,"failed","手机号码不对！");
+		}
+		return new Result(Result.STATUS_SUCCESS,"success",ret);
+	}
+	
 
+	@RequestMapping(value = "/parentOrder", method = RequestMethod.POST, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+	public Result parentOrder(@RequestBody ParentOrder parentOrderbody, HttpServletRequest request, HttpServletResponse response) throws Exception {
+		if (issessionok(request) == false) {
+			response.setStatus(Result.STATUS_TIMEOUT);
+			throw new Exception("TIMEOUT");
+		}
+		
+		logger.info("get obj " + parentOrderbody.toString());
+		
+		if (parentOrderbody.getOrderId() == null || parentOrderbody.getOrderId()  == "")// 新增接口
+		{
+			DateFormat format = new SimpleDateFormat("yyyyMMddhhmmss");
+	        String s = format.format(new Date())+parentOrderbody.getParentId();
+			parentOrderbody.setOrderId(s);
+			parentOrderbody.setCreateTime(new Date());
+			parentOrderbody.setModifyTime(new Date());
+
+		} else// update
+		{
+			
+			//parentOrderbody.setCutOffTime(parentOrderbody.getCutOffTime());;
+			//parentOrderbody.setCutOffTime(new Date(parentOrderbody.getCutOffTime()));;
+			parentOrderbody.setModifyTime(new Date());
+//			AccntDeposit accntdepoist = adDao.findByAccountId(ad.getAccountId());
+//			ad.setPassword(accntdepoist.getPassword());
+//			ad.setModifyTime(new Date());
+//			ad.setCreateTime(accntdepoist.getCreateTime());
+		}
+
+		parentOrderbody = parentOrderRep.saveAndFlush(parentOrderbody);
+		logger.info("save obj " + parentOrderbody.toString());
+		return new Result(Result.STATUS_SUCCESS, "success", parentOrderbody);
+	}
+	
+	
+	@RequestMapping(value = "/priceseting", method = RequestMethod.POST, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+	public Result priceseting(@RequestBody PriceSetting psetting, HttpServletRequest request, HttpServletResponse response) throws Exception {
+		if (issessionok(request) == false) {
+			response.setStatus(Result.STATUS_TIMEOUT);
+			throw new Exception("TIMEOUT");
+		}
+		
+		
+		if (psetting.getRecordId() == null || psetting.getRecordId()  == 0)// 新增接口
+		{
+			psetting.setRecordId(accntDepostquery.getNewPriceSetId());
+			psetting.setBusinessId(accntDepostquery.getNewPriceSetId());
+			psetting.setCreateTime(new Date());
+
+		} else// update
+		{
+//			AccntDeposit accntdepoist = adDao.findByAccountId(ad.getAccountId());
+//			ad.setPassword(accntdepoist.getPassword());
+//			ad.setModifyTime(new Date());
+//			ad.setCreateTime(accntdepoist.getCreateTime());
+		}
+
+		psetting = priceset.saveAndFlush(psetting);
+		return new Result(Result.STATUS_SUCCESS, "success", psetting);
+	}
+	
+	
+	@RequestMapping(value = "/depositPhotos", method = RequestMethod.POST, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+	public Result depositPhotos(@RequestBody DepositPhotos pDepositPhotos, HttpServletRequest request, HttpServletResponse response) throws Exception {
+		if (issessionok(request) == false) {
+			response.setStatus(Result.STATUS_TIMEOUT);
+			throw new Exception("TIMEOUT");
+		}
+		
+		
+		if (pDepositPhotos.getPhotoId() == null || pDepositPhotos.getPhotoId()  == 0)// 新增接口
+		{
+			pDepositPhotos.setPhotoId(accntDepostquery.getNewPriceSetId());
+			pDepositPhotos.setModifyTime(new Date());
+			pDepositPhotos.setCreateTime(new Date());
+
+		} else// update
+		{
+//			AccntDeposit accntdepoist = adDao.findByAccountId(ad.getAccountId());
+//			ad.setPassword(accntdepoist.getPassword());
+//			ad.setModifyTime(new Date());
+//			ad.setCreateTime(accntdepoist.getCreateTime());
+		}
+
+		pDepositPhotos = depositphrep.saveAndFlush(pDepositPhotos);
+		return new Result(Result.STATUS_SUCCESS, "success", pDepositPhotos);
+	}
+	
+	@RequestMapping(value = "/detelePhoto", method = RequestMethod.GET)
+	public Result detelePhoto(@RequestParam(value = "photoid", required = false) int photoid, HttpServletRequest request, HttpServletResponse response) throws Exception {
+		if (issessionok(request) == false) {
+			response.setStatus(Result.STATUS_TIMEOUT);
+			throw new Exception("TIMEOUT");
+		}
+		System.out.println("photoid+"+photoid);
+		
+		depositphrep.delete(photoid);
+		depositphrep.flush();
+		//pDepositPhotos = depositphrep.saveAndFlush(pDepositPhotos);
+		return new Result(Result.STATUS_SUCCESS, "success", "删除成功");
+	}
+	
+	
+
+	@RequestMapping(value = "/depositPhotolist", method = RequestMethod.GET)
+	public Result depositPhotolist(@RequestParam(value = "depositid", required = false) int depositid, HttpServletRequest request, HttpServletResponse response) throws Exception {
+		if (issessionok(request) == false) {
+			response.setStatus(Result.STATUS_TIMEOUT);
+			throw new Exception("TIMEOUT");
+		}
+		
+		List<DepositPhotos> depphlist = depositphrep.findByDepositId(depositid);
+		return new Result(Result.STATUS_SUCCESS, "success", depphlist);
+	}
+	
+	
 	/**
 	 * /api/v1/login //顾问登录 { "name": "test", "password": "123456" }
-	 * 
 	 * @param user
 	 * @param password
 	 * @throws Exception
 	 */
 	@RequestMapping(value = "/login", method = RequestMethod.POST, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
-	public Result login(@RequestBody AccntConsultant ac, HttpServletRequest request, HttpServletResponse response)
-			throws Exception {
+	public Result login(@RequestBody AccntConsultant ac, HttpServletRequest request, HttpServletResponse response){
 
 		logger.info("getName" + ac.getName() + "password" + ac.getPassword());
 		if (ac.getName() == null || ac.getName().equals("") || ac.getPassword() == null
@@ -117,6 +289,7 @@ public class ApiRestService {
 		if (obj != null && obj.size() > 0) {
 
 			HttpSession session = request.getSession();
+			//session.setAttribute(arg0, arg1);
 			return new Result(Result.STATUS_SUCCESS, "login success", obj.get(0));
 		} else {
 			return new Result(Result.STATUS_FAIL, "not is exits");
@@ -162,6 +335,8 @@ public class ApiRestService {
 		logger.info("save obj " + ad);
 		return new Result(Result.STATUS_SUCCESS, "success", ad);
 	}
+	
+	
 
 	@RequestMapping(value = "/depositinfo", method = RequestMethod.GET)
 	public Result depositinfo(@RequestParam(value = "pageNumber", required = false) int pageNumber,
@@ -405,6 +580,23 @@ public class ApiRestService {
 		//return new Result(Result.STATUS_SUCCESS, "success", obj);
 	}
 	
+	@RequestMapping(value = "/queryPriceSetting", method = RequestMethod.GET)
+	public Result queryPriceSetting(@RequestParam(value = "pageNumber", required = true) int pageNumber,
+			@RequestParam(value = "pageSize", required = true) int pageSize,
+			@RequestParam(value = "filter", required = false) String filter,
+			@RequestParam(value = "order", required = false) String order,
+			HttpServletRequest request, HttpServletResponse response
+			) throws Exception {
+		
+		if (issessionok(request) == false) {
+			response.setStatus(Result.STATUS_TIMEOUT);
+			throw new Exception("TIMEOUT");
+		}
+
+		ResultComn obj =  accntDepostquery.queryPriceSettingData(filter,order,pageNumber,pageSize);
+		return new Result(Result.STATUS_SUCCESS, "success", obj);
+		//return new Result(Result.STATUS_SUCCESS, "success", obj);
+	}
 	
 	
 	/**
@@ -414,7 +606,7 @@ public class ApiRestService {
 	 */
 	@RequestMapping(value = "/uploadExt", produces = { "application/json" }, method = RequestMethod.POST)
 	public String uploadExt(HttpServletRequest request, @RequestParam("file") MultipartFile file,
-			@RequestParam("updatefield") String updatefield, @RequestParam("id") int id) {
+			@RequestParam("updatefield") String updatefield, @RequestParam("id") int id,@RequestParam("picType") int picType) {
 		String ret = upload(request, file);		
 		JSONObject jsonObject = new JSONObject(ret);
 		
@@ -436,30 +628,54 @@ public class ApiRestService {
 		AccntDeposit accntdepoist = adDao.findByAccountId(id);
 		if (("frontDeskLink").equalsIgnoreCase(updatefield)) {
 			accntdepoist.setFrontDeskLink(fileurl);
-		} else if (("pubilcZoneLink").equalsIgnoreCase(updatefield)) {
-			accntdepoist.setPubilcZoneLink(fileurl);
+			adDao.saveAndFlush(accntdepoist);
+		} else if (("publicZoneLink").equalsIgnoreCase(updatefield)) {
+			accntdepoist.setPubliccZoneLink(fileurl);
+			adDao.saveAndFlush(accntdepoist);
 		} else if (("kitchenLink").equalsIgnoreCase(updatefield)) {
 			accntdepoist.setKitchenLink(fileurl);
+			adDao.saveAndFlush(accntdepoist);
 		} else if (("diningRoomLink").equalsIgnoreCase(updatefield)) {
 			accntdepoist.setDiningRoomLink(fileurl);
+			adDao.saveAndFlush(accntdepoist);
 		} else if (("restRoomLink1").equalsIgnoreCase(updatefield)) {
 			accntdepoist.setRestRoomLink1(fileurl);
+			adDao.saveAndFlush(accntdepoist);
 		} else if (("restRoomLink2").equalsIgnoreCase(updatefield)) {
 			accntdepoist.setRestRoomLink2(fileurl);
+			adDao.saveAndFlush(accntdepoist);
 		} else if (("ClassRoomLink1").equalsIgnoreCase(updatefield)) {
 			accntdepoist.setClassRoomLink1(fileurl);
+			adDao.saveAndFlush(accntdepoist);
 		} else if (("ClassRoomLink2").equalsIgnoreCase(updatefield)) {
 			accntdepoist.setClassRoomLink2(fileurl);
+			adDao.saveAndFlush(accntdepoist);
 		} else if (("otherRoomLink1").equalsIgnoreCase(updatefield)) {
 			accntdepoist.setOtherRoomLink1(fileurl);
+			adDao.saveAndFlush(accntdepoist);
 		} else if (("otherRoomLink2").equalsIgnoreCase(updatefield)) {
 			accntdepoist.setOtherRoomLink2(fileurl);
+			adDao.saveAndFlush(accntdepoist);
 		} else if (("id2PhotoLink").equalsIgnoreCase(updatefield)) {
 			accntdepoist.setId2PhotoLink(fileurl);
+			adDao.saveAndFlush(accntdepoist);
 		}
 		
+		else if (("depositphotos").equalsIgnoreCase(updatefield)) {
+			//List<DepositPhotos> listdepphlist = depositphrep.findByDepositIdAndPhotoType(id, picType);
+			System.out.println("zzlxzp11");
+			DepositPhotos depositPhotos= new DepositPhotos();
+			depositPhotos.setPhotoId(accntDepostquery.getNewDepositPhotosId());  
+			depositPhotos.setDepositId(id);
+			depositPhotos.setPhotoLink(fileurl);
+			depositPhotos.setPhotoType(picType);
+			depositPhotos.setCreateTime(new Date());
+			depositPhotos.setModifyTime(new Date());
+			depositphrep.saveAndFlush(depositPhotos);
+			//accntdepoist.setId2PhotoLink(fileurl);
+		}
 
-		adDao.saveAndFlush(accntdepoist);
+		
 
 		return ret;
 	}

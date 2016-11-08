@@ -9,7 +9,10 @@ angular.module('CustomDialog', [])
           checkDocument: checkDocument,
           createDocument: createDocument,
           parentDetail: parentDetail,
-          teacherDetail: teacherDetail
+          teacherDetail: teacherDetail,
+          msgDetail: msgDetail,
+          priceDetail:priceDetail,
+          chargedetail:chargedetail
       };
       return myDialog;
 
@@ -102,7 +105,7 @@ angular.module('CustomDialog', [])
           });
       };
       
-      function parentDetail (teacherDetail,confirm,cancel) {
+      function parentDetail (parentDetail,confirm,cancel) {
           var modalInstance = $modal.open({
               animation: true,
               templateUrl: 'Dialogs/parentDetailModal.html',
@@ -110,7 +113,7 @@ angular.module('CustomDialog', [])
               size: 'lg',
               resolve: {
                   user: function () {
-                      return teacherDetail;
+                      return parentDetail;
                   }
               }
           });
@@ -118,6 +121,89 @@ angular.module('CustomDialog', [])
           modalInstance.result.then(function (item) {
               console.log("back from item "+item);
               confirm();
+          }, function () {
+              console.log('Modal dismissed at: ' + new Date());
+              cancel();
+          });
+      };
+      
+      
+      
+      function msgDetail(msgDetail,confirm,cancel) {
+          var modalInstance = $modal.open({
+              animation: true,
+              templateUrl: 'Dialogs/msgDetailModal.html',
+              controller: 'MsgDetailModalCtrl',
+              size: 'lg',
+              resolve: {
+                  user: function () {
+                      return msgDetail;
+                  }
+              }
+          });
+
+          modalInstance.result.then(function (item) {
+              console.log("back from item "+item);
+              confirm();
+          }, function () {
+              console.log('Modal dismissed at: ' + new Date());
+              cancel();
+          });
+      };
+      
+      function priceDetail(priceDetail,confirm,cancel) {
+          var modalInstance = $modal.open({
+              animation: true,
+              templateUrl: 'Dialogs/priceDetailModal.html',
+              controller: 'PriceDetailModalCtrl',
+              size: 'lg',
+              resolve: {
+                  user: function () {
+                      return priceDetail;
+                  }
+              }
+          });
+
+          modalInstance.result.then(function (item) {
+              WebService.priceSeting(item).then(function(data){
+            	  confirm();
+                  toaster.pop('success', "", "保存成功");
+              },function(error){
+                  toaster.pop('error', "保存失败", error);
+                  confirm();
+              });
+              console.log("back from item "+item);
+              
+          }, function () {
+              console.log('Modal dismissed at: ' + new Date());
+              cancel();
+          });
+      };
+      
+      function chargedetail(chargedetail,confirm,cancel) {
+          var modalInstance = $modal.open({
+              animation: true,
+              templateUrl: 'Dialogs/chargeDetailModal.html',
+              controller: 'ChargeDetailModalCtrl',
+              size: 'lg',
+              resolve: {
+                  user: function () {
+                      return chargedetail;
+                  }
+              }
+          });
+
+          modalInstance.result.then(function (item) {
+              WebService.parentOrderDetial(item).then(function(data){
+            	  confirm();
+                  toaster.pop('success', "", "保存成功");
+              },function(error){
+            	  debugger;
+                  toaster.pop('error', "保存失败", error);
+                  confirm();
+              });
+              console.log("back from item "+item);
+              
           }, function () {
               console.log('Modal dismissed at: ' + new Date());
               cancel();

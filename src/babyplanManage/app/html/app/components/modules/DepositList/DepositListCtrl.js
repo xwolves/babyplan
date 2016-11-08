@@ -9,7 +9,7 @@
 					  $scope.sortType     = 'AccountID'; // set the default sort type
 					  $scope.sortReverse  = false;  // set the default sort order
 					  $scope.filter="";
-						
+					  $scope.simpleFilter="";
 					  $scope.order="AccountID desc";
 						
 						$scope.paginationConf = {

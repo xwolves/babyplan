@@ -9,7 +9,7 @@
 				$scope.sortReverse = false; // set the default sort order
 				$scope.filter = "";
 				$scope.order = "AccountID desc";
-
+				$scope.simpleFilter="";
 				$scope.ALLfilter = "";
 				$scope.depfilter = "";
 				

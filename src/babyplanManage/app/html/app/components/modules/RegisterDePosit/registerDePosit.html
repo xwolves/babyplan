@@ -80,9 +80,39 @@
 				</select>
 			</div>
 		</div>
+		
+		<div ng-show="!isnew" class="form-group">
+			<label for="picType" class="col-sm-2 control-label">图片类型</label>
+			<div class="col-sm-4">
+				<select class="form-control" ng-model="picType"
+					ng-options="n.id as n.name for n in picTypedata">
+					<option value="">-- 请选择 --</option>
+				</select>
+			</div>
+			<label  class="col-sm-2 control-label">选择上传图片</label>
+			<div class="col-sm-4">
+				<input class="form-control" type="file" ng-files="getTheFiles($files,'depositphotos')"  accept="image/* "></input>
+			</div>
+		</div>
 
 		<!--  文件上传  -->
-		<div class="form-group">
+
+
+		<div ng-show="!isnew">
+				<div   class="form-group">
+				<div ng-repeat="png in listpng">
+					<label for="frontDeskLink" class="col-sm-2 control-label">{{png.photoType|picTypefilter}}</label>
+					<div class="col-sm-4">
+						<button class="btn btn-primary" type="button" ng-click="deletephoto(png.photoId)" style="width: 120px;">删除图片</button>
+						<img class="form-group col-sm-12" ng-src={{png.photoLink}} />
+					</div>
+
+					
+				</div>	
+				</div>
+		</div>		
+		
+		<div ng-show="!isnew" class="form-group">
 			<label for="frontDeskLink" class="col-sm-2 control-label">前台照片</label>
 			<div class="col-sm-4">
 				<img class="form-group col-sm-12" ng-src={{content.frontDeskLink}} />
@@ -93,15 +123,15 @@
 
 			<label for="publicZoneLink" class="col-sm-2 control-label">公共活动区域</label>
 			<div class="col-sm-4">
-				<img class="form-group col-sm-12" ng-src={{content.pubilcZoneLink}} />
+				<img class="form-group col-sm-12" ng-src={{content.publicZoneLink}} />
 				<div class=" col-sm-12">
-					<input class="form-control"  type="file"  ng-files="getTheFiles($files,'pubilcZoneLink')"
+					<input class="form-control"  type="file"  ng-files="getTheFiles($files,'publicZoneLink')"
 						accept="image/* "></input>
 				</div>
 			</div>
 		</div>
 
-		<div class="form-group">
+		<div ng-show="!isnew" class="form-group">
 			<label for="kitchenLink" class="col-sm-2 control-label">厨房照片</label>
 			<div class="col-sm-4">
 				<img class="form-group col-sm-12" ng-src={{content.kitchenLink}} />
@@ -121,7 +151,7 @@
 			</div>
 		</div>
 
-		<div class="form-group">
+		<div ng-show="!isnew" class="form-group">
 			<label for="restRoomLink1" class="col-sm-2 control-label">休息室照片1</label>
 			<div class="col-sm-4">
 				<img class="form-group col-sm-12" ng-src={{content.restRoomLink1}} />
@@ -142,7 +172,7 @@
 			</div>
 		</div>
 
-		<div class="form-group">
+		<div ng-show="!isnew" class="form-group">
 			<label for="classRoomLink1" class="col-sm-2 control-label">教室照片1</label>
 			<div class="col-sm-4">
 				<img class="form-group col-sm-12" ng-src={{content.classRoomLink1}} />
@@ -162,7 +192,7 @@
 			</div>
 		</div>
 
-		<div class="form-group">
+		<div ng-show="!isnew" class="form-group">
 			<label for="otherRoomLink1" class="col-sm-2 control-label">其它房间照片1</label>
 			<div class="col-sm-4">
 				<img class="form-group col-sm-12" ng-src={{content.otherRoomLink1}} />
@@ -184,7 +214,7 @@
 
 
 
-		<div class="form-group">
+		<div ng-show="!isnew" class="form-group">
 			<label for="otherRoomLink1" class="col-sm-2 control-label">法人身份证扫描件</label>
 			<div class="col-sm-4">
 				<img class="form-group col-sm-12" ng-src={{content.id2PhotoLink}} />

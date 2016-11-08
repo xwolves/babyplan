@@ -4,6 +4,9 @@
     'CreateDocModalCtrl',
     'ParentDetailModalCtrl',
     'TeacherDetailModalCtrl',
+    'MsgDetailModalCtrl',
+    'PriceDetailModalCtrl',
+    'ChargeDetailModalCtrl', 
     'CustomDialog'
   ]);
 

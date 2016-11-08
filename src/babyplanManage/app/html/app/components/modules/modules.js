@@ -16,6 +16,8 @@
     'DevicesListModule',
     'MsgPostListModule', 
     'ChargeListModule',  
+    'PriceListModule',
+    'SimulatedregistrationModule',
     'Ui'
   ]);
 }());

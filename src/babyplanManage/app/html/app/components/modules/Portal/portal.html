@@ -26,7 +26,7 @@
         <div class="col-sm-3 col-md-2 sidebar" ng-hide="hide" style="position:fixed">
             <ul class="nav nav-sidebar">
                 <li ng-repeat="menu in menus" ng-class="{1: 'active', 0: 'inactive'}[menu.active]" style="font-size: 20px;">
-                    <a ui-sref="{{menu.url}}" ng-show="menu.show||btnHide">
+                    <a ui-sref="{{menu.url}}" ng-show="menu.show||btnHide" ng-click="nemuclick(menu)">
                         <span class="{{menu.icon}}"></span>
                         &nbsp;
                         {{menu.name}}

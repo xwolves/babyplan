@@ -9,7 +9,7 @@
 				$scope.sortReverse = false; // set the default sort order
 				$scope.filter = "";
 				$scope.order = "AccountID desc";
-
+				$scope.simpleFilter="";
 				$scope.ALLfilter = "";
 				$scope.depfilter = "";
 				$scope.filerintpul = "";
@@ -65,9 +65,12 @@
 					// console.log(event);
 				}
 
-				$scope.depositdetial = function(event) {
-
-					console.log(event);
+				$scope.outOrg = function(user) {
+					WebService.outorg(user.AccountID,user.DepositID).then(function(data) {
+						toaster.pop('success', "退出成功","");
+						console.log(data.content);
+						$scope.query($stateParams);
+					});
 				}
 
 				$scope.parentdetial = function(event) {
@@ -88,7 +91,7 @@
 				{
 					$scope.filter="( AccountID like '%"+$scope.simpleFilter +"%' "+" or Name like '%"+$scope.simpleFilter +"%' "
 					+" or Age like '%"+$scope.simpleFilter +"%' "+" or TeachAge like '%"+$scope.simpleFilter +"%' "+
-					" or Mobile like '%"+$scope.simpleFilter +"%') "+
+					" or Mobile like '%"+$scope.simpleFilter +"%' "+
 					" or OrgName like '%"+$scope.simpleFilter +"%') " +" and ";
 					
 				

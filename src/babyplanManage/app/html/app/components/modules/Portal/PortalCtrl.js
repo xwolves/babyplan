@@ -13,28 +13,44 @@
             $scope.btnHide=AuthService.isAdmin;
 
             var menus_normal=[
-                {name:"托管机构列表",url:".depositList",active:0,icon:"glyphicon glyphicon-list",show:true},
-                {name:"老师列表",url:".depositList",active:0,icon:"glyphicon glyphicon-list",show:true},
-                {name:"孩子列表",url:"portal.childrenList",active:0,icon:"glyphicon glyphicon-list",show:true},
-                {name:"打卡记录列表",url:".signList",active:0,icon:"glyphicon glyphicon-font",show:true},
-                {name:"不在托管结构的孩子列表",url:".depositList",active:0,icon:"glyphicon glyphicon-list",show:true},
-                {name:"指纹设备列表",url:".myDocument",active:0,icon:"glyphicon glyphicon-th-list",show:true},
-                {name:"广告列表",url:".mySign",active:0,icon:"glyphicon glyphicon-ok-sign",show:true},
+                {name:"托管机构管理",url:".depositList",active:0,icon:"glyphicon glyphicon-list",show:true},
+                {name:"老师管理",url:".depositList",active:0,icon:"glyphicon glyphicon-list",show:true},
+                {name:"孩子管理",url:"portal.childrenList",active:0,icon:"glyphicon glyphicon-list",show:true},
+                {name:"打卡记录管理",url:".signList",active:0,icon:"glyphicon glyphicon-font",show:true},
+                {name:"不在托管结构的孩子管理",url:".depositList",active:0,icon:"glyphicon glyphicon-list",show:true},
+                {name:"指纹设备管理",url:".myDocument",active:0,icon:"glyphicon glyphicon-th-list",show:true},
+                {name:"广告管理",url:".mySign",active:0,icon:"glyphicon glyphicon-ok-sign",show:true},
                 {name:"关于应用",url:".about",active:0,icon:"glyphicon glyphicon-font",show:true}
             ];
             var menus_admin=[
-                {name:"托管机构列表",url:".depositList",active:0,icon:"glyphicon glyphicon-list",show:true},
-                {name:"老师列表",url:".teacherList",active:0,icon:"glyphicon glyphicon-list",show:true},
-                {name:"孩子列表",url:".childrenList",active:0,icon:"glyphicon glyphicon-list",show:true},
-                {name:"打卡记录列表",url:".signList",active:0,icon:"glyphicon glyphicon-list",show:true},
-                {name:"指纹设备列表",url:".devicesList",active:0,icon:"glyphicon glyphicon-th-list",show:true},
-                {name:"信息发布列表",url:".msgPostList",active:0,icon:"glyphicon glyphicon-th-list",show:true},
+                {name:"托管机构管理",url:".depositList",active:0,icon:"glyphicon glyphicon-list",show:true},
+                {name:"老师管理",url:".teacherList",active:0,icon:"glyphicon glyphicon-list",show:true},
+                {name:"孩子管理",url:".childrenList",active:0,icon:"glyphicon glyphicon-list",show:true},
+                {name:"打卡记录管理",url:".signList",active:0,icon:"glyphicon glyphicon-list",show:true},
+                {name:"指纹设备管理",url:".devicesList",active:0,icon:"glyphicon glyphicon-th-list",show:true},
+                {name:"信息发布管理",url:".msgPostList",active:0,icon:"glyphicon glyphicon-th-list",show:true},
                 {name:"家长订单表",url:".chargeList",active:0,icon:"glyphicon glyphicon-th-list",show:true},
-                {name:"广告列表",url:".mySign",active:0,icon:"glyphicon glyphicon-ok-sign",show:true},
+                {name:"套餐管理",url:".priceList",active:0,icon:"glyphicon glyphicon-th-list",show:true},
+                {name:"模拟注册登录",url:".simulatedregistration",active:0,icon:"glyphicon glyphicon-th-list",show:true},
+                {name:"广告管理",url:".mySign",active:0,icon:"glyphicon glyphicon-ok-sign",show:true},
                 {name:"关于应用",url:".about",active:0,icon:"glyphicon glyphicon-font",show:true}
             ];
 
             $scope.menus=menus_admin;
+            
+            $scope.nemuclick=function(menus)
+            {
+            	
+            	for(var i=0;i<$scope.menus.length;i++)
+        		{
+            		$scope.menus[i].active=0;
+        		}
+            	
+            	menus.active=1;
+            	$scope.menus;
+            		debugger;
+            	
+            };
 
             $scope.navbtns=[
                 {name:"用户",url:"#/user",show:true},

@@ -21,7 +21,7 @@
 					'RegisterDePositCtrl',
 					function($scope, WebService, toaster, $http, $state,
 							$stateParams, $timeout, AuthService) {
-
+						var photolist={};
 						$scope.drawPoint = function() {
 							$timeout(function() {
 								if ($scope.templongitude !== null
@@ -31,7 +31,7 @@
 									$scope.map.centerAndZoom(new BMap.Point(
 											$scope.templongitude,
 											$scope.templatitude), 18); // 初始化地图,设置中心点坐标和地图级别
-									console.log($scope.templongitude + "sss"
+									console.log($scope.templongitude + ""
 											+ $scope.templatitude);
 									var point = new BMap.Point(
 											$scope.templongitude,
@@ -40,7 +40,7 @@
 									$scope.map.addOverlay(marker);// 显示到地图
 								} else {
 									$scope.map.centerAndZoom(new BMap.Point(
-											116.404, 39.915), 18); // 初始化地图,设置中心点坐标和地图级别
+											114.066112,22.548515), 18); // 初始化地图,设置中心点坐标和地图级别
 								}
 
 							}, 300);
@@ -49,6 +49,8 @@
 
 						$scope.init = function($scope, $stateParams) {
 							$scope.content={};
+							
+							$scope.photolist=photolist;
 							$scope.showbaidu = false;
 							$scope.templongitude;
 							$scope.templatitude;
@@ -67,18 +69,56 @@
 							if ($stateParams.accountID == null) {
 								// $scope.isnew = false;
 								$scope.title="新增托管机构";
+								
+								$scope.isnew= true;
 
 							} else {
+								$scope.isnew= false;
 								$scope.title="编辑托管机构";
 								WebService
 										.queryDepostbyid($stateParams.accountID)
 										.then(
 												function(data) {
+													console.log(data);
+
 													$scope.content = data;
 													$scope.templongitude = $scope.content.longitude;
 													$scope.templatitude = $scope.content.latitude;
 
 												});
+								
+								
+								WebService
+								.queryPhotoListByDepId($stateParams.accountID)
+								.then(
+										function(data) {
+											var obj={};
+											
+											//121：执照l类型；211：场地合同类型
+//											for(var i=0;i<data.length;i++)
+//											{
+//												if(data[i].photoType==121)
+//												{
+//													photolist.zzlxzp=data[i].photoLink;
+//													obj.src1=photolist.zzlxzp;
+//												}
+//												else if(data[i].photoType==211)		
+//												{
+//													photolist.htlxzp=data[i].photoLink;
+//													obj.src2=photolist.zzlxzp;
+//												}
+//											}
+											//var array=[obj];
+											//if(data)
+											$scope.listpng = data;
+											//$scope.listpng[0]=obj;
+
+											//if(data)
+											//$scope.photolist = data;
+											
+										});
+								
+								
 							}
 
 							// 创建右键菜单
@@ -195,7 +235,7 @@
 						$scope.placeContractType = '';
 						$scope.placeContractTypedata = [ {
 							id : 1,
-							placeContractName : '民非执照',
+							placeContractName : '房管所备案的房屋证或租赁证',
 						}, {
 							id : 2,
 							placeContractName : '房屋租赁合同',
@@ -203,6 +243,31 @@
 							id : 3,
 							placeContractName : '无任何合同类场地',
 						} ];
+						
+						$scope.picType="";
+						$scope.picTypedata = [ {
+							id : 111,
+							name : '消防验收合格证',
+						}, {
+							id : 112,
+							name : '卫生许可证',
+						}, {
+							id : 121,
+							name : '工商执照',
+						} , {
+							id : 211,
+							name : '房管所备案的房屋证或租赁证',
+						} , {
+							id : 212,
+							name : '场地租赁合同（已备案）',
+						} , {
+							id : 221,
+							name : '房屋租赁合同',
+						} ];
+						
+						
+						
+						// 111：消防验收合格证；112：卫生许可证；121：工商执照；211：房管所备案的房屋证或租赁证；212：场地租赁合同（已备案）；221：房屋租赁合同；
 						// 查询用户信息
 						// WebService.queryUser(fwr.gh).then(function(data){
 						// $scope.fwrymc=data.mc;
@@ -310,12 +375,23 @@
 
 							angular.forEach($files, function(value, key) {
 								var formdata = new FormData();
-								console.log(value);
-								console.log(key);
-								console.log(tagname);
+
 								formdata.append("file", value);								
 								formdata.append("updatefield", tagname);
 								formdata.append("id", $stateParams.accountID);
+								//console.log("pictype"+$scope.picType);
+								formdata.append("picType", $scope.picType);
+								if(tagname=='depositphotos')
+								{
+									if($scope.picType=="")
+									{
+									
+										alert("请先选择上传类型");
+										return;
+									}
+									
+								}
+								
 								$scope.submit(formdata);
 							});
 							
@@ -326,7 +402,24 @@
 						// 上传
 						$scope.uploadImg = '';
 						// 提交
-
+						$scope.deletephoto=function(photoid)
+						{
+							
+							WebService
+							.detelePhoto(photoid)
+							.then(
+									function(data) {
+										toaster.pop('success', "删除成功！");
+										//更新							    
+										WebService
+										.queryPhotoListByDepId($stateParams.accountID)
+										.then(
+												function(data) {
+													$scope.listpng = data;
+												});
+										//$scope.listpng = data;
+									});
+						};
 						$scope.submit = function(formdata) {
 							var request = {
 								method : 'POST',
@@ -338,15 +431,23 @@
 								},
 								transformRequest : angular.identity
 							};
+							
+
 
 							// SEND THE FILES.
 							$http(request).success(function(d) {
-								//更新
+								//更新							    
+								WebService
+								.queryPhotoListByDepId($stateParams.accountID)
+								.then(
+										function(data) {
+											$scope.listpng = data;
+										});
+
 								WebService
 								.queryDepostbyid($stateParams.accountID)
 								.then(
 										function(data) {
-
 											$scope.content.frontDeskLink =  data.frontDeskLink;
 											$scope.content.publicZoneLink =  data.publicZoneLink;
 											$scope.content.kitchenLink =  data.kitchenLink;
@@ -369,12 +470,14 @@
 							}).error(function(d) {
 								//alert(d);
 							});
+							
+	
 						}
 						// $scope.upload = function(file) {
 						// var fd = new FormData();
 						// fd.append('file', $scope.myFile);
 						// console.log($scope.myFile);
-						// debugger;
+						// 
 						// $http({
 						// method : 'POST',
 						// url : "http://127.0.0.1:8080/babyplan/api/v1/upload",
