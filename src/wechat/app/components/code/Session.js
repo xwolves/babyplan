@@ -28,8 +28,6 @@
             session.userId = null;
             session.userRole = null;
             session.wechat = null;
-            console.log("session destroy");
-            alert("my session destroyed");
         }
 
         function updateRoles(roles) {

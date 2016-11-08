@@ -1,0 +1,46 @@
+<ion-view view-title="确认加入VIP会员">
+
+
+    <ion-content>
+        <h4 style="text-align: center;">套餐详情</h4>
+        <div class="list">
+            <div class="item">
+                套餐名称
+                <span class="item-note" style="color: #000066">
+                  {{vm.item.businessname}}
+                </span>
+            </div>
+            <div class="item">
+                套餐描述
+                <span class="item-note" style="color: #000066">
+                  {{vm.item.businessdesc}}
+                </span>
+            </div>
+            <div class="item">
+                套餐价格
+                <span class="item-note" style="color: #000066">
+                  {{vm.item.price/100}}元
+                </span>
+            </div>
+            <div class="item">
+                套餐天数
+                <span class="item-note" style="color: #000066">
+                  {{vm.item.numofdays}}天
+                </span>
+            </div>
+            <div class="item">
+                平均计算
+                <span class="item-note" style="color: #000066">
+                  {{vm.item.uprice/100}}元／天
+                </span>
+            </div>
+        </div>
+        <p style="text-align: center;">{{vm.information}}</p>
+    </ion-content>
+
+    <div class="bar bar-footer">
+        <div class="button-bar">
+            <a class="button button-positive" ng-disabled="!vm.wechatPayReady" ng-click="vm.pay()">微信支付</a>
+        </div>
+    </div>
+</ion-view>

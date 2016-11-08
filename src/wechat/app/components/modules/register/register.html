@@ -13,9 +13,9 @@
                     用户类型
                 </div>
                 <select ng-model="vm.roleType">
-                    <option value="2">孩子家长</option>
-                    <option value="3">机构老师</option>
-                    <option value="1">托管机构</option>
+                    <option value="2" ng-if="vm.isParent">孩子家长</option>
+                    <option value="3" ng-if="!vm.isParent">机构老师</option>
+                    <option value="1" ng-if="!vm.isParent">托管机构</option>
                 </select>
             </label>
             <div ng-if="vm.roleType=='2'">

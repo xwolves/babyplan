@@ -14,8 +14,8 @@
                 vm.type = $stateParams.type;
                 console.log("vm.type = "+vm.type+" with "+vm.user);
             /////////////////////////////////////////////////////////
-            //    vm.user = "oVyGDuNPkAbtljfJKusP4oaCrYG0";//test
-            //    vm.type = 3;//test
+            //    vm.user = "o_Nkcw4CsZh5dbE2v8XVLUxfd96A";//"oVyGDuNPkAbtljfJKusP4oaCrYG0";//test
+            //    vm.type = 2;//test
             ////////////////////////////////////////////////////////
                 //MessageToaster.info('user = '+vm.user);
                 if (vm.user) {
@@ -60,9 +60,9 @@
                             //no data found
                             AuthService.setSession(null, null, Role.unknown,userid);
 
-                            StateService.clearAllAndGo("register");
+                            StateService.clearAllAndGo("register",{type:vm.type});
                         }
-                        MessageToaster.error(response.error);
+                        //MessageToaster.error(response.error);
                     }
                 });
             };

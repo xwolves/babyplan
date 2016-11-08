@@ -13,7 +13,13 @@
         'parentModule',
         'childrenSettingModule',
         'teacherModule',
+        'teacherSettingModule',
         'depositChildrenModule',
+        'vipBuyModule',
+        'vipRecordModule',
+        'vipTipsModule',
+        'commentModule',
+        'exitModule',
         'photoModule'
     ]);
 

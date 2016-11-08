@@ -116,8 +116,8 @@ class Info{
             $info['childuid'] = $childuid;
             $info['childname'] = $row['name'];
 
-            $sql_str = "SELECT * FROM tb_deposit_daily a WHERE a.`DepositID` =
-                (SELECT b.`DepositID` FROM tb_deposit_children b WHERE b.`ChildrenID` = :childuid)";
+            $sql_str = "SELECT * FROM tb_deposit_daily a WHERE a.`DepositID` in
+                (SELECT b.`DepositID` FROM tb_deposit_children b WHERE b.`ChildrenID` = :childuid) ORDER BY a.`CreateTime` DESC";
             $stmt = $this->DB->prepare($sql_str);
             $stmt->bindParam(":childuid", $childuid, PDO::PARAM_STR);
             if(!$stmt->execute())
@@ -155,7 +155,7 @@ class Info{
         try{
             $sql_str = "";
             if (strpos($tId, '3')===0) {
-              $sql_str = "select * from tb_accnt_deposit where AccountID = ( SELECT DepositID from tb_deposit_teacher  where TeacherID = :tId limit 0，1);";
+              $sql_str = "select * from tb_accnt_deposit where AccountID = ( SELECT DepositID from tb_deposit_teacher  where TeacherID = :tId limit 0,1);";
             }else{
               $sql_str = "select * from tb_accnt_deposit where AccountID = :tId";
             }
@@ -361,7 +361,7 @@ class Info{
         try{
             $sql_str =  "select * from (
             select * ,
-            (select pc.ParentID from tb_parent_children pc WHERE pc.ChildrenID = cs.ChildID and pc.parentID = :parentuid limit 0,1) as parentID,
+            (select pc.ParentID from tb_parent_children pc WHERE pc.ChildrenID = cs.ChildID and  pc.ParentID = :parentuid limit 0,1 ) as parentID,
             (select ac.Name from tb_accnt_children ac WHERE ac.AccountID = cs.ChildID) as childName
             from tb_children_signin cs ) a
             ORDER BY SignInTime DESC;";
@@ -382,7 +382,7 @@ class Info{
             }
             return $info;
         }catch (PDOException $e) {
-            $errs = $e->getMessage();
+	    $errs = $e->getMessage();
             return 10000;
         }
     }
@@ -419,6 +419,46 @@ class Info{
 
             return $info;
 
+        }catch (PDOException $e) {
+            $errs = $e->getMessage();
+            return 10000;
+        }
+    }
+
+    public function getNearbyDepositList($longitude, $latitude){
+        try{
+            $rsp_data = array();
+            $sql_str = "SELECT AccountID, Longitude, Latitude, OrgName, Address, FrontDeskLink,
+                ROUND( 6378.138*2*ASIN(SQRT( POW(SIN(($latitude*PI()/180-Latitude*PI()/180)/2),2)+COS($latitude*PI()/180)*COS(Latitude*PI()/180)*POW(SIN(($longitude*PI()/180-Longitude*PI()/180)/2),2)))*1000) AS Dist
+                FROM tb_accnt_deposit WHERE longitude IS NOT NULL AND latitude ORDER BY Dist ASC";
+            $stmt = $this->DB->prepare($sql_str);
+            if(!$stmt->execute())
+                return 10001;
+            $info = array();
+            while($row = $stmt->fetch(PDO::FETCH_ASSOC))
+                $rsp_data[] = $row;
+
+            return $rsp_data;
+
+        }catch (PDOException $e) {
+            $errs = $e->getMessage();
+            return 10000;
+        }
+    }
+
+    public function getDepositInfo($depositid){
+        try{
+            $sql_str = "select * from tb_accnt_deposit where AccountID = :depositid";
+            $stmt = $this->DB->prepare($sql_str);
+            $stmt->bindParam(":depositid", $depositid, PDO::PARAM_STR);
+            if(!$stmt->execute())
+                return 10001;
+
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+            if(!$row)
+                return 12007;
+
+            return $row;
         }catch (PDOException $e) {
             $errs = $e->getMessage();
             return 10000;

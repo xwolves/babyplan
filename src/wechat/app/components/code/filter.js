@@ -19,6 +19,23 @@ app.filter('JSchange', function () {
     };
 });
 
+app.filter('PayStatus', function () {
+    return function (input) {
+        if (input == "1")return "已付款";
+        else if (input == "0")return "未付款";
+        else return "未知";
+    };
+});
+
+app.filter('PayType', function () {
+    return function (input) {
+        if (input == "1")return "支付宝支付";
+        else if (input == "0")return "微信支付";
+        else if (input == "2")return "其它";
+        else return "未知";
+    };
+});
+
 app.filter('relationshipChange', function () {
     return function (input) {
         if (input == "1")return "父亲";
@@ -41,6 +58,21 @@ app.filter('dateChange', function () {
         }else{
             return d.Format('mm')+"分钟前";
         }
+    };
+});
+
+app.filter('ImageMin', function () {
+    return function (input) {
+        if(input!=null){
+            var fileExtension = input.substring(input.lastIndexOf('.') + 1);
+            var fileName = input.substring(0,input.lastIndexOf('.'));
+            if(fileExtension.toLowerCase()=='jpg' ||fileExtension.toLowerCase() =='png' || fileExtension.toLowerCase()=='gif'){
+                return fileName+"_64x64"+"."+fileExtension;
+            }return input;
+        }else{
+            return '';
+        }
+
     };
 });
 

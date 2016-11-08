@@ -5,9 +5,12 @@ require_once '../../Slim/Slim/LogWriter.php';
 require_once './account_moduls/accnt_function.php';
 require_once './finger_moduls/finger_function.php';
 require_once './info_moduls/info_function.php';
+require_once './charge_moduls/charge_function.php';
+require_once './comment_moduls/comment_function.php';
 require_once 'config.php';
 require_once 'common.php';
 require_once '../../Slim/WeiChat/WXBizMsgCrypt.php';
+require_once './wechatPay/function.php';
 \Slim\Slim::registerAutoloader();
 
 $log = new \Slim\LogWriter(fopen('../../Slim/Log/log', 'a'));
@@ -50,6 +53,22 @@ $app->options('/:a/:b', function() {});
 $app->options('/:a/:b/:c', function() {});
 $app->options('/:a/:b/:c/:d', function() {});
 
+//生成微信支付订单，并将订单存在我们的数据库
+$app->post(
+      '/wechatPay/order',
+      function () use ($app, $sql_db) {
+        createOrder($app, $sql_db);
+      }
+);
+
+//查询微信支付里的订单信息
+$app->get(
+      '/wechatPay/order/:orderId',
+      function ($orderId) use ($app) {
+        queryOrder($app, $orderId);
+      }
+);
+
 $app->get(
     '/redirect/',
     function () use ($app, $APP_ID, $SECRET, $REDIRECT_URL, $redis){
@@ -64,7 +83,7 @@ $app->get(
         }
 
         $code=$req->params("code");
-        $redirect_url = urlencode($reUrl);
+        $redirect_url = urlencode(str_replace(":8500","",$reUrl));//将端口去掉，nginx会自动转回带端口的
         $url = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=".$APP_ID."&redirect_uri=".$redirect_url."&response_type=code&scope=snsapi_userinfo&state=BABY_PLAN#wechat_redirect ";
         if($code!=null){
             $userInfo=redirectWechat($code, $APP_ID, $SECRET, $app, $redis);
@@ -75,8 +94,8 @@ $app->get(
             $tail = "#/wxlogin";
             $tmp_str = substr($go2Url, strlen($go2Url) - strlen($tail));
             //if($tail != $tmp_str)
-            //    $go2Url .= $tail;
-			$app->getLog()->debug("Debug ".date('Y-m-d H:i:s')." : "."?user=".$userInfo['openid']."&type=".$type);
+            // $go2Url .= $tail;
+            $app->getLog()->debug("Debug ".date('Y-m-d H:i:s')." : "."?user=".$userInfo['openid']."&type=".$type);
             header("Location: ".$go2Url."?user=".$userInfo['openid']."&type=".$type);
             exit;
         }else{
@@ -234,7 +253,7 @@ $app->post(
 
 $app->post(
     '/account/teacher/:teacher_accnt_id/update',
-    function ($teacher_accnt_id) use ($app, $sql_db) {
+    function ($teacher_accnt_id) use ($app, $sql_db, $redis) {
         $rsp_data = array();
         $response = $app->response;
         $request = $app->request->getBody();
@@ -293,6 +312,13 @@ $app->post(
                         $tmp_ar = array();
                         $tmp_ar['uid'] = $ret[$i]['uid'];
                         $tmp_ar['type'] = $ret[$i]['type'];
+                        $type = $ret[$i]['type'];
+                        if(intval($type) == 2){
+                            if(!getParentPurview($sql_db, $type))
+                                $tmp_ar['sfjf'] = 0;
+                            else
+                                $tmp_ar['sfjf'] = 1;
+                        }
                         $rsp_data[] = $tmp_ar;
                     }
                     $response->setBody(rspData(0, $rsp_data));
@@ -301,6 +327,13 @@ $app->post(
                     $tmp_ar['uid'] = $ret[0]['uid'];
                     $tmp_ar['type'] = $ret[0]['type'];
                     $tmp_ar['token'] = $ret[0]['token'];
+                    $type = $ret[0]['token'];
+                    if(intval($type) == 2){
+                        if(!getParentPurview($sql_db, $type))
+                            $tmp_ar['sfjf'] = 0;
+                        else
+                            $tmp_ar['sfjf'] = 1;
+                    }
                     $rsp_data[] = $tmp_ar;
                     $response->setBody(rspData(0, $rsp_data));
                 }
@@ -418,6 +451,44 @@ $app->get(
 
     }
 );
+
+/*
+ * 老师账号微信退出
+ */
+$app->get(
+    '/exitTeacher/:teacherid',
+    function ($teacherid) use ($app, $sql_db, $redis){
+        $response = $app->response;
+        $token = $app->request->headers('token');
+        $depositInfo = $redis->get($token);
+        if(!$depositInfo){
+            $response->setBody(rspData(10005));
+            return;
+        }
+        $account = new Account($sql_db);
+        $ret = $account->teacherExit($teacherid);
+        $response->setBody(rspData($ret));
+    }
+);
+
+/*
+ * 机构账号微信退出
+ */
+$app->get(
+    '/exitDeposit/:depositid',
+    function ($depositid) use ($app, $sql_db, $redis){
+        $response = $app->response;
+        $token = $app->request->headers('token');
+        $depositInfo = $redis->get($token);
+        if(!$depositInfo){
+            $response->setBody(rspData(10005));
+            return;
+        }
+        $account = new Account($sql_db);
+        $ret = $account->depositExit($depositid);
+        $response->setBody(rspData($ret));
+    }
+);
 //=========================================== finger moduls==================================================
 /*
 $app->get(
@@ -440,6 +511,12 @@ $app->get(
 
 /*
  * 孩子指纹注册
+ * /finger/children/register/:childuid
+ * {
+ * "deviceid":"11111",
+ * "fingerfeature":"asdfasdfasdf",
+ * "fingerindex":1
+ * }
  */
 $app->post(
     '/finger/children/register/:childuid',
@@ -522,12 +599,8 @@ $app->post(
         $a_request = array_change_key_case($a_request, CASE_LOWER);
 
         $finger = new Finger($sql_db);
-        $ret = $finger->setDevice(1, $a_request);
-        if(gettype($ret) != "array"){
-            $response->setBody(rspData($ret));
-        }else{
-            $response->setBody(rspData(0, $ret));
-        }
+        $ret = $finger->setDevice($a_request);
+        $response->setBody(rspData($ret));
     }
 );
 
@@ -567,6 +640,20 @@ $app->post(
 
         $finger = new Finger($sql_db);
         $ret = $finger->DeviceReport($a_request);
+        $response->setBody(rspData($ret));
+    }
+);
+
+/*
+ * 根据孩子id获取家长孩子信息
+ */
+$app->get(
+    '/infomation/parent/children/:childuid',
+    function ($childuid) use ($app, $sql_db){
+        $response = $app->response;
+
+        $finger = new Finger($sql_db);
+        $ret = $finger->fetchParentChildreBychilduid($childuid);
         if(gettype($ret) != "array"){
             $response->setBody(rspData($ret));
         }else{
@@ -576,7 +663,7 @@ $app->post(
 );
 
 /*
- * 设备获取家长孩子信息
+ * 设备id获取对应机构下所有家长孩子信息
  */
 $app->get(
     '/device/parent/children/:deviceid',
@@ -594,7 +681,7 @@ $app->get(
 );
 
 /*
- * 机构获取家长孩子信息
+ * 机构id获取机构下所有家长孩子信息
  */
 $app->get(
     '/deposit/parent/children/:depositid',
@@ -617,18 +704,16 @@ $app->get(
  */
 $app->post(
     '/deposit/publish',
-    function () use ($app, $sql_db){
+    function () use ($app, $sql_db, $redis){
         $rsp_data = array();
         $response = $app->response;
         $request = $app->request->getBody();
-/*
         $token = $app->request->headers('token');
         $depositInfo = $redis->get($token);
         if(!$depositInfo){
             $response->setBody(rspData(10005));
             return;
         }
-*/
         $a_request = json_decode($request,true);
         if(empty($a_request)){
             $response->setBody(rspData(12001));
@@ -643,22 +728,20 @@ $app->post(
 );
 
 /*
- * 获取老师所在机构信息
+ * 通过老师id获取老师所在的机构详细信息
  */
 $app->get(
     '/deposit/teacher/:tid',
-    function ($tid) use ($app, $sql_db){
+    function ($tid) use ($app, $sql_db, $redis){
         $rsp_data = array();
         $response = $app->response;
         $request = $app->request->getBody();
-        /*
         $token = $app->request->headers('token');
         $depositInfo = $redis->get($token);
         if(!$depositInfo){
             $response->setBody(rspData(10005));
             return;
         }
-        */
         $info = new Info($sql_db);
         $ret = $info->getDepositWithTeacherID($tid);
         if(gettype($ret) != "array"){
@@ -670,22 +753,20 @@ $app->get(
 );
 
 /*
- * 获取所有机构发布过的信息
+ * 通过机构id获取机构发布过的所有信息
  */
 $app->get(
     '/deposit/allInformation/:id',
-    function ($id) use ($app, $sql_db){
+    function ($id) use ($app, $sql_db, $redis){
         $rsp_data = array();
         $response = $app->response;
         $request = $app->request->getBody();
-        /*
         $token = $app->request->headers('token');
         $depositInfo = $redis->get($token);
         if(!$depositInfo){
             $response->setBody(rspData(10005));
             return;
         }
-        */
         $info = new Info($sql_db);
         $ret = $info->getDailyWithDepositID($id);
         if(gettype($ret) != "array"){
@@ -697,23 +778,21 @@ $app->get(
 );
 
 /*
- * 家长获取相关孩子的信息
+ * 通过家长id获取家长相关孩子账号信息
  */
 //$app->options('/parent/childrenList/:parentuid', function(){});
 $app->get(
     '/parent/childrenList/:parentuid',
-    function ($parentuid) use ($app, $sql_db){
+    function ($parentuid) use ($app, $sql_db, $redis){
         $rsp_data = array();
         $response = $app->response;
         $request = $app->request->getBody();
         $token = $app->request->headers('token');
-        /*
         $depositInfo = $redis->get($token);
         if(!$depositInfo){
             $response->setBody(rspData(10005));
             return;
         }
-         */
         $info = new Info($sql_db);
         $ret = $info->getChldrenList($parentuid);
         if(gettype($ret) != "array"){
@@ -725,22 +804,22 @@ $app->get(
 );
 
 /*
- * 获取孩子在机构的情况信息
+ * 通过孩子id获取孩子在的机构发布的所有信息
  */
 $app->get(
     '/parent/children/information/:childuid',
-    function ($childuid) use ($app, $sql_db){
+    function ($childuid) use ($app, $sql_db, $redis){
         $rsp_data = array();
         $response = $app->response;
         $request = $app->request->getBody();
-        /*
         $token = $app->request->headers('token');
         $depositInfo = $redis->get($token);
         if(!$depositInfo){
             $response->setBody(rspData(10005));
             return;
         }
-         */
+        if(!getParentPurview($sql_db, $childuid))
+            return $response->setBody(rspData(16005));
         $info = new Info($sql_db);
         $ret = $info->getChildrenDepositInfo($childuid);
         if(gettype($ret) != "array"){
@@ -752,22 +831,22 @@ $app->get(
 );
 
 /*
- * 获取家长所有孩子在机构的情况信息
+ * 通过家长id获取家长所有孩子所在机构发布的信息
  */
 $app->get(
     '/parent/children/allInformation/:parentid',
-    function ($parentid) use ($app, $sql_db){
+    function ($parentid) use ($app, $sql_db, $redis){
         $rsp_data = array();
         $response = $app->response;
         $request = $app->request->getBody();
-        /*
         $token = $app->request->headers('token');
         $depositInfo = $redis->get($token);
         if(!$depositInfo){
             $response->setBody(rspData(10005));
             return;
         }
-         */
+        if(!getParentPurview($sql_db, $parentid))
+            return $response->setBody(rspData(16005));
         $info = new Info($sql_db);
         //$ret = $info->getParentDepositInfo($parentid);
         $ret = $info->getChldrenDailyFromParentId($parentid);
@@ -779,23 +858,26 @@ $app->get(
     }
 );
 
+
 /*
- * 获取孩子的打卡信息
+ * 通过孩子id获取孩子的打卡信息
  */
 $app->get(
     '/parent/children/signin/:childuid',
-    function($childuid) use($app, $sql_db){
+    function($childuid) use($app, $sql_db, $redis){
         $rsp_data = array();
         $response = $app->response;
         $request = $app->request->getBody();
-        /*
         $token = $app->request->headers('token');
         $depositInfo = $redis->get($token);
+        /*
         if(!$depositInfo){
             $response->setBody(rspData(10005));
             return;
         }
          */
+        if(!getParentPurview($sql_db, $childuid))
+            return $response->setBody(rspData(16005));
         $info = new Info($sql_db);
         $ret = $info->getSigninInfo($childuid);
         if(gettype($ret) != "array"){
@@ -807,24 +889,23 @@ $app->get(
 );
 
 /*
- * 获取所有孩子的打卡信息
+ * 通过家长id获取所有孩子的打卡信息
  */
 $app->get(
     '/parent/children/allSignin/:parentid',
-    function($parentid) use($app, $sql_db){
+    function($parentid) use($app, $sql_db, $redis){
         $rsp_data = array();
         $response = $app->response;
         $request = $app->request->getBody();
-        /*
         $token = $app->request->headers('token');
         $depositInfo = $redis->get($token);
         if(!$depositInfo){
             $response->setBody(rspData(10005));
             return;
         }
-         */
+        if(!getParentPurview($sql_db, $parentid))
+            return $response->setBody(rspData(16005));
         $info = new Info($sql_db);
-        //$ret = $info->getAllSigninInfo($parentid);
         $ret = $info->getChldrenSignInFromParentId($parentid);
         if(gettype($ret) != "array"){
             $response->setBody(rspData($ret));
@@ -835,22 +916,20 @@ $app->get(
 );
 
 /*
- * 获取机构中所有孩子列表
+ * 通过机构id获取机构中所有孩子列表
  */
 $app->get(
     '/deposit/children/:depositid',
-    function($depositid) use($app, $sql_db){
+    function($depositid) use($app, $sql_db, $redis){
         $rsp_data = array();
         $response = $app->response;
         $request = $app->request->getBody();
-        /*
         $token = $app->request->headers('token');
         $depositInfo = $redis->get($token);
         if(!$depositInfo){
             $response->setBody(rspData(10005));
             return;
         }
-         */
         $finger = new Finger($sql_db);
         $ret = $finger->depositFetchChildren($depositid);
         if(gettype($ret) != "array"){
@@ -861,29 +940,237 @@ $app->get(
     }
 );
 
+/*
+ * 获取附近的机构列表
+ */
+$app->get(
+    '/nearbyDepositList/:longitude/:latitude',
+    function ($longitude, $latitude) use($app, $sql_db, $redis){
+        $response = $app->response;
+        $token = $app->request->headers('token');
+        $depositInfo = $redis->get($token);
+        if(!$depositInfo){
+            $response->setBody(rspData(10005));
+            return;
+        }
+        $info = new Info($sql_db);
+        $ret = $info->getNearbyDepositList($longitude, $latitude);
+        if(gettype($ret) != "array"){
+            $response->setBody(rspData($ret));
+        }else{
+            $response->setBody(rspData(0, $ret));
+        }
+    }
+);
+
+/*
+ * 通过机构id获取机构详情信息
+ */
+$app->get(
+    '/depositInfo/fetch/:depositid',
+    function ($depositid) use ($app, $sql_db, $redis){
+        $response = $app->response;
+        $token = $app->request->headers('token');
+        $depositInfo = $redis->get($token);
+        if(!$depositInfo){
+            $response->setBody(rspData(10005));
+            return;
+        }
+        $info = new Info($sql_db);
+        $ret = $info->getDepositInfo($depositid);
+        if(gettype($ret) != "array"){
+            $response->setBody(rspData($ret));
+        }else{
+            $response->setBody(rspData(0, $ret));
+        }
+    }
+);
+
+//============================================================charge moduls=========================================//
+/*
+ * 拉取收费模块列表
+ */
+$app->get(
+    '/charge/fetch/menuList',
+    function () use ($app, $sql_db, $redis){
+        $response = $app->response;
+        $token = $app->request->headers('token');
+        $depositInfo = $redis->get($token);
+        if(!$depositInfo){
+            $response->setBody(rspData(10005));
+            return;
+        }
+        $charge = new Charge($sql_db);
+        $ret = $charge->getMenuList();
+        if(gettype($ret) != "array"){
+            $response->setBody(rspData($ret));
+        }else{
+            $response->setBody(rspData(0, $ret));
+        }
+    }
+);
+
+/*
+ * 查询parentid的订单
+ */
+$app->get(
+    '/charge/order/fetch/:parentid',
+    function ($parentid) use ($app, $sql_db, $redis){
+        $response = $app->response;
+        $token = $app->request->headers('token');
+        $depositInfo = $redis->get($token);
+        if(!$depositInfo){
+            $response->setBody(rspData(10005));
+            return;
+        }
+        $charge = new Charge($sql_db);
+        $ret = $charge->getOrderListByParentid($parentid);
+        if(gettype($ret) != "array"){
+            $response->setBody(rspData($ret));
+        }else{
+            $response->setBody(rspData(0, $ret));
+        }
+    }
+);
+
+/*
+ * 新增parent_order
+ */
+$app->post(
+    '/charge/order/insert/:parentid',
+    function($parentid) use ($app, $sql_db, $redis){
+        $rsp_data = array();
+        $response = $app->response;
+        $request = $app->request->getBody();
+        $token = $app->request->headers('token');
+        $depositInfo = $redis->get($token);
+        if(!$depositInfo){
+            $response->setBody(rspData(10005));
+            return;
+        }
+
+        $a_request = json_decode($request, true);
+        if(empty($a_request)){
+            $response->setBody(rspData(16001));
+            return;
+        }
+        $a_request = array_change_key_case($a_request, CASE_LOWER);
+        $a_request['parentid'] = $parentid;
+
+        $charge = new Charge($sql_db);
+        $ret = $charge->insertParentOrder($a_request);
+        $response->setBody(rspData($ret));
+    }
+);
+
+/*
+ * 更新parent_order
+ */
+$app->post(
+    '/charge/order/update/:parentid',
+    function ($parentid) use ($app, $sql_db, $redis){
+        $rsp_data = array();
+        $response = $app->response;
+        $request = $app->request->getBody();
+        $token = $app->request->headers('token');
+        $depositInfo = $redis->get($token);
+        if(!$depositInfo){
+            $response->setBody(rspData(10005));
+            return;
+        }
+
+        $a_request = json_decode($request, true);
+        if(empty($a_request)){
+            $response->setBody(rspData(16001));
+            return;
+        }
+        $a_request = array_change_key_case($a_request, CASE_LOWER);
+        $a_request['parentid'] = $parentid;
+
+        $charge = new Charge($sql_db);
+        $ret = $charge->updateParentOrder($a_request);
+        $response->setBody(rspData($ret));
+    }
+);
+
+//==========================================================comment moduls=========================================//
+/*
+ * 家长评论机构
+ */
+$app->post(
+    '/comment/deposit/parent/:parentid',
+    function ($parentid) use ($app, $sql_db, $redis){
+        $rsp_data = array();
+        $response = $app->response;
+        $request = $app->request->getBody();
+        $token = $app->request->headers('token');
+        $depositInfo = $redis->get($token);
+        if(!$depositInfo){
+            $response->setBody(rspData(10005));
+            return;
+        }
+        $a_request = json_decode($request,true);
+        if(empty($a_request)){
+            $response->setBody(rspData(12001));
+            return;
+        }
+        $a_request = array_change_key_case($a_request, CASE_LOWER);
+        $a_request['commentby'] = $parentid;
+        if(!getParentPurview($sql_db, $parentid))
+            return $response->setBody(rspData(16005));
+
+        $comment = new Comment($sql_db);
+        $ret = $comment->parentCommentDeposit($a_request);
+        $response->setBody(rspData($ret));
+    }
+);
+
+/*
+ * 通过机构id拉取机构的所有评论
+ */
+$app->get(
+    '/comment/deposit/fetch/:depositid',
+    function ($depositid) use ($app, $sql_db, $redis){
+        $response = $app->response;
+        $token = $app->request->headers('token');
+        $depositInfo = $redis->get($token);
+        if(!$depositInfo){
+            $response->setBody(rspData(10005));
+            return;
+        }
+        $comment = new Comment($sql_db);
+        $ret = $comment->getDepositComments($depositid);
+        if(gettype($ret) != "array"){
+            $response->setBody(rspData($ret));
+        }else{
+            $response->setBody(rspData(0, $ret));
+        }
+    }
+);
 
 $app->put(
     '/upload',
     function () use ($app) {
-      $ch = curl_init(); //初始化CURL句柄
-      curl_setopt($ch, CURLOPT_URL, "http://localhost/upload?filename=".$app->request->params('filename')); //设置请求的URL
-      curl_setopt($ch, CURLOPT_RETURNTRANSFER,1); //设为TRUE把curl_exec()结果转化为字串，而不是直接输出
-      curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT'); //设置请求方式
-      curl_setopt($ch,CURLOPT_HTTPHEADER,array("X-HTTP-Method-Override: PUT"));//设置HTTP头信息
-	$data=$app->request->getBody();
-      curl_setopt($ch,CURLOPT_HTTPHEADER,array("Content-Length:".strlen($data)));
-	curl_setopt($ch, CURLOPT_POSTFIELDS, $data);//设置提交的字符串
-      $document = curl_exec($ch);//执行预定义的CURL
-      if(!curl_errno($ch)){
+        $ch = curl_init(); //初始化CURL句柄
+        curl_setopt($ch, CURLOPT_URL, "http://localhost/upload?filename=".$app->request->params('filename')); //设置请求的URL
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER,1); //设为TRUE把curl_exec()结果转化为字串，而不是直接输出
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT'); //设置请求方式
+        curl_setopt($ch,CURLOPT_HTTPHEADER,array("X-HTTP-Method-Override: PUT"));//设置HTTP头信息
+        $data=$app->request->getBody();
+        curl_setopt($ch,CURLOPT_HTTPHEADER,array("Content-Length:".strlen($data)));
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $data);//设置提交的字符串
+        $document = curl_exec($ch);//执行预定义的CURL
+        if(!curl_errno($ch)){
         $info = curl_getinfo($ch);
         $app->getLog()->debug("Debug ".date('Y-m-d H:i:s')." : "."seconds to send a request to " . $info['url']);
       } else {
         $app->getLog()->debug("Debug ".date('Y-m-d H:i:s')." : "."Curl error: " . curl_error($ch));
       }
       curl_close($ch);
-	  $response = $app->response;
+	$response = $app->response;
       $response->setBody($document);
     }
 );
+
 
 $app->run();

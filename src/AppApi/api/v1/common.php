@@ -13,11 +13,20 @@ static $errCode = array(
     12004 => 'Account Weixin Not Bound',
     12005 => 'Account Have No Children Related',
     12006 => 'Account Have No Teacher Related',
+    12007 => 'Deposit Account No Exist',
 
     13001 => 'Finger Parames Empty',
     13002 => 'Finger Parames Required Defect',
     13003 => 'Device Not Register',
-    13004 => 'Finger Not register'
+    13004 => 'Finger Not register',
+
+    15001 => 'Comment Parames Empty',
+    15002 => 'Comment Parames Required Defect',
+
+    16001 => 'Charge Parames Empty',
+    16002 => 'Charge Parames Required Defect',
+    16004 => 'No Charge Menu List',
+    16005 => 'No payment'
 );
 
 function rspData($ret, $data = ""){
@@ -110,4 +119,33 @@ function getUserInfo($access_token, $open_id, $app, $redis)
     $redis->set("wechat_user_".$open_id, $data);
     return $arr_data;
 }
+
+function getParentPurview($sql_db, $uid){
+    try{
+        $type = substr($uid, 0, 1);
+        if(intval($type) != 2 && intval($type) != 4)
+            return false;
+        if(intval($type) == 4){
+            $sql_str = "SELECT parentid, TIMESTAMPDIFF(DAY, NOW(), cutofftime) as retdays, businessid FROM tb_parent_order 
+                WHERE paystatus = 1 AND NOW() <= cutofftime AND parentid=(select parentid from tb_parent_children where childrenid=:uid)";
+        }else{
+            $sql_str = "SELECT parentid, TIMESTAMPDIFF(DAY, NOW(), cutofftime) as retdays, businessid FROM tb_parent_order 
+                WHERE paystatus = 1 AND NOW() <= cutofftime AND parentid=:uid";
+        }
+        $stmt = $sql_db->prepare($sql_str);
+        $stmt->bindParam(":uid", $uid, PDO::PARAM_STR);
+        if(!$stmt->execute())
+            return false;
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        if(!$row)
+            return false;
+
+        return true;
+    }catch (PDOException $e) {
+        $errs = $e->getMessage();
+        return 10000;
+    }
+
+}
+
 ?>

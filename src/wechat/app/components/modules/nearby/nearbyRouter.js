@@ -8,15 +8,34 @@
   function myRouter($stateProvider, $urlRouterProvider) {
     'ngInject';
     $stateProvider
-      .state('tabs.nearby', {
-        url: "/nearby",
+      .state('tabs.nearbyList', {
+        url: "/nearbyList",
           views: {
             'tab-nearby': {
-              templateUrl: 'nearby/nearby.html',
-              controller: 'nearbyCtrl',
+              templateUrl: 'nearby/nearbyList.html',
+              controller: 'nearbyListCtrl',
               controllerAs: 'vm'
             }
           }
+      })
+      .state('tabs.nearby', {
+        url: "/nearby",
+        views: {
+          'tab-nearby': {
+            templateUrl: 'nearby/nearby.html',
+            controller: 'nearbyCtrl',
+            controllerAs: 'vm'
+          }
+        }
+      })
+      .state('nearbyDepositInfo', {
+        url: "/nearbyDepositInfo?:id",
+        params: {
+          id : null
+        },
+        templateUrl: 'nearby/nearbyDepositInfo.html',
+        controller: 'nearbyDepositInfoCtrl',
+        controllerAs: 'vm'
       });
   }
 }());

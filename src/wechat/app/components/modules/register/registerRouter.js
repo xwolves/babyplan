@@ -9,7 +9,10 @@
     'ngInject';
     $stateProvider
       .state('register', {
-        url: "/register",
+        url: "/register?type",
+        params:{
+          type:1
+        },
         templateUrl: 'register/register.html',
         controller: 'registerCtrl',
         controllerAs: 'vm'

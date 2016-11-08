@@ -1,0 +1,21 @@
+<ion-view view-title="我的消费记录">
+
+    <ion-nav-buttons side="left">
+        <a class="button button-icon icon ion-ios-arrow-back" ng-click="vm.back()"></a>
+    </ion-nav-buttons>
+
+    <ion-content>
+        <ion-list>
+            <ion-item class="item" collection-repeat="item in vm.records" ng-click="vm.goTo(item.OrderID,item)">
+                <!--<p>{{item.BusinessName}}</p>-->
+                <!--<p>{{item.BusinessID}}</p>-->
+                <p>{{item.NumOfDays}}天合共{{item.Amount/100}}元套餐 <span style="float: right" ng-class="{nopad:item.PayStatus == 0}">{{item.PayStatus|PayStatus}}</span></p>
+                <p ng-show="item.PayStatus == 1">支付时间：{{item.PayTime}}</p>
+            </ion-item>
+
+            <div class="item" ng-if="vm.records !== undefined && !vm.records.length" class="no-results">
+                <p>无相关记录</p>
+            </div>
+        </ion-list>
+    </ion-content>
+</ion-view>

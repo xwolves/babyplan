@@ -1,0 +1,33 @@
+<ion-view view-title="{{vm.item.OrgName}}">
+
+    <ion-nav-buttons side="left">
+        <a class="button button-icon icon ion-ios-arrow-back" ng-click="vm.back()"></a>
+    </ion-nav-buttons>
+
+    <ion-content>
+        <img ng-src="{{vm.item.FrontDeskLink}}" style="width: 100%;"/>
+
+        <ul>
+            <li class="item">
+                <p style="font-size: larger;color: black;margin-bottom: 15px;">{{vm.item.OrgName}} &nbsp;&nbsp;{{vm.item.Address}}</p>
+                <span class="myBorderFrame">工商执照</span> &nbsp;&nbsp;<span class="myBorderFrame">优质教育</span>
+            </li>
+            <li class="item">
+                <p>机构名称：{{vm.more.OrgName}}</p>
+                <p>详细地址：{{vm.more.Address}}</p>
+                <p>联系电话：{{vm.more.ContactPhone}}</p>
+                <p>托管对象：{{vm.more.Remark}}</p>
+            </li>
+            <li class="item">
+                <div style="color: grey;">
+                    <i class="ion-android-favorite">&nbsp;</i><span>{{vm.comments.length}}</span>
+                    &nbsp;
+                    <i class="ion-ios-photos">&nbsp;</i><span>0</span>
+                    <span>&nbsp;</span>
+                    <span style="float: right"><i class="ion-ios-arrow-forward"></i></span>
+                </div>
+            </li>
+        </ul>
+    </ion-content>
+
+</ion-view>

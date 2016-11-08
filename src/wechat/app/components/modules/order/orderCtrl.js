@@ -1,7 +1,7 @@
 (function() {
     "use strict";
     angular.module('orderCtrl', [])
-        .controller('orderCtrl', function($scope, Constants) {
+        .controller('orderCtrl', function($scope, Constants, StateService) {
             'ngInject';
             var vm = this;
             vm.activated = false;
@@ -12,5 +12,9 @@
                 vm.activated = true;
                 vm.version = Constants.buildID;
             }
+
+            vm.goTo=function(where){
+                StateService.go(where);
+            };
         });
 }());

@@ -1,0 +1,22 @@
+<ion-view view-title="加入/续费VIP会员">
+    <ion-nav-buttons side="left">
+        <a class="button button-icon icon ion-ios-arrow-back" ng-click="vm.back()"></a>
+    </ion-nav-buttons>
+
+    <ion-content>
+         <!-- ng-repeat="" -->
+        <div style="width: 100%; margin-top: 10px;"  ng-repeat="item in vm.menu">
+            <div class="vipSelction" ng-class="{vipSelctionSelcted:vm.isSelected==$index}" ng-click="vm.isSelected=$index">
+                <span class="vipSelectionItem">{{item.price/100}}元 {{item.uprice/100}}元／天</span>
+                <div class="vipSelectionItemRight">{{item.numofdays}}天</div>
+            </div>
+        </div>
+
+    </ion-content>
+
+    <div class="bar bar-footer">
+        <div class="button-bar">
+            <a class="button button-positive" ng-disabled="vm.isSelected < 0" ng-click="vm.gotoBuy()">加入</a>
+        </div>
+    </div>
+</ion-view>
