@@ -54,8 +54,8 @@
                     "depositid": Number(vm.deposit.depositid),
                     "publisherid": Number(vm.id),
                     "infotype":Number(vm.dailyType),
-                    "latitude":"",
-                    "longitude":"",
+                    "latitude":0,
+                    "longitude":0,
                     "description":vm.desc,
                     "imgs":vm.imgs
                 };

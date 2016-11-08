@@ -64,8 +64,8 @@ $app->post(
 //查询微信支付里的订单信息
 $app->get(
       '/wechatPay/order/:orderId',
-      function ($orderId) use ($app) {
-        queryOrder($app, $orderId);
+      function ($orderId) use ($app, $sql_db) {
+        queryOrder($app, $orderId, $sql_db);
       }
 );
 

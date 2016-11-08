@@ -92,7 +92,12 @@
                                                 // "data":{"orderId":"139630530220161103152842","wechatOrderId":"4003682001201611038611986947",
                                                 // "totalFee":"1","payState":"SUCCESS","payTime":"20161103152851"}}
                                                 //alert(JSON.stringify(result));
-                                                var status = result.data.payState;
+                                                if(result.errno == 0 ){
+                                                    MessageToaster.info("微信支付完成");
+                                                    StateService.clearAllAndGo(AuthService.getNextPath());
+                                                }
+                                                //var status = result.data.payState;
+                                                /*
                                                 var payTime=result.data.payTime;
                                                 var endDate=vm.getEndDate(payTime,vm.item.numofdays);
                                                 if(status === 'SUCCESS'){
@@ -112,6 +117,7 @@
                                                         }
                                                     );
                                                 }
+                                                */
                                             },
                                             function (reason) {
                                                 alert("checkOrder error "+JSON.stringify(reason));

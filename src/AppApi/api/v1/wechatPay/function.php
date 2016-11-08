@@ -105,7 +105,35 @@ function createOrder($app,$sql_db){
   }
 }
 
-function queryOrder($app,$orderId){
+function updateParentOrder($a_request,$app,$sql_db){
+    try{
+        if(!array_key_exists("orderId", $a_request) || !array_key_exists("payTime", $a_request) || !array_key_exists("payState", $a_request))
+            return 16002;
+        $orderid = $a_request['orderId'];
+        $paytime = $a_request['payTime'];
+        $paystatus = $a_request['payState'];
+        $sql_str = "UPDATE tb_parent_order SET modifytime=now(), paystatus=:paystatus, paytime=str_to_date(:paytime, '%Y%m%d%H%i%s'),
+            cutofftime=date_add(:pt, INTERVAL numofdays DAY) where orderid=:orderid";
+
+        $stmt = $sql_db->prepare($sql_str);
+        $stmt->bindParam(":paystatus", intval($paystatus), PDO::PARAM_INT);
+        $stmt->bindParam(":paytime", $paytime, PDO::PARAM_STR);
+        $stmt->bindParam(":pt", $paytime, PDO::PARAM_STR);
+        $stmt->bindParam(":orderid", $orderid, PDO::PARAM_STR);
+        if(!$stmt->execute())
+            return 10001;
+        if($stmt->rowCount() <= 0)
+            return 10002;
+
+        return 0;
+    }catch (PDOException $e) {
+        $errs = $e->getMessage();
+        $app->getLog()->debug("Debug ".date('Y-m-d H:i:s')." : ".$errs);
+        return 10000;
+    }
+}
+
+function queryOrder($app,$orderId,$sql_db){
     $response = $app->response();
     //$request = $app->request->getBody();
     $input = new WxPayOrderQuery();
@@ -129,7 +157,8 @@ function queryOrder($app,$orderId){
         $rsp_data['totalFee'] = $order['total_fee'];
         $rsp_data['payState'] = $order['trade_state'];
         $rsp_data['payTime'] = $order['time_end'];
-        $response->setBody(rspData(0,  $rsp_data));
+        $result=updateParentOrder($rsp_data, $app, $sql_db);
+        $response->setBody(rspData($result));
     }else{
         $response->setBody(rspData(10001,  $order['err_code_des']));
     }

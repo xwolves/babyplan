@@ -557,7 +557,7 @@ app.filter('statusChange', function () {
             'appTitle':'托管系统',
             'serverUrl': '/api/v1/',
             'dfsUrl': '/',
-            'buildID': '20161108v1',
+            'buildID': '20161108v2',
             'ENVIRONMENT':'release'
         });
 }());
@@ -648,6 +648,37 @@ Date.prototype.Format = function(fmt) {
   angular.module('tools', [
     
   ]);
+
+}());
+
+(function() {
+  "use strict";
+  angular.module('commentModule', [
+    'commentService'
+  ]);
+
+}());
+
+(function() {
+  'use strict';
+
+  angular.module('commentService', [])
+    .factory('commentService', commentService);
+
+  function commentService($q, $http, Constants, ResultHandler) {
+    'ngInject';
+    var service = {
+        queryDepositComment:queryDepositComment
+    };
+
+    //http://172.18.1.166/api/v1/comment/deposit/fetch/:depositid
+    function queryDepositComment(id) {
+        var url = Constants.serverUrl + 'comment/deposit/fetch/'+id;
+        return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
+    };
+
+    return service;
+  }
 
 }());
 
@@ -819,7 +850,7 @@ Date.prototype.Format = function(fmt) {
                 console.log("vm.type = "+vm.type+" with "+vm.user);
             /////////////////////////////////////////////////////////
             //    vm.user = "o_Nkcw4CsZh5dbE2v8XVLUxfd96A";//"oVyGDuNPkAbtljfJKusP4oaCrYG0";//test
-            //    vm.type = 2;//test
+            //    vm.type = 3;//test
             ////////////////////////////////////////////////////////
                 //MessageToaster.info('user = '+vm.user);
                 if (vm.user) {
@@ -1711,37 +1742,6 @@ Date.prototype.Format = function(fmt) {
 
 (function() {
   "use strict";
-  angular.module('commentModule', [
-    'commentService'
-  ]);
-
-}());
-
-(function() {
-  'use strict';
-
-  angular.module('commentService', [])
-    .factory('commentService', commentService);
-
-  function commentService($q, $http, Constants, ResultHandler) {
-    'ngInject';
-    var service = {
-        queryDepositComment:queryDepositComment
-    };
-
-    //http://172.18.1.166/api/v1/comment/deposit/fetch/:depositid
-    function queryDepositComment(id) {
-        var url = Constants.serverUrl + 'comment/deposit/fetch/'+id;
-        return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
-    };
-
-    return service;
-  }
-
-}());
-
-(function() {
-  "use strict";
   angular.module('exitModule', [
     'exitCtrl',
     'exitRouter',
@@ -2119,8 +2119,8 @@ Date.prototype.Format = function(fmt) {
                     "depositid": Number(vm.deposit.depositid),
                     "publisherid": Number(vm.id),
                     "infotype":Number(vm.dailyType),
-                    "latitude":"",
-                    "longitude":"",
+                    "latitude":0,
+                    "longitude":0,
                     "description":vm.desc,
                     "imgs":vm.imgs
                 };
@@ -3119,121 +3119,6 @@ Date.prototype.Format = function(fmt) {
 
 (function() {
   "use strict";
-  angular.module('photoModule', [
-    'photoCtrl',
-    'photoRouter'
-  ]);
-
-}());
-
-(function() {
-    "use strict";
-    angular.module('photoCtrl', [])
-        .controller('photoCtrl', function($scope, Constants,$stateParams,Session,StateService,$ionicSlideBoxDelegate,$timeout) {
-            'ngInject';
-            var vm = this;
-            vm.activated = false;
-            $scope.$on('$ionicView.afterEnter', activate);
-
-            function activate() {
-                vm.activated = true;
-                vm.version = Constants.buildID;
-                vm.msg=Session.temp;
-                vm.images=[];
-                vm.imgCount=0;
-                if(vm.msg.photolink1!=null && vm.msg.photolink1!=""){
-                    vm.images[vm.imgCount]=vm.msg.photolink1;
-                    vm.imgCount++;
-                }
-                if(vm.msg.photolink2!=null && vm.msg.photolink2!=""){
-                    vm.images[vm.imgCount]=vm.msg.photolink2;
-                    vm.imgCount++;
-                }
-                if(vm.msg.photolink3!=null && vm.msg.photolink3!=""){
-                    vm.images[vm.imgCount]=vm.msg.photolink3;
-                    vm.imgCount++;
-                }
-                if(vm.msg.photolink4!=null && vm.msg.photolink4!=""){
-                    vm.images[vm.imgCount]=vm.msg.photolink4;
-                    vm.imgCount++;
-                }
-                if(vm.msg.photolink5!=null && vm.msg.photolink5!=""){
-                    vm.images[vm.imgCount]=vm.msg.photolink5;
-                    vm.imgCount++;
-                }
-                if(vm.msg.photolink6!=null && vm.msg.photolink6!=""){
-                    vm.images[vm.imgCount]=vm.msg.photolink6;
-                    vm.imgCount++;
-                }
-                console.log(vm.images);
-                vm.index=$stateParams.index;
-                console.log(vm.index);
-                //vm.image=vm.images[vm.index];
-                $timeout(function(){
-                    $scope.slider.slideTo(vm.index);
-                    $scope.slider.updateLoop();
-                    //$ionicSlideBoxDelegate.enableSlide(true);
-                    //$ionicSlideBoxDelegate.slide(vm.index);
-                    //console.log($ionicSlideBoxDelegate.currentIndex()+" - "+$ionicSlideBoxDelegate.slidesCount());
-                }, 300);
-
-            }
-            vm.back=function(){
-                StateService.back();
-            };
-
-            $scope.options = {
-                loop: false
-            }
-
-            $scope.$on("$ionicSlides.sliderInitialized", function(event, data){
-                // data.slider is the instance of Swiper
-                console.log(data);
-                $scope.slider = data.slider;
-            });
-
-            $scope.$on("$ionicSlides.slideChangeStart", function(event, data){
-                console.log('Slide change is beginning');
-                //console.log(event);
-                //console.log(data);
-            });
-
-            $scope.$on("$ionicSlides.slideChangeEnd", function(event, data){
-                // note: the indexes are 0-based
-                //console.log(event);
-                console.log($scope.slider.activeIndex+" - "+$scope.slider.previousIndex);
-                //$scope.activeIndex = data.activeIndex;
-                //$scope.previousIndex = data.previousIndex;
-                //console.log('Slide from '+data.previousIndex +' to '+data.activeIndex);
-            });
-        });
-}());
-
-(function() {
-  'use strict';
-
-  angular.module('photoRouter', [])
-    .config(myRouter);
-
-
-  function myRouter($stateProvider, $urlRouterProvider) {
-    'ngInject';
-    $stateProvider
-        .state('photo', {
-          url: "/photo?:index",
-          params:{
-            index:0
-          },
-          templateUrl: 'photo/photo.html',
-          controller: 'photoCtrl',
-          controllerAs: 'vm'
-        })
-      ;
-  }
-}());
-
-(function() {
-  "use strict";
   angular.module('profileModule', [
     'profileCtrl',
     'profileRouter',
@@ -3673,6 +3558,121 @@ Date.prototype.Format = function(fmt) {
 
 (function() {
   "use strict";
+  angular.module('photoModule', [
+    'photoCtrl',
+    'photoRouter'
+  ]);
+
+}());
+
+(function() {
+    "use strict";
+    angular.module('photoCtrl', [])
+        .controller('photoCtrl', function($scope, Constants,$stateParams,Session,StateService,$ionicSlideBoxDelegate,$timeout) {
+            'ngInject';
+            var vm = this;
+            vm.activated = false;
+            $scope.$on('$ionicView.afterEnter', activate);
+
+            function activate() {
+                vm.activated = true;
+                vm.version = Constants.buildID;
+                vm.msg=Session.temp;
+                vm.images=[];
+                vm.imgCount=0;
+                if(vm.msg.photolink1!=null && vm.msg.photolink1!=""){
+                    vm.images[vm.imgCount]=vm.msg.photolink1;
+                    vm.imgCount++;
+                }
+                if(vm.msg.photolink2!=null && vm.msg.photolink2!=""){
+                    vm.images[vm.imgCount]=vm.msg.photolink2;
+                    vm.imgCount++;
+                }
+                if(vm.msg.photolink3!=null && vm.msg.photolink3!=""){
+                    vm.images[vm.imgCount]=vm.msg.photolink3;
+                    vm.imgCount++;
+                }
+                if(vm.msg.photolink4!=null && vm.msg.photolink4!=""){
+                    vm.images[vm.imgCount]=vm.msg.photolink4;
+                    vm.imgCount++;
+                }
+                if(vm.msg.photolink5!=null && vm.msg.photolink5!=""){
+                    vm.images[vm.imgCount]=vm.msg.photolink5;
+                    vm.imgCount++;
+                }
+                if(vm.msg.photolink6!=null && vm.msg.photolink6!=""){
+                    vm.images[vm.imgCount]=vm.msg.photolink6;
+                    vm.imgCount++;
+                }
+                console.log(vm.images);
+                vm.index=$stateParams.index;
+                console.log(vm.index);
+                //vm.image=vm.images[vm.index];
+                $timeout(function(){
+                    $scope.slider.slideTo(vm.index);
+                    $scope.slider.updateLoop();
+                    //$ionicSlideBoxDelegate.enableSlide(true);
+                    //$ionicSlideBoxDelegate.slide(vm.index);
+                    //console.log($ionicSlideBoxDelegate.currentIndex()+" - "+$ionicSlideBoxDelegate.slidesCount());
+                }, 300);
+
+            }
+            vm.back=function(){
+                StateService.back();
+            };
+
+            $scope.options = {
+                loop: false
+            }
+
+            $scope.$on("$ionicSlides.sliderInitialized", function(event, data){
+                // data.slider is the instance of Swiper
+                console.log(data);
+                $scope.slider = data.slider;
+            });
+
+            $scope.$on("$ionicSlides.slideChangeStart", function(event, data){
+                console.log('Slide change is beginning');
+                //console.log(event);
+                //console.log(data);
+            });
+
+            $scope.$on("$ionicSlides.slideChangeEnd", function(event, data){
+                // note: the indexes are 0-based
+                //console.log(event);
+                console.log($scope.slider.activeIndex+" - "+$scope.slider.previousIndex);
+                //$scope.activeIndex = data.activeIndex;
+                //$scope.previousIndex = data.previousIndex;
+                //console.log('Slide from '+data.previousIndex +' to '+data.activeIndex);
+            });
+        });
+}());
+
+(function() {
+  'use strict';
+
+  angular.module('photoRouter', [])
+    .config(myRouter);
+
+
+  function myRouter($stateProvider, $urlRouterProvider) {
+    'ngInject';
+    $stateProvider
+        .state('photo', {
+          url: "/photo?:index",
+          params:{
+            index:0
+          },
+          templateUrl: 'photo/photo.html',
+          controller: 'photoCtrl',
+          controllerAs: 'vm'
+        })
+      ;
+  }
+}());
+
+(function() {
+  "use strict";
   angular.module('tabsModule', [
     'tabsCtrl',
     'tabsRouter',
@@ -3782,6 +3782,78 @@ Date.prototype.Format = function(fmt) {
 
 
     }
+
+}());
+
+(function() {
+  "use strict";
+  angular.module('teacherSettingModule', [
+    'teacherSettingCtrl',
+    'teacherSettingRouter',
+    'teacherSettingService'
+  ]);
+
+}());
+
+(function() {
+    "use strict";
+    angular.module('teacherSettingCtrl', [])
+        .controller('teacherSettingCtrl', function($scope, $state, Constants, StateService) {
+            'ngInject';
+            var vm = this;
+            vm.activated = false;
+            $scope.$on('$ionicView.afterEnter', activate);
+
+            function activate() {
+                vm.activated = true;
+                vm.version = Constants.buildID;
+            }
+
+            vm.goTo = function(addr){
+                console.log(addr);
+                StateService.go(addr);
+            };
+
+        });
+}());
+
+(function() {
+  'use strict';
+
+  angular.module('teacherSettingRouter', [])
+    .config(myRouter);
+
+
+  function myRouter($stateProvider, $urlRouterProvider) {
+    'ngInject';
+    $stateProvider
+      .state('tabs.teacherSetting', {
+        url: "/teacherSetting",
+          views: {
+            'tab-teacherSetting': {
+              templateUrl: 'teacherSetting/teacherSetting.html',
+              controller: 'teacherSettingCtrl',
+              controllerAs: 'vm'
+            }
+          }
+      });
+  }
+}());
+
+(function() {
+  'use strict';
+
+  angular.module('teacherSettingService', [])
+    .factory('teacherSettingService', myService);
+
+  function myService( $q, $http) {
+    'ngInject';
+    var service = {
+    };
+    return service;
+
+
+  }
 
 }());
 
@@ -4047,78 +4119,6 @@ Date.prototype.Format = function(fmt) {
 }());
 
 (function() {
-  "use strict";
-  angular.module('teacherSettingModule', [
-    'teacherSettingCtrl',
-    'teacherSettingRouter',
-    'teacherSettingService'
-  ]);
-
-}());
-
-(function() {
-    "use strict";
-    angular.module('teacherSettingCtrl', [])
-        .controller('teacherSettingCtrl', function($scope, $state, Constants, StateService) {
-            'ngInject';
-            var vm = this;
-            vm.activated = false;
-            $scope.$on('$ionicView.afterEnter', activate);
-
-            function activate() {
-                vm.activated = true;
-                vm.version = Constants.buildID;
-            }
-
-            vm.goTo = function(addr){
-                console.log(addr);
-                StateService.go(addr);
-            };
-
-        });
-}());
-
-(function() {
-  'use strict';
-
-  angular.module('teacherSettingRouter', [])
-    .config(myRouter);
-
-
-  function myRouter($stateProvider, $urlRouterProvider) {
-    'ngInject';
-    $stateProvider
-      .state('tabs.teacherSetting', {
-        url: "/teacherSetting",
-          views: {
-            'tab-teacherSetting': {
-              templateUrl: 'teacherSetting/teacherSetting.html',
-              controller: 'teacherSettingCtrl',
-              controllerAs: 'vm'
-            }
-          }
-      });
-  }
-}());
-
-(function() {
-  'use strict';
-
-  angular.module('teacherSettingService', [])
-    .factory('teacherSettingService', myService);
-
-  function myService( $q, $http) {
-    'ngInject';
-    var service = {
-    };
-    return service;
-
-
-  }
-
-}());
-
-(function() {
     "use strict";
     angular.module('buyCtrl', [])
         .controller('buyCtrl', function($scope, $state, $stateParams, Constants, StateService, vipBuyService, AuthService, MessageToaster, Session) {
@@ -4211,7 +4211,7 @@ Date.prototype.Format = function(fmt) {
                                                 //{"errno":0,"error":"",
                                                 // "data":{"orderId":"139630530220161103152842","wechatOrderId":"4003682001201611038611986947",
                                                 // "totalFee":"1","payState":"SUCCESS","payTime":"20161103152851"}}
-                                                alert(JSON.stringify(result));
+                                                //alert(JSON.stringify(result));
                                                 if(result.errno == 0 ){
                                                     MessageToaster.info("微信支付完成");
                                                     StateService.clearAllAndGo(AuthService.getNextPath());
@@ -4407,6 +4407,83 @@ Date.prototype.Format = function(fmt) {
 }());
 
 (function() {
+  "use strict";
+  angular.module('vipTipsModule', [
+    'vipTipsCtrl',
+    'vipTipsRouter',
+    'vipTipsService'
+  ]);
+
+}());
+
+(function() {
+    "use strict";
+    angular.module('vipTipsCtrl', [])
+        .controller('vipTipsCtrl', function($scope, $state, Constants, StateService) {
+            'ngInject';
+            var vm = this;
+            vm.activated = false;
+            $scope.$on('$ionicView.afterEnter', activate);
+            vm.expend1=false;
+            function activate() {
+                vm.activated = true;
+                vm.version = Constants.buildID;
+            }
+
+            vm.back=function(){
+                StateService.back();
+            };
+
+            vm.test=function(){
+                console.log('test');
+            }
+        });
+}());
+
+(function() {
+  'use strict';
+
+  angular.module('vipTipsRouter', [])
+    .config(myRouter);
+
+
+  function myRouter($stateProvider, $urlRouterProvider) {
+    'ngInject';
+    $stateProvider
+        .state('vipTips', {
+          url: "/vipTips",
+          templateUrl: 'vipTips/vipTips.html',
+          controller: 'vipTipsCtrl',
+          controllerAs: 'vm'
+        })
+  }
+}());
+
+(function() {
+  'use strict';
+
+  angular.module('vipTipsService', [])
+    .factory('vipTipsService', eService);
+
+  function eService( $q, $http,Constants,ResultHandler) {
+    'ngInject';
+    var service = {
+      exit:exit
+    };
+
+    function exit(id) {
+      var url = Constants.serverUrl + 'account/exit/'+id;
+      return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
+    };
+
+    return service;
+
+
+  }
+
+}());
+
+(function() {
     "use strict";
     angular.module('recordCtrl', [])
         .controller('recordCtrl', function($scope, $state, $stateParams, Constants, StateService, vipBuyService, AuthService, MessageToaster, Session) {
@@ -4523,83 +4600,6 @@ Date.prototype.Format = function(fmt) {
 
   angular.module('vipRecordService', [])
     .factory('vipRecordService', eService);
-
-  function eService( $q, $http,Constants,ResultHandler) {
-    'ngInject';
-    var service = {
-      exit:exit
-    };
-
-    function exit(id) {
-      var url = Constants.serverUrl + 'account/exit/'+id;
-      return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
-    };
-
-    return service;
-
-
-  }
-
-}());
-
-(function() {
-  "use strict";
-  angular.module('vipTipsModule', [
-    'vipTipsCtrl',
-    'vipTipsRouter',
-    'vipTipsService'
-  ]);
-
-}());
-
-(function() {
-    "use strict";
-    angular.module('vipTipsCtrl', [])
-        .controller('vipTipsCtrl', function($scope, $state, Constants, StateService) {
-            'ngInject';
-            var vm = this;
-            vm.activated = false;
-            $scope.$on('$ionicView.afterEnter', activate);
-            vm.expend1=false;
-            function activate() {
-                vm.activated = true;
-                vm.version = Constants.buildID;
-            }
-
-            vm.back=function(){
-                StateService.back();
-            };
-
-            vm.test=function(){
-                console.log('test');
-            }
-        });
-}());
-
-(function() {
-  'use strict';
-
-  angular.module('vipTipsRouter', [])
-    .config(myRouter);
-
-
-  function myRouter($stateProvider, $urlRouterProvider) {
-    'ngInject';
-    $stateProvider
-        .state('vipTips', {
-          url: "/vipTips",
-          templateUrl: 'vipTips/vipTips.html',
-          controller: 'vipTipsCtrl',
-          controllerAs: 'vm'
-        })
-  }
-}());
-
-(function() {
-  'use strict';
-
-  angular.module('vipTipsService', [])
-    .factory('vipTipsService', eService);
 
   function eService( $q, $http,Constants,ResultHandler) {
     'ngInject';

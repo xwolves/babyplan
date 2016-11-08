@@ -5,10 +5,11 @@
             'appTitle':'托管系统',
             'serverUrl': '/api/v1/',
             'dfsUrl': '/',
-            'buildID': '20161101v1',
+            'buildID': '20161108v2',
             'ENVIRONMENT':'release'
         });
 }());
 //'serverUrl': 'http://120.76.226.47/api/v2/',
 //    'dfsUrl': 'http://120.76.226.47/',
 //http://localhost:8090/
+//http://wx.zxing-tech.cn
