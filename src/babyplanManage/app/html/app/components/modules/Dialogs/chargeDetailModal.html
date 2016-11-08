@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+
+<div class="modal-header">
+	<h3 class="modal-title">订单详情</h3>
+</div>
+<div class="modal-body">
+	<!-- 
+
+				<td>{{doc.OrderID}}</td>
+				<td>{{doc.Name}}</td>
+				<td>{{doc.Mobile}}</td>
+				<td>{{doc.OrderType}}</td>
+				<td>{{doc.Amount}}</td>
+				<td>{{doc.PayStatus}}</td>
+				<td>{{doc.PayType}}</td>
+				<td>{{doc.PayTime|date:'yyyy-MM-dd HH:mm'}}</td>			
+				<td>{{doc.NumOfDays}}</td>
+				<td>{{doc.CutOffTime|date:'yyyy-MM-dd HH:mm'}}</td>
+				<td>{{doc.BusinessName}}</td>
+				<td>{{doc.CreateTime|date:'yyyy-MM-dd HH:mm'}}</td>
+				<td>{{doc.ModifyTime|date:'yyyy-MM-dd HH:mm'}}</td>
+ -->
+	<form class="form-horizontal">
+		<div ng-show="isnew" class="form-group">
+			<label for="aAccountID" class="col-sm-2 control-label">查询家长账号</label>
+			<div class="col-sm-4">
+				<input  id="BusinessName" type="text" placeholder="家长注册时手机号码"
+					class="form-control" ng-model="mobile">
+					
+			</div>
+			<button col-sm-2 class="btn btn-primary" type="button" ng-click="selectbymobile()">查询</button>
+		</div>
+		
+		<div class="form-group">
+			<label for="aAccountID" class="col-sm-2 control-label">家长账号</label>
+			<div class="col-sm-4">
+				<input id="BusinessName" type="text" placeholder="家长账号"
+					class="form-control" ng-model="user.ParentID">
+			</div>
+			<label for="aName" class="col-sm-2 control-label">订单类型</label>
+			<div class="col-sm-4">
+				<select class="form-control" ng-model="user.OrderType"
+					ng-options="n.id as n.name for n in orderTypeList">
+					<option value="">-- 请选择 --</option>
+				</select>
+			</div>
+		</div>
+
+		<div class="form-group">
+			<label for="aSex" class="col-sm-2 control-label">套餐类型</label>
+			<div class="col-sm-4">
+				<select class="form-control" ng-model="user.BusinessID"
+					ng-options="n.BusinessID as n.BusinessName for n in pricelist"
+					ng-change="bussisesschang()">
+					<option value="">-- 请选择 --</option>
+				</select>
+			</div>
+			<label for="aSex" class="col-sm-2 control-label">订单金额</label>
+			<div class="col-sm-4">
+				<label id="BusinessID" class="form-control">{{user.Amount}}</label>
+			</div>
+		</div>
+
+		<!-- 关联订单列表 -->
+		<div class="form-group">
+
+			<label for="aMobile" class="col-sm-2 control-label">天数</label>
+			<div class="col-sm-4">
+				<label id="Reason" class="
+					form-control">{{user.NumOfDays}}
+				</label>
+			</div>
+			<label for="aAge" class="col-sm-2 control-label">支付时间</label>
+			<div class="col-sm-4">
+				<input  id="Age" type="datetime-local" placeholder="支付时间" class="form-control"
+					ng-model="PayTime">
+			</div>
+		</div>
+
+		<div class="form-group">
+
+			<label for="aMobile" class="col-sm-2 control-label">支付状态</label>
+			<div class="col-sm-4">
+				<select class="form-control" ng-model="user.PayStatus"
+					ng-options="n.id as n.name for n in payStatusList">
+					<option value="">-- 请选择 --</option>
+				</select>
+			</div>
+			<label for="aMobile" class="col-sm-2 control-label">支付类型</label>
+			<div class="col-sm-4">
+				<select class="form-control" ng-model="user.PayType"
+					ng-options="n.id as n.name for n in payTypeList">
+					<option value="">-- 请选择 --</option>
+				</select>
+			</div>
+
+		</div>
+		<div class="form-group">
+
+			<label ng-show="!isnew" for="aMobile" class="col-sm-2 control-label">截止时间</label>
+			<div ng-show="!isnew"  class="col-sm-4">
+				<input id="CutOffTime" type="datetime-local" placeholder="支付状态"
+					class="
+					form-control" ng-model="CutOffTime">
+			</div>
+		</div>
+		<!-- 
+				<div class="form-group">
+
+			<label for="aNumOfDays" class="col-sm-2 control-label">修改时间</label>
+			<div class="col-sm-4">
+				<label id="ModifyTime" type="text" placeholder="修改时间"
+					class="form-control">{{user.ModifyTime|date:'yyyy-MM-dd HH:mm'}}</label>
+			</div>
+			<label for="aCreateTime" class="col-sm-2 control-label">创建时间</label>
+			<div class="col-sm-4">
+				<label class="form-control">{{user.CreateTime|date:'yyyy-MM-dd HH:mm'}}</label>
+			</div>
+
+		</div>
+	 -->
+	</form>
+
+</div>
+<div  class="modal-footer">
+	<button  ng-show="isnew" class="btn btn-primary" type="button" ng-click="save()">确定</button>
+	<button class="btn" type="button" ng-click="cancel()">关闭</button>
+</div>

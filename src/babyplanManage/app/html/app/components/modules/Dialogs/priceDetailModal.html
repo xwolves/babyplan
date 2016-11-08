@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+
+<div class="modal-header">
+	<h3 class="modal-title">价格配置详情</h3>
+</div>
+<div class="modal-body">
+
+	<form class="form-horizontal">
+		<div class="form-group">
+			<label for="aAccountID" class="col-sm-2 control-label">套餐名称</label>
+			<div class="col-sm-4">
+				<input id="BusinessName" type="text" placeholder="套餐名称"
+					class="form-control" ng-model="user.BusinessName">
+			</div>
+			<label for="aName" class="col-sm-2 control-label">套餐描述</label>
+			<div class="col-sm-4">
+				<input id="BusinessDesc" type="text" placeholder="套餐描述" class="form-control"
+					ng-model="user.BusinessDesc">
+			</div>
+		</div>
+
+		<div class="form-group">
+			<label for="aSex" class="col-sm-2 control-label">套餐价格</label>
+			<div class="col-sm-4">
+				<input id="Price" type="text" placeholder="套餐价格"
+					class="form-control" ng-model="user.Price">
+			</div>
+			<label for="aMobile" class="col-sm-2 control-label">设置该价格的原因</label>
+			<div class="col-sm-4">
+				<input id="Reason" type="text" placeholder="设置该价格的原因"
+					class="form-control" ng-model="user.Reason">
+			</div>
+		</div>
+		
+
+		<div class="form-group">
+			<label for="aAge" class="col-sm-2 control-label">价格设置人</label>
+			<div class="col-sm-4">
+				<input id="Age" type="text" placeholder="价格设置人" class="form-control"
+					ng-model="user.Provide">
+			</div>
+			<label for="aTeachAge" class="col-sm-2 control-label">套餐状态</label>
+			<div class="col-sm-4">
+				<select class="form-control" ng-model="user.Status"
+					ng-options="n.id as n.name for n in statuslist">
+					<option value="">-- 请选择 --</option>
+				</select>
+			</div>
+		</div>
+
+		<div class="form-group">
+			<label for="aNumOfDays" class="col-sm-2 control-label">套餐天数</label>
+			<div class="col-sm-4">
+				<input  id="NumOfDays" type="text"
+					placeholder="套餐天数" class="form-control" ng-model="user.NumOfDays">
+			</div>
+
+
+		</div>
+
+</form>
+
+</div>
+<div class="modal-footer">
+	<button class="btn btn-primary" type="button" ng-click="save()">确定</button>
+	<button class="btn" type="button" ng-click="cancel()">关闭</button>
+</div>

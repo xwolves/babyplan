@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+
+<div class="modal-header">
+	<h3 class="modal-title">信息发布详情</h3>
+</div>
+<div class="modal-body">
+
+	<form class="form-horizontal">
+		<div class="form-group">
+			<label for="aAccountID" class="col-sm-2 control-label">老师账号</label>
+			<div class="col-sm-4">
+				<input id="PublisherID" type="text" placeholder="老师账号"
+					class="form-control" ng-model="PublisherID">
+			</div>
+			<label for="aName" class="col-sm-2 control-label">老师姓名</label>
+			<div class="col-sm-4">
+				<input id="Name" type="text" placeholder="老师姓名" class="form-control"
+					ng-model="Name">
+			</div>
+		</div>
+
+		<div class="form-group">
+			<label for="aMobile" class="col-sm-2 control-label">DepositID</label>
+			<div class="col-sm-4">
+				<input id="Mobile" type="text" placeholder="机构账号"
+					class="form-control" ng-model="PublisherID">
+			</div>
+			<label for="aSex" class="col-sm-2 control-label">机构名称</label>
+			<div class="col-sm-4">
+				<label class="form-control">{{OrgName}}</label>
+			</div>
+		</div>
+
+		<div class="form-group">
+			<label for="aAge" class="col-sm-2 control-label">总浏览次数</label>
+			<div class="col-sm-4">
+				<input id="Age" type="text" placeholder="ClickCount" class="form-control"
+					ng-model="ClickCount">
+			</div>
+			<label for="aTeachAge" class="col-sm-2 control-label">信息类型</label>
+			<div class="col-sm-4">
+				<label id="TeachAge" type="text" placeholder="信息类型"
+					class="form-control" >{{InfoType|dailyinfoTypefilter}}</label>
+			</div>
+		</div>
+
+		<div class="form-group">
+
+			<label for="aCreateTime" class="col-sm-2 control-label">点赞的个数</label>
+			<div class="col-sm-4">
+				<input  id="CreateTime" type="text"
+					placeholder="创建时间" class="form-control" ng-model="StarCount">
+			</div>
+			<label for="aModifyTime" class="col-sm-2 control-label">发布状态</label>
+			<div class="col-sm-4">
+				<label type="datetime-local" id="ModifyTime" class="form-control">{{Status|dailyStatusfilter}}</label>
+			</div>
+
+		</div>
+
+		<div class="form-group">
+			<label for="aCreateTime" class="col-sm-2 control-label">照片</label>
+			<div class="col-sm-4">
+				<img class="form-group col-sm-12" ng-src={{PhotoLink1}} />
+			</div>
+			<label for="aCreateTime" class="col-sm-2 control-label">照片</label>
+			<div class="col-sm-4">
+				<img class="form-group col-sm-12" ng-src={{PhotoLink2}} />
+			</div>
+		</div>
+		
+		<div class="form-group">
+			<label for="aCreateTime" class="col-sm-2 control-label">照片</label>
+			<div class="col-sm-4">
+				<img class="form-group col-sm-12" ng-src={{PhotoLink3}} />
+			</div>
+			<label for="aCreateTime" class="col-sm-2 control-label">照片</label>
+			<div class="col-sm-4">
+				<img class="form-group col-sm-12" ng-src={{PhotoLink4}} />
+			</div>
+		</div>
+		
+		<div class="form-group">
+			<label for="aCreateTime" class="col-sm-2 control-label">照片</label>
+			<div class="col-sm-4">
+				<img class="form-group col-sm-12" ng-src={{PhotoLink5}} />
+			</div>
+			<label for="aCreateTime" class="col-sm-2 control-label">照片</label>
+			<div class="col-sm-4">
+				<img class="form-group col-sm-12" ng-src={{PhotoLink6}} />
+			</div>
+		</div>
+		<div class="form-group">
+			<label for="aCreateTime" class="col-sm-2 control-label">创建时间</label>
+			<div class="col-sm-4">
+				<label for="aCreateTime" control-label">{{CreateTime|date:'yyyy-MM-dd HH:mm'}}</label>
+			</div>
+
+		</div>
+		<div class="form-group">
+			<label for="aRemark" class="col-sm-2 control-label">备注</label>
+			<div class="col-sm-10">
+				<textarea class="form-control" rows="3" ng-model="Remark"></textarea>
+
+			</div>
+
+		</div>
+	</form>
+</div>
+
+<div class="modal-footer">
+	<!-- 
+	<button class="btn btn-primary" type="button" ng-click="save()">确定</button>
+	-->
+	<button class="btn" type="button" ng-click="cancel()">关闭</button>
+</div>

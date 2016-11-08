@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+
+
+<div style="margin-top: 20px;" class="table-responsive">
+	<table class="table table-bordered table-striped">
+		<thead>
+			<tr>
+				<td><a
+					ng-click="sortType = 'AccountID'; sortReverse = !sortReverse">
+						孩子账号 <span ng-show="sortType == 'AccountID' && !sortReverse"
+						class="fa fa-caret-down"></span> <span
+						ng-show="sortType == 'AccountID' && sortReverse"
+						class="fa fa-caret-up"></span>
+				</a></td>
+				<td><a
+					ng-click="sortType = 'Name'; sortReverse = !sortReverse">
+						孩子姓名 <span ng-show="Name == 'Address' && !sortReverse"
+						class="fa fa-caret-down"></span> <span
+						ng-show="sortType == 'Name' && sortReverse"
+						class="fa fa-caret-up"></span>
+				</a></td>
+				<td><a
+					ng-click="sortType = 'PName'; sortReverse = !sortReverse">
+						家长姓名 <span ng-show="sortType == 'PName' && !sortReverse"
+						class="fa fa-caret-down"></span> <span
+						ng-show="sortType == 'PName' && sortReverse"
+						class="fa fa-caret-up"></span>
+				</a></td>
+				<td><a
+					ng-click="sortType = 'PMobile'; sortReverse = !sortReverse">
+						家长电话 <span ng-show="sortType == 'PMobile' && !sortReverse"
+						class="fa fa-caret-down"></span> <span
+						ng-show="sortType == 'PMobile' && sortReverse"
+						class="fa fa-caret-up"></span>
+				</a></td>
+
+				<td><a
+					ng-click="sortType = 'OrgName'; sortReverse = !sortReverse">
+						机构名称 <span ng-show="sortType == 'OrgName' && !sortReverse"
+						class="fa fa-caret-down"></span> <span
+						ng-show="sortType == 'OrgName' && sortReverse"
+						class="fa fa-caret-up"></span>
+				</a></td>
+
+				<td><a
+					ng-click="sortType = 'DepositStartTime'; sortReverse = !sortReverse">
+						起托日期 <span ng-show="sortType == 'DepositStartTime' && !sortReverse"
+						class="fa fa-caret-down"></span> <span
+						ng-show="sortType == 'DepositStartTime' && sortReverse"
+						class="fa fa-caret-up"></span>
+				</a></td>
+
+				<td><a
+					ng-click="sortType = 'DepositEndTime'; sortReverse = !sortReverse">
+						离托日期 <span
+						ng-show="sortType == 'DepositEndTime' && !sortReverse"
+						class="fa fa-caret-down"></span> <span
+						ng-show="sortType == 'DepositEndTime' && sortReverse"
+						class="fa fa-caret-up"></span>
+				</a></td>
+				
+				<td><a
+					ng-click="sortType = 'DepositType'; sortReverse = !sortReverse">
+						托管类型 <span
+						ng-show="sortType == 'DepositType' && !sortReverse"
+						class="fa fa-caret-down"></span> <span
+						ng-show="sortType == 'DepositType' && sortReverse"
+						class="fa fa-caret-up"></span>
+				</a></td>
+
+				<td>打卡记录</td>
+				<td>家长 详情</td>
+			</tr>
+		</thead>
+
+		<tbody>
+			<tr ng-repeat="doc in document "
+				ng-Dblclick="editdeposit(doc.AccountID)">
+				<td>{{doc.AccountID}}</td>
+				<td>{{doc.Name}}</td>
+				<td>{{doc.PName}}</td>
+				<td>{{doc.PMobile}}</td>
+				<td>{{doc.OrgName}}</td>
+				<td>{{doc.DepositStartTime|date:'yyyy-MM-dd HH:mm'}}</td>
+				<td>{{doc.DepositEndTime|date:'yyyy-MM-dd HH:mm'}}</td>
+				<td>{{doc.DepositType|DespTypechange}}</td>
+				<td><button class="btn btn-primary" type="button"
+						ng-click="fingerRecord(doc.AccountID)">查看打卡记录</button></td>
+				<td><button class="btn btn-primary" type="button"
+						ng-click="parentdetial(doc)">查看家长详情</button></td>
+			</tr>
+		</tbody>
+
+	</table>
+
+
+	<tm-pagination conf="paginationConf"></tm-pagination>
+</div>
+<!-- 
+<div style="margin-top: 20px;" class="table-responsive">
+	<p class="text-center" ng-if="isLoading">正在加载中 ...</p>
+	<table ng-table="tableParams"
+		class="table table-striped  tr:active,table tr:visited{ background:red}  table-hover  table-bordered table-responsive">
+		<tr ng-repeat="doc in document "
+			ng-Dblclick="editdeposit(doc.accountId)">
+			<td title="'孩子姓名'">{{doc.Name}}</td>
+			<td title="'家长姓名'">{{doc.PartentName}}</td>
+			<td title="'家长电话'">{{doc.Mobile}}</td>
+			<td title="'机构名称'">{{doc.OrgName}}</td>
+			<td title="'起托日期'">{{doc.DepositStartTime|date:'yyyy-MM-dd HH:mm'}}</td>
+			<td title="'离托日期'">{{doc.DepositEndTime|date:'yyyy-MM-dd HH:mm'}}
+			<td title="'托管类型'"><span>{{doc.DepositType|DespTypechange}}</span></td>
+			<td title="'打卡记录'"><button class="btn btn-primary" type="button"
+					ng-click="fingerRecord(doc.AccountID)">查看打卡记录</button></td>
+			<td title="'家长 详情'"><button class="btn btn-primary" type="button"
+					ng-click="parentdetial(doc)">查看家长详情</button></td>
+		</tr>
+	</table>
+
+	<tm-pagination conf="paginationConf"></tm-pagination>
+</div>
+ -->
+<!--<![endif]-->
