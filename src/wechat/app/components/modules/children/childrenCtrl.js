@@ -10,7 +10,8 @@
             vm.fingerprintLogs=[];
             vm.fingerprintLogSample=[];
             vm.messages=[];
-
+            vm.offset=0;
+            vm.limit=30;
             $scope.$on('$ionicView.afterEnter', activate);
 
             function activate() {
@@ -27,37 +28,24 @@
                 //    "country": "中国",
                 //    "headimgurl":  "http://wx.qlogo.cn/mmopen/g3MonUZtNHkdmzicIlibx6iaFqAc56vxLSUfpb6n5WKSYVY0ChQKkiaJSgQ1dZuTOgvLLrhJbERQQ4eMsv84eavHiaiceqxibJxCfHe/0"
                 //};
-                vm.getChildrenInfo(AuthService.getLoginID());
-
-                vm.getChildrenMsg(AuthService.getLoginID());
+                vm.getChildrenInfo(AuthService.getLoginID(),vm.offset,vm.limit);
 
                 vm.getChildren();
             };
 
-            vm.getChildrenInfo = function(pId){
-                childrenService.getChildrenSignIn(pId).then(function(data) {
+            vm.getChildrenInfo = function(pId,offset,limit){
+                childrenService.getChildrenAllInfo(pId,offset,limit).then(function(data) {
                     if (data.errno == 0) {
-                        console.log("getChildrenSignIn: ");
+                        console.log("getChildrenAllInfo: ");
                         console.log(data.data);
-                        vm.fingerprintLogs=data.data;
-                        for(var i=0;i<vm.fingerprintLogs.length;i++){
-                            vm.fingerprintLogSample[i]=vm.fingerprintLogs[i];
-                            if(i>=1){
-                                break;
-                            }
-                        }
-                        console.log(vm.fingerprintLogSample);
+                        if(vm.messages.length == 0)
+                            vm.messages=data.data;
+                        else
+                            vm.message.push(data.data);
+                        console.log(vm.messages);
+                        vm.offset+=data.data.length;
                     }else{
                         console.log(data);
-                    }
-                });
-            };
-            vm.getChildrenMsg = function(pId){
-                childrenService.getChildrenMsg(pId).then(function(data) {
-                    if (data.errno == 0) {
-                        console.log("getChildrenMsg: ");
-                        console.log(data.data);
-                        vm.msg = data.data;
                     }
                 });
             };
@@ -73,51 +61,27 @@
                 });
             };
 
+            vm.getImg = function(type){
+                if(type == 1){
+                    return {name:"就餐",src:"img/dinner.png"};
+                }else if(type == 2){
+                    return {name:"培训",src:"img/traning.png"};
+                }else if(type == 3){
+                    return {name:"活动",src:"img/play.png"};
+                }else if(type == 4){
+                    return {name:"作业",src:"img/homework.png"};
+                }else if(type == 5){
+                    return {name:"接入",src:"img/login.png"};
+                }else if(type == 6){
+                    return {name:"送到",src:"img/logout.png"};
+                }else{
+                    return {name:"未知信息类型",src:"img/unknown.png"};
+                }
+            };
+
             vm.goPhoto=function(msgIndex,index){
                 Session.temp=vm.msg[msgIndex];
                 StateService.go("photo",{index:index});
-            };
-
-            // {childuid: "40000003", childname: "赵小萌", timeline: Array[1]}
-            //childname:"赵小萌"
-            //childuid:"40000003"
-            //timeline:Array[1]
-            //0:Object
-            //clickcount:"0"
-            //createtime:"2016-08-12 09:29:36"
-            //depositid:"10000001"
-            //description:null
-            //infoid:"1"
-            //infotype:null
-            //latitude:null
-            //longitude:null
-            //photolink1:"http://a"
-            //photolink2:"http://b"
-            //photolink3:null
-            //photolink4:null
-            //photolink5:null
-            //photolink6:null
-            //publisherid:"0"
-            //status:"1"
-            vm.getMsg = function(childId){
-                childrenService.getMsg(childId).then(function(data) {
-                    if (data.errno == 0) {
-                        console.log(data.data);
-                        vm.msg = data.data;
-                    }
-                });
-            };
-            vm.getChildSignIn = function(childId,name){
-                childrenService.getChildSignIn(childId).then(function(data) {
-                    if (data.errno == 0 ) {
-                        data.data.forEach(function(item){
-                            item.childId=childId;
-                            item.childName=name;
-                            vm.fingerprintLogs.push(item);
-                        });
-                    }
-                    console.log(JSON.stringify(vm.fingerprintLogs));
-                });
             };
 
             vm.getChildren = function(){

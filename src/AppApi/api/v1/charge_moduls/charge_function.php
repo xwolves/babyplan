@@ -26,7 +26,7 @@ class Charge{
     public function insertParentOrder($a_request){
         try{
             if(!array_key_exists("parentid", $params) || !array_key_exists("orderid", $params))
-                return 16002; 
+                return 16002;
             $column = array("orderid", "parentid", "ordertype", "amount", "paystatus", "paytype", "paytime", "numofdays", "cutofftime", "businessid");
             $ar_params = array();
             foreach($a_request as $key => $val){
@@ -61,7 +61,7 @@ class Charge{
     public function updateParentOrder($a_request){
         try{
             if(!array_key_exists("parentid", $a_request) || !array_key_exists("orderid", $a_request))
-                return 16002; 
+                return 16002;
             $orderid = $a_request['orderid'];
             $parentid = $a_request['parentid'];
             $column = array("ordertype", "amount", "paystatus", "paytype", "paytime", "numofdays", "cutofftime", "businessid");
@@ -94,7 +94,7 @@ class Charge{
 
     public function getOrderListByParentid($parentid){
         try{
-            $sql_str = "select * from tb_parent_order where parentid=:parentid";
+            $sql_str = "select * from tb_parent_order where parentid=:parentid order by modifytime desc";
             $stmt = $this->DB->prepare($sql_str);
             $stmt->bindParam(":parentid", intval($parentid), PDO::PARAM_INT);
             if (!$stmt->execute())

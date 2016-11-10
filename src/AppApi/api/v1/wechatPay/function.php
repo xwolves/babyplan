@@ -107,18 +107,31 @@ function createOrder($app,$sql_db){
 
 function updateParentOrder($a_request,$app,$sql_db){
     try{
-        if(!array_key_exists("orderId", $a_request) || !array_key_exists("payTime", $a_request) || !array_key_exists("payState", $a_request))
+        if(!array_key_exists("orderId", $a_request) || !array_key_exists("payTime", $a_request)
+        || !array_key_exists("payState", $a_request))
             return 16002;
         $orderid = $a_request['orderId'];
         $paytime = $a_request['payTime'];
         $paystatus = $a_request['payState'];
+        $parentid = substr($orderid,0,8);
+        $sql_str = "SELECT cutofftime FROM tb_parent_order WHERE paytime = (SELECT MAX(paytime) FROM tb_parent_order WHERE parentid = :parentid AND paystatus = 1)";
+        $stmt = $sql_db->prepare($sql_str);
+        $stmt->bindParam(":parentid", intval($parentid), PDO::PARAM_INT);
+        if(!$stmt->execute())
+            return 10001;
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        $cutofftime = "";
+        if($row)
+            $cutofftime = $row['cutofftime'];
         $sql_str = "UPDATE tb_parent_order SET modifytime=now(), paystatus=:paystatus, paytime=str_to_date(:paytime, '%Y%m%d%H%i%s'),
-            cutofftime=date_add(:pt, INTERVAL numofdays DAY) where orderid=:orderid";
-
+            cutofftime=date_add(str_to_date(:pt, '%Y%m%d%H%i%s'), INTERVAL numofdays DAY) where orderid=:orderid";
         $stmt = $sql_db->prepare($sql_str);
         $stmt->bindParam(":paystatus", intval($paystatus), PDO::PARAM_INT);
         $stmt->bindParam(":paytime", $paytime, PDO::PARAM_STR);
-        $stmt->bindParam(":pt", $paytime, PDO::PARAM_STR);
+        if(empty($cutofftime))
+            $stmt->bindParam(":pt", $paytime, PDO::PARAM_STR);
+        else
+            $stmt->bindParam(":pt", $cutofftime, PDO::PARAM_STR);
         $stmt->bindParam(":orderid", $orderid, PDO::PARAM_STR);
         if(!$stmt->execute())
             return 10001;
@@ -155,7 +168,9 @@ function queryOrder($app,$orderId,$sql_db){
         $rsp_data['orderId'] = $order['out_trade_no'];
         $rsp_data['wechatOrderId'] = $order['transaction_id'];
         $rsp_data['totalFee'] = $order['total_fee'];
-        $rsp_data['payState'] = $order['trade_state'];
+        if($order['trade_state']=='SUCCESS')$state=1;
+        else $state=0;
+        $rsp_data['payState'] = $state;
         $rsp_data['payTime'] = $order['time_end'];
         $result=updateParentOrder($rsp_data, $app, $sql_db);
         $response->setBody(rspData($result));

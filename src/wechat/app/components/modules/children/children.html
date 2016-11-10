@@ -1,63 +1,54 @@
-<ion-view view-title="孩子托管信息">
+<ion-view view-title="{{vm.parent.wechat.nickname}} 孩子信息流">
     <ion-content>
-        <div class="header" style="height: 20%;background-color: #10AEFF">
-            <div id="parent" style="text-align: center;">
-                <div style="display:inline-block;margin-top: 20px;">
-                    <!-- wechat.pic -->
-                    <img style="float: left;" ng-src="{{vm.parent.wechat.headimgurl}}"
+
+        <div class="msg_flow" ng-repeat="item in vm.messages track by $index">
+            <!--指纹-->
+
+            <div ng-if="item.datatype!='1'" class="item item-avatar">
+                    <!--图片-->
+                    <img class="weui_media_appmsg_thumb" src="./img/finger.png" alt="指纹记录">
+                    <!-- title --><!--time|mytime--><!--<span style="float: right">{{item.CreateTime}}</span>-->
+                    <h2 class="weui_media_title">{{item.childname}}于{{item.CreateTime}} 指纹打卡</h2>
+                    <!--deposit-->
+                    <p class="weui_media_desc">{{item.DepositID}}</p>
+            </div>
+            <!--信息-->
+            <div ng-if="item.datatype!='2'">
+                <div  class="item item-avatar" style="background: #eeeeee"><!--图片--><!-- title --><!--deposit--><!--time-->
+                    <!--图片-->
+                    <img class="weui_media_appmsg_thumb" ng-src="{{vm.getImg(item.InfoType).src}}" alt="在校信息">
+                    <!-- title --><!--time|mytime-->
+                    <h2 class="weui_media_title">{{vm.getImg(item.InfoType).name}}<span style="float: right">{{item.CreateTime}}</span></h2>
+                    <!--deposit-->
+                    <p class="weui_media_desc">{{item.DepositID}}</p>
+                </div>
+                <!--message-->
+                <p class="weui_media_desc" ng-if="item.Description">{{item.Description}}</p>
+                <!--photo--><!--photo--><!--photo-->
+                <!--photo--><!--photo--><!--photo-->
+                <div style="display:inline-block;" ng-if="item.PhotoLink1">
+                    <img style="float: left;" ng-src="{{item.PhotoLink1|ImageMin}}" ng-click="goToSlide(0,item)"
                          onload='if (this.width>64 || this.height>100) if (this.width/this.height>64/100) this.width=64; else this.height=100;' >
-                    <div style="float: left;margin-top: 10px; margin-left: 10px;">
-                        <!-- wechat.name -->
-                        <h4>{{vm.parent.wechat.nickname}}</h4>
-                        <p style="margin-top: -10px;">{{vm.parent.title}}</p>
-                    </div>
+                    <img style="float: left;" ng-src="{{item.PhotoLink2|ImageMin}}"  ng-if="item.PhotoLink2" ng-click="goToSlide(1,item)"
+                         onload='if (this.width>64 || this.height>100) if (this.width/this.height>64/100) this.width=64; else this.height=100;' >
+                    <img style="float: left;" ng-src="{{item.PhotoLink3|ImageMin}}"  ng-if="item.PhotoLink3" ng-click="goToSlide(2,item)"
+                         onload='if (this.width>64 || this.height>100) if (this.width/this.height>64/100) this.width=64; else this.height=100;' >
                 </div>
-            </div>
-        </div>
-        <div class="msg_flow">
-            <h4>打卡记录</h4>
-            <div class="weui_panel weui_panel_access">
-            <div class="weui_panel_bd">
-                <div class="weui_media_box weui_media_text" ng-repeat="item in vm.fingerprintLogSample">
-                    <h4 class="weui_media_title">{{item.childName}}</h4>
-                    <p class="weui_media_desc">{{item.signintime}} <br>于指纹机{{item.deviceid}}中记录指纹</p>
+                <div style="display:inline-block;" ng-if="item.PhotoLink4">
+                    <img style="float: left;" ng-src="{{item.PhotoLink4|ImageMin}}" ng-click="vm.goPhoto(3,item)"
+                         onload='if (this.width>64 || this.height>100) if (this.width/this.height>64/100) this.width=64; else this.height=100;' >
+                    <img style="float: left;" ng-src="{{item.PhotoLink5|ImageMin}}"  ng-if="item.PhotoLink5" ng-click="goToSlide(4,item)"
+                         onload='if (this.width>64 || this.height>100) if (this.width/this.height>64/100) this.width=64; else this.height=100;' >
+                    <img style="float: left;" ng-src="{{item.PhotoLink6|ImageMin}}"  ng-if="item.PhotoLink6" ng-click="goToSlide(5,item)"
+                         onload='if (this.width>64 || this.height>100) if (this.width/this.height>64/100) this.width=64; else this.height=100;' >
                 </div>
-            </div>
-            <a ui-sref="tabs.childrenSignIn" class="weui_panel_ft">查看更多</a>
-        </div>
-            <h4>托管情况</h4>
-            <div class="weui_panel_bd">
-
-                <div class="weui_media_box weui_media_appmsg" ng-repeat="item in vm.msg">
-                    <div class="weui_media_hd">
-                        <img class="weui_media_appmsg_thumb" src="./img/title.png" alt="小孩的头像">
-                    </div>
-                    <div class="weui_media_box weui_media_text">
-                        <h4 class="weui_media_title">{{item.childrenName}}</h4>
-                        <p class="weui_media_desc" ng-if="item.description">{{item.description}}</p>
-                        <div style="display:inline-block;" ng-if="item.photolink1">
-                            <img style="float: left;" ng-src="{{item.photolink1|ImageMin}}" ng-click="goToSlide(0,item)"
-                                 onload='if (this.width>64 || this.height>100) if (this.width/this.height>64/100) this.width=64; else this.height=100;' >
-                            <img style="float: left;" ng-src="{{item.photolink2|ImageMin}}"  ng-if="item.photolink2" ng-click="goToSlide(1,item)"
-                                 onload='if (this.width>64 || this.height>100) if (this.width/this.height>64/100) this.width=64; else this.height=100;' >
-                            <img style="float: left;" ng-src="{{item.photolink3|ImageMin}}"  ng-if="item.photolink3" ng-click="goToSlide(2,item)"
-                                 onload='if (this.width>64 || this.height>100) if (this.width/this.height>64/100) this.width=64; else this.height=100;' >
-                        </div>
-                        <div style="display:inline-block;" ng-if="item.photolink4">
-                            <img style="float: left;" ng-src="{{item.photolink4|ImageMin}}" ng-click="vm.goPhoto(3,item)"
-                                 onload='if (this.width>64 || this.height>100) if (this.width/this.height>64/100) this.width=64; else this.height=100;' >
-                            <img style="float: left;" ng-src="{{item.photolink5|ImageMin}}"  ng-if="item.photolink5" ng-click="goToSlide(4,item)"
-                                 onload='if (this.width>64 || this.height>100) if (this.width/this.height>64/100) this.width=64; else this.height=100;' >
-                            <img style="float: left;" ng-src="{{item.photolink6|ImageMin}}"  ng-if="item.photolink6" ng-click="goToSlide(5,item)"
-                                 onload='if (this.width>64 || this.height>100) if (this.width/this.height>64/100) this.width=64; else this.height=100;' >
-                        </div>
-                        <ul class="weui_media_info">
-                            <li class="weui_media_info_meta">来自{{item.publisherid}}老师</li>
-                            <li class="weui_media_info_meta weui_media_info_meta_extra">{{item.createtime|dateChange}}</li>
-                            <li class="weui_media_info_meta weui_media_info_meta_extra">{{item.clickcount}}</li>
-                        </ul>
-                    </div>
-
+                <div>
+                    <hr>
+                    <!--like 来自{{item.PublisherID}}老师 comment-->
+                    <p>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<i class="ion-heart">&nbsp;{{item.StarCount}}</i>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<i class="ion-at">&nbsp;{{item.StarCount}}</i>
+                    </p>
                 </div>
             </div>
 

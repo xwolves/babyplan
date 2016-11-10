@@ -557,7 +557,7 @@ app.filter('statusChange', function () {
             'appTitle':'托管系统',
             'serverUrl': '/api/v1/',
             'dfsUrl': '/',
-            'buildID': '20161108v2',
+            'buildID': '20161110v1',
             'ENVIRONMENT':'release'
         });
 }());
@@ -648,37 +648,6 @@ Date.prototype.Format = function(fmt) {
   angular.module('tools', [
     
   ]);
-
-}());
-
-(function() {
-  "use strict";
-  angular.module('commentModule', [
-    'commentService'
-  ]);
-
-}());
-
-(function() {
-  'use strict';
-
-  angular.module('commentService', [])
-    .factory('commentService', commentService);
-
-  function commentService($q, $http, Constants, ResultHandler) {
-    'ngInject';
-    var service = {
-        queryDepositComment:queryDepositComment
-    };
-
-    //http://172.18.1.166/api/v1/comment/deposit/fetch/:depositid
-    function queryDepositComment(id) {
-        var url = Constants.serverUrl + 'comment/deposit/fetch/'+id;
-        return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
-    };
-
-    return service;
-  }
 
 }());
 
@@ -849,8 +818,8 @@ Date.prototype.Format = function(fmt) {
                 vm.type = $stateParams.type;
                 console.log("vm.type = "+vm.type+" with "+vm.user);
             /////////////////////////////////////////////////////////
-            //    vm.user = "o_Nkcw4CsZh5dbE2v8XVLUxfd96A";//"oVyGDuNPkAbtljfJKusP4oaCrYG0";//test
-            //    vm.type = 3;//test
+            //    vm.user = "oVyGDuNPkAbtljfJKusP4oaCrYG0";//test "o_Nkcw4CsZh5dbE2v8XVLUxfd96A";//
+            //    vm.type = 2;//test
             ////////////////////////////////////////////////////////
                 //MessageToaster.info('user = '+vm.user);
                 if (vm.user) {
@@ -978,6 +947,202 @@ Date.prototype.Format = function(fmt) {
     "use strict";
     angular.module('childrenCtrl', [])
         .controller('childrenCtrl', function($scope, Constants,childrenService,AuthService,Session, StateService,$ionicModal, $ionicSlideBoxDelegate) {
+            'ngInject';
+            console.log("childrenCtrl");
+            var vm = this;
+            vm.activated = false;
+            vm.parent={};
+            vm.fingerprintLogs=[];
+            vm.fingerprintLogSample=[];
+            vm.messages=[];
+            vm.offset=0;
+            vm.limit=30;
+            $scope.$on('$ionicView.afterEnter', activate);
+
+            function activate() {
+                vm.activated = true;
+                vm.version = Constants.buildID;
+                //从微信获取家长的基本信息
+                vm.getWechatInfo(AuthService.getWechatId());
+                //vm.parent.wechat={
+                //    "nickname": "Band",
+                //    "sex": 1,
+                //    "language": "zh_CN",
+                //    "city": "广州",
+                //    "province": "广东",
+                //    "country": "中国",
+                //    "headimgurl":  "http://wx.qlogo.cn/mmopen/g3MonUZtNHkdmzicIlibx6iaFqAc56vxLSUfpb6n5WKSYVY0ChQKkiaJSgQ1dZuTOgvLLrhJbERQQ4eMsv84eavHiaiceqxibJxCfHe/0"
+                //};
+                vm.getChildrenInfo(AuthService.getLoginID(),vm.offset,vm.limit);
+
+                vm.getChildren();
+            };
+
+            vm.getChildrenInfo = function(pId,offset,limit){
+                childrenService.getChildrenAllInfo(pId,offset,limit).then(function(data) {
+                    if (data.errno == 0) {
+                        console.log("getChildrenAllInfo: ");
+                        console.log(data.data);
+                        if(vm.messages.length == 0)
+                            vm.messages=data.data;
+                        else
+                            vm.message.push(data.data);
+                        console.log(vm.messages);
+                        vm.offset+=data.data.length;
+                    }else{
+                        console.log(data);
+                    }
+                });
+            };
+
+            vm.getWechatInfo = function(wId){
+                console.log("wechat id : "+wId);
+                childrenService.getWechatInfo(wId).then(function(data) {
+                    if (data.errno == 0) {
+                        console.log("wechat info: ");
+                        console.log(data.data);
+                        vm.parent.wechat = data.data;
+                    }
+                });
+            };
+
+            vm.getImg = function(type){
+                if(type == 1){
+                    return {name:"就餐",src:"img/dinner.png"};
+                }else if(type == 2){
+                    return {name:"培训",src:"img/traning.png"};
+                }else if(type == 3){
+                    return {name:"活动",src:"img/play.png"};
+                }else if(type == 4){
+                    return {name:"作业",src:"img/homework.png"};
+                }else if(type == 5){
+                    return {name:"接入",src:"img/login.png"};
+                }else if(type == 6){
+                    return {name:"送到",src:"img/logout.png"};
+                }else{
+                    return {name:"未知信息类型",src:"img/unknown.png"};
+                }
+            };
+
+            vm.goPhoto=function(msgIndex,index){
+                Session.temp=vm.msg[msgIndex];
+                StateService.go("photo",{index:index});
+            };
+
+            vm.getChildren = function(){
+                childrenService.getChildren(AuthService.getLoginID()).then(function(data) {
+                    var title="";
+                    if (data.errno == 0) {
+                        console.log(data.data);
+                        vm.childs = data.data;
+                        for(var i=0;i<vm.childs.length;i++){
+                            if(i==vm.childs.length-1)
+                                title+=(vm.childs[i].name+"的家长");
+                            else
+                                title+=(vm.childs[i].name+",");
+                            //vm.getMsg(vm.childs[i].uid);
+                            //vm.getChildSignIn(vm.childs[i].uid,vm.childs[i].name);
+                        }
+                        vm.parent.title=title;
+                    }
+                    //vm.fingerprintLogs.sort(function(a,b){return a.log-b.log});
+                });
+            };
+
+            vm.getImages=function(msg){
+                vm.imgCount=0;
+                if(msg.photolink1!=null && msg.photolink1!=""){
+                    var data={src:msg.photolink1,msg:''};
+                    vm.images[vm.imgCount]=data;
+                    vm.imgCount++;
+                }
+                if(msg.photolink2!=null && msg.photolink2!=""){
+                    var data={src:msg.photolink2,msg:''};
+                    vm.images[vm.imgCount]=data;
+                    vm.imgCount++;
+                }
+                if(msg.photolink3!=null && msg.photolink3!=""){
+                    var data={src:msg.photolink3,msg:''};
+                    vm.images[vm.imgCount]=data;
+                    vm.imgCount++;
+                }
+                if(msg.photolink4!=null && msg.photolink4!=""){
+                    var data={src:msg.photolink4,msg:''};
+                    vm.images[vm.imgCount]=data;
+                    vm.imgCount++;
+                }
+                if(msg.photolink5!=null && msg.photolink5!=""){
+                    var data={src:msg.photolink5,msg:''};
+                    vm.images[vm.imgCount]=data;
+                    vm.imgCount++;
+                }
+                if(msg.photolink6!=null && msg.photolink6!=""){
+                    var data={src:msg.photolink6,msg:''};
+                    vm.images[vm.imgCount]=data;
+                    vm.imgCount++;
+                }
+                console.log(vm.images);
+            };
+
+            $ionicModal.fromTemplateUrl('message/image-modal.html', {
+                scope: $scope,
+                animation: 'slide-in-up'
+            }).then(function(modal) {
+                $scope.modal = modal;
+            });
+
+            $scope.openModal = function() {
+                $ionicSlideBoxDelegate.slide(0);
+                $scope.modal.show();
+            };
+
+            $scope.closeModal = function() {
+                $scope.modal.hide();
+            };
+
+            // Cleanup the modal when we're done with it!
+            $scope.$on('$destroy', function() {
+                $scope.modal.remove();
+            });
+            // Execute action on hide modal
+            $scope.$on('modal.hide', function() {
+                // Execute action
+            });
+            // Execute action on remove modal
+            $scope.$on('modal.removed', function() {
+                // Execute action
+            });
+            $scope.$on('modal.shown', function() {
+                console.log('Modal is shown!');
+            });
+
+            // Call this functions if you need to manually control the slides
+            $scope.next = function() {
+                $ionicSlideBoxDelegate.next();
+            };
+
+            $scope.previous = function() {
+                $ionicSlideBoxDelegate.previous();
+            };
+
+            $scope.goToSlide = function(index,msg) {
+                vm.images=[];
+                vm.getImages(msg);
+                $scope.modal.show();
+                $ionicSlideBoxDelegate.slide(index);
+            };
+
+            // Called each time the slide changes
+            $scope.slideChanged = function(index) {
+                $scope.slideIndex = index;
+            };
+        });
+}());
+
+(function() {
+    "use strict";
+    angular.module('childrenCtrl_old', [])
+        .controller('childrenCtrl_old', function($scope, Constants,childrenService,AuthService,Session, StateService,$ionicModal, $ionicSlideBoxDelegate) {
             'ngInject';
             console.log("childrenCtrl");
             var vm = this;
@@ -1253,7 +1418,8 @@ Date.prototype.Format = function(fmt) {
       getChildren:getChildren,
       getChildSignIn:getChildSignIn,
       getChildrenSignIn:getChildrenSignIn,
-      getWechatInfo:getWechatInfo
+      getWechatInfo:getWechatInfo,
+      getChildrenAllInfo:getChildrenAllInfo
     };
 
     //字段名	类型	备注
@@ -1354,6 +1520,11 @@ Date.prototype.Format = function(fmt) {
         return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
     };
 
+    function getChildrenAllInfo(parentId,offset,count){
+        var url = Constants.serverUrl + 'parent/childrenInformation/fetch/'+parentId+'?offset='+offset+'&limitcount='+count;
+        return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
+    }
+
     function getWechatInfo(wid) {
         var url = Constants.serverUrl + 'wechat/'+wid;
         return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
@@ -1365,6 +1536,63 @@ Date.prototype.Format = function(fmt) {
   }
 
 
+}());
+
+(function() {
+    "use strict";
+    angular.module('childrenEditCtrl', [])
+        .controller('childrenEditCtrl', function($scope, $stateParams, Constants, StateService,childrenSettingService,AuthService,Session) {
+            'ngInject';
+            var vm = this;
+            vm.activated = false;
+
+            vm.query = function(id){
+                console.log("child id = "+id);
+                vm.child=Session.temp;
+            };
+
+            $scope.$on('$ionicView.afterEnter', activate);
+
+            function activate() {
+                console.log($stateParams);
+                vm.cid = $stateParams.cid;
+                //0:query 1:create 2:update
+                vm.type = $stateParams.type;
+                if(vm.type=='0')vm.isEditing = false;
+                else vm.isEditing = true;
+
+                vm.activated = true;
+                vm.version = Constants.buildID;
+
+                if(vm.type!='1')vm.query(vm.cid);
+                else vm.child = {name:'',sex:'',remark:'',relationship:''};
+            }
+
+            vm.back=function(){
+                StateService.back();
+            };
+
+            vm.save=function(){
+                //save
+                if(vm.type=='1'){
+                    //create
+                    childrenSettingService.registerChildren(vm.child,AuthService.getLoginID()).then(function(data) {
+                        if (data.errno == 0) {
+                            //var userId = data.data.uid;
+                            //wxlogin(vm.user.wechat);
+                            StateService.back();
+                        }
+                    });
+
+                }else{
+                    //update
+                    StateService.back();
+                }
+
+            };
+
+
+        });
 }());
 
 (function() {
@@ -1585,6 +1813,37 @@ Date.prototype.Format = function(fmt) {
     return service;
 
 
+  }
+
+}());
+
+(function() {
+  "use strict";
+  angular.module('commentModule', [
+    'commentService'
+  ]);
+
+}());
+
+(function() {
+  'use strict';
+
+  angular.module('commentService', [])
+    .factory('commentService', commentService);
+
+  function commentService($q, $http, Constants, ResultHandler) {
+    'ngInject';
+    var service = {
+        queryDepositComment:queryDepositComment
+    };
+
+    //http://172.18.1.166/api/v1/comment/deposit/fetch/:depositid
+    function queryDepositComment(id) {
+        var url = Constants.serverUrl + 'comment/deposit/fetch/'+id;
+        return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
+    };
+
+    return service;
   }
 
 }());
@@ -3119,6 +3378,121 @@ Date.prototype.Format = function(fmt) {
 
 (function() {
   "use strict";
+  angular.module('photoModule', [
+    'photoCtrl',
+    'photoRouter'
+  ]);
+
+}());
+
+(function() {
+    "use strict";
+    angular.module('photoCtrl', [])
+        .controller('photoCtrl', function($scope, Constants,$stateParams,Session,StateService,$ionicSlideBoxDelegate,$timeout) {
+            'ngInject';
+            var vm = this;
+            vm.activated = false;
+            $scope.$on('$ionicView.afterEnter', activate);
+
+            function activate() {
+                vm.activated = true;
+                vm.version = Constants.buildID;
+                vm.msg=Session.temp;
+                vm.images=[];
+                vm.imgCount=0;
+                if(vm.msg.photolink1!=null && vm.msg.photolink1!=""){
+                    vm.images[vm.imgCount]=vm.msg.photolink1;
+                    vm.imgCount++;
+                }
+                if(vm.msg.photolink2!=null && vm.msg.photolink2!=""){
+                    vm.images[vm.imgCount]=vm.msg.photolink2;
+                    vm.imgCount++;
+                }
+                if(vm.msg.photolink3!=null && vm.msg.photolink3!=""){
+                    vm.images[vm.imgCount]=vm.msg.photolink3;
+                    vm.imgCount++;
+                }
+                if(vm.msg.photolink4!=null && vm.msg.photolink4!=""){
+                    vm.images[vm.imgCount]=vm.msg.photolink4;
+                    vm.imgCount++;
+                }
+                if(vm.msg.photolink5!=null && vm.msg.photolink5!=""){
+                    vm.images[vm.imgCount]=vm.msg.photolink5;
+                    vm.imgCount++;
+                }
+                if(vm.msg.photolink6!=null && vm.msg.photolink6!=""){
+                    vm.images[vm.imgCount]=vm.msg.photolink6;
+                    vm.imgCount++;
+                }
+                console.log(vm.images);
+                vm.index=$stateParams.index;
+                console.log(vm.index);
+                //vm.image=vm.images[vm.index];
+                $timeout(function(){
+                    $scope.slider.slideTo(vm.index);
+                    $scope.slider.updateLoop();
+                    //$ionicSlideBoxDelegate.enableSlide(true);
+                    //$ionicSlideBoxDelegate.slide(vm.index);
+                    //console.log($ionicSlideBoxDelegate.currentIndex()+" - "+$ionicSlideBoxDelegate.slidesCount());
+                }, 300);
+
+            }
+            vm.back=function(){
+                StateService.back();
+            };
+
+            $scope.options = {
+                loop: false
+            }
+
+            $scope.$on("$ionicSlides.sliderInitialized", function(event, data){
+                // data.slider is the instance of Swiper
+                console.log(data);
+                $scope.slider = data.slider;
+            });
+
+            $scope.$on("$ionicSlides.slideChangeStart", function(event, data){
+                console.log('Slide change is beginning');
+                //console.log(event);
+                //console.log(data);
+            });
+
+            $scope.$on("$ionicSlides.slideChangeEnd", function(event, data){
+                // note: the indexes are 0-based
+                //console.log(event);
+                console.log($scope.slider.activeIndex+" - "+$scope.slider.previousIndex);
+                //$scope.activeIndex = data.activeIndex;
+                //$scope.previousIndex = data.previousIndex;
+                //console.log('Slide from '+data.previousIndex +' to '+data.activeIndex);
+            });
+        });
+}());
+
+(function() {
+  'use strict';
+
+  angular.module('photoRouter', [])
+    .config(myRouter);
+
+
+  function myRouter($stateProvider, $urlRouterProvider) {
+    'ngInject';
+    $stateProvider
+        .state('photo', {
+          url: "/photo?:index",
+          params:{
+            index:0
+          },
+          templateUrl: 'photo/photo.html',
+          controller: 'photoCtrl',
+          controllerAs: 'vm'
+        })
+      ;
+  }
+}());
+
+(function() {
+  "use strict";
   angular.module('profileModule', [
     'profileCtrl',
     'profileRouter',
@@ -3558,307 +3932,6 @@ Date.prototype.Format = function(fmt) {
 
 (function() {
   "use strict";
-  angular.module('photoModule', [
-    'photoCtrl',
-    'photoRouter'
-  ]);
-
-}());
-
-(function() {
-    "use strict";
-    angular.module('photoCtrl', [])
-        .controller('photoCtrl', function($scope, Constants,$stateParams,Session,StateService,$ionicSlideBoxDelegate,$timeout) {
-            'ngInject';
-            var vm = this;
-            vm.activated = false;
-            $scope.$on('$ionicView.afterEnter', activate);
-
-            function activate() {
-                vm.activated = true;
-                vm.version = Constants.buildID;
-                vm.msg=Session.temp;
-                vm.images=[];
-                vm.imgCount=0;
-                if(vm.msg.photolink1!=null && vm.msg.photolink1!=""){
-                    vm.images[vm.imgCount]=vm.msg.photolink1;
-                    vm.imgCount++;
-                }
-                if(vm.msg.photolink2!=null && vm.msg.photolink2!=""){
-                    vm.images[vm.imgCount]=vm.msg.photolink2;
-                    vm.imgCount++;
-                }
-                if(vm.msg.photolink3!=null && vm.msg.photolink3!=""){
-                    vm.images[vm.imgCount]=vm.msg.photolink3;
-                    vm.imgCount++;
-                }
-                if(vm.msg.photolink4!=null && vm.msg.photolink4!=""){
-                    vm.images[vm.imgCount]=vm.msg.photolink4;
-                    vm.imgCount++;
-                }
-                if(vm.msg.photolink5!=null && vm.msg.photolink5!=""){
-                    vm.images[vm.imgCount]=vm.msg.photolink5;
-                    vm.imgCount++;
-                }
-                if(vm.msg.photolink6!=null && vm.msg.photolink6!=""){
-                    vm.images[vm.imgCount]=vm.msg.photolink6;
-                    vm.imgCount++;
-                }
-                console.log(vm.images);
-                vm.index=$stateParams.index;
-                console.log(vm.index);
-                //vm.image=vm.images[vm.index];
-                $timeout(function(){
-                    $scope.slider.slideTo(vm.index);
-                    $scope.slider.updateLoop();
-                    //$ionicSlideBoxDelegate.enableSlide(true);
-                    //$ionicSlideBoxDelegate.slide(vm.index);
-                    //console.log($ionicSlideBoxDelegate.currentIndex()+" - "+$ionicSlideBoxDelegate.slidesCount());
-                }, 300);
-
-            }
-            vm.back=function(){
-                StateService.back();
-            };
-
-            $scope.options = {
-                loop: false
-            }
-
-            $scope.$on("$ionicSlides.sliderInitialized", function(event, data){
-                // data.slider is the instance of Swiper
-                console.log(data);
-                $scope.slider = data.slider;
-            });
-
-            $scope.$on("$ionicSlides.slideChangeStart", function(event, data){
-                console.log('Slide change is beginning');
-                //console.log(event);
-                //console.log(data);
-            });
-
-            $scope.$on("$ionicSlides.slideChangeEnd", function(event, data){
-                // note: the indexes are 0-based
-                //console.log(event);
-                console.log($scope.slider.activeIndex+" - "+$scope.slider.previousIndex);
-                //$scope.activeIndex = data.activeIndex;
-                //$scope.previousIndex = data.previousIndex;
-                //console.log('Slide from '+data.previousIndex +' to '+data.activeIndex);
-            });
-        });
-}());
-
-(function() {
-  'use strict';
-
-  angular.module('photoRouter', [])
-    .config(myRouter);
-
-
-  function myRouter($stateProvider, $urlRouterProvider) {
-    'ngInject';
-    $stateProvider
-        .state('photo', {
-          url: "/photo?:index",
-          params:{
-            index:0
-          },
-          templateUrl: 'photo/photo.html',
-          controller: 'photoCtrl',
-          controllerAs: 'vm'
-        })
-      ;
-  }
-}());
-
-(function() {
-  "use strict";
-  angular.module('tabsModule', [
-    'tabsCtrl',
-    'tabsRouter',
-    'tabsService'
-  ]);
-
-}());
-
-(function() {
-  "use strict";
-  angular.module('tabsCtrl', [])
-    .controller('tabsCtrl', function($scope,tabsService,StateService,AuthService) {
-      'ngInject';
-      var vm = this;
-      vm.activated = false;
-
-      vm.who=AuthService.getUserRole();
-      //vm.slideBoxImgs = homeService.getSlideBoxImgs();
-      //vm.homeOptions = homeService.getHomeOptions();
-      vm.goState = StateService.go;
-      $scope.$on('$ionicView.afterEnter', activate);
-      function activate() {
-        vm.activated = true;
-      }
-      function goState(state){
-        StateService.go(state);
-      }
-    });
-}());
-
-(function() {
-  'use strict';
-
-  angular.module('tabsRouter', [])
-    .config(myRouter);
-
-
-  function myRouter($stateProvider, $urlRouterProvider) {
-    'ngInject';
-    $stateProvider
-      .state('tabs', {
-        url: '/tabs',
-        abstract: true,
-        templateUrl: 'tabs/tabs.html',
-        controller: 'tabsCtrl',
-        controllerAs: 'vm'
-      })
-  }
-
-}());
-
-(function() {
-    'use strict';
-
-    angular.module('tabsService', [])
-        .factory('tabsService', tabsService);
-
-    function tabsService($q, $http) {
-        'ngInject';
-        var service = {
-            getHomeOptions: getHomeOptions,
-            getSlideBoxImgs: getSlideBoxImgs
-        };
-
-        function getHomeOptions() {
-            return [{
-                label: '填写信息',
-                iconSrc: 'img/home_icon1.png',
-                state: 'PersonalDetails',
-                textColor:"#DC5858"
-            }, {
-                label: '到校方式',
-                iconSrc: 'img/home_icon2.png',
-                state: 'PersonalDetails',
-                textColor:"#5976DF"
-            }, {
-                label: '新生报到',
-                iconSrc: 'img/home_icon3.png',
-                state: 'Register',
-                textColor:"#27CAD4"
-            }, {
-                label: '修改密码',
-                iconSrc: 'img/home_icon4.png',
-                state: 'ModifyPsw',
-                textColor:"#DC75E0"
-            }, {
-                label: '关于应用',
-                iconSrc: 'img/home_icon5.png',
-                state: 'About',
-                textColor:"#75E084"
-            }]
-        }
-
-        function getSlideBoxImgs() {
-            return [{
-                index: 0,
-                src: "img/home_bg1.png"
-            }, {
-                index: 1,
-                src: "img/home_bg2.png"
-            }, {
-                index: 2,
-                src: "img/home_bg3.png"
-            }];
-        }
-        return service;
-
-
-    }
-
-}());
-
-(function() {
-  "use strict";
-  angular.module('teacherSettingModule', [
-    'teacherSettingCtrl',
-    'teacherSettingRouter',
-    'teacherSettingService'
-  ]);
-
-}());
-
-(function() {
-    "use strict";
-    angular.module('teacherSettingCtrl', [])
-        .controller('teacherSettingCtrl', function($scope, $state, Constants, StateService) {
-            'ngInject';
-            var vm = this;
-            vm.activated = false;
-            $scope.$on('$ionicView.afterEnter', activate);
-
-            function activate() {
-                vm.activated = true;
-                vm.version = Constants.buildID;
-            }
-
-            vm.goTo = function(addr){
-                console.log(addr);
-                StateService.go(addr);
-            };
-
-        });
-}());
-
-(function() {
-  'use strict';
-
-  angular.module('teacherSettingRouter', [])
-    .config(myRouter);
-
-
-  function myRouter($stateProvider, $urlRouterProvider) {
-    'ngInject';
-    $stateProvider
-      .state('tabs.teacherSetting', {
-        url: "/teacherSetting",
-          views: {
-            'tab-teacherSetting': {
-              templateUrl: 'teacherSetting/teacherSetting.html',
-              controller: 'teacherSettingCtrl',
-              controllerAs: 'vm'
-            }
-          }
-      });
-  }
-}());
-
-(function() {
-  'use strict';
-
-  angular.module('teacherSettingService', [])
-    .factory('teacherSettingService', myService);
-
-  function myService( $q, $http) {
-    'ngInject';
-    var service = {
-    };
-    return service;
-
-
-  }
-
-}());
-
-(function() {
-  "use strict";
   angular.module('teacherModule', [
     'teacherCtrl',
     'teacherEditCtrl',
@@ -4111,6 +4184,192 @@ Date.prototype.Format = function(fmt) {
       return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
     };
 
+    return service;
+
+
+  }
+
+}());
+
+(function() {
+  "use strict";
+  angular.module('tabsModule', [
+    'tabsCtrl',
+    'tabsRouter',
+    'tabsService'
+  ]);
+
+}());
+
+(function() {
+  "use strict";
+  angular.module('tabsCtrl', [])
+    .controller('tabsCtrl', function($scope,tabsService,StateService,AuthService) {
+      'ngInject';
+      var vm = this;
+      vm.activated = false;
+
+      vm.who=AuthService.getUserRole();
+      //vm.slideBoxImgs = homeService.getSlideBoxImgs();
+      //vm.homeOptions = homeService.getHomeOptions();
+      vm.goState = StateService.go;
+      $scope.$on('$ionicView.afterEnter', activate);
+      function activate() {
+        vm.activated = true;
+      }
+      function goState(state){
+        StateService.go(state);
+      }
+    });
+}());
+
+(function() {
+  'use strict';
+
+  angular.module('tabsRouter', [])
+    .config(myRouter);
+
+
+  function myRouter($stateProvider, $urlRouterProvider) {
+    'ngInject';
+    $stateProvider
+      .state('tabs', {
+        url: '/tabs',
+        abstract: true,
+        templateUrl: 'tabs/tabs.html',
+        controller: 'tabsCtrl',
+        controllerAs: 'vm'
+      })
+  }
+
+}());
+
+(function() {
+    'use strict';
+
+    angular.module('tabsService', [])
+        .factory('tabsService', tabsService);
+
+    function tabsService($q, $http) {
+        'ngInject';
+        var service = {
+            getHomeOptions: getHomeOptions,
+            getSlideBoxImgs: getSlideBoxImgs
+        };
+
+        function getHomeOptions() {
+            return [{
+                label: '填写信息',
+                iconSrc: 'img/home_icon1.png',
+                state: 'PersonalDetails',
+                textColor:"#DC5858"
+            }, {
+                label: '到校方式',
+                iconSrc: 'img/home_icon2.png',
+                state: 'PersonalDetails',
+                textColor:"#5976DF"
+            }, {
+                label: '新生报到',
+                iconSrc: 'img/home_icon3.png',
+                state: 'Register',
+                textColor:"#27CAD4"
+            }, {
+                label: '修改密码',
+                iconSrc: 'img/home_icon4.png',
+                state: 'ModifyPsw',
+                textColor:"#DC75E0"
+            }, {
+                label: '关于应用',
+                iconSrc: 'img/home_icon5.png',
+                state: 'About',
+                textColor:"#75E084"
+            }]
+        }
+
+        function getSlideBoxImgs() {
+            return [{
+                index: 0,
+                src: "img/home_bg1.png"
+            }, {
+                index: 1,
+                src: "img/home_bg2.png"
+            }, {
+                index: 2,
+                src: "img/home_bg3.png"
+            }];
+        }
+        return service;
+
+
+    }
+
+}());
+
+(function() {
+  "use strict";
+  angular.module('teacherSettingModule', [
+    'teacherSettingCtrl',
+    'teacherSettingRouter',
+    'teacherSettingService'
+  ]);
+
+}());
+
+(function() {
+    "use strict";
+    angular.module('teacherSettingCtrl', [])
+        .controller('teacherSettingCtrl', function($scope, $state, Constants, StateService) {
+            'ngInject';
+            var vm = this;
+            vm.activated = false;
+            $scope.$on('$ionicView.afterEnter', activate);
+
+            function activate() {
+                vm.activated = true;
+                vm.version = Constants.buildID;
+            }
+
+            vm.goTo = function(addr){
+                console.log(addr);
+                StateService.go(addr);
+            };
+
+        });
+}());
+
+(function() {
+  'use strict';
+
+  angular.module('teacherSettingRouter', [])
+    .config(myRouter);
+
+
+  function myRouter($stateProvider, $urlRouterProvider) {
+    'ngInject';
+    $stateProvider
+      .state('tabs.teacherSetting', {
+        url: "/teacherSetting",
+          views: {
+            'tab-teacherSetting': {
+              templateUrl: 'teacherSetting/teacherSetting.html',
+              controller: 'teacherSettingCtrl',
+              controllerAs: 'vm'
+            }
+          }
+      });
+  }
+}());
+
+(function() {
+  'use strict';
+
+  angular.module('teacherSettingService', [])
+    .factory('teacherSettingService', myService);
+
+  function myService( $q, $http) {
+    'ngInject';
+    var service = {
+    };
     return service;
 
 
@@ -4407,83 +4666,6 @@ Date.prototype.Format = function(fmt) {
 }());
 
 (function() {
-  "use strict";
-  angular.module('vipTipsModule', [
-    'vipTipsCtrl',
-    'vipTipsRouter',
-    'vipTipsService'
-  ]);
-
-}());
-
-(function() {
-    "use strict";
-    angular.module('vipTipsCtrl', [])
-        .controller('vipTipsCtrl', function($scope, $state, Constants, StateService) {
-            'ngInject';
-            var vm = this;
-            vm.activated = false;
-            $scope.$on('$ionicView.afterEnter', activate);
-            vm.expend1=false;
-            function activate() {
-                vm.activated = true;
-                vm.version = Constants.buildID;
-            }
-
-            vm.back=function(){
-                StateService.back();
-            };
-
-            vm.test=function(){
-                console.log('test');
-            }
-        });
-}());
-
-(function() {
-  'use strict';
-
-  angular.module('vipTipsRouter', [])
-    .config(myRouter);
-
-
-  function myRouter($stateProvider, $urlRouterProvider) {
-    'ngInject';
-    $stateProvider
-        .state('vipTips', {
-          url: "/vipTips",
-          templateUrl: 'vipTips/vipTips.html',
-          controller: 'vipTipsCtrl',
-          controllerAs: 'vm'
-        })
-  }
-}());
-
-(function() {
-  'use strict';
-
-  angular.module('vipTipsService', [])
-    .factory('vipTipsService', eService);
-
-  function eService( $q, $http,Constants,ResultHandler) {
-    'ngInject';
-    var service = {
-      exit:exit
-    };
-
-    function exit(id) {
-      var url = Constants.serverUrl + 'account/exit/'+id;
-      return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
-    };
-
-    return service;
-
-
-  }
-
-}());
-
-(function() {
     "use strict";
     angular.module('recordCtrl', [])
         .controller('recordCtrl', function($scope, $state, $stateParams, Constants, StateService, vipBuyService, AuthService, MessageToaster, Session) {
@@ -4600,6 +4782,83 @@ Date.prototype.Format = function(fmt) {
 
   angular.module('vipRecordService', [])
     .factory('vipRecordService', eService);
+
+  function eService( $q, $http,Constants,ResultHandler) {
+    'ngInject';
+    var service = {
+      exit:exit
+    };
+
+    function exit(id) {
+      var url = Constants.serverUrl + 'account/exit/'+id;
+      return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
+    };
+
+    return service;
+
+
+  }
+
+}());
+
+(function() {
+  "use strict";
+  angular.module('vipTipsModule', [
+    'vipTipsCtrl',
+    'vipTipsRouter',
+    'vipTipsService'
+  ]);
+
+}());
+
+(function() {
+    "use strict";
+    angular.module('vipTipsCtrl', [])
+        .controller('vipTipsCtrl', function($scope, $state, Constants, StateService) {
+            'ngInject';
+            var vm = this;
+            vm.activated = false;
+            $scope.$on('$ionicView.afterEnter', activate);
+            vm.expend1=false;
+            function activate() {
+                vm.activated = true;
+                vm.version = Constants.buildID;
+            }
+
+            vm.back=function(){
+                StateService.back();
+            };
+
+            vm.test=function(){
+                console.log('test');
+            }
+        });
+}());
+
+(function() {
+  'use strict';
+
+  angular.module('vipTipsRouter', [])
+    .config(myRouter);
+
+
+  function myRouter($stateProvider, $urlRouterProvider) {
+    'ngInject';
+    $stateProvider
+        .state('vipTips', {
+          url: "/vipTips",
+          templateUrl: 'vipTips/vipTips.html',
+          controller: 'vipTipsCtrl',
+          controllerAs: 'vm'
+        })
+  }
+}());
+
+(function() {
+  'use strict';
+
+  angular.module('vipTipsService', [])
+    .factory('vipTipsService', eService);
 
   function eService( $q, $http,Constants,ResultHandler) {
     'ngInject';

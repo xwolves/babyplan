@@ -12,7 +12,8 @@
       getChildren:getChildren,
       getChildSignIn:getChildSignIn,
       getChildrenSignIn:getChildrenSignIn,
-      getWechatInfo:getWechatInfo
+      getWechatInfo:getWechatInfo,
+      getChildrenAllInfo:getChildrenAllInfo
     };
 
     //字段名	类型	备注
@@ -112,6 +113,11 @@
         var url = Constants.serverUrl + 'parent/children/allSignin/'+parentId;
         return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
     };
+
+    function getChildrenAllInfo(parentId,offset,count){
+        var url = Constants.serverUrl + 'parent/childrenInformation/fetch/'+parentId+'?offset='+offset+'&limitcount='+count;
+        return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
+    }
 
     function getWechatInfo(wid) {
         var url = Constants.serverUrl + 'wechat/'+wid;
