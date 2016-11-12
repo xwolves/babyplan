@@ -5,6 +5,7 @@
     </ion-nav-buttons>
 
     <ion-content>
+        <p ng-show="vm.records[0].CutOffTime">VIP服务截止时间：{{vm.records[0].CutOffTime}}</p>
         <ion-list>
             <ion-item class="item" collection-repeat="item in vm.records" ng-click="vm.goTo(item.OrderID,item)">
                 <!--<p>{{item.BusinessName}}</p>-->

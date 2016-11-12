@@ -5,7 +5,7 @@
             'appTitle':'托管系统',
             'serverUrl': '/api/v1/',
             'dfsUrl': '/',
-            'buildID': '20161110v1',
+            'buildID': '20161112v1',
             'ENVIRONMENT':'release'
         });
 }());

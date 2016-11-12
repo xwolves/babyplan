@@ -101,6 +101,41 @@ class Info{
         }
     }
 
+    public function getChldrenAllInformation($parentid, $offset, $limitcount){
+           try{
+               $sql_str =  "select * from (SELECT * FROM
+                   (
+                       SELECT * FROM
+                       (SELECT 1 AS datatype, dd.*, b.childrenid, parentid, childname FROM tb_deposit_daily dd LEFT JOIN (
+                           SELECT dc.ChildrenID, dc.DepositID,
+                           (SELECT pc.ParentID FROM tb_parent_children pc WHERE pc.ChildrenID = dc.ChildrenID LIMIT 0, 1) AS parentID,
+                           (SELECT ac.Name FROM tb_accnt_children ac WHERE ac.AccountID = dc.ChildrenID) AS childName
+                           FROM tb_deposit_children dc ) b
+                           ON b.DepositID = dd.DepositID) publish
+                           WHERE publish.parentID = :parentid
+                           UNION ALL
+                           SELECT * FROM
+                           (SELECT 2 AS datatype, signinid AS infoid, deviceid AS publisherid, depositid, '' AS longitude, '' AS latitude, 0 AS clickcount, 0 AS infotype, '' AS description,
+                           '' AS photolink1, '' AS photolink2, '' AS photolink3, '' AS photolink4, '' AS photolink5, '' AS photolink6, 0 AS STATUS, createtime, 0 AS starcount, childid AS childrenid,
+                           (SELECT pc.ParentID FROM tb_parent_children pc WHERE pc.ChildrenID = cs.ChildID  LIMIT 0,1 ) AS parentID,
+                           (SELECT ac.Name FROM tb_accnt_children ac WHERE ac.AccountID = cs.ChildID) AS childName
+                           FROM tb_children_signin cs ) signin WHERE signin.parentid = :parentid
+                       ) total ORDER BY total.createtime DESC) bbb limit $offset, $limitcount ";
+               $stmt = $this->DB->prepare($sql_str);
+               $stmt->bindParam(":parentid", $parentid, PDO::PARAM_STR);
+               if(!$stmt->execute())
+                   return 10001;
+               $info = array();
+               while($row = $stmt->fetch(PDO::FETCH_ASSOC)){
+                   $info[] = $row;
+               }
+               return $info;
+           }catch (PDOException $e) {
+               $errs = $e->getMessage();
+               return 10000;
+           }
+    }
+
     public function getChildrenDepositInfo($childuid){
         try{
             $info = array();

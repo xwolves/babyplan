@@ -9,7 +9,7 @@ class Charge{
     public function getMenuList(){
         try{
             $rsp_data = array();
-            $sql_str = "SELECT businessdesc, businessid, price, numofdays, FORMAT(price/numofdays, 2) AS uprice FROM tb_price_setting where status=1 order by price";
+            $sql_str = "SELECT businessdesc,businessname, businessid, price, numofdays, FORMAT(price/numofdays, 2) AS uprice FROM tb_price_setting where status=1 order by price";
             $stmt = $this->DB->prepare($sql_str);
             if(!$stmt->execute())
                 return 10001;
@@ -94,7 +94,8 @@ class Charge{
 
     public function getOrderListByParentid($parentid){
         try{
-            $sql_str = "select * from tb_parent_order where parentid=:parentid order by modifytime desc";
+            //$sql_str = "select * from tb_parent_order where parentid=:parentid order by modifytime desc";
+            $sql_str = "select o.*,s.BusinessName,s.BusinessDesc from tb_parent_order o join tb_price_setting s on o.BusinessId = s.BusinessId where o.parentid=:parentid order by modifytime desc";
             $stmt = $this->DB->prepare($sql_str);
             $stmt->bindParam(":parentid", intval($parentid), PDO::PARAM_INT);
             if (!$stmt->execute())

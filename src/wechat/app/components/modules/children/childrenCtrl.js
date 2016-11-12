@@ -106,33 +106,33 @@
 
             vm.getImages=function(msg){
                 vm.imgCount=0;
-                if(msg.photolink1!=null && msg.photolink1!=""){
-                    var data={src:msg.photolink1,msg:''};
+                if(msg.PhotoLink1!=null && msg.PhotoLink1!=""){
+                    var data={src:msg.PhotoLink1,msg:''};
                     vm.images[vm.imgCount]=data;
                     vm.imgCount++;
                 }
-                if(msg.photolink2!=null && msg.photolink2!=""){
-                    var data={src:msg.photolink2,msg:''};
+                if(msg.PhotoLink2!=null && msg.PhotoLink2!=""){
+                    var data={src:msg.PhotoLink2,msg:''};
                     vm.images[vm.imgCount]=data;
                     vm.imgCount++;
                 }
-                if(msg.photolink3!=null && msg.photolink3!=""){
-                    var data={src:msg.photolink3,msg:''};
+                if(msg.PhotoLink3!=null && msg.PhotoLink3!=""){
+                    var data={src:msg.PhotoLink3,msg:''};
                     vm.images[vm.imgCount]=data;
                     vm.imgCount++;
                 }
-                if(msg.photolink4!=null && msg.photolink4!=""){
-                    var data={src:msg.photolink4,msg:''};
+                if(msg.PhotoLink4!=null && msg.PhotoLink4!=""){
+                    var data={src:msg.PhotoLink4,msg:''};
                     vm.images[vm.imgCount]=data;
                     vm.imgCount++;
                 }
-                if(msg.photolink5!=null && msg.photolink5!=""){
-                    var data={src:msg.photolink5,msg:''};
+                if(msg.PhotoLink5!=null && msg.PhotoLink5!=""){
+                    var data={src:msg.PhotoLink5,msg:''};
                     vm.images[vm.imgCount]=data;
                     vm.imgCount++;
                 }
-                if(msg.photolink6!=null && msg.photolink6!=""){
-                    var data={src:msg.photolink6,msg:''};
+                if(msg.PhotoLink6!=null && msg.PhotoLink6!=""){
+                    var data={src:msg.PhotoLink6,msg:''};
                     vm.images[vm.imgCount]=data;
                     vm.imgCount++;
                 }

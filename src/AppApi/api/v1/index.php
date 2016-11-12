@@ -916,6 +916,42 @@ $app->get(
 );
 
 /*
+ * 通过家长id获取所有孩子的打卡信息和机构发布信息
+ * /parent/childrenInformation/fetch/:parentid?offset=2&limitcount=30
+ */
+$app->get(
+    '/parent/childrenInformation/fetch/:parentid',
+    function($parentid) use($app, $sql_db, $redis){
+        $rsp_data = array();
+        $response = $app->response;
+        $request = $app->request->getBody();
+        $token = $app->request->headers('token');
+        $depositInfo = $redis->get($token);
+        if(!$depositInfo){
+            $response->setBody(rspData(10005));
+            return;
+        }
+        if(!getParentPurview($sql_db, $parentid))
+            return $response->setBody(rspData(16005));
+        $params = $app->request->params();
+        $params = array_change_key_case($params, CASE_LOWER);
+        if(empty($params) || !array_key_exists("offset", $params) || !array_key_exists("limitcount", $params)){
+                $response->setBody(rspData(FAILED, "请指定分页信息"));
+                return;
+            }
+        $limitcount = $params['limitcount'];
+        $offset = $params['offset'];
+        $info = new Info($sql_db);
+        $ret = $info->getChldrenAllInformation($parentid, $offset, $limitcount);
+        if(gettype($ret) != "array"){
+            $response->setBody(rspData($ret));
+        }else{
+            $response->setBody(rspData(0, $ret));
+        }
+    }
+);
+
+/*
  * 通过机构id获取机构中所有孩子列表
  */
 $app->get(

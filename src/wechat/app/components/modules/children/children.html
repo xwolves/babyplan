@@ -6,41 +6,43 @@
 
             <div ng-if="item.datatype!='1'" class="item item-avatar">
                     <!--图片-->
-                    <img class="weui_media_appmsg_thumb" src="./img/finger.png" alt="指纹记录">
+                    <img src="./img/finger.png" alt="指纹记录">
                     <!-- title --><!--time|mytime--><!--<span style="float: right">{{item.CreateTime}}</span>-->
-                    <h2 class="weui_media_title">{{item.childname}}于{{item.CreateTime}} 指纹打卡</h2>
+                    <h2>{{item.childname}}于{{item.CreateTime}} 指纹打卡</h2>
                     <!--deposit-->
-                    <p class="weui_media_desc">{{item.DepositID}}</p>
+                    <p>{{item.DepositID}}</p>
             </div>
             <!--信息-->
             <div ng-if="item.datatype!='2'">
-                <div  class="item item-avatar" style="background: #eeeeee"><!--图片--><!-- title --><!--deposit--><!--time-->
+                <div  class="item item-avatar" style="background: #eeeeee;"><!--图片--><!-- title --><!--deposit--><!--time-->
                     <!--图片-->
-                    <img class="weui_media_appmsg_thumb" ng-src="{{vm.getImg(item.InfoType).src}}" alt="在校信息">
+                    <img ng-src="{{vm.getImg(item.InfoType).src}}" alt="在校信息">
                     <!-- title --><!--time|mytime-->
-                    <h2 class="weui_media_title">{{vm.getImg(item.InfoType).name}}<span style="float: right">{{item.CreateTime}}</span></h2>
+                    <h2>{{vm.getImg(item.InfoType).name}}<span style="float: right">{{item.CreateTime|dateChange}}</span></h2>
                     <!--deposit-->
-                    <p class="weui_media_desc">{{item.DepositID}}</p>
+                    <p>{{item.DepositID}}</p>
                 </div>
-                <!--message-->
-                <p class="weui_media_desc" ng-if="item.Description">{{item.Description}}</p>
-                <!--photo--><!--photo--><!--photo-->
-                <!--photo--><!--photo--><!--photo-->
-                <div style="display:inline-block;" ng-if="item.PhotoLink1">
-                    <img style="float: left;" ng-src="{{item.PhotoLink1|ImageMin}}" ng-click="goToSlide(0,item)"
-                         onload='if (this.width>64 || this.height>100) if (this.width/this.height>64/100) this.width=64; else this.height=100;' >
-                    <img style="float: left;" ng-src="{{item.PhotoLink2|ImageMin}}"  ng-if="item.PhotoLink2" ng-click="goToSlide(1,item)"
-                         onload='if (this.width>64 || this.height>100) if (this.width/this.height>64/100) this.width=64; else this.height=100;' >
-                    <img style="float: left;" ng-src="{{item.PhotoLink3|ImageMin}}"  ng-if="item.PhotoLink3" ng-click="goToSlide(2,item)"
-                         onload='if (this.width>64 || this.height>100) if (this.width/this.height>64/100) this.width=64; else this.height=100;' >
-                </div>
-                <div style="display:inline-block;" ng-if="item.PhotoLink4">
-                    <img style="float: left;" ng-src="{{item.PhotoLink4|ImageMin}}" ng-click="vm.goPhoto(3,item)"
-                         onload='if (this.width>64 || this.height>100) if (this.width/this.height>64/100) this.width=64; else this.height=100;' >
-                    <img style="float: left;" ng-src="{{item.PhotoLink5|ImageMin}}"  ng-if="item.PhotoLink5" ng-click="goToSlide(4,item)"
-                         onload='if (this.width>64 || this.height>100) if (this.width/this.height>64/100) this.width=64; else this.height=100;' >
-                    <img style="float: left;" ng-src="{{item.PhotoLink6|ImageMin}}"  ng-if="item.PhotoLink6" ng-click="goToSlide(5,item)"
-                         onload='if (this.width>64 || this.height>100) if (this.width/this.height>64/100) this.width=64; else this.height=100;' >
+                <div style="margin-left: 20px;">
+                    <!--message-->
+                    <p ng-if="item.Description">{{item.Description}}</p>
+                    <!--photo--><!--photo--><!--photo-->
+                    <!--photo--><!--photo--><!--photo-->
+                    <div style="display:inline-block;" ng-if="item.PhotoLink1">
+                        <img style="float: left;" ng-src="{{item.PhotoLink1|ImageMin}}" ng-click="goToSlide(0,item)"
+                             onload='if (this.width>64 || this.height>100) if (this.width/this.height>64/100) this.width=64; else this.height=100;' >
+                        <img style="float: left;margin-left: 10px;" ng-src="{{item.PhotoLink2|ImageMin}}"  ng-if="item.PhotoLink2" ng-click="goToSlide(1,item)"
+                             onload='if (this.width>64 || this.height>100) if (this.width/this.height>64/100) this.width=64; else this.height=100;' >
+                        <img style="float: left;margin-left: 10px;" ng-src="{{item.PhotoLink3|ImageMin}}"  ng-if="item.PhotoLink3" ng-click="goToSlide(2,item)"
+                             onload='if (this.width>64 || this.height>100) if (this.width/this.height>64/100) this.width=64; else this.height=100;' >
+                    </div>
+                    <div style="display:inline-block;" ng-if="item.PhotoLink4">
+                        <img style="float: left;" ng-src="{{item.PhotoLink4|ImageMin}}" ng-click="vm.goPhoto(3,item)"
+                             onload='if (this.width>64 || this.height>100) if (this.width/this.height>64/100) this.width=64; else this.height=100;' >
+                        <img style="float: left;margin-left: 10px;" ng-src="{{item.PhotoLink5|ImageMin}}"  ng-if="item.PhotoLink5" ng-click="goToSlide(4,item)"
+                             onload='if (this.width>64 || this.height>100) if (this.width/this.height>64/100) this.width=64; else this.height=100;' >
+                        <img style="float: left;margin-left: 10px;" ng-src="{{item.PhotoLink6|ImageMin}}"  ng-if="item.PhotoLink6" ng-click="goToSlide(5,item)"
+                             onload='if (this.width>64 || this.height>100) if (this.width/this.height>64/100) this.width=64; else this.height=100;' >
+                    </div>
                 </div>
                 <div>
                     <hr>
