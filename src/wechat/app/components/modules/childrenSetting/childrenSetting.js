@@ -3,6 +3,7 @@
   angular.module('childrenSettingModule', [
     'childrenSettingCtrl',
     'childrenEditCtrl',
+    'childrenAddCtrl',
     'childrenSettingRouter',
     'childrenSettingService'
   ]);

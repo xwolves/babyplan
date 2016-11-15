@@ -10163,6 +10163,10 @@ button.toast-close-button {
 .borderBottom {
   border-bottom: solid lightgrey; }
 
+.errorText {
+  text-align: center;
+  color: red; }
+
 .platform-android .bar .title {
   font-size: 17px !important; }
 

@@ -14,6 +14,12 @@
         controller: 'childrenSettingCtrl',
         controllerAs: 'vm'
       })
+      .state('childrenAdd', {
+        url: "/childrenAdd",
+        templateUrl: 'childrenSetting/childrenAdd.html',
+        controller: 'childrenAddCtrl',
+        controllerAs: 'vm'
+      })
       .state('childrenEdit', {
         url: "/childrenEdit?:cid&:type",
         params: {

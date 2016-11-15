@@ -1,0 +1,249 @@
+
+<ion-view view-title="添加孩子信息">
+
+    <ion-content>
+        <!--1-->
+        <form name="myForm">
+        <div class="list card" ng-if="vm.page==1">
+            <div class="item item-avatar">
+                <img src="./img/write.png">
+                <h2>资料填写 {{vm.page}}／5</h2>
+                <p>为了更好的让我们更了解您的孩子，</p>
+                <p>请给我们提供更充足的信息</p>
+            </div>
+            <div class="item item-image">
+                <div class="list">
+                    <label class="item item-input">
+                        <span class="input-label">孩子姓名</span>
+                        <input type="text" ng-model="vm.child.name" name="child_name" style="text-align:right;" required>
+                    </label>
+                    <label class="item item-input item-select">
+                        <span class="input-label">孩子性别</span>
+                        <select ng-model="vm.child.sex" name="child_sex" required>
+                            <option value='1'>男</option>
+                            <option value='2'>女</option>
+                        </select>
+                    </label>
+                    <label class="item item-input">
+                        <span class="input-label">出生日期</span>
+                        <input type="date" ng-model="vm.child.birthday" name="child_birthday" style="text-align:right;" required>
+                    </label>
+                </div>
+            </div>
+            <div class="item">
+                <button class="button button-positive" style="width: 45%" ng-click="vm.prev()" ng-disabled="true">
+                    <i class="icon ion-arrow-left-b"></i>
+                    上一页
+                </button>
+                <button class="button button-positive" style="width: 45%" ng-click="vm.next()" ng-disabled="!myForm.$valid">
+                    下一页
+                    <i class="icon ion-arrow-right-b"></i>
+                </button>
+            </div>
+        </div>
+        <div ng-show="!myForm.$valid && (myForm.child_name.$dirty||myForm.child_sex.$dirty||myForm.child_birthday.$dirty)">
+            <div class="errorText">
+                <p>错误信息：</p>
+                <small ng-show="myForm.child_name.$error.required">小孩姓名未填写</small>
+                <small ng-show="myForm.child_sex.$error.required">小孩性别未填写</small>
+                <small ng-show="myForm.child_birthday.$error.required">出生日期未填写</small>
+            </div>
+        </div>
+
+        <!--2-->
+        <div class="list card"  ng-if="vm.page==2">
+
+            <div class="item item-avatar">
+                <img src="./img/write.png">
+                <h2>资料填写 {{vm.page}}／5</h2>
+                <p>请填写家长信息</p>
+                <p>&nbsp;</p>
+            </div>
+
+            <div class="item item-image">
+                <div class="list">
+                    <label class="item item-input">
+                        <span class="input-label">监护人1</span>
+                        <input type="text" ng-model="vm.child.guardian1" name="child_guardian1" style="text-align:right;" required>
+                    </label>
+                    <label class="item item-input">
+                        <span class="input-label">监护人电话</span>
+                        <input type="tel" ng-model="vm.child.guardianPhone1" name="child_guardianPhone1" style="text-align:right;"
+                               required ng-minlength="11" ng-maxlength="11" ng-pattern="/^1[0-9]{10}$/">
+                    </label>
+                    <label class="item item-input">
+                        <span class="input-label">监护人单位</span>
+                        <input type="text" ng-model="vm.child.guardianWorkplace1" name="child_guardianWorkplace1"  style="text-align:right;" >
+                    </label>
+                </div>
+            </div>
+            <div class="item">
+                <button href="#" class="button button-positive" style="width: 45%" ng-click="vm.prev()">
+                    <i class="icon ion-arrow-left-b"></i>
+                    上一页
+                </button>
+                <button href="#" class="button button-positive" style="width: 45%" ng-click="vm.next()" ng-disabled="!myForm.$valid">
+                    下一页
+                    <i class="icon ion-arrow-right-b"></i>
+                </button>
+            </div>
+        </div>
+        <div ng-show="!myForm.$valid && (myForm.child_guardian1.$dirty||myForm.child_guardianPhone1.$dirty)">
+            <div class="errorText">
+                <p>错误信息：</p>
+                <small ng-show="myForm.child_guardian1.$error.required">监护人姓名未填写</small>
+                <small ng-show="myForm.child_guardianPhone1.$error.required">监护人手机号码未填写</small>
+                <small ng-show="myForm.child_guardianPhone1.$error.minlength||myForm.child_guardianPhone1.$error.maxlength">监护人手机号码长度不正确</small>
+                <small ng-show="myForm.child_guardianPhone1.$error.pattern">监护人手机号码不对</small>
+            </div>
+        </div>
+
+        <!--3-->
+        <div class="list card"  ng-if="vm.page==3">
+
+            <div class="item item-avatar">
+                <img src="./img/write.png">
+                <h2>资料填写 {{vm.page}}／5</h2>
+                <p>请再填写另一位家长信息</p>
+                <p>&nbsp;</p>
+            </div>
+
+            <div class="item item-image">
+                <div class="list">
+                    <label class="item item-input">
+                        <span class="input-label">监护人2</span>
+                        <input type="text" ng-model="vm.child.guardian2" name="child_guardian2" style="text-align:right;">
+                    </label>
+                    <label class="item item-input">
+                        <span class="input-label">监护人2电话</span>
+                        <input type="tel" ng-model="vm.child.guardianPhone2" name="child_guardianPhone2" style="text-align:right;">
+                    </label>
+                    <label class="item item-input">
+                        <span class="input-label">监护人2单位</span>
+                        <input type="text" ng-model="vm.child.guardianWorkplace2" name="child_guardianWorkplace2" style="text-align:right;" >
+                    </label>
+                </div>
+            </div>
+            <div class="item">
+                <button href="#" class="button button-positive" style="width: 45%" ng-click="vm.prev()">
+                    <i class="icon ion-arrow-left-b"></i>
+                    上一页
+                </button>
+                <button href="#" class="button button-positive" style="width: 45%" ng-click="vm.next()" ng-disabled="!myForm.$valid">
+                    下一页
+                    <i class="icon ion-arrow-right-b"></i>
+                </button>
+            </div>
+        </div>
+
+
+        <!--4-->
+        <div class="list card"  ng-if="vm.page==4">
+            <div class="item item-avatar">
+                <img src="./img/write.png">
+                <h2>资料填写 {{vm.page}}／5</h2>
+                <p>请填写孩子的生活信息</p>
+                <p>&nbsp;</p>
+            </div>
+            <div class="item item-image">
+                <div class="list">
+                    <label class="item item-input">
+                        <span class="input-label">家庭住址</span>
+                        <input type="text" ng-model="vm.child.homeAddr" name="child_homeAddr" style="text-align:right;" >
+                    </label>
+                    <label class="item item-input">
+                        <span class="input-label">过敏情况</span>
+                        <input type="text" ng-model="vm.child.allergyRemark" name="child_allergyRemark" style="text-align:right;" >
+                    </label>
+                    <label class="item item-input borderBottom">
+                        <span class="input-label">饮食爱好</span>
+                        <input type="text" ng-model="vm.child.favoriteFood" name="child_favoriteFood" style="text-align:right;" >
+                    </label>
+                </div>
+            </div>
+            <div class="item">
+                <button href="#" class="button button-positive" style="width: 45%" ng-click="vm.prev()">
+                    <i class="icon ion-arrow-left-b"></i>
+                    上一页
+                </button>
+                <button href="#" class="button button-positive" style="width: 45%" ng-click="vm.next()" ng-disabled="!myForm.$valid">
+                    下一页
+                    <i class="icon ion-arrow-right-b"></i>
+                </button>
+            </div>
+        </div>
+
+
+        <!--5-->
+        <div class="list card"  ng-if="vm.page==5">
+            <div class="item item-avatar">
+                <img src="./img/write.png">
+                <h2>资料填写 {{vm.page}}／5</h2>
+                <p>请填写学生的在校信息</p>
+                <p>&nbsp;</p>
+            </div>
+            <div class="item item-image">
+                <div class="list">
+                    <label class="item item-input">
+                        <span class="input-label">就读学校</span>
+                        <input type="text" ng-model="vm.child.schoolName"  name="child_schoolName" style="text-align:right;" required>
+                    </label>
+                    <label class="item item-input item-select">
+                        <span class="input-label">当前年级</span>
+                        <select ng-model="vm.child.grade" name="child_grade" required>
+                            <option value='0' selected>无</option>
+                            <option value='11'>幼一</option>
+                            <option value='12'>幼二</option>
+                            <option value='13'>幼三</option>
+                            <option value='14'>幼四</option>
+                            <option value='21'>小一</option>
+                            <option value='22'>小二</option>
+                            <option value='23'>小三</option>
+                            <option value='24'>小四</option>
+                            <option value='25'>小五</option>
+                            <option value='26'>小六</option>
+                            <option value='31'>初一</option>
+                            <option value='32'>初二</option>
+                            <option value='33'>初三</option>
+                        </select>
+                    </label>
+                    <label class="item item-input borderBottom">
+                        <span class="input-label">班主任电话</span>
+                        <input type="tel" ng-model="vm.child.classTeacherPhone" name="child_classTeacherPhone" style="text-align:right;">
+                    </label>
+                </div>
+            </div>
+            <div class="item">
+                <button href="#" class="button button-positive" style="width: 45%" ng-click="vm.prev()">
+                    <i class="icon ion-arrow-left-b"></i>
+                    上一页
+                </button>
+                <!--<button href="#" class="button button-positive" style="width: 45%" ng-click="vm.next()" ng-disabled="true">-->
+                    <!--下一页-->
+                    <!--<i class="icon ion-arrow-right-b"></i>-->
+                <!--</button>-->
+                <button href="#" class="button button-positive" style="width: 45%" ng-click="vm.next()" ng-disabled="!myForm.$valid">
+                    <i class="icon ion-android-checkbox-outline"></i>
+                    保存
+                </button>
+            </div>
+        </div>
+        <div ng-show="!myForm.$valid && (myForm.schoolName.$dirty||myForm.grade.$dirty)">
+            <div class="errorText">
+                <p>错误信息：</p>
+                <small ng-show="myForm.schoolName.$error.required">就读学校未填写</small>
+                <small ng-show="myForm.grade.$error.required">所在班级未填写</small>
+            </div>
+        </div>
+
+        </form>
+    </ion-content>
+
+    <!--<div class="bar bar-footer" ng-show="vm.isEditing">-->
+        <!--<div class="button-bar">-->
+            <!--<a class="button button-positive" style="margin-right: 1px;" ng-click="vm.save()">保存</a>-->
+            <!--<a class="button button-positive" style="margin-left: 1px;" ng-click="vm.back()">取消</a>-->
+        <!--</div>-->
+    <!--</div>-->
+
+</ion-view>

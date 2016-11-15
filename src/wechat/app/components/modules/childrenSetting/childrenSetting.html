@@ -4,7 +4,7 @@
         <a class="button button-icon icon ion-ios-arrow-back" ng-click="vm.back()"></a>
     </ion-nav-buttons>
     <ion-nav-buttons side="right">
-        <a class="button button-icon icon ion-person-add" ng-click="vm.newChild()"></a>
+        <a class="button button-icon icon ion-person-add" ng-click="vm.newChild2()"></a>
     </ion-nav-buttons>
 
     <ion-content>
@@ -12,7 +12,7 @@
             <ion-item class="item" ng-click="vm.goTo(item.uid,item)" collection-repeat="item in vm.children">
                 <p>{{item.name}}<span style="float: right">{{item.sex|gendarChange}}</span></p>
                 <!--暂时不支持编辑与删除-->
-                <!--<ion-option-button class="button-positive ion-edit" ng-click="vm.editChild(item.uid,item)">&nbsp;编辑</ion-option-button>-->
+                <ion-option-button class="button-positive ion-edit" ng-click="vm.editChild(item.uid,item)">&nbsp;编辑</ion-option-button>
                 <!--<ion-option-button class="button-assertive ion-trash-a" ng-click="vm.delChild(item)">&nbsp;删除</ion-option-button>-->
             </ion-item>
 

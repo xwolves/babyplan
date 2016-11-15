@@ -39,6 +39,12 @@
                 StateService.go('childrenEdit',{type:1});
             };
 
+            vm.newChild2=function(){
+                //创建新的孩子信息,使用新局部编写界面
+                $ionicListDelegate.closeOptionButtons();
+                StateService.go('childrenAdd');
+            };
+
             vm.editChild=function(id,child){
                 //编辑孩子信息
                 $ionicListDelegate.closeOptionButtons();
