@@ -557,7 +557,7 @@ app.filter('statusChange', function () {
             'appTitle':'托管系统',
             'serverUrl': '/api/v1/',
             'dfsUrl': '/',
-            'buildID': '20161115v2',
+            'buildID': '20161116v1',
             'ENVIRONMENT':'release'
         });
 }());
@@ -596,14 +596,6 @@ app.filter('statusChange', function () {
     angular.module('directive', [
 
     ]);
-
-}());
-
-(function() {
-  "use strict";
-  angular.module('tools', [
-    
-  ]);
 
 }());
 
@@ -648,6 +640,14 @@ Date.prototype.Format = function(fmt) {
         'exitModule',
         'photoModule'
     ]);
+
+}());
+
+(function() {
+  "use strict";
+  angular.module('tools', [
+    
+  ]);
 
 }());
 
@@ -1445,7 +1445,7 @@ Date.prototype.Format = function(fmt) {
                 vm.type = $stateParams.type;
                 console.log("vm.type = "+vm.type+" with "+vm.user);
             /////////////////////////////////////////////////////////
-            //    vm.user = "oVyGDuNPkAbtljfJKusP4oaCrYG0";//test "o_Nkcw4CsZh5dbE2v8XVLUxfd96A";//
+            //    vm.user = "o_Nkcw4CsZh5dbE2v8XVLUxfd96A";//"oVyGDuNPkAbtljfJKusP4oaCrYG0";//test "o_Nkcw4CsZh5dbE2v8XVLUxfd96A";//
             //    vm.type = 2;//test
             ////////////////////////////////////////////////////////
                 //MessageToaster.info('user = '+vm.user);
@@ -1563,12 +1563,31 @@ Date.prototype.Format = function(fmt) {
 (function() {
     "use strict";
     angular.module('childrenAddCtrl', [])
-        .controller('childrenAddCtrl', function($scope, $stateParams, Constants, StateService) {
+        .controller('childrenAddCtrl', function($scope, $stateParams, Constants, StateService, childrenSettingService, AuthService) {
             'ngInject';
             var vm = this;
             vm.activated = false;
             vm.page = 1;
-            vm.child = {sex:'1'};
+            vm.child = {
+                "name": "",
+                "sex": "1",
+                "remark": "",
+                "birthday": "",
+                "relationship": "",
+                "guardian1": "",
+                "guardianPhone1": "",
+                "guardianWorkplace1": "",
+                "guardian2": "",
+                "guardianPhone2": "",
+                "guardianWorkplace2": "",
+                "homeAddr": "",
+                "allergyRemark": "",
+                "allergy": "0",
+                "favoriteFood": "",
+                "grade": "",
+                "schoolName": "",
+                "classTeacherPhone": ""
+            };//{sex:'1'};
             $scope.$on('$ionicView.afterEnter', activate);
 
             function activate() {
@@ -1591,7 +1610,19 @@ Date.prototype.Format = function(fmt) {
             vm.next=function(){
                 if(vm.page==5){
                     //save data
-                    alert('尚未开放');
+                    //alert('尚未开放');
+                    console.log(vm.child.birthday);
+                    var date=new Date();
+                    console.log(vm.child.birthday.getTime());
+
+                    childrenSettingService.registerChild(vm.child, AuthService.getLoginID()).then(function (data) {
+                        console.log(data);
+                        if (data.errno == 0) {
+                            //var userId = data.data.uid;
+                            //wxlogin(vm.user.wechat);
+                            StateService.back();
+                        }
+                    });
                 }else{
                     vm.page++;
                 }
@@ -1610,7 +1641,7 @@ Date.prototype.Format = function(fmt) {
 (function() {
     "use strict";
     angular.module('childrenEditCtrl', [])
-        .controller('childrenEditCtrl', function($scope, $stateParams, Constants, StateService,childrenSettingService,AuthService,Session) {
+        .controller('childrenEditCtrl', function($scope, $stateParams, Constants, StateService,childrenSettingService,AuthService,Session,MessageToaster) {
             'ngInject';
             var vm = this;
             vm.activated = false;
@@ -1618,6 +1649,13 @@ Date.prototype.Format = function(fmt) {
             vm.query = function(id){
                 console.log("child id = "+id);
                 vm.child=Session.temp;
+                childrenSettingService.queryChild(id).then(function(data) {
+                    if (data.errno == 0) {
+                        console.log(data.data);
+                        vm.child = data.data;
+                    }
+                });
+
             };
 
             $scope.$on('$ionicView.afterEnter', activate);
@@ -1634,30 +1672,67 @@ Date.prototype.Format = function(fmt) {
                 vm.version = Constants.buildID;
 
                 if(vm.type!='1')vm.query(vm.cid);
-                else vm.child = {name:'',sex:'',remark:'',relationship:''};
+                else {
+                    vm.child = {
+                        "Name": "",
+                        "Sex": "",
+                        "Remark": "",
+                        "Birthday": "",
+                        "Guardian1": "",
+                        "Guardianphone1": "",
+                        "Guardianworkplace1": "",
+                        "Guardian2": "",
+                        "Guardianphone2": "",
+                        "Guardianworkplace2": "",
+                        "HomeAddr": "",
+                        "AllergyRemark": "",
+                        "Allergy": "",
+                        "FavoriteFood": "",
+                        "Grade": "",
+                        "SchoolName": "",
+                        "ClassTeacherPhone": "",
+                        "Course": "",
+                        "OpenTime": "",
+                        "DepositCardID": "",
+                        "DepositType": "",
+                        "Benefit": ""
+                    };
+                }
             }
 
             vm.back=function(){
                 StateService.back();
             };
 
-            vm.save=function(){
-                //save
-                if(vm.type=='1'){
-                    //create
-                    childrenSettingService.registerChildren(vm.child,AuthService.getLoginID()).then(function(data) {
-                        if (data.errno == 0) {
-                            //var userId = data.data.uid;
-                            //wxlogin(vm.user.wechat);
-                            StateService.back();
-                        }
-                    });
-
+            vm.save=function(valid,dirty){
+                //console.log("valid = "+valid+" dirty = "+dirty);
+                if(valid && dirty) {
+                    //save
+                    if (vm.type == '1') {
+                        //create
+                        childrenSettingService.registerChild(vm.child, AuthService.getLoginID()).then(function (data) {
+                            if (data.errno == 0) {
+                                //var userId = data.data.uid;
+                                //wxlogin(vm.user.wechat);
+                                StateService.back();
+                            }
+                        });
+                    } else {
+                        //update
+                        childrenSettingService.updateChild(vm.child).then(function (data) {
+                            console.log(data);
+                            if (data.errno == 0) {
+                                StateService.back();
+                            }
+                        });
+                    }
                 }else{
-                    //update
-                    StateService.back();
+                    if(!valid){
+                        MessageToaster.info("内容不全，无法更新");
+                    }else if(!dirty) {
+                        MessageToaster.info("无内容修改，无需更新");
+                    }
                 }
-
             };
 
 
@@ -1666,8 +1741,8 @@ Date.prototype.Format = function(fmt) {
 
 (function() {
     "use strict";
-    angular.module('childrenEditCtrl', [])
-        .controller('childrenEditCtrl', function($scope, $stateParams, Constants, StateService,childrenSettingService,AuthService,Session) {
+    angular.module('childrenEditCtrl_old', [])
+        .controller('childrenEditCtrl_old', function($scope, $stateParams, Constants, StateService,childrenSettingService,AuthService,Session) {
             'ngInject';
             var vm = this;
             vm.activated = false;
@@ -1855,7 +1930,9 @@ Date.prototype.Format = function(fmt) {
   function childrenSettingService( $q, $http, Constants, ResultHandler) {
     'ngInject';
     var service = {
-      registerChildren:registerChildren
+      queryChild:queryChild,
+      updateChild:updateChild,
+      registerChild:registerChild
     };
 
     //POST
@@ -1875,21 +1952,80 @@ Date.prototype.Format = function(fmt) {
     //    }
     //}
     //need token in headers
-    function registerChildren(child,parentId) {
+    // "name", "sex", "fingerfeature", "remark", "grade", "birthday", "homeaddr", "allergy", "allergyremark","favoritefood",
+    //"guardian1","guardianphone1","guardianworkplace1", "guardian2", "guardianphone2", "guardianworkplace2", "schoolname", "classteacherphone",
+    //    "course","opentime", "depositcardid", "deposittype", "benefit
+    function registerChild(child,parentId) {
+      var time=child.birthday.toISOString().slice(0, 19).replace('T', ' ');
       var data = {
         "p_uid":parentId,
         "name": child.name,
         "sex": child.sex,
         "relationship": child.relationship,
-        "remark": child.remark
+        "remark": child.remark,
+        "birthday":time,
+        "guardian1":child.guardian1,
+        "guardianphone1":child.guardianPhone1,
+        "guardianworkplace1":child.guardianWorkplace1,
+        "guardian2":child.guardian2,
+        "guardianphone2":child.guardianPhone2,
+        "guardianworkplace2":child.guardianWorkplace2,
+        "homeaddr":child.homeAddr,
+        "allergyremark":child.allergyRemark,
+        "allergy":child.allergy,
+        "favoritefood":child.favoriteFood,
+        "grade":child.grade,
+        "schoolname":child.schoolName,
+        "classteacherphone":child.classTeacherPhone
       };
-      console.log(data);
+      console.log(JSON.stringify(data));
       var url = Constants.serverUrl + 'account/register/children';
       return $http({
         method: 'post',
         url: url,
         data: data
       }).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
+    };
+
+    //http://172.18.1.166/api/v1/account/children/update/40000015     POST 更新孩子信息
+    function updateChild(child) {
+      var data = {
+        "name": child.Name,
+        "sex": child.Sex,
+        "remark": child.Remark!=null?child.Remark:"",
+        "birthday":child.Birthday!=null?child.Birthday:"",
+        "guardian1":child.Guardian1!=null?child.Guardian1:"",
+        "guardianphone1":child.GuardianPhone1!=null?child.GuardianPhone1:"",
+        "guardianworkplace1":child.GuardianWorkplace1!=null?child.GuardianWorkplace1:"",
+        "guardian2":child.Guardian2!=null?child.Guardian2:"",
+        "guardianphone2":child.GuardianPhone2!=null?child.GuardianPhone2:"",
+        "guardianworkplace2":child.GuardianWorkplace2!=null?child.GuardianWorkplace2:"",
+        "homeaddr":child.HomeAddr!=null?child.HomeAddr:"",
+        "allergyremark":child.AllergyRemark!=null?child.AllergyRemark:"",
+        "allergy":child.Allergy!=null?child.Allergy:"0",
+        "favoritefood":child.FavoriteFood!=null?child.FavoriteFood:"",
+        "grade":child.Grade!=null?child.Grade:"0",
+        "schoolname":child.SchoolName!=null?child.SchoolName:"",
+        "classteacherphone":child.ClassTeacherPhone!=null?child.ClassTeacherPhone:"",
+        "course":child.Course!=null?child.Course:"",
+        "opentime":child.OpenTime!=null?child.OpenTime:"",
+        "depositcardid":child.DepositCardID!=null?child.DepositCardID:"",
+        "deposittype":child.DepositType!=null?child.DepositType:"0",
+        "benefit":child.Benefit!=null?child.Benefit:"0"
+      };
+      console.log(JSON.stringify(data));
+      var url = Constants.serverUrl + 'account/children/update/'+child.AccountID;
+      return $http({
+        method: 'post',
+        url: url,
+        data: data
+      }).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
+    };
+
+    //http://172.18.1.166/api/v1/account/children/query/40000015    GET 获取孩子信息
+    function queryChild(childId) {
+      var url = Constants.serverUrl + 'account/children/query/'+childId;
+      return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
     };
 
     return service;
@@ -3460,78 +3596,6 @@ Date.prototype.Format = function(fmt) {
 
 (function() {
   "use strict";
-  angular.module('profileModule', [
-    'profileCtrl',
-    'profileRouter',
-    'profileService'
-  ]);
-
-}());
-
-(function() {
-    "use strict";
-    angular.module('profileCtrl', [])
-        .controller('profileCtrl', function($scope, $state, Constants, StateService) {
-            'ngInject';
-            var vm = this;
-            vm.activated = false;
-            $scope.$on('$ionicView.afterEnter', activate);
-
-            function activate() {
-                vm.activated = true;
-                vm.version = Constants.buildID;
-            }
-
-            vm.goTo = function(addr){
-                console.log(addr);
-                StateService.go(addr);
-            };
-
-        });
-}());
-
-(function() {
-  'use strict';
-
-  angular.module('profileRouter', [])
-    .config(myRouter);
-
-
-  function myRouter($stateProvider, $urlRouterProvider) {
-    'ngInject';
-    $stateProvider
-      .state('tabs.profile', {
-        url: "/profile",
-          views: {
-            'tab-profile': {
-              templateUrl: 'profile/profile.html',
-              controller: 'profileCtrl',
-              controllerAs: 'vm'
-            }
-          }
-      });
-  }
-}());
-
-(function() {
-  'use strict';
-
-  angular.module('profileService', [])
-    .factory('profileService', profileService);
-
-  function profileService( $q, $http) {
-    'ngInject';
-    var service = {
-    };
-    return service;
-
-
-  }
-
-}());
-
-(function() {
-  "use strict";
   angular.module('photoModule', [
     'photoCtrl',
     'photoRouter'
@@ -3643,6 +3707,78 @@ Date.prototype.Format = function(fmt) {
         })
       ;
   }
+}());
+
+(function() {
+  "use strict";
+  angular.module('profileModule', [
+    'profileCtrl',
+    'profileRouter',
+    'profileService'
+  ]);
+
+}());
+
+(function() {
+    "use strict";
+    angular.module('profileCtrl', [])
+        .controller('profileCtrl', function($scope, $state, Constants, StateService) {
+            'ngInject';
+            var vm = this;
+            vm.activated = false;
+            $scope.$on('$ionicView.afterEnter', activate);
+
+            function activate() {
+                vm.activated = true;
+                vm.version = Constants.buildID;
+            }
+
+            vm.goTo = function(addr){
+                console.log(addr);
+                StateService.go(addr);
+            };
+
+        });
+}());
+
+(function() {
+  'use strict';
+
+  angular.module('profileRouter', [])
+    .config(myRouter);
+
+
+  function myRouter($stateProvider, $urlRouterProvider) {
+    'ngInject';
+    $stateProvider
+      .state('tabs.profile', {
+        url: "/profile",
+          views: {
+            'tab-profile': {
+              templateUrl: 'profile/profile.html',
+              controller: 'profileCtrl',
+              controllerAs: 'vm'
+            }
+          }
+      });
+  }
+}());
+
+(function() {
+  'use strict';
+
+  angular.module('profileService', [])
+    .factory('profileService', profileService);
+
+  function profileService( $q, $http) {
+    'ngInject';
+    var service = {
+    };
+    return service;
+
+
+  }
+
 }());
 
 (function() {
@@ -4128,78 +4264,6 @@ Date.prototype.Format = function(fmt) {
 
 (function() {
   "use strict";
-  angular.module('teacherSettingModule', [
-    'teacherSettingCtrl',
-    'teacherSettingRouter',
-    'teacherSettingService'
-  ]);
-
-}());
-
-(function() {
-    "use strict";
-    angular.module('teacherSettingCtrl', [])
-        .controller('teacherSettingCtrl', function($scope, $state, Constants, StateService) {
-            'ngInject';
-            var vm = this;
-            vm.activated = false;
-            $scope.$on('$ionicView.afterEnter', activate);
-
-            function activate() {
-                vm.activated = true;
-                vm.version = Constants.buildID;
-            }
-
-            vm.goTo = function(addr){
-                console.log(addr);
-                StateService.go(addr);
-            };
-
-        });
-}());
-
-(function() {
-  'use strict';
-
-  angular.module('teacherSettingRouter', [])
-    .config(myRouter);
-
-
-  function myRouter($stateProvider, $urlRouterProvider) {
-    'ngInject';
-    $stateProvider
-      .state('tabs.teacherSetting', {
-        url: "/teacherSetting",
-          views: {
-            'tab-teacherSetting': {
-              templateUrl: 'teacherSetting/teacherSetting.html',
-              controller: 'teacherSettingCtrl',
-              controllerAs: 'vm'
-            }
-          }
-      });
-  }
-}());
-
-(function() {
-  'use strict';
-
-  angular.module('teacherSettingService', [])
-    .factory('teacherSettingService', myService);
-
-  function myService( $q, $http) {
-    'ngInject';
-    var service = {
-    };
-    return service;
-
-
-  }
-
-}());
-
-(function() {
-  "use strict";
   angular.module('teacherModule', [
     'teacherCtrl',
     'teacherEditCtrl',
@@ -4460,211 +4524,70 @@ Date.prototype.Format = function(fmt) {
 }());
 
 (function() {
-    "use strict";
-    angular.module('recordCtrl', [])
-        .controller('recordCtrl', function($scope, $state, $stateParams, Constants, StateService, vipBuyService, AuthService, MessageToaster, Session) {
-            'ngInject';
-            var vm = this;
-
-            vm.activated = false;
-
-
-            $scope.$on('$ionicView.afterEnter', activate);
-
-            function activate() {
-                console.log($stateParams);
-                vm.index = $stateParams.index;
-
-                vm.activated = true;
-                vm.version = Constants.buildID;
-                vm.query(vm.index);
-            }
-
-            vm.query = function(id){
-                console.log(" index = "+id);
-                if(Session.temp.OrderID == id)
-                    vm.item=Session.temp;
-
-            };
-
-            vm.back = function(){
-                StateService.back();
-                Session.temp = null;
-            };
-
-
-        });
-}());
-
-(function() {
   "use strict";
-  angular.module('vipRecordModule', [
-    'vipRecordCtrl',
-    'recordCtrl',
-    'vipRecordRouter',
-    'vipRecordService'
+  angular.module('teacherSettingModule', [
+    'teacherSettingCtrl',
+    'teacherSettingRouter',
+    'teacherSettingService'
   ]);
 
 }());
 
 (function() {
     "use strict";
-    angular.module('vipRecordCtrl', [])
-        .controller('vipRecordCtrl', function($scope, $state, Constants, StateService,vipBuyService,AuthService,MessageToaster,Session) {
+    angular.module('teacherSettingCtrl', [])
+        .controller('teacherSettingCtrl', function($scope, $state, Constants, StateService) {
             'ngInject';
             var vm = this;
             vm.activated = false;
-
             $scope.$on('$ionicView.afterEnter', activate);
 
             function activate() {
                 vm.activated = true;
                 vm.version = Constants.buildID;
-                vm.getRecords();
             }
 
-            vm.back=function(){
-                StateService.back();
+            vm.goTo = function(addr){
+                console.log(addr);
+                StateService.go(addr);
             };
 
-            vm.goTo=function(id,item){
-                Session.temp=item;
-                StateService.go('record',{index:id});
-            };
-
-            vm.getRecords = function () {
-                vipBuyService.getOrders(AuthService.getLoginID()).then(function(data) {
-                    if (data.errno == 0) {
-                        console.log(data.data);
-                        vm.records = data.data;
-                    }
-                });
-            };
         });
 }());
 
 (function() {
   'use strict';
 
-  angular.module('vipRecordRouter', [])
+  angular.module('teacherSettingRouter', [])
     .config(myRouter);
 
 
   function myRouter($stateProvider, $urlRouterProvider) {
     'ngInject';
     $stateProvider
-        .state('vipRecord', {
-          url: "/vipRecord",
-          templateUrl: 'vipRecord/vipRecord.html',
-          controller: 'vipRecordCtrl',
-          controllerAs: 'vm'
-        })
-        .state('record', {
-          url: "/record?:index",
-          params:{
-            index:0
-          },
-          templateUrl: 'vipRecord/record.html',
-          controller: 'recordCtrl',
-          controllerAs: 'vm'
-        });
+      .state('tabs.teacherSetting', {
+        url: "/teacherSetting",
+          views: {
+            'tab-teacherSetting': {
+              templateUrl: 'teacherSetting/teacherSetting.html',
+              controller: 'teacherSettingCtrl',
+              controllerAs: 'vm'
+            }
+          }
+      });
   }
 }());
 
 (function() {
   'use strict';
 
-  angular.module('vipRecordService', [])
-    .factory('vipRecordService', eService);
+  angular.module('teacherSettingService', [])
+    .factory('teacherSettingService', myService);
 
-  function eService( $q, $http,Constants,ResultHandler) {
+  function myService( $q, $http) {
     'ngInject';
     var service = {
-      exit:exit
     };
-
-    function exit(id) {
-      var url = Constants.serverUrl + 'account/exit/'+id;
-      return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
-    };
-
-    return service;
-
-
-  }
-
-}());
-
-(function() {
-  "use strict";
-  angular.module('vipTipsModule', [
-    'vipTipsCtrl',
-    'vipTipsRouter',
-    'vipTipsService'
-  ]);
-
-}());
-
-(function() {
-    "use strict";
-    angular.module('vipTipsCtrl', [])
-        .controller('vipTipsCtrl', function($scope, $state, Constants, StateService) {
-            'ngInject';
-            var vm = this;
-            vm.activated = false;
-            $scope.$on('$ionicView.afterEnter', activate);
-            vm.expend1=false;
-            function activate() {
-                vm.activated = true;
-                vm.version = Constants.buildID;
-            }
-
-            vm.back=function(){
-                StateService.back();
-            };
-
-            vm.test=function(){
-                console.log('test');
-            }
-        });
-}());
-
-(function() {
-  'use strict';
-
-  angular.module('vipTipsRouter', [])
-    .config(myRouter);
-
-
-  function myRouter($stateProvider, $urlRouterProvider) {
-    'ngInject';
-    $stateProvider
-        .state('vipTips', {
-          url: "/vipTips",
-          templateUrl: 'vipTips/vipTips.html',
-          controller: 'vipTipsCtrl',
-          controllerAs: 'vm'
-        })
-  }
-}());
-
-(function() {
-  'use strict';
-
-  angular.module('vipTipsService', [])
-    .factory('vipTipsService', eService);
-
-  function eService( $q, $http,Constants,ResultHandler) {
-    'ngInject';
-    var service = {
-      exit:exit
-    };
-
-    function exit(id) {
-      var url = Constants.serverUrl + 'account/exit/'+id;
-      return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
-    };
-
     return service;
 
 
@@ -4956,6 +4879,219 @@ Date.prototype.Format = function(fmt) {
     };
 
     return service;
+  }
+
+}());
+
+(function() {
+    "use strict";
+    angular.module('recordCtrl', [])
+        .controller('recordCtrl', function($scope, $state, $stateParams, Constants, StateService, vipBuyService, AuthService, MessageToaster, Session) {
+            'ngInject';
+            var vm = this;
+
+            vm.activated = false;
+
+
+            $scope.$on('$ionicView.afterEnter', activate);
+
+            function activate() {
+                console.log($stateParams);
+                vm.index = $stateParams.index;
+
+                vm.activated = true;
+                vm.version = Constants.buildID;
+                vm.query(vm.index);
+            }
+
+            vm.query = function(id){
+                console.log(" index = "+id);
+                if(Session.temp.OrderID == id)
+                    vm.item=Session.temp;
+
+            };
+
+            vm.back = function(){
+                StateService.back();
+                Session.temp = null;
+            };
+
+
+        });
+}());
+
+(function() {
+  "use strict";
+  angular.module('vipRecordModule', [
+    'vipRecordCtrl',
+    'recordCtrl',
+    'vipRecordRouter',
+    'vipRecordService'
+  ]);
+
+}());
+
+(function() {
+    "use strict";
+    angular.module('vipRecordCtrl', [])
+        .controller('vipRecordCtrl', function($scope, $state, Constants, StateService,vipBuyService,AuthService,MessageToaster,Session) {
+            'ngInject';
+            var vm = this;
+            vm.activated = false;
+
+            $scope.$on('$ionicView.afterEnter', activate);
+
+            function activate() {
+                vm.activated = true;
+                vm.version = Constants.buildID;
+                vm.getRecords();
+            }
+
+            vm.back=function(){
+                StateService.back();
+            };
+
+            vm.goTo=function(id,item){
+                Session.temp=item;
+                StateService.go('record',{index:id});
+            };
+
+            vm.getRecords = function () {
+                vipBuyService.getOrders(AuthService.getLoginID()).then(function(data) {
+                    if (data.errno == 0) {
+                        console.log(data.data);
+                        vm.records = data.data;
+                    }
+                });
+            };
+        });
+}());
+
+(function() {
+  'use strict';
+
+  angular.module('vipRecordRouter', [])
+    .config(myRouter);
+
+
+  function myRouter($stateProvider, $urlRouterProvider) {
+    'ngInject';
+    $stateProvider
+        .state('vipRecord', {
+          url: "/vipRecord",
+          templateUrl: 'vipRecord/vipRecord.html',
+          controller: 'vipRecordCtrl',
+          controllerAs: 'vm'
+        })
+        .state('record', {
+          url: "/record?:index",
+          params:{
+            index:0
+          },
+          templateUrl: 'vipRecord/record.html',
+          controller: 'recordCtrl',
+          controllerAs: 'vm'
+        });
+  }
+}());
+
+(function() {
+  'use strict';
+
+  angular.module('vipRecordService', [])
+    .factory('vipRecordService', eService);
+
+  function eService( $q, $http,Constants,ResultHandler) {
+    'ngInject';
+    var service = {
+      exit:exit
+    };
+
+    function exit(id) {
+      var url = Constants.serverUrl + 'account/exit/'+id;
+      return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
+    };
+
+    return service;
+
+
+  }
+
+}());
+
+(function() {
+  "use strict";
+  angular.module('vipTipsModule', [
+    'vipTipsCtrl',
+    'vipTipsRouter',
+    'vipTipsService'
+  ]);
+
+}());
+
+(function() {
+    "use strict";
+    angular.module('vipTipsCtrl', [])
+        .controller('vipTipsCtrl', function($scope, $state, Constants, StateService) {
+            'ngInject';
+            var vm = this;
+            vm.activated = false;
+            $scope.$on('$ionicView.afterEnter', activate);
+            vm.expend1=false;
+            function activate() {
+                vm.activated = true;
+                vm.version = Constants.buildID;
+            }
+
+            vm.back=function(){
+                StateService.back();
+            };
+
+            vm.test=function(){
+                console.log('test');
+            }
+        });
+}());
+
+(function() {
+  'use strict';
+
+  angular.module('vipTipsRouter', [])
+    .config(myRouter);
+
+
+  function myRouter($stateProvider, $urlRouterProvider) {
+    'ngInject';
+    $stateProvider
+        .state('vipTips', {
+          url: "/vipTips",
+          templateUrl: 'vipTips/vipTips.html',
+          controller: 'vipTipsCtrl',
+          controllerAs: 'vm'
+        })
+  }
+}());
+
+(function() {
+  'use strict';
+
+  angular.module('vipTipsService', [])
+    .factory('vipTipsService', eService);
+
+  function eService( $q, $http,Constants,ResultHandler) {
+    'ngInject';
+    var service = {
+      exit:exit
+    };
+
+    function exit(id) {
+      var url = Constants.serverUrl + 'account/exit/'+id;
+      return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
+    };
+
+    return service;
+
+
   }
 
 }());
