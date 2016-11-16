@@ -106,14 +106,13 @@ function createOrder($app,$sql_db){
 }
 
 function updateParentOrder($a_request,$app,$sql_db){
-    try{
-        if(!array_key_exists("orderId", $a_request) || !array_key_exists("payTime", $a_request)
-        || !array_key_exists("payState", $a_request))
-            return 16002;
-        $orderid = $a_request['orderId'];
-        $paytime = $a_request['payTime'];
-        $paystatus = $a_request['payState'];
-        $parentid = substr($orderid,0,8);
+        try{
+            if(!array_key_exists("orderId", $a_request) || !array_key_exists("payTime", $a_request) || !array_key_exists("payState", $a_request))
+                return 16002;
+            $orderid = $a_request['orderId'];
+            $paytime = $a_request['payTime'];
+            $paystatus = $a_request['payState'];
+            $parentid = substr($orderid,0,8);
         $sql_str = "SELECT cutofftime FROM tb_parent_order WHERE paytime = (SELECT MAX(paytime) FROM tb_parent_order WHERE parentid = :parentid AND paystatus = 1)";
         $stmt = $sql_db->prepare($sql_str);
         $stmt->bindParam(":parentid", intval($parentid), PDO::PARAM_INT);
@@ -124,7 +123,7 @@ function updateParentOrder($a_request,$app,$sql_db){
         if($row)
             $cutofftime = $row['cutofftime'];
         $sql_str = "UPDATE tb_parent_order SET modifytime=now(), paystatus=:paystatus, paytime=str_to_date(:paytime, '%Y%m%d%H%i%s'),
-            cutofftime=date_add(str_to_date(:pt, '%Y%m%d%H%i%s'), INTERVAL numofdays DAY) where orderid=:orderid";
+            cutofftime=date_add(:pt, INTERVAL numofdays DAY) where orderid=:orderid";
         $stmt = $sql_db->prepare($sql_str);
         $stmt->bindParam(":paystatus", intval($paystatus), PDO::PARAM_INT);
         $stmt->bindParam(":paytime", $paytime, PDO::PARAM_STR);
@@ -133,17 +132,18 @@ function updateParentOrder($a_request,$app,$sql_db){
         else
             $stmt->bindParam(":pt", $cutofftime, PDO::PARAM_STR);
         $stmt->bindParam(":orderid", $orderid, PDO::PARAM_STR);
-        if(!$stmt->execute())
-            return 10001;
-        if($stmt->rowCount() <= 0)
-            return 10002;
+        
+	    if(!$stmt->execute())
+                return 10001;
+            if($stmt->rowCount() <= 0)
+                return 10002;
 
-        return 0;
-    }catch (PDOException $e) {
-        $errs = $e->getMessage();
-        $app->getLog()->debug("Debug ".date('Y-m-d H:i:s')." : ".$errs);
-        return 10000;
-    }
+            return 0;
+        }catch (PDOException $e) {
+            $errs = $e->getMessage();
+	    $app->getLog()->debug("Debug ".date('Y-m-d H:i:s')." : ".$errs);
+		return 10000;
+        }
 }
 
 function queryOrder($app,$orderId,$sql_db){
@@ -168,12 +168,15 @@ function queryOrder($app,$orderId,$sql_db){
         $rsp_data['orderId'] = $order['out_trade_no'];
         $rsp_data['wechatOrderId'] = $order['transaction_id'];
         $rsp_data['totalFee'] = $order['total_fee'];
-        if($order['trade_state']=='SUCCESS')$state=1;
-        else $state=0;
+	if($order['trade_state']=='SUCCESS')$state=1;
+	else $state=0;
         $rsp_data['payState'] = $state;
         $rsp_data['payTime'] = $order['time_end'];
-        $result=updateParentOrder($rsp_data, $app, $sql_db);
-        $response->setBody(rspData($result));
+	$result=updateParentOrder($rsp_data,$app,$sql_db);
+	if($result==0)
+            $response->setBody(rspData(0));
+        else 
+	    $response->setBody(rspData($result));
     }else{
         $response->setBody(rspData(10001,  $order['err_code_des']));
     }

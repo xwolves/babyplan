@@ -14,6 +14,7 @@ static $errCode = array(
     12005 => 'Account Have No Children Related',
     12006 => 'Account Have No Teacher Related',
     12007 => 'Deposit Account No Exist',
+    12008 => 'Children Account No Exist',
 
     13001 => 'Finger Parames Empty',
     13002 => 'Finger Parames Required Defect',

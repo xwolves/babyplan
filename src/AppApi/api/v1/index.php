@@ -123,7 +123,7 @@ $app->post(
             return;
         }
         $account = new Account($sql_db);
-        $ret = $account->createParentAccount($a_request, 2);
+        $ret = $account->createAccount($a_request, 2);
         $rsp_data['uid'] = $ret;
         $response->setBody(rspData($ret, $rsp_data));
     }
@@ -147,9 +147,59 @@ $app->post(
             return;
         }
         $account = new Account($sql_db);
-        $ret = $account->createParentAccount($a_request, 4);
+        $ret = $account->createAccount($a_request, 4);
         $rsp_data['uid'] = $ret;
         $response->setBody(rspData($ret, $rsp_data));
+    }
+);
+
+//修改孩子信息
+$app->post(
+    '/account/children/update/:childid',
+    function ($childid) use ($app, $sql_db, $redis){
+        $rsp_data = array();
+        $response = $app->response;
+        $request = $app->request->getBody();
+        $token = $app->request->headers('token');
+        $depositInfo = $redis->get($token);
+        if(!$depositInfo){
+            $response->setBody(rspData(10005));
+            return;
+        }
+
+        $a_request = json_decode($request, true);
+        if(empty($a_request)){
+            $response->setBody(rspData(12001));
+            return;
+        }
+        $a_request['accountid'] = $childid;
+        $a_request = array_change_key_case($a_request, CASE_LOWER);
+        $account = new Account($sql_db);
+        $ret = $account->updateChildren($a_request);
+        $rsp_data['uid'] = $ret;
+        $response->setBody(rspData($ret, $rsp_data));
+    }
+);
+
+//查询孩子信息
+$app->get(
+    '/account/children/query/:childid',
+    function ($childid) use ($app, $sql_db, $redis){
+        $response = $app->response;
+        $token = $app->request->headers('token');
+        $depositInfo = $redis->get($token);
+        if(!$depositInfo){
+            $response->setBody(rspData(10005));
+            return;
+        }
+
+        $account = new Account($sql_db);
+        $ret = $account->queryChildrenInfo($childid);
+        if(gettype($ret) != "array"){
+            $response->setBody(rspData($ret));
+        }else{
+            $response->setBody(rspData(0, $ret));
+        }
     }
 );
 
@@ -171,7 +221,7 @@ $app->post(
             return;
         }
         $account = new Account($sql_db);
-        $ret = $account->createParentAccount($a_request, 3);
+        $ret = $account->createAccount($a_request, 3);
         $rsp_data['uid'] = $ret;
         $rsp_data['passwd'] = substr($a_request['mobile'], strlen($a_request['mobile']) - 6);
         $response->setBody(rspData($ret, $rsp_data));
@@ -401,7 +451,7 @@ $app->get(
             return;
         }
         $account = new Account($sql_db);
-        $ret = $account->queryChildrenInfo($parent_accnt_id);
+        $ret = $account->queryChildrenList($parent_accnt_id);
         if(count($ret) == 0)
             $response->setBody(rspData(12005));
         else
@@ -1102,6 +1152,7 @@ $app->post(
 /*
  * 更新parent_order
  */
+/*
 $app->post(
     '/charge/order/update/:parentid',
     function ($parentid) use ($app, $sql_db, $redis){
@@ -1111,8 +1162,8 @@ $app->post(
         $token = $app->request->headers('token');
         $depositInfo = $redis->get($token);
         if(!$depositInfo){
-            $response->setBody(rspData(10005));
-            return;
+            //$response->setBody(rspData(10005));
+            //return;
         }
 
         $a_request = json_decode($request, true);
@@ -1128,6 +1179,7 @@ $app->post(
         $response->setBody(rspData($ret));
     }
 );
+ */
 
 //==========================================================comment moduls=========================================//
 /*
@@ -1154,7 +1206,7 @@ $app->post(
         $a_request['commentby'] = $parentid;
         if(!getParentPurview($sql_db, $parentid))
             return $response->setBody(rspData(16005));
-
+            
         $comment = new Comment($sql_db);
         $ret = $comment->parentCommentDeposit($a_request);
         $response->setBody(rspData($ret));
@@ -1207,6 +1259,5 @@ $app->put(
       $response->setBody($document);
     }
 );
-
 
 $app->run();

@@ -92,8 +92,8 @@ class Account{
                     $info[] = $d_info;
                 else{
                     if(!empty($t_info)){
-                        $info[] = $t_info;
-                    }
+                        $info[] = $t_info;	
+                    }	
                 }
             }else if(intval($type) == 2){
                 if(!empty($p_info))
@@ -118,7 +118,7 @@ class Account{
 
     }
 
-    public function createParentAccount($info, $type){
+    public function createAccount($info, $type){
         try{
             $accountId = $this->createAccountId($type);
             if($accountId < 10000000)
@@ -142,17 +142,11 @@ class Account{
                 $tb_name = "tb_accnt_teacher";
                 $column = array("accountid", "mobile", "password", "name", "sex", "teachage", "age");
                 $info['password'] = substr($info['mobile'], strlen($info['mobile']) - 6);
-                //$sql_str = "insert into tb_deposit_teacher (depositid, teacherid, createtime) values (?, ?, now())";
-                //$stmt = $this->DB->prepare($sql_str);
-	        //$stmt->bindParam(1, $info['depositid'], PDO::PARAM_INT);
-                //$stmt->bindParam(2, $accountId, PDO::PARAM_INT);
-                //if(!$stmt->execute())
-                //    return 10001;
-                //if($stmt->rowCount() <= 0)
-                //    return 10002;
             }else if(4 == intval($type)){
                 $tb_name = "tb_accnt_children";
-                $column = array("accountid", "name", "sex", "fingerfeature", "remark");
+                $column = array("accountid", "name", "sex", "fingerfeature", "remark", "grade", "birthday", "homeaddr", "allergy", "allergyremark","favoritefood",
+                    "guardian1","guardianphone1","guardianworkplace1", "guardian2", "guardianphone2", "guardianworkplace2", "schoolname", "classteacherphone",
+                    "course","opentime", "depositcardid", "deposittype", "benefit");
                 $sql_str = "insert into tb_parent_children (parentid, childrenid, createtime) values (:parentid, :childrenid, now())";
                 $stmt = $this->DB->prepare($sql_str);
                 $stmt->bindParam(":parentid", intval($info['p_uid']), PDO::PARAM_INT);
@@ -336,6 +330,43 @@ class Account{
         }
     }
 
+    public function updateChildren($params){
+        try{
+            $accountid = $params['accountid'];
+            $column = array("name", "sex", "fingerfeature", "remark", "grade", "birthday", "homeaddr", "allergy", "allergyremark","favoritefood",
+                    "guardian1","guardianphone1","guardianworkplace1", "guardian2", "guardianphone2", "guardianworkplace2", "schoolname", "classteacherphone",
+                    "course","opentime", "depositcardid", "deposittype", "benefit");
+
+            $ar_params = array();
+            foreach($params as $key => $val){
+                if(in_array($key, $column))
+                    $ar_params[$key] = $val;
+            }
+
+            $str_tail = "";
+            foreach($ar_params as $key => $val){
+                if(empty($str_tail))
+                    $str_tail = " set $key=:$key";
+                else
+                    $str_tail .= ", $key=:$key";
+            }
+
+            if(!empty($str_tail)){
+                $sql_str = "update tb_accnt_children $str_tail , modifytime = now() where accountid = $accountid";
+                $stmt = $this->DB->prepare($sql_str);
+                if (!$stmt->execute($ar_params))
+                    return 10001;
+                if($stmt->rowCount() <= 0)
+                    return 10002;
+            }
+
+            return $accountid;
+        }catch (PDOException $e) {
+            $errs = $e->getMessage();
+            return 10000;
+        }
+    }
+
     public function updateDeposit($params){
         try{
             $accountid = $params['accountid'];
@@ -399,7 +430,7 @@ class Account{
         }
     }
 
-    public function queryChildrenInfo($parentid){
+    public function queryChildrenList($parentid){
         try{
             $info = array();
             $sql_str = "SELECT c.accountid, b.relationship, c.name, c.sex, c.fingerfeature, c.remark FROM
@@ -441,6 +472,26 @@ class Account{
             $info = $row;
 
             return $info;
+        }catch (PDOException $e) {
+            $errs = $e->getMessage();
+            return 10000;
+        }
+    }
+
+    public function queryChildrenInfo($childid){
+        try{
+            $sql_str = "SELECT * from tb_accnt_children where accountid=:childid";
+            $stmt = $this->DB->prepare($sql_str);
+            $stmt->bindParam(":childid", intval($childid), PDO::PARAM_INT);
+            if (!$stmt->execute())
+                return 10001;
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if(!$row)
+                return 12008;
+            
+
+            return $row;
         }catch (PDOException $e) {
             $errs = $e->getMessage();
             return 10000;
