@@ -1,0 +1,2 @@
+gox -rebuild -verbose -osarch="linux/amd64" && rm -vf ~/Modem/apilesson_d && cp -vf apilesson_linux_amd64 ~/Modem/apilesson_d
+

@@ -1,0 +1,50 @@
+{
+    "student": 1035796777,
+    "subject": 3,
+    "teacher": 50013856,
+    "operator": 0,
+    "at": [
+    {
+        "beginTime": 1468821600,
+        "endTime": 1468825200,
+        "classHour": 0
+    },
+    {
+        "beginTime": 1468832400,
+        "endTime": 1468836000,
+        "classHour": 0
+    },
+    {
+        "beginTime": 1468825200,
+        "endTime": 1468821600,
+        "classHour": 0
+    }
+
+    ],
+    "byDay": {
+        "beginTime": 0,
+        "endTime": 0,
+        "at": [
+        {
+            "beginTime": 0,
+            "endTime": 0,
+            "classHour": 0
+        },
+        {
+        }
+        ]
+    },
+    "byWeek": {
+        "beginTime": 0,
+        "endTime": 0,
+        "at": [
+        {
+            "beginTime": 0,
+            "endTime": 0,
+            "classHour": 0
+        },
+        {           
+        }
+        ]
+    }
+}

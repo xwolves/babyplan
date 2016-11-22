@@ -1,0 +1,29 @@
+{
+    "student": 1035796777,
+    "subject": 3,
+    "teacher": 50013856,
+    "operator": 0,
+    "at": [],
+    "byDay": {
+        "beginTime": 1468994400,
+        "endTime": 1469440800,
+        "at": [
+            {
+                "beginTime": 1468994400,
+                "endTime": 1468998000,
+                "classHour": 0
+            }
+        ]
+    },
+    "byWeek": {
+        "beginTime": 1469592000,
+        "endTime": 1470801600,
+        "at": [
+            {
+                "beginTime": 1469592000,
+                "endTime": 1469595600,
+                "classHour": 0
+            }
+        ]
+    }
+}

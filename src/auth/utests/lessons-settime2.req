@@ -1,0 +1,17 @@
+{
+    "student": 1035796777,
+    "subject": 1,
+    "beginTime": 1469595600,
+    "endTime": 1469599600,
+    "operator": 0,
+    "reason": 8,
+    "plan": {
+        "at": [
+            {
+                "beginTime": 1469692000,
+                "endTime": 1469597600,
+                "classHour": 3
+            }
+        ]
+    }
+}

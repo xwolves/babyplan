@@ -1,0 +1,33 @@
+{
+    "student":0,
+    "subject":0,
+    "beginTime":1468653362,
+    "endTime":1468656962,
+    "operator":0,
+    "reason":0,
+    "plan":{
+        "at": [],
+        "byDay": {
+            "beginTime": 1468994400,
+            "endTime": 1469440800,
+            "at": [
+                {
+                    "beginTime": 1468994400,
+                    "endTime": 1468998000,
+                    "classHour": 0
+                }
+            ]
+        },
+        "byWeek": {
+            "beginTime": 1469592000,
+            "endTime": 1470801600,
+            "at": [
+                {
+                    "beginTime": 1469592000,
+                    "endTime": 1469595600,
+                    "classHour": 0
+                }
+            ]
+        }
+    }
+}
