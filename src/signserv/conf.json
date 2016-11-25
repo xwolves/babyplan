@@ -1,0 +1,10 @@
+{
+    "serv_addr":":10080",
+    "db_config":{
+        "db_host":"127.0.0.1",
+        "db_port":3306,
+        "db_user":"deposit",
+        "db_pass":"Deposit@00",
+        "db_name":"db_deposit"
+    }
+}
