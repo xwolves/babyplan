@@ -36,6 +36,15 @@
         templateUrl: 'nearby/nearbyDepositInfo.html',
         controller: 'nearbyDepositInfoCtrl',
         controllerAs: 'vm'
+      })
+      .state('depositComment', {
+        url: "/depositComment?:id",
+        params: {
+          id : null
+        },
+        templateUrl: 'nearby/depositComment.html',
+        controller: 'depositCommentCtrl',
+        controllerAs: 'vm'
       });
   }
 }());

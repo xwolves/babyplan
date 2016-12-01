@@ -6,6 +6,7 @@
             'ngStorage',
             'toaster',
             'ui.rCalendar.tpls',
-            'baiduMap'
+            'baiduMap',
+            'ionic.rating'
         ]);
 }());

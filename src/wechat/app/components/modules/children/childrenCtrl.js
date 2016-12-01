@@ -10,8 +10,10 @@
             vm.fingerprintLogs=[];
             vm.fingerprintLogSample=[];
             vm.messages=[];
+            vm.simpleFilter='';
             vm.offset=0;
             vm.limit=30;
+            vm.canLoadMore=true;
             $scope.$on('$ionicView.afterEnter', activate);
 
             function activate() {
@@ -33,6 +35,10 @@
                 vm.getChildren();
             };
 
+            vm.doRefresh = function(offset){
+                vm.getChildrenInfo(AuthService.getLoginID(),offset,vm.limit);
+            };
+
             vm.getChildrenInfo = function(pId,offset,limit){
                 childrenService.getChildrenAllInfo(pId,offset,limit).then(function(data) {
                     if (data.errno == 0) {
@@ -41,9 +47,17 @@
                         if(vm.messages.length == 0)
                             vm.messages=data.data;
                         else
-                            vm.message.push(data.data);
+                            vm.messages=vm.messages.concat(data.data);
                         console.log(vm.messages);
                         vm.offset+=data.data.length;
+                        if(data.data.length < vm.limit){
+                            console.log("it is the last data");
+                            vm.canLoadMore = false;
+                        }else{
+                            vm.canLoadMore = true;
+                        }
+                        $scope.$broadcast('scroll.refreshComplete');
+                        $scope.$broadcast('scroll.infiniteScrollComplete');
                     }else{
                         console.log(data);
                     }
@@ -84,6 +98,10 @@
                 StateService.go("photo",{index:index});
             };
 
+            vm.star = function(){
+                console.log("add star");
+            };
+
             vm.getChildren = function(){
                 childrenService.getChildren(AuthService.getLoginID()).then(function(data) {
                     var title="";
@@ -102,6 +120,26 @@
                     }
                     //vm.fingerprintLogs.sort(function(a,b){return a.log-b.log});
                 });
+            };
+
+            vm.change = function(){
+                if(vm.simpleFilterSelect==='-1'){
+                    vm.simpleFilter="";
+                }else if(vm.simpleFilterSelect==='0'){
+                    vm.simpleFilter={datatype:'2'};
+                }else if(vm.simpleFilterSelect==='1'){
+                    vm.simpleFilter={datatype:'1',InfoType:'1'};
+                }else if(vm.simpleFilterSelect==='2'){
+                    vm.simpleFilter={datatype:'1',InfoType:'2'};
+                }else if(vm.simpleFilterSelect==='3'){
+                    vm.simpleFilter={datatype:'1',InfoType:'3'};
+                }else if(vm.simpleFilterSelect==='4'){
+                    vm.simpleFilter={datatype:'1',InfoType:'4'};
+                }else if(vm.simpleFilterSelect==='5'){
+                    vm.simpleFilter={datatype:'1',InfoType:'5'};
+                }else if(vm.simpleFilterSelect==='6'){
+                    vm.simpleFilter={datatype:'1',InfoType:'6'};
+                }
             };
 
             vm.getImages=function(msg){
@@ -191,5 +229,6 @@
             $scope.slideChanged = function(index) {
                 $scope.slideIndex = index;
             };
+
         });
 }());

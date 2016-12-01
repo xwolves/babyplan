@@ -18,11 +18,18 @@
                 <p>联系电话：{{vm.more.ContactPhone}}</p>
                 <p>托管对象：{{vm.more.Remark}}</p>
             </li>
-            <li class="item">
+            <!--<li class="item">-->
+                <!--<div style="color: grey;">-->
+                    <!--<i class="ion-android-favorite">&nbsp;</i><span>{{vm.comments.length}}</span>-->
+                    <!--&nbsp;-->
+                    <!--<i class="ion-ios-photos">&nbsp;</i><span>0</span>-->
+                    <!--<span>&nbsp;</span>-->
+                    <!--<span style="float: right"><i class="ion-ios-arrow-forward"></i></span>-->
+                <!--</div>-->
+            <!--</li>-->
+            <li class="item" ng-click="vm.gotoDepositComment()">
                 <div style="color: grey;">
-                    <i class="ion-android-favorite">&nbsp;</i><span>{{vm.comments.length}}</span>
-                    &nbsp;
-                    <i class="ion-ios-photos">&nbsp;</i><span>0</span>
+                    <i class="ion-ios-star">&nbsp;</i><span>{{vm.scores}}</span>
                     <span>&nbsp;</span>
                     <span style="float: right"><i class="ion-ios-arrow-forward"></i></span>
                 </div>

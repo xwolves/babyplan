@@ -67,7 +67,8 @@
             'ngStorage',
             'toaster',
             'ui.rCalendar.tpls',
-            'baiduMap'
+            'baiduMap',
+            'ionic.rating'
         ]);
 }());
 
@@ -557,7 +558,7 @@ app.filter('statusChange', function () {
             'appTitle':'托管系统',
             'serverUrl': '/api/v1/',
             'dfsUrl': '/',
-            'buildID': '20161116v1',
+            'buildID': '20161201v1',
             'ENVIRONMENT':'release'
         });
 }());
@@ -652,6 +653,288 @@ Date.prototype.Format = function(fmt) {
 }());
 
 (function() {
+    "use strict";
+    angular.module('LoginModule', [
+        'WXLoginCtrl',
+        'LoginRouter',
+        'LoginService'
+    ]).run(function($rootScope, Session, StateService,$location) {
+        $rootScope.$on('$stateChangeStart', function(event, next) {
+          if (next.url.indexOf('wxlogin')>0 ) {
+              console.log("wxlogin");
+          }else if(next.url.indexOf('login')>0){
+              console.log("login");
+          }else if(next.url.indexOf('register')>0){
+              //未绑定用户者,进入注册绑定页面
+              console.log("register");
+          }else{
+            if (Session.userId && Session.token) {
+                //login successed
+            } else {
+                console.log("user not login with ");
+                event.preventDefault();
+                StateService.clearAllAndGo('wxlogin');
+            }
+          }
+        });
+        //alert($location.absUrl());
+        var url = $location.absUrl();
+        //获取ticket参数，因为angualr的路径不规范，会出现http://10.20.68.73:8080/casOauth/?ticket=ST-16-HzIjcAlxbKvlyJQAX2XI-cas01.sustc.edu.cn#/login，无法用公共方法获取
+        var start = url.indexOf('user=') + 5;
+        var end = url.indexOf('&type=');
+        //如果是http://10.20.68.73:8080/casOauth?ticket=ST-16-HzIjcAlxbKvlyJQAX2XI-cas01.sustc.edu.cn这种情况
+        //或者是是http://10.20.68.73:8080/casOauth/#/login?ticket=ST-16-HzIjcAlxbKvlyJQAX2XI-cas01.sustc.edu.cn这种情况
+        if (end == -1 || end < start) end = url.length;
+        console.log("login 1" + start + " - " + end);
+        var myUser = url.toString().substring(start, end);
+        console.log("get user = " + myUser);
+
+        var start = url.indexOf('&type=') + 6;
+        var end = url.indexOf('#/wxlogin');
+        if (end == -1 || end < start) end = url.length;
+        console.log("login 2" + start + " - " + end);
+        var myType = url.toString().substring(start, end);
+        console.log("get type = " + myType);
+
+        StateService.clearAllAndGo('wxlogin',{user:myUser,type:myType});
+    });
+
+}());
+
+(function() {
+  'use strict';
+
+  angular.module('LoginRouter', [])
+    .config(LoginRouter);
+
+
+  function LoginRouter($stateProvider,$urlRouterProvider) {
+    'ngInject';
+    $stateProvider
+    .state('wxlogin', {
+      url: "/wxlogin?:user&:type",
+      params:{
+        user:null,
+        type:0
+      },
+      templateUrl: 'Login/wxlogin.html',
+      controller: 'WXLoginCtrl',
+      controllerAs: 'vm'
+    });
+    // $urlRouterProvider.when('', '/wxlogin');
+    $urlRouterProvider.otherwise('/wxlogin');
+
+  }
+}());
+
+(function() {
+    'use strict';
+
+    angular.module('LoginService', [])
+        .factory('LoginService', LoginService);
+
+    function LoginService($q, $http, ResultHandler, Constants) {
+        'ngInject';
+        var service = {
+            login: login,
+            logout: logout,
+            wxLogin: wxLogin
+        };
+
+        function logout() {
+
+        }
+
+        function login(userId, password) {
+            var data = {
+                id: md5(userId),
+                psw: md5(password)
+            };
+            var url = Constants.serverUrl + 'login';
+            return $http({
+                method: 'post',
+                url: url,
+                data: data
+            }).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
+        }
+
+        //POST /api/v1/login
+        //Request Body:
+        //{
+        //    "weixinno": "xxxxxx"
+        //}
+        //Response Body:
+        //{
+        //    "errno":0,
+        //    "error":"",
+        //    "data":{
+        //        "token":"fdddsdsdddsssssdfff",
+        //        "uid":"用户id",
+        //        "type":"用户类型"   uid的第一位数
+        //    }
+        //}
+        function wxLogin(wxId,type) {
+            var data = {
+                weixinno: wxId
+            };
+            var end="";
+            if(type!=null){
+                //console.log("include type "+type);
+                data.type=type;
+                end="?type="+type;
+            }
+            var url = Constants.serverUrl + 'login'+end;
+            return $http({
+                method: 'post',
+                url: url,
+                data: data
+            }).then(function (response) {
+                return response.data;
+            }, function (error) {
+                return $q.reject(error);
+            });
+        }
+
+
+        return service;
+
+
+    }
+
+}());
+
+(function() {
+    "use strict";
+    angular.module('WXLoginCtrl', [])
+        .controller('WXLoginCtrl', function(Constants, AuthService, MessageToaster, LoginService, $timeout, $scope, Session, $stateParams, StateService, $ionicModal, Role) {
+            'ngInject';
+
+            var vm = this;
+            vm.wxlogin = wxlogin;
+            vm.isDev = Constants.ENVIRONMENT == 'dev' ? true : false;
+            $scope.$on('$ionicView.beforeEnter', validate);
+
+            function validate() {
+                vm.user = $stateParams.user;
+                vm.type = $stateParams.type;
+                console.log("vm.type = "+vm.type+" with "+vm.user);
+            /////////////////////////////////////////////////////////
+            //    vm.user = "o_Nkcw4CsZh5dbE2v8XVLUxfd96A";//"oVyGDuNPkAbtljfJKusP4oaCrYG0";//test "o_Nkcw4CsZh5dbE2v8XVLUxfd96A";//
+            //    vm.type = 2;//test
+            ////////////////////////////////////////////////////////
+                //MessageToaster.info('user = '+vm.user);
+                if (vm.user) {
+                    //login failed
+                    //MessageToaster.info('logining....');
+                    vm.info = "正在登录，请稍后...";
+                    vm.showLoginModal = showLoginModal;
+                    //vm.roleList = [{type:1,user:'1111'}];//test
+                    vm.showChooseModal = showChooseModal;
+                    vm.login = login;
+                    vm.select = selectChoose;
+                    //获取到微信uid后先尝试登陆对应的用户类型
+                    if(vm.type){
+                        vm.wxlogin(vm.user,vm.type);
+                    }else{
+                        vm.showChooseModal();
+                    }
+                }
+            }
+
+            function wxlogin(userid,type) {
+                console.log(userid+"  type = "+type);
+                //MessageToaster.info('准备登录');
+                LoginService.wxLogin(userid,type).then(function(response) {
+                    console.log(response);
+                    if(response.errno==0) {
+                        var result = response.data;
+                        if (result instanceof Array && result.length > 1) {
+                            //modal select type
+                            vm.roleList=result;
+                            //MessageToaster.info("have select "+result.length);
+                            vm.showChooseModal();
+                        }else{
+                            var u=result[0];
+                            if (u.uid != null && u.token != null && u.type != null) {
+                                AuthService.setSession(u.uid, u.token, u.type,userid);
+                                StateService.clearAllAndGo(AuthService.getNextPath());
+                            }
+                        }
+                    }else{
+                        if(response.errno==12004){
+                            //no data found
+                            AuthService.setSession(null, null, Role.unknown,userid);
+
+                            StateService.clearAllAndGo("register",{type:vm.type});
+                        }
+                        //MessageToaster.error(response.error);
+                    }
+                });
+            };
+
+            //WeuiModalLoading
+            function login(user) {
+                //WeuiModalLoading.show();
+                //test
+                AuthService.setSession('1', '123', '1');
+                StateService.go(AuthService.getNextPath());
+                //test
+
+                LoginService.login(user.userId, user.password).then(function(response) {
+                    if (vm.modal)
+                        vm.closeDetailsModal();
+                    MessageToaster.success(response.message);
+                    AuthService.setSession(response.data.uid, response.data.token,response.data.type);
+                    StateService.clearAllAndGo(AuthService.getNextPath());
+                }).finally(function() {
+                    //WeuiModalLoading.hide();
+                });
+            }
+
+            function showLoginModal() {
+                $ionicModal.fromTemplateUrl('Login/LoginModal.html', {
+                    scope: $scope,
+                    animation: 'slide-in-up'
+                }).then(function(modal) {
+                    vm.modal = modal;
+                    vm.modal.show();
+                });
+
+                vm.closeDetailsModal = function() {
+                    vm.modal.remove();
+                };
+                $scope.$on('$ionicView.leave', function() {
+                    vm.modal.remove();
+                });
+            }
+
+            function showChooseModal() {
+                $ionicModal.fromTemplateUrl('Login/ChooseModal.html', {
+                    scope: $scope,
+                    animation: 'slide-in-up'
+                }).then(function(modal) {
+                    vm.cmodal = modal;
+                    vm.cmodal.show();
+                });
+
+                vm.closeChooseModal = function() {
+                    vm.cmodal.remove();
+                };
+                $scope.$on('$ionicView.leave', function() {
+                    vm.cmodal.remove();
+                });
+            }
+
+            function selectChoose(){
+                if(vm.choose!=null){
+                    //know user choose then login agin with type
+                    wxlogin(vm.user, vm.choose);
+                }
+            }
+        });
+}());
+
+(function() {
   "use strict";
   angular.module('childrenModule', [
     'childrenCtrl',
@@ -676,6 +959,7 @@ Date.prototype.Format = function(fmt) {
             vm.simpleFilter='';
             vm.offset=0;
             vm.limit=30;
+            vm.canLoadMore=true;
             $scope.$on('$ionicView.afterEnter', activate);
 
             function activate() {
@@ -697,6 +981,10 @@ Date.prototype.Format = function(fmt) {
                 vm.getChildren();
             };
 
+            vm.doRefresh = function(offset){
+                vm.getChildrenInfo(AuthService.getLoginID(),offset,vm.limit);
+            };
+
             vm.getChildrenInfo = function(pId,offset,limit){
                 childrenService.getChildrenAllInfo(pId,offset,limit).then(function(data) {
                     if (data.errno == 0) {
@@ -705,9 +993,17 @@ Date.prototype.Format = function(fmt) {
                         if(vm.messages.length == 0)
                             vm.messages=data.data;
                         else
-                            vm.message.push(data.data);
+                            vm.messages=vm.messages.concat(data.data);
                         console.log(vm.messages);
                         vm.offset+=data.data.length;
+                        if(data.data.length < vm.limit){
+                            console.log("it is the last data");
+                            vm.canLoadMore = false;
+                        }else{
+                            vm.canLoadMore = true;
+                        }
+                        $scope.$broadcast('scroll.refreshComplete');
+                        $scope.$broadcast('scroll.infiniteScrollComplete');
                     }else{
                         console.log(data);
                     }
@@ -746,6 +1042,10 @@ Date.prototype.Format = function(fmt) {
             vm.goPhoto=function(msgIndex,index){
                 Session.temp=vm.msg[msgIndex];
                 StateService.go("photo",{index:index});
+            };
+
+            vm.star = function(){
+                console.log("add star");
             };
 
             vm.getChildren = function(){
@@ -1280,288 +1580,6 @@ Date.prototype.Format = function(fmt) {
 
 (function() {
     "use strict";
-    angular.module('LoginModule', [
-        'WXLoginCtrl',
-        'LoginRouter',
-        'LoginService'
-    ]).run(function($rootScope, Session, StateService,$location) {
-        $rootScope.$on('$stateChangeStart', function(event, next) {
-          if (next.url.indexOf('wxlogin')>0 ) {
-              console.log("wxlogin");
-          }else if(next.url.indexOf('login')>0){
-              console.log("login");
-          }else if(next.url.indexOf('register')>0){
-              //未绑定用户者,进入注册绑定页面
-              console.log("register");
-          }else{
-            if (Session.userId && Session.token) {
-                //login successed
-            } else {
-                console.log("user not login with ");
-                event.preventDefault();
-                StateService.clearAllAndGo('wxlogin');
-            }
-          }
-        });
-        //alert($location.absUrl());
-        var url = $location.absUrl();
-        //获取ticket参数，因为angualr的路径不规范，会出现http://10.20.68.73:8080/casOauth/?ticket=ST-16-HzIjcAlxbKvlyJQAX2XI-cas01.sustc.edu.cn#/login，无法用公共方法获取
-        var start = url.indexOf('user=') + 5;
-        var end = url.indexOf('&type=');
-        //如果是http://10.20.68.73:8080/casOauth?ticket=ST-16-HzIjcAlxbKvlyJQAX2XI-cas01.sustc.edu.cn这种情况
-        //或者是是http://10.20.68.73:8080/casOauth/#/login?ticket=ST-16-HzIjcAlxbKvlyJQAX2XI-cas01.sustc.edu.cn这种情况
-        if (end == -1 || end < start) end = url.length;
-        console.log("login 1" + start + " - " + end);
-        var myUser = url.toString().substring(start, end);
-        console.log("get user = " + myUser);
-
-        var start = url.indexOf('&type=') + 6;
-        var end = url.indexOf('#/wxlogin');
-        if (end == -1 || end < start) end = url.length;
-        console.log("login 2" + start + " - " + end);
-        var myType = url.toString().substring(start, end);
-        console.log("get type = " + myType);
-
-        StateService.clearAllAndGo('wxlogin',{user:myUser,type:myType});
-    });
-
-}());
-
-(function() {
-  'use strict';
-
-  angular.module('LoginRouter', [])
-    .config(LoginRouter);
-
-
-  function LoginRouter($stateProvider,$urlRouterProvider) {
-    'ngInject';
-    $stateProvider
-    .state('wxlogin', {
-      url: "/wxlogin?:user&:type",
-      params:{
-        user:null,
-        type:0
-      },
-      templateUrl: 'Login/wxlogin.html',
-      controller: 'WXLoginCtrl',
-      controllerAs: 'vm'
-    });
-    // $urlRouterProvider.when('', '/wxlogin');
-    $urlRouterProvider.otherwise('/wxlogin');
-
-  }
-}());
-
-(function() {
-    'use strict';
-
-    angular.module('LoginService', [])
-        .factory('LoginService', LoginService);
-
-    function LoginService($q, $http, ResultHandler, Constants) {
-        'ngInject';
-        var service = {
-            login: login,
-            logout: logout,
-            wxLogin: wxLogin
-        };
-
-        function logout() {
-
-        }
-
-        function login(userId, password) {
-            var data = {
-                id: md5(userId),
-                psw: md5(password)
-            };
-            var url = Constants.serverUrl + 'login';
-            return $http({
-                method: 'post',
-                url: url,
-                data: data
-            }).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
-        }
-
-        //POST /api/v1/login
-        //Request Body:
-        //{
-        //    "weixinno": "xxxxxx"
-        //}
-        //Response Body:
-        //{
-        //    "errno":0,
-        //    "error":"",
-        //    "data":{
-        //        "token":"fdddsdsdddsssssdfff",
-        //        "uid":"用户id",
-        //        "type":"用户类型"   uid的第一位数
-        //    }
-        //}
-        function wxLogin(wxId,type) {
-            var data = {
-                weixinno: wxId
-            };
-            var end="";
-            if(type!=null){
-                //console.log("include type "+type);
-                data.type=type;
-                end="?type="+type;
-            }
-            var url = Constants.serverUrl + 'login'+end;
-            return $http({
-                method: 'post',
-                url: url,
-                data: data
-            }).then(function (response) {
-                return response.data;
-            }, function (error) {
-                return $q.reject(error);
-            });
-        }
-
-
-        return service;
-
-
-    }
-
-}());
-
-(function() {
-    "use strict";
-    angular.module('WXLoginCtrl', [])
-        .controller('WXLoginCtrl', function(Constants, AuthService, MessageToaster, LoginService, $timeout, $scope, Session, $stateParams, StateService, $ionicModal, Role) {
-            'ngInject';
-
-            var vm = this;
-            vm.wxlogin = wxlogin;
-            vm.isDev = Constants.ENVIRONMENT == 'dev' ? true : false;
-            $scope.$on('$ionicView.beforeEnter', validate);
-
-            function validate() {
-                vm.user = $stateParams.user;
-                vm.type = $stateParams.type;
-                console.log("vm.type = "+vm.type+" with "+vm.user);
-            /////////////////////////////////////////////////////////
-            //    vm.user = "o_Nkcw4CsZh5dbE2v8XVLUxfd96A";//"oVyGDuNPkAbtljfJKusP4oaCrYG0";//test "o_Nkcw4CsZh5dbE2v8XVLUxfd96A";//
-            //    vm.type = 2;//test
-            ////////////////////////////////////////////////////////
-                //MessageToaster.info('user = '+vm.user);
-                if (vm.user) {
-                    //login failed
-                    //MessageToaster.info('logining....');
-                    vm.info = "正在登录，请稍后...";
-                    vm.showLoginModal = showLoginModal;
-                    //vm.roleList = [{type:1,user:'1111'}];//test
-                    vm.showChooseModal = showChooseModal;
-                    vm.login = login;
-                    vm.select = selectChoose;
-                    //获取到微信uid后先尝试登陆对应的用户类型
-                    if(vm.type){
-                        vm.wxlogin(vm.user,vm.type);
-                    }else{
-                        vm.showChooseModal();
-                    }
-                }
-            }
-
-            function wxlogin(userid,type) {
-                console.log(userid+"  type = "+type);
-                //MessageToaster.info('准备登录');
-                LoginService.wxLogin(userid,type).then(function(response) {
-                    console.log(response);
-                    if(response.errno==0) {
-                        var result = response.data;
-                        if (result instanceof Array && result.length > 1) {
-                            //modal select type
-                            vm.roleList=result;
-                            //MessageToaster.info("have select "+result.length);
-                            vm.showChooseModal();
-                        }else{
-                            var u=result[0];
-                            if (u.uid != null && u.token != null && u.type != null) {
-                                AuthService.setSession(u.uid, u.token, u.type,userid);
-                                StateService.clearAllAndGo(AuthService.getNextPath());
-                            }
-                        }
-                    }else{
-                        if(response.errno==12004){
-                            //no data found
-                            AuthService.setSession(null, null, Role.unknown,userid);
-
-                            StateService.clearAllAndGo("register",{type:vm.type});
-                        }
-                        //MessageToaster.error(response.error);
-                    }
-                });
-            };
-
-            //WeuiModalLoading
-            function login(user) {
-                //WeuiModalLoading.show();
-                //test
-                AuthService.setSession('1', '123', '1');
-                StateService.go(AuthService.getNextPath());
-                //test
-
-                LoginService.login(user.userId, user.password).then(function(response) {
-                    if (vm.modal)
-                        vm.closeDetailsModal();
-                    MessageToaster.success(response.message);
-                    AuthService.setSession(response.data.uid, response.data.token,response.data.type);
-                    StateService.clearAllAndGo(AuthService.getNextPath());
-                }).finally(function() {
-                    //WeuiModalLoading.hide();
-                });
-            }
-
-            function showLoginModal() {
-                $ionicModal.fromTemplateUrl('Login/LoginModal.html', {
-                    scope: $scope,
-                    animation: 'slide-in-up'
-                }).then(function(modal) {
-                    vm.modal = modal;
-                    vm.modal.show();
-                });
-
-                vm.closeDetailsModal = function() {
-                    vm.modal.remove();
-                };
-                $scope.$on('$ionicView.leave', function() {
-                    vm.modal.remove();
-                });
-            }
-
-            function showChooseModal() {
-                $ionicModal.fromTemplateUrl('Login/ChooseModal.html', {
-                    scope: $scope,
-                    animation: 'slide-in-up'
-                }).then(function(modal) {
-                    vm.cmodal = modal;
-                    vm.cmodal.show();
-                });
-
-                vm.closeChooseModal = function() {
-                    vm.cmodal.remove();
-                };
-                $scope.$on('$ionicView.leave', function() {
-                    vm.cmodal.remove();
-                });
-            }
-
-            function selectChoose(){
-                if(vm.choose!=null){
-                    //know user choose then login agin with type
-                    wxlogin(vm.user, vm.choose);
-                }
-            }
-        });
-}());
-
-(function() {
-    "use strict";
     angular.module('childrenAddCtrl', [])
         .controller('childrenAddCtrl', function($scope, $stateParams, Constants, StateService, childrenSettingService, AuthService) {
             'ngInject';
@@ -2068,157 +2086,6 @@ Date.prototype.Format = function(fmt) {
 
 (function() {
   "use strict";
-  angular.module('depositChildrenModule', [
-    'depositChildrenCtrl',
-    'teacherDepositChildrenCtrl',
-    'depositChildrenRouter',
-    'depositChildrenService'
-  ]);
-
-}());
-
-(function() {
-    "use strict";
-    angular.module('depositChildrenCtrl', [])
-        .controller('depositChildrenCtrl', function($scope,Constants,StateService,depositChildrenService,AuthService,MessageToaster) {
-            'ngInject';
-            var vm = this;
-            vm.activated = false;
-            $scope.$on('$ionicView.afterEnter', activate);
-
-            function activate() {
-                vm.activated = true;
-                vm.version = Constants.buildID;
-                vm.queryChildren();
-            }
-
-            vm.back=function(){
-                StateService.back();
-            };
-
-            vm.goTo=function(id,item){
-                //查看孩子的更多家长信息列表
-                StateService.go('teacherEdit',{cid:id,type:0});
-            };
-
-            vm.queryChildren = function(){
-                depositChildrenService.queryDepositChildren(AuthService.getLoginID()).then(function(data) {
-                    if (data.errno == 0) {
-                        console.log(data.data);
-                        vm.children = data.data;
-                    }else{
-                        MessageToaster.error("查不到任何数据 "+response.error);
-                    }
-                });
-            };
-        });
-}());
-
-(function() {
-  'use strict';
-
-  angular.module('depositChildrenRouter', [])
-    .config(myRouter);
-
-
-  function myRouter($stateProvider, $urlRouterProvider) {
-    'ngInject';
-    $stateProvider
-      .state('tabs.depositChildren', {
-        url: "/depositChildren",
-        views: {
-          'tab-depositChildren': {
-            templateUrl: 'depositChildren/depositChildren.html',
-            controller: 'teacherDepositChildrenCtrl',
-            controllerAs: 'vm'
-          }
-        }
-      })
-      .state('depositChildren', {
-        url: "/depositChildren",
-        templateUrl: 'depositChildren/depositChildren.html',
-        controller: 'depositChildrenCtrl',
-        controllerAs: 'vm'
-      })
-    ;
-  }
-}());
-
-(function() {
-  'use strict';
-
-  angular.module('depositChildrenService', [])
-    .factory('depositChildrenService', depositChildrenService);
-
-  function depositChildrenService( $q, $http, Constants, ResultHandler) {
-    'ngInject';
-    var service = {
-      queryDepositChildren:queryDepositChildren
-    };
-
-    //'/deposit/children/:depositid',
-    function queryDepositChildren(id) {
-      var url = Constants.serverUrl + 'deposit/children/'+id;
-      return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
-    };
-
-    return service;
-
-
-  }
-
-}());
-
-(function() {
-    "use strict";
-    angular.module('teacherDepositChildrenCtrl', [])
-        .controller('teacherDepositChildrenCtrl', function($scope,Constants,StateService,depositChildrenService,AuthService,MessageToaster,teacherService) {
-            'ngInject';
-            var vm = this;
-            vm.activated = false;
-            $scope.$on('$ionicView.afterEnter', activate);
-
-            function activate() {
-                vm.activated = true;
-                vm.version = Constants.buildID;
-                teacherService.queryTeacherDeposit(AuthService.getLoginID()).then(function(data) {
-                    if (data.errno == 0) {
-                        console.log(data.data);
-                        if(data.data!=null&&data.data.length>0) {
-                            vm.teacher = data.data[0];
-                            vm.queryChildren(vm.teacher.depositid);
-                        }
-                    } else {
-                        MessageToaster.error("查不到任何数据 " + data.error);
-                    }
-                });
-
-            }
-
-            vm.back=function(){
-                StateService.back();
-            };
-
-            vm.goTo=function(id,item){
-                //查看孩子的更多家长信息列表
-                StateService.go('teacherEdit',{cid:id,type:0});
-            };
-
-            vm.queryChildren = function(id){
-                depositChildrenService.queryDepositChildren(id).then(function(data) {
-                    if (data.errno == 0) {
-                        console.log(data.data);
-                        vm.children = data.data;
-                    }else{
-                        MessageToaster.error("查不到任何数据 "+response.error);
-                    }
-                });
-            };
-        });
-}());
-
-(function() {
-  "use strict";
   angular.module('exitModule', [
     'exitCtrl',
     'exitRouter',
@@ -2641,447 +2508,97 @@ Date.prototype.Format = function(fmt) {
 
 (function() {
   "use strict";
-  angular.module('nearbyModule', [
-    'nearbyCtrl',
-    'nearbyListCtrl',
-    'nearbyDepositInfoCtrl',
-    'nearbyRouter',
-    'nearbyService'
+  angular.module('depositChildrenModule', [
+    'depositChildrenCtrl',
+    'teacherDepositChildrenCtrl',
+    'depositChildrenRouter',
+    'depositChildrenService'
   ]);
 
 }());
 
 (function() {
     "use strict";
-    angular.module('nearbyCtrl', [])
-        .controller('nearbyCtrl', function($scope, Constants,nearbyService,MessageToaster,StateService,Session,CacheData) {
+    angular.module('depositChildrenCtrl', [])
+        .controller('depositChildrenCtrl', function($scope,Constants,StateService,depositChildrenService,AuthService,MessageToaster) {
             'ngInject';
-
             var vm = this;
             vm.activated = false;
-            vm.map = null;
-            vm.point = null;
-            vm.city = 'shenzhen';
-            vm.show=false;
-            vm.distance = 100000;
-            vm.changeName = '列表';
-            $scope.temp={mine:null,baidu:null};
-            vm.list=[];
-
-            var watch = $scope.$watchGroup(['temp.mine','temp.baidu'],function(newValue, oldValue, scope){
-                console.log(newValue);
-                //console.log(oldValue);
-                if(newValue[0]!=null && newValue[1]!=null){
-                    console.log('ok ,do it');
-                    //确认距离，锁定在10000
-                    for(var i=0;i<newValue[0].length;i++){
-                        if(newValue[0][i].Dist < vm.distance*2){
-                            vm.list.push(newValue[0][i]);
-                            var marker = new BMap.Marker(new BMap.Point(newValue[0][i].Longitude,newValue[0][i].Latitude));  // 创建标注
-                            var number = vm.list.length;
-                            var label=new BMap.Label(''+number);
-                            var margin=4;
-                            if(number>9)margin=0;
-                            label.setStyle({
-                                "color":"white",
-                                "background":"none",
-                                "fontSize":"14px",
-                                "margin-left":margin+"px",
-                                "border":"0"});
-                            marker.setLabel(label);
-                            var content=vm.getOrgContent(newValue[0][i]);
-                            marker.setTitle(newValue[0][i].OrgName);
-                            vm.map.addOverlay(marker);
-                            vm.addClickHandler(content,marker);
-                        }
-                    }
-
-                    console.log(vm.list);
-                    //检查百度是否有我们的数据一样的信息
-                    //将百度数据转成我们的
-                    for(var i=0;i<newValue[1].length;i++){
-                            var tmp={
-                                AccountID: i,
-                                Address: newValue[1][i].address,
-                                Dist: vm.map.getDistance(vm.point,newValue[1][i].point).toFixed(0),
-                                FrontDeskLink: "./img/place.png",
-                                Latitude: newValue[1][i].point.lat,
-                                Longitude:newValue[1][i].point.lng,
-                                OrgName: newValue[1][i].title
-                            };
-                            vm.list.push(tmp);
-                        var marker = new BMap.Marker(newValue[1][i].point);  // 创建标注
-                        var number = vm.list.length;
-                        var label=new BMap.Label(''+number);
-                        var margin=4;
-                        var content=vm.getOrgContent(tmp);
-                        if(number>9)margin=0;
-                        label.setStyle({
-                            "color":"white",
-                            "background":"none",
-                            "fontSize":"14px",
-                            "margin-left":margin+"px",
-                            "border":"0"});
-                        marker.setLabel(label);
-                        marker.setTitle(newValue[1][i].title);
-                        vm.map.addOverlay(marker);              // 将标注添加到地图中
-                        vm.addClickHandler(content,marker);
-                    }
-                    console.log(vm.list);
-                    //清空tmp
-                    $scope.temp={mine:null,baidu:null};
-                    //vm.show=true;
-                    //显示在列表，
-
-                    //显示在图片
-                }else if(newValue[0]!=null){
-                    console.log('get babyplan data');
-                }else if(newValue[1]!=null){
-                    console.log('get baidu map data');
-                }
-            });
-
-            vm.addClickHandler=function(content,marker){
-                marker.addEventListener("click",function(e){
-                        vm.openInfo(content,e)}
-                );
-            };
-
-            vm.openInfo=function(content,e){
-                var p = e.target;
-                var point = new BMap.Point(p.getPosition().lng, p.getPosition().lat);
-                var infoWindow = new BMap.InfoWindow(content,{enableCloseOnClick:true});  // 创建信息窗口对象
-                vm.map.openInfoWindow(infoWindow,point); //开启信息窗口
-            };
-
-            vm.getOrgContent = function(org){
-                var sContent =
-                    "<h4 style='margin:0 0 5px 0;padding:0.2em 0'>"+org.OrgName+"</h4>" +
-                    "<img style='margin:4px' id='imgDemo' src='"+org.FrontDeskLink+"' width='139' height='104' title='"+org.OrgName+"'/>" +
-                    "<p style='margin:0;line-height:1.5;font-size:13px;text-indent:2em'>"+org.Address+"</p>" ;
-                if(org.AccountID.length==8){
-                    sContent+="<a class='button' href='#nearbyDepositInfo?id="+org.AccountID+"' target='_self' >更多信息</a>";
-                }
-                return sContent;
-            };
-
-            vm.search=function(){
-                vm.list=[];
-                vm.searchOurInfo();
-                vm.searchNearBy(vm.inputData);
-            };
-
-            vm.change=function(){
-                vm.show=!vm.show;
-                if(vm.show){
-                    vm.changeName = '地图';
-                }else {
-                    vm.changeName = '列表';
-                }
-            };
-
-            vm.searchOurInfo=function(){
-                if(vm.point != null) {
-                    nearbyService.findNearbyDeposit(vm.point.lng, vm.point.lat).then(function (data) {
-                        if (data.errno == 0) {
-                            console.log(data.data);
-                            //是否要删除圆形范围内
-                            $scope.temp.mine = data.data;
-                        } else {
-                            console.log('error,find nearby deposit fail');
-                            console.log(data);
-                        }
-                    });
-                }else{
-                    MessageToaster.error("定位不成功");
-                }
-            };
-
-            //renderOptions: {map: vm.map, panel: "r-result"},
-            vm.searchNearBy=function(data){
-                var myPoint=null;
-                if(data!=null) {
-                    var myGeo = new BMap.Geocoder();
-                    // 将地址解析结果显示在地图上,并调整地图视野
-                    console.log(data);
-                    myGeo.getPoint(data, function (point) {
-                        if (point) {
-                            console.log("change address point");
-                            console.log(point);
-                            myPoint=point;
-                            vm.map.clearOverlays();
-                            vm.map.centerAndZoom(point, 15);
-                            vm.map.addOverlay(new BMap.Marker(point));
-                            vm.map.panTo(point);
-
-                            var local = new BMap.LocalSearch(vm.map, {
-                                renderOptions:{},
-                                onSearchComplete: vm.onSearchComplete
-                            });
-                            local.searchNearby('托管',myPoint, vm.distance);
-                        } else {
-                            alert("您选择地址没有解析到结果!");
-                        }
-                    }, vm.city);
-                }else{
-                    myPoint=vm.point;
-                }
-                var local = new BMap.LocalSearch(vm.map, {
-                    renderOptions:{},
-                    onSearchComplete: vm.onSearchComplete
-                    });
-                local.searchNearby('托管',myPoint, vm.distance);
-                //local.search("托管");
-            };
-
-            vm.onSearchComplete=function(results){
-                console.log(results);
-                $scope.temp.baidu = results.wr;
-            };
-
-            vm.setMapControl=function(map){
-                // 添加定位控件
-                var geolocationControl = new BMap.GeolocationControl();
-                geolocationControl.addEventListener("locationSuccess", function(e){
-                    // 定位成功事件
-                    var address = '';
-                    address += e.addressComponent.province;
-                    address += e.addressComponent.city;
-                    address += e.addressComponent.district;
-                    address += e.addressComponent.street;
-                    address += e.addressComponent.streetNumber;
-                    alert("当前定位地址为：" + address);
-
-                });
-                geolocationControl.addEventListener("locationError",function(e){
-                    // 定位失败事件
-                    alert(e.message);
-                });
-                map.addControl(geolocationControl);
-
-                //添加地图类型控件
-                map.addControl(new BMap.MapTypeControl());
-            };
-
-            vm.setBaiduMap=function(){
-                vm.map = new BMap.Map("allmap");    // 创建Map实例
-                vm.setMapControl(vm.map);
-                //get position
-                var geolocation = new BMap.Geolocation();
-                geolocation.getCurrentPosition(function(r){
-                    if(this.getStatus() == BMAP_STATUS_SUCCESS){
-                        vm.city = r.address.city;
-                        vm.map.setCurrentCity(vm.city);
-                        vm.point = r.point;
-                        vm.map.centerAndZoom(vm.point , 15);  // 初始化地图,设置中心点坐标和地图级别
-                        var myIcon = new BMap.Icon("http://api.map.baidu.com/img/markers.png", new BMap.Size(23, 25), {
-                            offset: new BMap.Size(10, 25), // 指定定位位置
-                            imageOffset: new BMap.Size(0, 0 - 10 * 25) // 设置图片偏移
-                        });
-                        var mk = new BMap.Marker(r.point,{icon:myIcon});
-                        vm.map.addOverlay(mk);
-                        vm.map.panTo(r.point);
-                    } else {
-                        alert('failed'+this.getStatus());
-                    }
-                },{enableHighAccuracy: true})
-            };
-
-            vm.goto=function(item){
-                if(item.AccountID.length!=8){
-                    MessageToaster.error("暂不提供此信息");
-                }else {
-                    CacheData.putObject(item.AccountID, item);
-                    StateService.go('nearbyDepositInfo', {id: item.AccountID});
-                }
-            };
-
             $scope.$on('$ionicView.afterEnter', activate);
 
             function activate() {
                 vm.activated = true;
                 vm.version = Constants.buildID;
-                vm.setBaiduMap();
-            }
-        });
-
-
-}());
-
-(function() {
-    "use strict";
-    angular.module('nearbyDepositInfoCtrl', [])
-        .controller('nearbyDepositInfoCtrl', function($scope, Constants,nearbyService,CacheData,$stateParams,StateService,organizerService,commentService) {
-            'ngInject';
-            var vm = this;
-            vm.activated = false;
-
-            $scope.$on('$ionicView.afterEnter', activate);
-
-            function activate() {
-                console.log($stateParams);
-                vm.cid = $stateParams.id;
-                console.log("id = "+vm.cid);
-                vm.activated = true;
-                vm.version = Constants.buildID;
-                vm.item =CacheData.getObject(vm.cid);
-                console.log(vm.item);
-                vm.getMoreInfo(vm.cid);
-                vm.getComment(vm.cid);
+                vm.queryChildren();
             }
 
             vm.back=function(){
                 StateService.back();
             };
 
-            vm.getMoreInfo=function(id){
-                organizerService.queryDepositInfo(id).then(function(data) {
+            vm.goTo=function(id,item){
+                //查看孩子的更多家长信息列表
+                StateService.go('teacherEdit',{cid:id,type:0});
+            };
+
+            vm.queryChildren = function(){
+                depositChildrenService.queryDepositChildren(AuthService.getLoginID()).then(function(data) {
                     if (data.errno == 0) {
                         console.log(data.data);
-                        vm.more = data.data;
+                        vm.children = data.data;
                     }else{
-                        console.log('error,find nearby deposit fail');
-                        console.log(data);
+                        MessageToaster.error("查不到任何数据 "+response.error);
                     }
                 });
             };
-
-            vm.getComment=function(id){
-                commentService.queryDepositComment(id).then(function(data) {
-                    if (data.errno == 0) {
-                        console.log(data.data);
-                        vm.comments = data.data;
-                    }else{
-                        console.log('error,get comment fail');
-                        console.log(data);
-                    }
-                });
-            };
-        });
-}());
-
-(function() {
-    "use strict";
-    angular.module('nearbyListCtrl', [])
-        .controller('nearbyListCtrl', function($scope, Constants,nearbyService,StateService,Session,CacheData) {
-            'ngInject';
-            var vm = this;
-            vm.activated = false;
-            vm.isMapMode=true;
-
-            $scope.$on('$ionicView.afterEnter', activate);
-
-            $scope.offlineOpts = {
-                retryInterval: 10000,
-                txt: 'Offline Mode'
-            };
-            var longitude = 114.2;
-            var latitude = 22.5;
-            $scope.mapOptions = {
-                center: {
-                    longitude: longitude,
-                    latitude: latitude
-                },
-                zoom: 11,
-                city: 'ShenZhen',
-                markers: [{
-                    longitude: longitude,
-                    latitude: latitude,
-                    icon: 'img/mappiont.png',
-                    width: 49,
-                    height: 60,
-                    title: 'Where',
-                    content: '这是哪里'
-                }]
-            };
-
-            $scope.loadMap = function(map) {
-                console.log(map);//gets called while map instance created
-            };
-
-            vm.loadData=function(longitude,latitude){
-                nearbyService.findNearbyDeposit(longitude,latitude).then(function(data) {
-                    if (data.errno == 0) {
-                        console.log(data.data);
-                        vm.list = data.data;
-                    }else{
-                        console.log('error,find nearby deposit fail');
-                        console.log(data);
-                    }
-                });
-            };
-
-            vm.goto=function(item){
-                //Session.temp=item;
-                CacheData.putObject(item.AccountID,item);
-                StateService.go('nearbyDepositInfo',{id:item.AccountID});
-            };
-
-            function activate() {
-                vm.activated = true;
-                vm.version = Constants.buildID;
-                vm.loadData(longitude,latitude);
-            }
         });
 }());
 
 (function() {
   'use strict';
 
-  angular.module('nearbyRouter', [])
+  angular.module('depositChildrenRouter', [])
     .config(myRouter);
 
 
   function myRouter($stateProvider, $urlRouterProvider) {
     'ngInject';
     $stateProvider
-      .state('tabs.nearbyList', {
-        url: "/nearbyList",
-          views: {
-            'tab-nearby': {
-              templateUrl: 'nearby/nearbyList.html',
-              controller: 'nearbyListCtrl',
-              controllerAs: 'vm'
-            }
-          }
-      })
-      .state('tabs.nearby', {
-        url: "/nearby",
+      .state('tabs.depositChildren', {
+        url: "/depositChildren",
         views: {
-          'tab-nearby': {
-            templateUrl: 'nearby/nearby.html',
-            controller: 'nearbyCtrl',
+          'tab-depositChildren': {
+            templateUrl: 'depositChildren/depositChildren.html',
+            controller: 'teacherDepositChildrenCtrl',
             controllerAs: 'vm'
           }
         }
       })
-      .state('nearbyDepositInfo', {
-        url: "/nearbyDepositInfo?:id",
-        params: {
-          id : null
-        },
-        templateUrl: 'nearby/nearbyDepositInfo.html',
-        controller: 'nearbyDepositInfoCtrl',
+      .state('depositChildren', {
+        url: "/depositChildren",
+        templateUrl: 'depositChildren/depositChildren.html',
+        controller: 'depositChildrenCtrl',
         controllerAs: 'vm'
-      });
+      })
+    ;
   }
 }());
 
 (function() {
   'use strict';
 
-  angular.module('nearbyService', [])
-    .factory('nearbyService', myService);
+  angular.module('depositChildrenService', [])
+    .factory('depositChildrenService', depositChildrenService);
 
-  function myService( $q, $http,Constants,ResultHandler) {
+  function depositChildrenService( $q, $http, Constants, ResultHandler) {
     'ngInject';
     var service = {
-      findNearbyDeposit:findNearbyDeposit
+      queryDepositChildren:queryDepositChildren
     };
 
-    //http://172.18.1.166/api/v1/nearbyDepositList/113.271/23.1353     附近的机构列表
-    function findNearbyDeposit(x,y) {
-      var url = Constants.serverUrl + 'nearbyDepositList/'+x+"/"+y;
+    //'/deposit/children/:depositid',
+    function queryDepositChildren(id) {
+      var url = Constants.serverUrl + 'deposit/children/'+id;
       return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
     };
 
@@ -3090,6 +2607,54 @@ Date.prototype.Format = function(fmt) {
 
   }
 
+}());
+
+(function() {
+    "use strict";
+    angular.module('teacherDepositChildrenCtrl', [])
+        .controller('teacherDepositChildrenCtrl', function($scope,Constants,StateService,depositChildrenService,AuthService,MessageToaster,teacherService) {
+            'ngInject';
+            var vm = this;
+            vm.activated = false;
+            $scope.$on('$ionicView.afterEnter', activate);
+
+            function activate() {
+                vm.activated = true;
+                vm.version = Constants.buildID;
+                teacherService.queryTeacherDeposit(AuthService.getLoginID()).then(function(data) {
+                    if (data.errno == 0) {
+                        console.log(data.data);
+                        if(data.data!=null&&data.data.length>0) {
+                            vm.teacher = data.data[0];
+                            vm.queryChildren(vm.teacher.depositid);
+                        }
+                    } else {
+                        MessageToaster.error("查不到任何数据 " + data.error);
+                    }
+                });
+
+            }
+
+            vm.back=function(){
+                StateService.back();
+            };
+
+            vm.goTo=function(id,item){
+                //查看孩子的更多家长信息列表
+                StateService.go('teacherEdit',{cid:id,type:0});
+            };
+
+            vm.queryChildren = function(id){
+                depositChildrenService.queryDepositChildren(id).then(function(data) {
+                    if (data.errno == 0) {
+                        console.log(data.data);
+                        vm.children = data.data;
+                    }else{
+                        MessageToaster.error("查不到任何数据 "+response.error);
+                    }
+                });
+            };
+        });
 }());
 
 (function() {
@@ -3426,340 +2991,626 @@ Date.prototype.Format = function(fmt) {
 }());
 
 (function() {
-  "use strict";
-  angular.module('parentModule', [
-    'parentCtrl',
-    'parentEditCtrl',
-    'parentRouter',
-    'parentService'
-  ]);
-
-}());
-
-(function() {
     "use strict";
-    angular.module('parentCtrl', [])
-        .controller('parentCtrl', function($scope, Constants, StateService, parentService, AuthService) {
+    angular.module('depositCommentCtrl', [])
+        .controller('depositCommentCtrl', function($scope, Constants,$stateParams,StateService,AuthService,depositCommentService,MessageToaster) {
             'ngInject';
             var vm = this;
             vm.activated = false;
+            vm.item = {
+                "scores":{
+                    "kitchen":0,
+                    "food":0,
+                    "roadsafety":0,
+                    "edufiresafety":0,
+                    "teacherresp":0
+                },
+                "commenttext":""
+            };
             $scope.$on('$ionicView.afterEnter', activate);
 
             function activate() {
+                console.log($stateParams);
+                vm.cid = $stateParams.id;
+                //vm.cid='10000002';//test
+                console.log("deposit id = "+vm.cid);
                 vm.activated = true;
                 vm.version = Constants.buildID;
-                vm.getTeacher();
-                vm.getChildren();
+                vm.getComment(AuthService.getLoginID(),vm.cid);
+                //vm.getCommentScores(vm.cid);//test
             }
 
-            vm.back = function(){
-                StateService.back();
-            };
-
-            vm.getTeacher = function(){
-                parentService.queryParent(AuthService.getLoginID()).then(function(data) {
-                    if (data.errno == 0) {
-                        console.log(data.data);
-                        vm.parent = data.data;
-                    }
-                });
-            };
-
-            vm.getChildren = function(){
-                parentService.queryChildren(AuthService.getLoginID()).then(function(data) {
-                    if (data.errno == 0) {
-                        console.log(data.data);
-                        vm.children = data.data;
-                    }
-                });
-            };
-
-        });
-}());
-
-(function() {
-    "use strict";
-    angular.module('parentEditCtrl', [])
-        .controller('parentEditCtrl', function($scope, Constants,AuthService,parentService) {
-            'ngInject';
-            var vm = this;
-            vm.activated = false;
-            $scope.$on('$ionicView.afterEnter', activate);
-
-            function activate() {
-                vm.activated = true;
-                vm.version = Constants.buildID;
-                vm.getChildren();
-            }
-
-
-            vm.getChildren = function(){
-                parentService.queryChildren(AuthService.getLoginID()).then(function(data) {
-                    if (data.errno == 0) {
-                        console.log(data.data);
-                        vm.children = data.data;
-                    }
-                });
-            };
-
-        });
-}());
-
-(function() {
-  'use strict';
-
-  angular.module('parentRouter', [])
-    .config(myRouter);
-
-
-  function myRouter($stateProvider, $urlRouterProvider) {
-    'ngInject';
-    $stateProvider
-      .state('parent', {
-        url: "/parent",
-        templateUrl: 'parent/parent.html',
-        controller: 'parentCtrl',
-        controllerAs: 'vm'
-      })
-      .state('parentEdit', {
-        url: "/parentEdit",
-        templateUrl: 'parent/parentEdit.html',
-        controller: 'parentEditCtrl',
-        controllerAs: 'vm'
-      })
-    ;
-  }
-}());
-
-(function() {
-  'use strict';
-
-  angular.module('parentService', [])
-    .factory('parentService', parentService);
-
-  function parentService( $q, $http, Constants, ResultHandler) {
-    'ngInject';
-    var service = {
-      queryParent:queryParent,
-      queryChildren:queryChildren
-    };
-
-    //-----HTTP Header => Authorization: Bearer-{$token}-----//
-
-    //GET /api/v1/account/query/parent/{parent_accnt_id}
-    //return
-    //{
-    //  "errno":0,
-    //  "error":"",
-    //  "data":{
-    //  "uid":10000001,
-    //      "name":"张粑粑",
-    //      "sex":1,
-    //      "mobile":"18612345678",
-    //      "nick":"sam"
-    //  }
-    //}
-    function queryParent(id) {
-      console.log($http.defaults.headers);
-      var url = Constants.serverUrl + 'account/query/parent/'+id;
-      return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
-    };
-
-    //GET /api/v1/account/query/parentChildren/{parent_accnt_id}
-    //return
-    //{
-    //  "errno":0,
-    //  "error":"",
-    //  "data":[
-    //    {
-    //      "uid":10000001,
-    //      "relationship":1,
-    //      "name":"赵大萌",
-    //      "sex":1,
-    //      "fingerfeature":"xxxxx",
-    //      "remark":"xxxx"
-    //    },
-    //    ...
-    //  ]
-    //}
-    function queryChildren(id) {
-      var url = Constants.serverUrl + 'account/query/parentChildren/'+id;
-      return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
-    };
-
-    return service;
-
-
-  }
-
-}());
-
-(function() {
-  "use strict";
-  angular.module('photoModule', [
-    'photoCtrl',
-    'photoRouter'
-  ]);
-
-}());
-
-(function() {
-    "use strict";
-    angular.module('photoCtrl', [])
-        .controller('photoCtrl', function($scope, Constants,$stateParams,Session,StateService,$ionicSlideBoxDelegate,$timeout) {
-            'ngInject';
-            var vm = this;
-            vm.activated = false;
-            $scope.$on('$ionicView.afterEnter', activate);
-
-            function activate() {
-                vm.activated = true;
-                vm.version = Constants.buildID;
-                vm.msg=Session.temp;
-                vm.images=[];
-                vm.imgCount=0;
-                if(vm.msg.photolink1!=null && vm.msg.photolink1!=""){
-                    vm.images[vm.imgCount]=vm.msg.photolink1;
-                    vm.imgCount++;
-                }
-                if(vm.msg.photolink2!=null && vm.msg.photolink2!=""){
-                    vm.images[vm.imgCount]=vm.msg.photolink2;
-                    vm.imgCount++;
-                }
-                if(vm.msg.photolink3!=null && vm.msg.photolink3!=""){
-                    vm.images[vm.imgCount]=vm.msg.photolink3;
-                    vm.imgCount++;
-                }
-                if(vm.msg.photolink4!=null && vm.msg.photolink4!=""){
-                    vm.images[vm.imgCount]=vm.msg.photolink4;
-                    vm.imgCount++;
-                }
-                if(vm.msg.photolink5!=null && vm.msg.photolink5!=""){
-                    vm.images[vm.imgCount]=vm.msg.photolink5;
-                    vm.imgCount++;
-                }
-                if(vm.msg.photolink6!=null && vm.msg.photolink6!=""){
-                    vm.images[vm.imgCount]=vm.msg.photolink6;
-                    vm.imgCount++;
-                }
-                console.log(vm.images);
-                vm.index=$stateParams.index;
-                console.log(vm.index);
-                //vm.image=vm.images[vm.index];
-                $timeout(function(){
-                    $scope.slider.slideTo(vm.index);
-                    $scope.slider.updateLoop();
-                    //$ionicSlideBoxDelegate.enableSlide(true);
-                    //$ionicSlideBoxDelegate.slide(vm.index);
-                    //console.log($ionicSlideBoxDelegate.currentIndex()+" - "+$ionicSlideBoxDelegate.slidesCount());
-                }, 300);
-
-            }
             vm.back=function(){
                 StateService.back();
             };
 
-            $scope.options = {
-                loop: false
-            }
+            vm.cancel=function(){
+                vm.isEditing=false;
+                //data return
+                vm.item=angular.copy(vm.itembackup);
+                vm.itembackup=null;
+            };
 
-            $scope.$on("$ionicSlides.sliderInitialized", function(event, data){
-                // data.slider is the instance of Swiper
-                console.log(data);
-                $scope.slider = data.slider;
-            });
+            vm.edit=function(){
+                vm.isEditing=true;;
+                vm.itembackup=angular.copy(vm.item);
+            };
 
-            $scope.$on("$ionicSlides.slideChangeStart", function(event, data){
-                console.log('Slide change is beginning');
-                //console.log(event);
-                //console.log(data);
-            });
+            vm.save=function(){
+                //check data
+                vm.item.depositid=vm.cid;
+                vm.item.parentid=AuthService.getLoginID();
+                depositCommentService.saveDepositComment(vm.item).then(function(data) {
+                    console.log(data);
+                    if (data.errno == 0) {
+                        //vm.item = data.data;
+                        vm.isEditing=false;
+                        vm.itembackup=null;
+                        MessageToaster.error("更新成功");
+                        vm.getComment(AuthService.getLoginID(),vm.cid);
+                    }else{
+                        console.log('error,get comment fail');
+                        console.log(data);
+                    }
+                });
 
-            $scope.$on("$ionicSlides.slideChangeEnd", function(event, data){
-                // note: the indexes are 0-based
-                //console.log(event);
-                console.log($scope.slider.activeIndex+" - "+$scope.slider.previousIndex);
-                //$scope.activeIndex = data.activeIndex;
-                //$scope.previousIndex = data.previousIndex;
-                //console.log('Slide from '+data.previousIndex +' to '+data.activeIndex);
-            });
+            };
+
+            vm.getComment=function(pid,did){
+                depositCommentService.getDepositComment(pid,did).then(function(data) {
+                    if (data.errno == 0) {
+                        console.log(data.data);
+                        vm.item = data.data;
+                    }else{
+                        console.log(data);
+                        if(data.errno==10003){
+                            vm.edit();
+                        }else{
+                            console.log('error,get comment fail');
+                        }
+                    }
+                });
+            };
+
+            vm.getCommentScores=function(id){
+                depositCommentService.getTotalDepositScore(id).then(function(data) {
+                        console.log(data);
+                });
+            };
         });
 }());
 
 (function() {
-  'use strict';
+    'use strict';
 
-  angular.module('photoRouter', [])
-    .config(myRouter);
+    angular.module('depositCommentService', [])
+        .factory('depositCommentService', myService);
+
+    function myService( $q, $http,Constants,ResultHandler) {
+        'ngInject';
+        var service = {
+            saveDepositComment:saveDepositComment,
+            getDepositComment:getDepositComment,
+            getTotalDepositScore:getTotalDepositScore
+        };
 
 
-  function myRouter($stateProvider, $urlRouterProvider) {
-    'ngInject';
-    $stateProvider
-        .state('photo', {
-          url: "/photo?:index",
-          params:{
-            index:0
-          },
-          templateUrl: 'photo/photo.html',
-          controller: 'photoCtrl',
-          controllerAs: 'vm'
-        })
-      ;
-  }
+        //1.家长评分
+        //POST
+        //URL: /api/v1/comments/parent/deposit
+        //Request Body:
+        //{
+        //    "depositid":10000001,
+        //    "parentid": 31000001,
+        //    "scores":{
+        //    "kitchen":8,
+        //        "food":8,
+        //        "road_safety":8,
+        //        "edu_fire_safety":8,
+        //        "teacher_responsibility":8
+        //      },
+        //    "comments_text":"老师责任心很好"
+        //}
+        function saveDepositComment(data) {
+            var url = Constants.serverUrl + 'comments/parent/deposit';
+            return $http({
+                method: 'post',
+                url: url,
+                data: data
+            }).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
+        };
+
+        //2.获取家长评分
+        //GET
+        //URL: /api/v1/comments/parent/deposit/?parentid=30000001&depositid=10000001
+        //    Response Body:
+        //{
+        //    "errno":0,
+        //    "error":"",
+        //    "data":{
+        //    "scores":{
+        //        "kitchen":8,
+        //            "food":8,
+        //            "road_safety":8,
+        //            "edu_fire_safety":8,
+        //            "teacher_responsibility":8
+        //        },
+        //    "comments_text":"老师责任心很好"
+        //    }
+        //}
+        function getDepositComment(pid,did) {
+            var url = Constants.serverUrl + 'comments/parent/deposit?parentid='+pid+"&depositid="+did;
+            return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
+        };
+
+        //3.获取总评分
+        //总评分计算公式： 总评分 = 公司评分 * 40% + 所有家长的各项评分的总平均分 * 60%
+        //GET
+        //URL: /api/v1/comments/deposit/?depositid=10000001
+        //Response Body:
+        //{
+        //    "errno":0,
+        //    "error":"",
+        //    "data":{
+        //        "scores":8
+        //    }
+        //}
+        function getTotalDepositScore(did) {
+            var url = Constants.serverUrl + 'comments/deposit?depositid='+did;
+            console.log(url);
+            return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
+        };
+
+        return service;
+
+
+    }
+
 }());
-
 (function() {
   "use strict";
-  angular.module('profileModule', [
-    'profileCtrl',
-    'profileRouter',
-    'profileService'
+  angular.module('nearbyModule', [
+    'nearbyCtrl',
+    'nearbyListCtrl',
+    'nearbyDepositInfoCtrl',
+    'depositCommentCtrl',
+    'nearbyRouter',
+    'depositCommentService',
+    'nearbyService'
   ]);
 
 }());
 
 (function() {
     "use strict";
-    angular.module('profileCtrl', [])
-        .controller('profileCtrl', function($scope, $state, Constants, StateService) {
+    angular.module('nearbyCtrl', [])
+        .controller('nearbyCtrl', function($scope, Constants,nearbyService,MessageToaster,StateService,Session,CacheData) {
             'ngInject';
+
             var vm = this;
             vm.activated = false;
+            vm.map = null;
+            vm.point = null;
+            vm.city = 'shenzhen';
+            vm.show=false;
+            vm.distance = 5000;
+            vm.changeName = '列表';
+            $scope.temp={mine:null,baidu:null};
+            vm.list=[];
+
+            var watch = $scope.$watchGroup(['temp.mine','temp.baidu'],function(newValue, oldValue, scope){
+                console.log(newValue);
+                //console.log(oldValue);
+                if(newValue[0]!=null && newValue[1]!=null){
+                    console.log('ok ,do it');
+                    //确认距离，锁定在10000
+                    for(var i=0;i<newValue[0].length;i++){
+                        if(newValue[0][i].Dist < vm.distance*2){
+                            vm.list.push(newValue[0][i]);
+                            var marker = new BMap.Marker(new BMap.Point(newValue[0][i].Longitude,newValue[0][i].Latitude));  // 创建标注
+                            var number = vm.list.length;
+                            var label=new BMap.Label(''+number);
+                            var margin=4;
+                            if(number>9)margin=0;
+                            label.setStyle({
+                                "color":"white",
+                                "background":"none",
+                                "fontSize":"14px",
+                                "margin-left":margin+"px",
+                                "border":"0"});
+                            marker.setLabel(label);
+                            var content=vm.getOrgContent(newValue[0][i]);
+                            marker.setTitle(newValue[0][i].OrgName);
+                            vm.map.addOverlay(marker);
+                            vm.addClickHandler(content,marker);
+                        }
+                    }
+
+                    console.log(vm.list);
+                    //检查百度是否有我们的数据一样的信息
+                    //将百度数据转成我们的
+                    for(var i=0;i<newValue[1].length;i++){
+                            var tmp={
+                                AccountID: i,
+                                Address: newValue[1][i].address,
+                                Dist: vm.map.getDistance(vm.point,newValue[1][i].point).toFixed(0),
+                                FrontDeskLink: "./img/place.png",
+                                Latitude: newValue[1][i].point.lat,
+                                Longitude:newValue[1][i].point.lng,
+                                OrgName: newValue[1][i].title
+                            };
+                            vm.list.push(tmp);
+                        var marker = new BMap.Marker(newValue[1][i].point);  // 创建标注
+                        var number = vm.list.length;
+                        var label=new BMap.Label(''+number);
+                        var margin=4;
+                        var content=vm.getOrgContent(tmp);
+                        if(number>9)margin=0;
+                        label.setStyle({
+                            "color":"white",
+                            "background":"none",
+                            "fontSize":"14px",
+                            "margin-left":margin+"px",
+                            "border":"0"});
+                        marker.setLabel(label);
+                        marker.setTitle(newValue[1][i].title);
+                        vm.map.addOverlay(marker);              // 将标注添加到地图中
+                        vm.addClickHandler(content,marker);
+                    }
+                    console.log(vm.list);
+                    //清空tmp
+                    $scope.temp={mine:null,baidu:null};
+                    //vm.show=true;
+                    //显示在列表，
+
+                    //显示在图片
+                }else if(newValue[0]!=null){
+                    console.log('get babyplan data');
+                }else if(newValue[1]!=null){
+                    console.log('get baidu map data');
+                }
+            });
+
+            vm.addClickHandler=function(content,marker){
+                marker.addEventListener("click",function(e){
+                        vm.openInfo(content,e)}
+                );
+            };
+
+            vm.openInfo=function(content,e){
+                var p = e.target;
+                var point = new BMap.Point(p.getPosition().lng, p.getPosition().lat);
+                var infoWindow = new BMap.InfoWindow(content,{enableCloseOnClick:true});  // 创建信息窗口对象
+                vm.map.openInfoWindow(infoWindow,point); //开启信息窗口
+            };
+
+            vm.getOrgContent = function(org){
+                var sContent =
+                    "<h4 style='margin:0 0 5px 0;padding:0.2em 0'>"+org.OrgName+"</h4>" +
+                    "<img style='margin:4px' id='imgDemo' src='"+org.FrontDeskLink+"' width='139' height='104' title='"+org.OrgName+"'/>" +
+                    "<p style='margin:0;line-height:1.5;font-size:13px;text-indent:2em'>"+org.Address+"</p>" ;
+                if(org.AccountID.length==8){
+                    sContent+="<a class='button' href='#nearbyDepositInfo?id="+org.AccountID+"' target='_self' >更多信息</a>";
+                }
+                return sContent;
+            };
+
+            vm.search=function(){
+                vm.list=[];
+                vm.searchOurInfo();
+                vm.searchNearBy(vm.inputData);
+            };
+
+            vm.change=function(){
+                vm.show=!vm.show;
+                if(vm.show){
+                    vm.changeName = '地图';
+                }else {
+                    vm.changeName = '列表';
+                }
+            };
+
+            vm.searchOurInfo=function(){
+                if(vm.point != null) {
+                    nearbyService.findNearbyDeposit(vm.point.lng, vm.point.lat).then(function (data) {
+                        if (data.errno == 0) {
+                            console.log(data.data);
+                            //是否要删除圆形范围内
+                            $scope.temp.mine = data.data;
+                        } else {
+                            console.log('error,find nearby deposit fail');
+                            console.log(data);
+                        }
+                    });
+                }else{
+                    MessageToaster.error("定位不成功");
+                }
+            };
+
+            //renderOptions: {map: vm.map, panel: "r-result"},
+            vm.searchNearBy=function(data){
+                var myPoint=null;
+                if(data!=null) {
+                    var myGeo = new BMap.Geocoder();
+                    // 将地址解析结果显示在地图上,并调整地图视野
+                    console.log(data);
+                    myGeo.getPoint(data, function (point) {
+                        if (point) {
+                            console.log("change address point");
+                            console.log(point);
+                            myPoint=point;
+                            vm.map.clearOverlays();
+                            vm.map.centerAndZoom(point, 15);
+                            vm.map.addOverlay(new BMap.Marker(point));
+                            vm.map.panTo(point);
+
+                            var local = new BMap.LocalSearch(vm.map, {
+                                renderOptions:{},
+                                onSearchComplete: vm.onSearchComplete
+                            });
+                            local.searchNearby('托管',myPoint, vm.distance);
+                        } else {
+                            alert("您选择地址没有解析到结果!");
+                        }
+                    }, vm.city);
+                }else{
+                    myPoint=vm.point;
+                }
+                var local = new BMap.LocalSearch(vm.map, {
+                    renderOptions:{},
+                    onSearchComplete: vm.onSearchComplete
+                    });
+                local.searchNearby('托管',myPoint, vm.distance);
+                //local.search("托管");
+            };
+
+            vm.onSearchComplete=function(results){
+                console.log(results);
+                $scope.temp.baidu = results.wr;
+            };
+
+            vm.setMapControl=function(map){
+                // 添加定位控件
+                var geolocationControl = new BMap.GeolocationControl();
+                geolocationControl.addEventListener("locationSuccess", function(e){
+                    // 定位成功事件
+                    var address = '';
+                    address += e.addressComponent.province;
+                    address += e.addressComponent.city;
+                    address += e.addressComponent.district;
+                    address += e.addressComponent.street;
+                    address += e.addressComponent.streetNumber;
+                    alert("当前定位地址为：" + address);
+
+                });
+                geolocationControl.addEventListener("locationError",function(e){
+                    // 定位失败事件
+                    alert(e.message);
+                });
+                map.addControl(geolocationControl);
+
+                //添加地图类型控件
+                map.addControl(new BMap.MapTypeControl());
+            };
+
+            vm.setBaiduMap=function(){
+                vm.map = new BMap.Map("allmap");    // 创建Map实例
+                vm.setMapControl(vm.map);
+                //get position
+                var geolocation = new BMap.Geolocation();
+                geolocation.getCurrentPosition(function(r){
+                    if(this.getStatus() == BMAP_STATUS_SUCCESS){
+                        vm.city = r.address.city;
+                        vm.map.setCurrentCity(vm.city);
+                        vm.point = r.point;
+                        vm.map.centerAndZoom(vm.point , 15);  // 初始化地图,设置中心点坐标和地图级别
+                        var myIcon = new BMap.Icon("http://api.map.baidu.com/img/markers.png", new BMap.Size(23, 25), {
+                            offset: new BMap.Size(10, 25), // 指定定位位置
+                            imageOffset: new BMap.Size(0, 0 - 10 * 25) // 设置图片偏移
+                        });
+                        var mk = new BMap.Marker(r.point,{icon:myIcon});
+                        vm.map.addOverlay(mk);
+                        vm.map.panTo(r.point);
+                    } else {
+                        alert('failed'+this.getStatus());
+                    }
+                },{enableHighAccuracy: true})
+            };
+
+            vm.goto=function(item){
+                if(item.AccountID.length!=8){
+                    MessageToaster.error("暂不提供此信息");
+                    //StateService.go('depositComment',{id:item.AccountID});
+                }else {
+                    CacheData.putObject(item.AccountID, item);
+                    StateService.go('nearbyDepositInfo', {id: item.AccountID});
+                }
+            };
+
             $scope.$on('$ionicView.afterEnter', activate);
 
             function activate() {
                 vm.activated = true;
                 vm.version = Constants.buildID;
+                vm.setBaiduMap();
+            }
+        });
+
+
+}());
+
+(function() {
+    "use strict";
+    angular.module('nearbyDepositInfoCtrl', [])
+        .controller('nearbyDepositInfoCtrl', function($scope, Constants,nearbyService,CacheData,$stateParams,StateService,organizerService,depositCommentService) {
+            'ngInject';
+            var vm = this;
+            vm.activated = false;
+
+            $scope.$on('$ionicView.afterEnter', activate);
+
+            function activate() {
+                console.log($stateParams);
+                vm.cid = $stateParams.id;
+                console.log("id = "+vm.cid);
+                vm.activated = true;
+                vm.version = Constants.buildID;
+                vm.item =CacheData.getObject(vm.cid);
+                console.log(vm.item);
+                vm.getMoreInfo(vm.cid);
+                vm.getComment(vm.cid);
             }
 
-            vm.goTo = function(addr){
-                console.log(addr);
-                StateService.go(addr);
+            vm.back=function(){
+                StateService.back();
             };
 
+            vm.gotoDepositComment=function(){
+                StateService.go('depositComment',{id:vm.cid});
+            };
+
+            vm.getMoreInfo=function(id){
+                organizerService.queryDepositInfo(id).then(function(data) {
+                    if (data.errno == 0) {
+                        console.log(data.data);
+                        vm.more = data.data;
+                    }else{
+                        console.log('error,find nearby deposit fail');
+                        console.log(data);
+                    }
+                });
+            };
+
+            vm.getComment=function(id){
+                depositCommentService.getTotalDepositScore(id).then(function(data) {
+                    if (data.errno == 0) {
+                        console.log(data.data);
+                        vm.scores = data.data.scores;
+                    }else{
+                        console.log(data);
+                        if(data.errno==10003){
+                            vm.scores=0;
+                        }else{
+                            console.log('error,get comment fail');
+                        }
+                    }
+                });
+            };
+        });
+}());
+
+(function() {
+    "use strict";
+    angular.module('nearbyListCtrl', [])
+        .controller('nearbyListCtrl', function($scope, Constants,nearbyService,StateService,Session,CacheData) {
+            'ngInject';
+            var vm = this;
+            vm.activated = false;
+            vm.isMapMode=true;
+
+            $scope.$on('$ionicView.afterEnter', activate);
+
+            $scope.offlineOpts = {
+                retryInterval: 10000,
+                txt: 'Offline Mode'
+            };
+            var longitude = 114.2;
+            var latitude = 22.5;
+            $scope.mapOptions = {
+                center: {
+                    longitude: longitude,
+                    latitude: latitude
+                },
+                zoom: 11,
+                city: 'ShenZhen',
+                markers: [{
+                    longitude: longitude,
+                    latitude: latitude,
+                    icon: 'img/mappiont.png',
+                    width: 49,
+                    height: 60,
+                    title: 'Where',
+                    content: '这是哪里'
+                }]
+            };
+
+            $scope.loadMap = function(map) {
+                console.log(map);//gets called while map instance created
+            };
+
+            vm.loadData=function(longitude,latitude){
+                nearbyService.findNearbyDeposit(longitude,latitude).then(function(data) {
+                    if (data.errno == 0) {
+                        console.log(data.data);
+                        vm.list = data.data;
+                    }else{
+                        console.log('error,find nearby deposit fail');
+                        console.log(data);
+                    }
+                });
+            };
+
+            vm.goto=function(item){
+                //Session.temp=item;
+                CacheData.putObject(item.AccountID,item);
+                StateService.go('nearbyDepositInfo',{id:item.AccountID});
+            };
+
+            function activate() {
+                vm.activated = true;
+                vm.version = Constants.buildID;
+                vm.loadData(longitude,latitude);
+            }
         });
 }());
 
 (function() {
   'use strict';
 
-  angular.module('profileRouter', [])
+  angular.module('nearbyRouter', [])
     .config(myRouter);
 
 
   function myRouter($stateProvider, $urlRouterProvider) {
     'ngInject';
     $stateProvider
-      .state('tabs.profile', {
-        url: "/profile",
+      .state('tabs.nearbyList', {
+        url: "/nearbyList",
           views: {
-            'tab-profile': {
-              templateUrl: 'profile/profile.html',
-              controller: 'profileCtrl',
+            'tab-nearby': {
+              templateUrl: 'nearby/nearbyList.html',
+              controller: 'nearbyListCtrl',
               controllerAs: 'vm'
             }
           }
+      })
+      .state('tabs.nearby', {
+        url: "/nearby",
+        views: {
+          'tab-nearby': {
+            templateUrl: 'nearby/nearby.html',
+            controller: 'nearbyCtrl',
+            controllerAs: 'vm'
+          }
+        }
+      })
+      .state('nearbyDepositInfo', {
+        url: "/nearbyDepositInfo?:id",
+        params: {
+          id : null
+        },
+        templateUrl: 'nearby/nearbyDepositInfo.html',
+        controller: 'nearbyDepositInfoCtrl',
+        controllerAs: 'vm'
+      })
+      .state('depositComment', {
+        url: "/depositComment?:id",
+        params: {
+          id : null
+        },
+        templateUrl: 'nearby/depositComment.html',
+        controller: 'depositCommentCtrl',
+        controllerAs: 'vm'
       });
   }
 }());
@@ -3767,13 +3618,21 @@ Date.prototype.Format = function(fmt) {
 (function() {
   'use strict';
 
-  angular.module('profileService', [])
-    .factory('profileService', profileService);
+  angular.module('nearbyService', [])
+    .factory('nearbyService', myService);
 
-  function profileService( $q, $http) {
+  function myService( $q, $http,Constants,ResultHandler) {
     'ngInject';
     var service = {
+      findNearbyDeposit:findNearbyDeposit
     };
+
+    //http://172.18.1.166/api/v1/nearbyDepositList/113.271/23.1353     附近的机构列表
+    function findNearbyDeposit(x,y) {
+      var url = Constants.serverUrl + 'nearbyDepositList/'+x+"/"+y;
+      return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
+    };
+
     return service;
 
 
@@ -4146,6 +4005,121 @@ Date.prototype.Format = function(fmt) {
     return service;
   }
 
+}());
+
+(function() {
+  "use strict";
+  angular.module('photoModule', [
+    'photoCtrl',
+    'photoRouter'
+  ]);
+
+}());
+
+(function() {
+    "use strict";
+    angular.module('photoCtrl', [])
+        .controller('photoCtrl', function($scope, Constants,$stateParams,Session,StateService,$ionicSlideBoxDelegate,$timeout) {
+            'ngInject';
+            var vm = this;
+            vm.activated = false;
+            $scope.$on('$ionicView.afterEnter', activate);
+
+            function activate() {
+                vm.activated = true;
+                vm.version = Constants.buildID;
+                vm.msg=Session.temp;
+                vm.images=[];
+                vm.imgCount=0;
+                if(vm.msg.photolink1!=null && vm.msg.photolink1!=""){
+                    vm.images[vm.imgCount]=vm.msg.photolink1;
+                    vm.imgCount++;
+                }
+                if(vm.msg.photolink2!=null && vm.msg.photolink2!=""){
+                    vm.images[vm.imgCount]=vm.msg.photolink2;
+                    vm.imgCount++;
+                }
+                if(vm.msg.photolink3!=null && vm.msg.photolink3!=""){
+                    vm.images[vm.imgCount]=vm.msg.photolink3;
+                    vm.imgCount++;
+                }
+                if(vm.msg.photolink4!=null && vm.msg.photolink4!=""){
+                    vm.images[vm.imgCount]=vm.msg.photolink4;
+                    vm.imgCount++;
+                }
+                if(vm.msg.photolink5!=null && vm.msg.photolink5!=""){
+                    vm.images[vm.imgCount]=vm.msg.photolink5;
+                    vm.imgCount++;
+                }
+                if(vm.msg.photolink6!=null && vm.msg.photolink6!=""){
+                    vm.images[vm.imgCount]=vm.msg.photolink6;
+                    vm.imgCount++;
+                }
+                console.log(vm.images);
+                vm.index=$stateParams.index;
+                console.log(vm.index);
+                //vm.image=vm.images[vm.index];
+                $timeout(function(){
+                    $scope.slider.slideTo(vm.index);
+                    $scope.slider.updateLoop();
+                    //$ionicSlideBoxDelegate.enableSlide(true);
+                    //$ionicSlideBoxDelegate.slide(vm.index);
+                    //console.log($ionicSlideBoxDelegate.currentIndex()+" - "+$ionicSlideBoxDelegate.slidesCount());
+                }, 300);
+
+            }
+            vm.back=function(){
+                StateService.back();
+            };
+
+            $scope.options = {
+                loop: false
+            }
+
+            $scope.$on("$ionicSlides.sliderInitialized", function(event, data){
+                // data.slider is the instance of Swiper
+                console.log(data);
+                $scope.slider = data.slider;
+            });
+
+            $scope.$on("$ionicSlides.slideChangeStart", function(event, data){
+                console.log('Slide change is beginning');
+                //console.log(event);
+                //console.log(data);
+            });
+
+            $scope.$on("$ionicSlides.slideChangeEnd", function(event, data){
+                // note: the indexes are 0-based
+                //console.log(event);
+                console.log($scope.slider.activeIndex+" - "+$scope.slider.previousIndex);
+                //$scope.activeIndex = data.activeIndex;
+                //$scope.previousIndex = data.previousIndex;
+                //console.log('Slide from '+data.previousIndex +' to '+data.activeIndex);
+            });
+        });
+}());
+
+(function() {
+  'use strict';
+
+  angular.module('photoRouter', [])
+    .config(myRouter);
+
+
+  function myRouter($stateProvider, $urlRouterProvider) {
+    'ngInject';
+    $stateProvider
+        .state('photo', {
+          url: "/photo?:index",
+          params:{
+            index:0
+          },
+          templateUrl: 'photo/photo.html',
+          controller: 'photoCtrl',
+          controllerAs: 'vm'
+        })
+      ;
+  }
 }());
 
 (function() {
@@ -5089,6 +5063,247 @@ Date.prototype.Format = function(fmt) {
       return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
     };
 
+    return service;
+
+
+  }
+
+}());
+
+(function() {
+  "use strict";
+  angular.module('parentModule', [
+    'parentCtrl',
+    'parentEditCtrl',
+    'parentRouter',
+    'parentService'
+  ]);
+
+}());
+
+(function() {
+    "use strict";
+    angular.module('parentCtrl', [])
+        .controller('parentCtrl', function($scope, Constants, StateService, parentService, AuthService) {
+            'ngInject';
+            var vm = this;
+            vm.activated = false;
+            $scope.$on('$ionicView.afterEnter', activate);
+
+            function activate() {
+                vm.activated = true;
+                vm.version = Constants.buildID;
+                vm.getTeacher();
+                vm.getChildren();
+            }
+
+            vm.back = function(){
+                StateService.back();
+            };
+
+            vm.getTeacher = function(){
+                parentService.queryParent(AuthService.getLoginID()).then(function(data) {
+                    if (data.errno == 0) {
+                        console.log(data.data);
+                        vm.parent = data.data;
+                    }
+                });
+            };
+
+            vm.getChildren = function(){
+                parentService.queryChildren(AuthService.getLoginID()).then(function(data) {
+                    if (data.errno == 0) {
+                        console.log(data.data);
+                        vm.children = data.data;
+                    }
+                });
+            };
+
+        });
+}());
+
+(function() {
+    "use strict";
+    angular.module('parentEditCtrl', [])
+        .controller('parentEditCtrl', function($scope, Constants,AuthService,parentService) {
+            'ngInject';
+            var vm = this;
+            vm.activated = false;
+            $scope.$on('$ionicView.afterEnter', activate);
+
+            function activate() {
+                vm.activated = true;
+                vm.version = Constants.buildID;
+                vm.getChildren();
+            }
+
+
+            vm.getChildren = function(){
+                parentService.queryChildren(AuthService.getLoginID()).then(function(data) {
+                    if (data.errno == 0) {
+                        console.log(data.data);
+                        vm.children = data.data;
+                    }
+                });
+            };
+
+        });
+}());
+
+(function() {
+  'use strict';
+
+  angular.module('parentRouter', [])
+    .config(myRouter);
+
+
+  function myRouter($stateProvider, $urlRouterProvider) {
+    'ngInject';
+    $stateProvider
+      .state('parent', {
+        url: "/parent",
+        templateUrl: 'parent/parent.html',
+        controller: 'parentCtrl',
+        controllerAs: 'vm'
+      })
+      .state('parentEdit', {
+        url: "/parentEdit",
+        templateUrl: 'parent/parentEdit.html',
+        controller: 'parentEditCtrl',
+        controllerAs: 'vm'
+      })
+    ;
+  }
+}());
+
+(function() {
+  'use strict';
+
+  angular.module('parentService', [])
+    .factory('parentService', parentService);
+
+  function parentService( $q, $http, Constants, ResultHandler) {
+    'ngInject';
+    var service = {
+      queryParent:queryParent,
+      queryChildren:queryChildren
+    };
+
+    //-----HTTP Header => Authorization: Bearer-{$token}-----//
+
+    //GET /api/v1/account/query/parent/{parent_accnt_id}
+    //return
+    //{
+    //  "errno":0,
+    //  "error":"",
+    //  "data":{
+    //  "uid":10000001,
+    //      "name":"张粑粑",
+    //      "sex":1,
+    //      "mobile":"18612345678",
+    //      "nick":"sam"
+    //  }
+    //}
+    function queryParent(id) {
+      console.log($http.defaults.headers);
+      var url = Constants.serverUrl + 'account/query/parent/'+id;
+      return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
+    };
+
+    //GET /api/v1/account/query/parentChildren/{parent_accnt_id}
+    //return
+    //{
+    //  "errno":0,
+    //  "error":"",
+    //  "data":[
+    //    {
+    //      "uid":10000001,
+    //      "relationship":1,
+    //      "name":"赵大萌",
+    //      "sex":1,
+    //      "fingerfeature":"xxxxx",
+    //      "remark":"xxxx"
+    //    },
+    //    ...
+    //  ]
+    //}
+    function queryChildren(id) {
+      var url = Constants.serverUrl + 'account/query/parentChildren/'+id;
+      return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
+    };
+
+    return service;
+
+
+  }
+
+}());
+
+(function() {
+  "use strict";
+  angular.module('profileModule', [
+    'profileCtrl',
+    'profileRouter',
+    'profileService'
+  ]);
+
+}());
+
+(function() {
+    "use strict";
+    angular.module('profileCtrl', [])
+        .controller('profileCtrl', function($scope, $state, Constants, StateService) {
+            'ngInject';
+            var vm = this;
+            vm.activated = false;
+            $scope.$on('$ionicView.afterEnter', activate);
+
+            function activate() {
+                vm.activated = true;
+                vm.version = Constants.buildID;
+            }
+
+            vm.goTo = function(addr){
+                console.log(addr);
+                StateService.go(addr);
+            };
+
+        });
+}());
+
+(function() {
+  'use strict';
+
+  angular.module('profileRouter', [])
+    .config(myRouter);
+
+
+  function myRouter($stateProvider, $urlRouterProvider) {
+    'ngInject';
+    $stateProvider
+      .state('tabs.profile', {
+        url: "/profile",
+          views: {
+            'tab-profile': {
+              templateUrl: 'profile/profile.html',
+              controller: 'profileCtrl',
+              controllerAs: 'vm'
+            }
+          }
+      });
+  }
+}());
+
+(function() {
+  'use strict';
+
+  angular.module('profileService', [])
+    .factory('profileService', profileService);
+
+  function profileService( $q, $http) {
+    'ngInject';
+    var service = {
+    };
     return service;
 
 

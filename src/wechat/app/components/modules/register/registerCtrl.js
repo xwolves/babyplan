@@ -52,8 +52,8 @@
             });
             $scope.$watch('vm.user.password', function(newValue, oldValue) {
                 if(vm.user.password!=undefined) {
-                    if (vm.user.password.length < 8) {
-                        vm.error = '密码长度必须不小于8位';
+                    if (vm.user.password.length < 6) {
+                        vm.error = '密码长度必须不小于6位';
                     } else {
                         vm.error = null;
                     }
@@ -63,7 +63,7 @@
             });
             $scope.$watch('vm.user.pswConfirm', function(newValue, oldValue) {
                 if(vm.user.pswConfirm!=undefined) {
-                    if (vm.user.password != '' && vm.user.password.length >= 8  && vm.user.pswConfirm != vm.user.password) {
+                    if (vm.user.password != '' && vm.user.password.length >= 6  && vm.user.pswConfirm != vm.user.password) {
                         vm.error = '密码不一致';
                     } else {
                         vm.error = null;
@@ -79,7 +79,7 @@
                     return false;
                 }
                 else {
-                    if(vm.user.password.length >= 8 && vm.user.pswConfirm.length >= 8
+                    if(vm.user.password.length >= 6 && vm.user.pswConfirm.length >= 6
                         && vm.user.name.length > 0 && vm.user.mobile.length == 11
                         && vm.user.password == vm.user.pswConfirm) return true;
                     else vm.error = '数据未填完哦!';
@@ -87,7 +87,7 @@
             };
 
             vm.simpleCheck = function(){
-                if(vm.org.password.length >= 8 && (vm.org.account.length == 11 || vm.org.account.length == 8 )){
+                if(vm.org.password.length >= 6 && (vm.org.account.length == 11 || vm.org.account.length == 8 )){
                     vm.error = "";
                     return true;
                 } else vm.error = '数据未填完哦!';

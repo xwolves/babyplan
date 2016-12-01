@@ -10167,6 +10167,15 @@ button.toast-close-button {
   text-align: center;
   color: red; }
 
+ul.rating li {
+  display: inline;
+  border: 0px;
+  background: none;
+  padding: 5px; }
+
+ul.rating li i {
+  font-size: 30px; }
+
 .platform-android .bar .title {
   font-size: 17px !important; }
 

@@ -1,0 +1,48 @@
+<ion-view>
+    <!--view-title="{{vm.item.OrgName}}"-->
+    <ion-nav-buttons side="left">
+        <a class="button button-icon icon ion-ios-arrow-back" ng-click="vm.back()"></a>
+    </ion-nav-buttons>
+    <ion-nav-buttons side="right">
+        <a class="button button-icon icon ion-android-create" ng-show="!vm.isEditing" ng-click="vm.edit()"></a>
+    </ion-nav-buttons>
+
+    <ion-content>
+        <div class="item item-divider">
+            评分
+        </div>
+
+        <span>厨房卫生: &nbsp;&nbsp;{{vm.item.scores.kitchen}}</span>
+        <rating ng-model="vm.item.scores.kitchen" readonly="!vm.isEditing" max="10"></rating>
+        <hr>
+        <span>餐饮营养和质量: &nbsp;&nbsp;{{vm.item.scores.food}}</span>
+        <rating ng-model="vm.item.scores.food" readonly="!vm.isEditing" max="10"></rating>
+        <hr>
+        <span>接送秩序安全: &nbsp;&nbsp;{{vm.item.scores.roadsafety}}</span>
+        <rating ng-model="vm.item.scores.roadsafety" readonly="!vm.isEditing" max="10"></rating>
+        <hr>
+        <span>消防安全和教育资质: &nbsp;&nbsp;{{vm.item.scores.edufiresafety}}</span>
+        <rating ng-model="vm.item.scores.edufiresafety" readonly="!vm.isEditing" max="10"></rating>
+        <hr>
+        <span>老师的爱心和责任心: &nbsp;&nbsp;{{vm.item.scores.teacherresp}}</span>
+        <rating ng-model="vm.item.scores.teacherresp" readonly="!vm.isEditing" max="10"></rating>
+        <hr>
+
+        <div class="item item-divider">
+            评语
+        </div>
+
+
+        <textarea rows="8" style="width: 100%;" ng-model="vm.item.commenttext" ng-readonly="!vm.isEditing"></textarea>
+
+
+    </ion-content>
+
+    <div class="bar bar-footer" ng-show="vm.isEditing">
+        <div class="button-bar">
+            <a class="button button-positive" style="margin-right: 1px;" ng-click="vm.save()">保存</a>
+            <a class="button button-positive" style="margin-left: 1px;" ng-click="vm.cancel()">取消</a>
+        </div>
+    </div>
+
+</ion-view>

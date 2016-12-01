@@ -10,7 +10,7 @@
             vm.point = null;
             vm.city = 'shenzhen';
             vm.show=false;
-            vm.distance = 100000;
+            vm.distance = 5000;
             vm.changeName = '列表';
             $scope.temp={mine:null,baidu:null};
             vm.list=[];

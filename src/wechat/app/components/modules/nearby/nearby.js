@@ -4,7 +4,9 @@
     'nearbyCtrl',
     'nearbyListCtrl',
     'nearbyDepositInfoCtrl',
+    'depositCommentCtrl',
     'nearbyRouter',
+    'depositCommentService',
     'nearbyService'
   ]);
 

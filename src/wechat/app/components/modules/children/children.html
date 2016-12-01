@@ -1,32 +1,72 @@
 <ion-view view-title="{{vm.parent.wechat.nickname}} 孩子信息流">
+    <ion-nav-buttons side="right">
+        <a class="button button-icon icon ion-search" ng-click="vm.showFilter=!vm.showFilter"></a>
+    </ion-nav-buttons>
     <ion-content>
-
-        <div class="msg_flow" ng-repeat="item in vm.messages track by $index">
+        <div ng-show="vm.showFilter">
+            <label class="item item-input item-select">
+              <span class="input-label">
+                过滤
+              </span>
+                <!--1：就餐；2：培训；3：活动；4：作业；5：接入；6：送达-->
+                <select ng-model="vm.simpleFilterSelect" ng-change="vm.change()">
+                    <option value="-1" selected>请选择排序方式</option>
+                    <option value="0">打卡记录</option>
+                    <option value="1">就餐</option>
+                    <option value="2">培训</option>
+                    <option value="3">活动</option>
+                    <option value="4">作业</option>
+                    <option value="5">接入</option>
+                    <option value="6">送达</option>
+                </select>
+            </label>
+        </div>
+        <ion-refresher pulling-text="刷新信息" on-refresh="vm.doRefresh(0)"></ion-refresher>
+        <div class="msg_flow" ng-repeat="item in vm.messages  | filter:vm.simpleFilter track by $index">
             <!--指纹-->
+            <!--<div ng-if="item.datatype!='1'" class="item item-avatar">-->
+                <!--<img src="./img/finger.png" alt="指纹记录">-->
+                <!--<h2>{{item.childname}}于{{item.CreateTime}} 指纹打卡</h2>-->
+                <!--<p>{{item.DepositID}}</p>-->
+            <!--</div>-->
+            <div ng-if="item.datatype!='1'">
+                <div class="row" style="background: #eeeeee;height: 48px;margin-top: 0px;padding-top: 0px;margin-bottom: 0px;padding-bottom: 0px;">
+                    <div class="col col-20">
+                        <img src="./img/finger.png" height="40px" alt="指纹记录" >
+                    </div>
+                    <div class="col col-60">
+                        <p>打卡记录<br><small>{{item.DepositID}}</small></p>
+                    </div>
+                    <div class="col col-20" >
+                        <span style="text-align: right">{{item.CreateTime|dateChange}}</span>
+                    </div>
+                </div>
 
-            <div ng-if="item.datatype!='1'" class="item item-avatar">
-                    <!--图片-->
-                    <img src="./img/finger.png" alt="指纹记录">
-                    <!-- title --><!--time|mytime--><!--<span style="float: right">{{item.CreateTime}}</span>-->
-                    <h2>{{item.childname}}于{{item.CreateTime}} 指纹打卡</h2>
-                    <!--deposit-->
-                    <p>{{item.DepositID}}</p>
+                <!--<div  class="item item-avatar" style="background: #eeeeee;">-->
+                    <!--<img src="./img/finger.png" alt="指纹记录">-->
+                    <!--<h2>打卡记录<span style="float: right">{{item.CreateTime|dateChange}}</span></h2>-->
+                    <!--<p>{{item.DepositID}}</p>-->
+                <!--</div>-->
+                <div style="margin-left: 20px;margin-top: 10px;">
+                    <p>{{item.childname}}于{{item.CreateTime}} 指纹打卡</p>
+                </div>
             </div>
             <!--信息-->
             <div ng-if="item.datatype!='2'">
-                <div  class="item item-avatar" style="background: #eeeeee;"><!--图片--><!-- title --><!--deposit--><!--time-->
-                    <!--图片-->
-                    <img ng-src="{{vm.getImg(item.InfoType).src}}" alt="在校信息">
-                    <!-- title --><!--time|mytime-->
-                    <h2>{{vm.getImg(item.InfoType).name}}<span style="float: right">{{item.CreateTime|dateChange}}</span></h2>
-                    <!--deposit-->
-                    <p>{{item.DepositID}}</p>
+                <div class="row" style="background: #eeeeee;height: 48px;margin-top: 0px;padding-top: 0px;margin-bottom: 0px;padding-bottom: 0px;">
+                    <div class="col col-20">
+                        <img ng-src="{{vm.getImg(item.InfoType).src}}" height="40px" alt="在校信息">
+                    </div>
+                    <div class="col col-60">
+                        <p>{{vm.getImg(item.InfoType).name}}<br><small>{{item.DepositID}}</small></p>
+                    </div>
+                    <div class="col col-20" >
+                        <span style="text-align: right">{{item.CreateTime|dateChange}}</span>
+                    </div>
                 </div>
                 <div style="margin-left: 20px;">
-                    <!--message-->
                     <p ng-if="item.Description">{{item.Description}}</p>
-                    <!--photo--><!--photo--><!--photo-->
-                    <!--photo--><!--photo--><!--photo-->
+
                     <div style="display:inline-block;" ng-if="item.PhotoLink1">
                         <img style="float: left;" ng-src="{{item.PhotoLink1|ImageMin}}" ng-click="goToSlide(0,item)"
                              onload='if (this.width>64 || this.height>100) if (this.width/this.height>64/100) this.width=64; else this.height=100;' >
@@ -43,17 +83,26 @@
                         <img style="float: left;margin-left: 10px;" ng-src="{{item.PhotoLink6|ImageMin}}"  ng-if="item.PhotoLink6" ng-click="goToSlide(5,item)"
                              onload='if (this.width>64 || this.height>100) if (this.width/this.height>64/100) this.width=64; else this.height=100;' >
                     </div>
-                </div>
-                <div>
-                    <hr>
-                    <!--like 来自{{item.PublisherID}}老师 comment-->
-                    <p>
-                        &nbsp;&nbsp;&nbsp;&nbsp;<i class="ion-heart">&nbsp;{{item.StarCount}}</i>
-                        &nbsp;&nbsp;&nbsp;&nbsp;<i class="ion-at">&nbsp;{{item.StarCount}}</i>
-                    </p>
+
+                    <!--<p>-->
+                        <!--&nbsp;&nbsp;&nbsp;&nbsp;<i class="ion-heart" ng-click="vm.star()">&nbsp;{{item.StarCount}}</i>-->
+                        <!--&nbsp;&nbsp;&nbsp;&nbsp;<i class="ion-at" ng-click="item.commentShow = !item.commentShow">&nbsp;{{item.StarCount}}</i>-->
+                    <!--</p>-->
+
+                    <!--<ion-list ng-show="vm.commentShow">-->
+                        <!--<ion-item class="item" collection-repeat="c in item.comments">-->
+                            <!--<p>{{c.CommentBy}}: {{c.CommentData}}<span style="float: right">{{c.CreateTime|dateChange}}</span></p>-->
+                        <!--</ion-item>-->
+
+                        <!--<div class="item" ng-if="item.comments !== undefined && !item.comments.length" class="no-results">-->
+                            <!--<p>无相关评论</p>-->
+                        <!--</div>-->
+                    <!--</ion-list>-->
+
                 </div>
             </div>
-
         </div>
+        <ion-infinite-scroll ng-if="vm.canLoadMore" immediate-check="false" icon="ion-loading-c" on-infinite="vm.doRefresh(vm.offset)"></ion-infinite-scroll>
+
     </ion-content>
 </ion-view>

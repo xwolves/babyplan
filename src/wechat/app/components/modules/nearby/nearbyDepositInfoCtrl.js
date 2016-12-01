@@ -1,7 +1,7 @@
 (function() {
     "use strict";
     angular.module('nearbyDepositInfoCtrl', [])
-        .controller('nearbyDepositInfoCtrl', function($scope, Constants,nearbyService,CacheData,$stateParams,StateService,organizerService,commentService) {
+        .controller('nearbyDepositInfoCtrl', function($scope, Constants,nearbyService,CacheData,$stateParams,StateService,organizerService,depositCommentService) {
             'ngInject';
             var vm = this;
             vm.activated = false;
@@ -24,6 +24,10 @@
                 StateService.back();
             };
 
+            vm.gotoDepositComment=function(){
+                StateService.go('depositComment',{id:vm.cid});
+            };
+
             vm.getMoreInfo=function(id){
                 organizerService.queryDepositInfo(id).then(function(data) {
                     if (data.errno == 0) {
@@ -37,13 +41,17 @@
             };
 
             vm.getComment=function(id){
-                commentService.queryDepositComment(id).then(function(data) {
+                depositCommentService.getTotalDepositScore(id).then(function(data) {
                     if (data.errno == 0) {
                         console.log(data.data);
-                        vm.comments = data.data;
+                        vm.scores = data.data.scores;
                     }else{
-                        console.log('error,get comment fail');
                         console.log(data);
+                        if(data.errno==10003){
+                            vm.scores=0;
+                        }else{
+                            console.log('error,get comment fail');
+                        }
                     }
                 });
             };
