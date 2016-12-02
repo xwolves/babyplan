@@ -74,6 +74,94 @@
 
 (function() {
   "use strict";
+  angular.module('config', [
+    'environmentConfig',
+    'constant',
+    'httpRelConfig'
+  ]);
+
+}());
+
+(function() {
+    "use strict";
+    angular.module('constant', [])
+        .constant('Path',{
+            'ParentRolePath':'tabs.children',
+            'OrganizerRolePath':'tabs.organizer',
+            'TeacherRolePath':'tabs.message'
+        })
+        .constant('Role',{
+            'unknown':'-1',
+            'Organizer':'1',
+            'Parent':'2',
+            'Teacher':'3',
+            'Children':'4',
+            'ThirdParty':'5',
+            'Consultant':'6'
+        })
+        .constant('Weixin', {
+        })
+        .constant('AUTH_EVENTS', {
+            loginSuccess: 'auth-login-success',
+            loginFailed: 'auth-login-failed',
+            logoutSuccess: 'auth-logout-success',
+            sessionTimeout: 'auth-session-timeout',
+            notAuthenticated: 'auth-not-authenticated',
+            notAuthorized: 'auth-not-authorized'
+        })
+        .constant('ErrorMessage', {
+            ACCESS_FAIL: '通讯异常，请稍后再试！',
+            TOKEN_INVALID: '连接超时，请重新登录！'
+        })
+        .constant('SuccessMessage', {
+            SUBMIT_SUCESS: '提交成功',
+            OPERATION_SUCESS:'操作完成'
+        });
+}());
+
+(function() {
+    "use strict";
+    angular.module('environmentConfig', [])
+        .constant('Constants', {
+            'appTitle':'托管系统',
+            'serverUrl': '/api/v1/',
+            'dfsUrl': '/',
+            'buildID': '20161202v1',
+            'ENVIRONMENT':'release'
+        });
+}());
+//'serverUrl': 'http://120.76.226.47/api/v2/',
+//    'dfsUrl': 'http://120.76.226.47/',
+//http://localhost:8090/
+//http://wx.zxing-tech.cn
+(function() {
+    "use strict";
+    angular.module('httpDevConfig', [])
+        .config(function($httpProvider) {
+            $httpProvider.defaults.headers.post["Content-Type"] = "application/x-www-form-urlencoded";
+            $httpProvider.defaults.headers.put["Content-Type"] = "application/x-www-form-urlencoded";
+        });
+}());
+
+(function() {
+    "use strict";
+    angular.module('httpRelConfig', [])
+    .config(function($httpProvider) {
+        $httpProvider.defaults.cache = false;
+        if (!$httpProvider.defaults.headers.get) {
+           $httpProvider.defaults.headers.get = {};
+        }
+        // disable IE ajax request caching
+        $httpProvider.defaults.headers.get['If-Modified-Since'] = '0';
+
+        // Disable IE ajax request caching
+        $httpProvider.defaults.headers.get['Cache-Control'] = 'no-cache';
+        $httpProvider.defaults.headers.get['Pragma'] = 'no-cache';
+    });
+}());
+
+(function() {
+  "use strict";
   angular.module('AuthService', []).factory('AuthService', function(Session,Path,Role) {
     'ngInject';
 
@@ -505,94 +593,6 @@ app.filter('statusChange', function () {
 }());
 
 (function() {
-  "use strict";
-  angular.module('config', [
-    'environmentConfig',
-    'constant',
-    'httpRelConfig'
-  ]);
-
-}());
-
-(function() {
-    "use strict";
-    angular.module('constant', [])
-        .constant('Path',{
-            'ParentRolePath':'tabs.children',
-            'OrganizerRolePath':'tabs.organizer',
-            'TeacherRolePath':'tabs.message'
-        })
-        .constant('Role',{
-            'unknown':'-1',
-            'Organizer':'1',
-            'Parent':'2',
-            'Teacher':'3',
-            'Children':'4',
-            'ThirdParty':'5',
-            'Consultant':'6'
-        })
-        .constant('Weixin', {
-        })
-        .constant('AUTH_EVENTS', {
-            loginSuccess: 'auth-login-success',
-            loginFailed: 'auth-login-failed',
-            logoutSuccess: 'auth-logout-success',
-            sessionTimeout: 'auth-session-timeout',
-            notAuthenticated: 'auth-not-authenticated',
-            notAuthorized: 'auth-not-authorized'
-        })
-        .constant('ErrorMessage', {
-            ACCESS_FAIL: '通讯异常，请稍后再试！',
-            TOKEN_INVALID: '连接超时，请重新登录！'
-        })
-        .constant('SuccessMessage', {
-            SUBMIT_SUCESS: '提交成功',
-            OPERATION_SUCESS:'操作完成'
-        });
-}());
-
-(function() {
-    "use strict";
-    angular.module('environmentConfig', [])
-        .constant('Constants', {
-            'appTitle':'托管系统',
-            'serverUrl': '/api/v1/',
-            'dfsUrl': '/',
-            'buildID': '20161201v1',
-            'ENVIRONMENT':'release'
-        });
-}());
-//'serverUrl': 'http://120.76.226.47/api/v2/',
-//    'dfsUrl': 'http://120.76.226.47/',
-//http://localhost:8090/
-//http://wx.zxing-tech.cn
-(function() {
-    "use strict";
-    angular.module('httpDevConfig', [])
-        .config(function($httpProvider) {
-            $httpProvider.defaults.headers.post["Content-Type"] = "application/x-www-form-urlencoded";
-            $httpProvider.defaults.headers.put["Content-Type"] = "application/x-www-form-urlencoded";
-        });
-}());
-
-(function() {
-    "use strict";
-    angular.module('httpRelConfig', [])
-    .config(function($httpProvider) {
-        $httpProvider.defaults.cache = false;
-        if (!$httpProvider.defaults.headers.get) {
-           $httpProvider.defaults.headers.get = {};
-        }
-        // disable IE ajax request caching
-        $httpProvider.defaults.headers.get['If-Modified-Since'] = '0';
-
-        // Disable IE ajax request caching
-        $httpProvider.defaults.headers.get['Cache-Control'] = 'no-cache';
-        $httpProvider.defaults.headers.get['Pragma'] = 'no-cache';
-    });
-}());
-
-(function() {
     "use strict";
     angular.module('directive', [
 
@@ -618,6 +618,14 @@ Date.prototype.Format = function(fmt) {
     return fmt;
 };
 (function() {
+  "use strict";
+  angular.module('tools', [
+    
+  ]);
+
+}());
+
+(function() {
     "use strict";
     angular.module('modules', [
         'LoginModule',
@@ -641,14 +649,6 @@ Date.prototype.Format = function(fmt) {
         'exitModule',
         'photoModule'
     ]);
-
-}());
-
-(function() {
-  "use strict";
-  angular.module('tools', [
-    
-  ]);
 
 }());
 
@@ -2086,6 +2086,157 @@ Date.prototype.Format = function(fmt) {
 
 (function() {
   "use strict";
+  angular.module('depositChildrenModule', [
+    'depositChildrenCtrl',
+    'teacherDepositChildrenCtrl',
+    'depositChildrenRouter',
+    'depositChildrenService'
+  ]);
+
+}());
+
+(function() {
+    "use strict";
+    angular.module('depositChildrenCtrl', [])
+        .controller('depositChildrenCtrl', function($scope,Constants,StateService,depositChildrenService,AuthService,MessageToaster) {
+            'ngInject';
+            var vm = this;
+            vm.activated = false;
+            $scope.$on('$ionicView.afterEnter', activate);
+
+            function activate() {
+                vm.activated = true;
+                vm.version = Constants.buildID;
+                vm.queryChildren();
+            }
+
+            vm.back=function(){
+                StateService.back();
+            };
+
+            vm.goTo=function(id,item){
+                //查看孩子的更多家长信息列表
+                StateService.go('teacherEdit',{cid:id,type:0});
+            };
+
+            vm.queryChildren = function(){
+                depositChildrenService.queryDepositChildren(AuthService.getLoginID()).then(function(data) {
+                    if (data.errno == 0) {
+                        console.log(data.data);
+                        vm.children = data.data;
+                    }else{
+                        MessageToaster.error("查不到任何数据 "+response.error);
+                    }
+                });
+            };
+        });
+}());
+
+(function() {
+  'use strict';
+
+  angular.module('depositChildrenRouter', [])
+    .config(myRouter);
+
+
+  function myRouter($stateProvider, $urlRouterProvider) {
+    'ngInject';
+    $stateProvider
+      .state('tabs.depositChildren', {
+        url: "/depositChildren",
+        views: {
+          'tab-depositChildren': {
+            templateUrl: 'depositChildren/depositChildren.html',
+            controller: 'teacherDepositChildrenCtrl',
+            controllerAs: 'vm'
+          }
+        }
+      })
+      .state('depositChildren', {
+        url: "/depositChildren",
+        templateUrl: 'depositChildren/depositChildren.html',
+        controller: 'depositChildrenCtrl',
+        controllerAs: 'vm'
+      })
+    ;
+  }
+}());
+
+(function() {
+  'use strict';
+
+  angular.module('depositChildrenService', [])
+    .factory('depositChildrenService', depositChildrenService);
+
+  function depositChildrenService( $q, $http, Constants, ResultHandler) {
+    'ngInject';
+    var service = {
+      queryDepositChildren:queryDepositChildren
+    };
+
+    //'/deposit/children/:depositid',
+    function queryDepositChildren(id) {
+      var url = Constants.serverUrl + 'deposit/children/'+id;
+      return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
+    };
+
+    return service;
+
+
+  }
+
+}());
+
+(function() {
+    "use strict";
+    angular.module('teacherDepositChildrenCtrl', [])
+        .controller('teacherDepositChildrenCtrl', function($scope,Constants,StateService,depositChildrenService,AuthService,MessageToaster,teacherService) {
+            'ngInject';
+            var vm = this;
+            vm.activated = false;
+            $scope.$on('$ionicView.afterEnter', activate);
+
+            function activate() {
+                vm.activated = true;
+                vm.version = Constants.buildID;
+                teacherService.queryTeacherDeposit(AuthService.getLoginID()).then(function(data) {
+                    if (data.errno == 0) {
+                        console.log(data.data);
+                        if(data.data!=null&&data.data.length>0) {
+                            vm.teacher = data.data[0];
+                            vm.queryChildren(vm.teacher.depositid);
+                        }
+                    } else {
+                        MessageToaster.error("查不到任何数据 " + data.error);
+                    }
+                });
+
+            }
+
+            vm.back=function(){
+                StateService.back();
+            };
+
+            vm.goTo=function(id,item){
+                //查看孩子的更多家长信息列表
+                StateService.go('teacherEdit',{cid:id,type:0});
+            };
+
+            vm.queryChildren = function(id){
+                depositChildrenService.queryDepositChildren(id).then(function(data) {
+                    if (data.errno == 0) {
+                        console.log(data.data);
+                        vm.children = data.data;
+                    }else{
+                        MessageToaster.error("查不到任何数据 "+response.error);
+                    }
+                });
+            };
+        });
+}());
+
+(function() {
+  "use strict";
   angular.module('exitModule', [
     'exitCtrl',
     'exitRouter',
@@ -2504,490 +2655,6 @@ Date.prototype.Format = function(fmt) {
                 };
             }
         });
-}());
-
-(function() {
-  "use strict";
-  angular.module('depositChildrenModule', [
-    'depositChildrenCtrl',
-    'teacherDepositChildrenCtrl',
-    'depositChildrenRouter',
-    'depositChildrenService'
-  ]);
-
-}());
-
-(function() {
-    "use strict";
-    angular.module('depositChildrenCtrl', [])
-        .controller('depositChildrenCtrl', function($scope,Constants,StateService,depositChildrenService,AuthService,MessageToaster) {
-            'ngInject';
-            var vm = this;
-            vm.activated = false;
-            $scope.$on('$ionicView.afterEnter', activate);
-
-            function activate() {
-                vm.activated = true;
-                vm.version = Constants.buildID;
-                vm.queryChildren();
-            }
-
-            vm.back=function(){
-                StateService.back();
-            };
-
-            vm.goTo=function(id,item){
-                //查看孩子的更多家长信息列表
-                StateService.go('teacherEdit',{cid:id,type:0});
-            };
-
-            vm.queryChildren = function(){
-                depositChildrenService.queryDepositChildren(AuthService.getLoginID()).then(function(data) {
-                    if (data.errno == 0) {
-                        console.log(data.data);
-                        vm.children = data.data;
-                    }else{
-                        MessageToaster.error("查不到任何数据 "+response.error);
-                    }
-                });
-            };
-        });
-}());
-
-(function() {
-  'use strict';
-
-  angular.module('depositChildrenRouter', [])
-    .config(myRouter);
-
-
-  function myRouter($stateProvider, $urlRouterProvider) {
-    'ngInject';
-    $stateProvider
-      .state('tabs.depositChildren', {
-        url: "/depositChildren",
-        views: {
-          'tab-depositChildren': {
-            templateUrl: 'depositChildren/depositChildren.html',
-            controller: 'teacherDepositChildrenCtrl',
-            controllerAs: 'vm'
-          }
-        }
-      })
-      .state('depositChildren', {
-        url: "/depositChildren",
-        templateUrl: 'depositChildren/depositChildren.html',
-        controller: 'depositChildrenCtrl',
-        controllerAs: 'vm'
-      })
-    ;
-  }
-}());
-
-(function() {
-  'use strict';
-
-  angular.module('depositChildrenService', [])
-    .factory('depositChildrenService', depositChildrenService);
-
-  function depositChildrenService( $q, $http, Constants, ResultHandler) {
-    'ngInject';
-    var service = {
-      queryDepositChildren:queryDepositChildren
-    };
-
-    //'/deposit/children/:depositid',
-    function queryDepositChildren(id) {
-      var url = Constants.serverUrl + 'deposit/children/'+id;
-      return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
-    };
-
-    return service;
-
-
-  }
-
-}());
-
-(function() {
-    "use strict";
-    angular.module('teacherDepositChildrenCtrl', [])
-        .controller('teacherDepositChildrenCtrl', function($scope,Constants,StateService,depositChildrenService,AuthService,MessageToaster,teacherService) {
-            'ngInject';
-            var vm = this;
-            vm.activated = false;
-            $scope.$on('$ionicView.afterEnter', activate);
-
-            function activate() {
-                vm.activated = true;
-                vm.version = Constants.buildID;
-                teacherService.queryTeacherDeposit(AuthService.getLoginID()).then(function(data) {
-                    if (data.errno == 0) {
-                        console.log(data.data);
-                        if(data.data!=null&&data.data.length>0) {
-                            vm.teacher = data.data[0];
-                            vm.queryChildren(vm.teacher.depositid);
-                        }
-                    } else {
-                        MessageToaster.error("查不到任何数据 " + data.error);
-                    }
-                });
-
-            }
-
-            vm.back=function(){
-                StateService.back();
-            };
-
-            vm.goTo=function(id,item){
-                //查看孩子的更多家长信息列表
-                StateService.go('teacherEdit',{cid:id,type:0});
-            };
-
-            vm.queryChildren = function(id){
-                depositChildrenService.queryDepositChildren(id).then(function(data) {
-                    if (data.errno == 0) {
-                        console.log(data.data);
-                        vm.children = data.data;
-                    }else{
-                        MessageToaster.error("查不到任何数据 "+response.error);
-                    }
-                });
-            };
-        });
-}());
-
-(function() {
-  "use strict";
-  angular.module('orderModule', [
-    'orderCtrl',
-    'orderRouter',
-    'orderService'
-  ]);
-
-}());
-
-(function() {
-    "use strict";
-    angular.module('orderCtrl', [])
-        .controller('orderCtrl', function($scope, Constants, StateService) {
-            'ngInject';
-            var vm = this;
-            vm.activated = false;
-            console.log("tabs come");
-            $scope.$on('$ionicView.afterEnter', activate);
-
-            function activate() {
-                vm.activated = true;
-                vm.version = Constants.buildID;
-            }
-
-            vm.goTo=function(where){
-                StateService.go(where);
-            };
-        });
-}());
-
-(function() {
-  'use strict';
-
-  angular.module('orderRouter', [])
-    .config(myRouter);
-
-
-  function myRouter($stateProvider, $urlRouterProvider) {
-    'ngInject';
-    $stateProvider
-      .state('tabs.order', {
-        url: "/order",
-          views: {
-            'tab-order': {
-              templateUrl: 'order/order.html',
-              controller: 'orderCtrl',
-              controllerAs: 'vm'
-            }
-          }
-      });
-  }
-}());
-
-(function() {
-  'use strict';
-
-  angular.module('orderService', [])
-    .factory('orderService', orderService);
-
-  function orderService( $q, $http) {
-    'ngInject';
-    var service = {
-    };
-    return service;
-
-
-  }
-
-}());
-
-(function() {
-  "use strict";
-  angular.module('organizerModule', [
-    'organizerCtrl',
-    'organizerInfoCtrl',
-    'organizerEditCtrl',
-    'organizerRouter',
-    'organizerService'
-  ]);
-
-}());
-
-(function() {
-    "use strict";
-    angular.module('organizerCtrl', [])
-        .controller('organizerCtrl', function($scope, Constants, StateService,organizerService,AuthService) {
-            'ngInject';
-            var vm = this;
-            vm.activated = false;
-            $scope.$on('$ionicView.afterEnter', activate);
-
-            function activate() {
-                vm.activated = true;
-                vm.version = Constants.buildID;
-            }
-
-            vm.goTo = function(addr){
-                StateService.go(addr);
-            };
-
-            vm.getOrganizer = function(){
-                organizerService.queryOrganizer(AuthService.getLoginID()).then(function(data) {
-                    if (data.errno == 0) {
-                        vm.organizer = data.data;
-                    }
-                });
-            };
-
-            vm.getChildren = function(){
-                organizerService.queryTeacher(AuthService.getLoginID()).then(function(data) {
-                    if (data.errno == 0) {
-                        vm.teacher = data.data;
-                    }
-                });
-            };
-        });
-}());
-
-(function() {
-    "use strict";
-    angular.module('organizerEditCtrl', [])
-        .controller('organizerEditCtrl', function($scope, $stateParams, Constants, MessageToaster, AuthService, StateService, organizerService) {
-            'ngInject';
-            var vm = this;
-            vm.activated = false;
-
-            $scope.$on('$ionicView.afterEnter', activate);
-
-            function activate() {
-                vm.activated = true;
-                vm.version = Constants.buildID;
-
-                vm.getOrganizer();
-            }
-
-            vm.back=function(){
-                StateService.back();
-            };
-
-            vm.save=function(){
-                var data={
-                    contactphone: vm.organizer.ContactPhone,
-                    address:vm.organizer.Address,
-                    contactname:vm.organizer.ContactName,
-                    remark:"备注描述"
-                };
-                if(angular.isUndefined(vm.organizer.Address)||vm.organizer.Address==null||vm.organizer.Address.length==0){
-                    MessageToaster.error("机构地址不正确");
-                    return ;
-                }
-                if(angular.isUndefined(vm.organizer.ContactName)||vm.organizer.ContactName==null||vm.organizer.ContactName.length==0){
-                    MessageToaster.error("联系人不正确");
-                    return ;
-                }
-                if(angular.isUndefined(vm.organizer.ContactPhone)||vm.organizer.ContactPhone==null||vm.organizer.ContactPhone.length==0
-                    ||vm.organizer.ContactPhone.length!=11){
-                    MessageToaster.error("联系人电话不正确");
-                    return ;
-                }
-                organizerService.updateOrganizer(AuthService.getLoginID(),data).then(function(response) {
-                    console.log(response);
-                    if(response.errno==0)
-                        MessageToaster.success("更新成功");
-                    else
-                        MessageToaster.error("更新失败");
-                    return ;
-                }).finally(function() {
-                    StateService.back();
-                });
-
-            };
-
-            vm.getOrganizer = function(){
-                organizerService.queryOrganizer(AuthService.getLoginID()).then(function(data) {
-                    if (data.errno == 0) {
-                        console.log(data.data);
-                        vm.organizer = data.data;
-                    }
-                });
-            };
-
-
-        });
-}());
-
-(function() {
-    "use strict";
-    angular.module('organizerInfoCtrl', [])
-        .controller('organizerInfoCtrl', function($scope,Constants,StateService,organizerService,AuthService) {
-            'ngInject';
-            var vm = this;
-            vm.activated = false;
-            $scope.$on('$ionicView.afterEnter', activate);
-
-            function activate() {
-                vm.activated = true;
-                vm.version = Constants.buildID;
-                //vm.organizer = {name:'abc 托管',contactName:"sam",contactPhone:"15986632761"};
-                vm.getOrganizer();
-            }
-
-            vm.back=function(){
-                StateService.back();
-            };
-
-            vm.edit=function(id){
-                //编辑机构信息
-                StateService.go('organizerEdit');
-            };
-
-            vm.getOrganizer = function(){
-                organizerService.queryOrganizer(AuthService.getLoginID()).then(function(data) {
-                    if (data.errno == 0) {
-                        console.log(data.data);
-                        vm.organizer = data.data;
-                    }
-                });
-            };
-        });
-}());
-
-(function() {
-  'use strict';
-
-  angular.module('organizerRouter', [])
-    .config(myRouter);
-
-
-  function myRouter($stateProvider, $urlRouterProvider) {
-    'ngInject';
-    $stateProvider
-      .state('tabs.organizer', {
-        url: "/organizer",
-          views: {
-            'tab-orgnize': {
-              templateUrl: 'organizer/organizer.html',
-              controller: 'organizerCtrl',
-              controllerAs: 'vm'
-            }
-          }
-      })
-      .state('organizerInfo', {
-        url: "/organizerInfo",
-        templateUrl: 'organizer/organizerInfo.html',
-        controller: 'organizerInfoCtrl',
-        controllerAs: 'vm'
-      })
-      .state('organizerEdit', {
-        url: "/organizerEdit",
-        templateUrl: 'organizer/organizerEdit.html',
-        controller: 'organizerEditCtrl',
-        controllerAs: 'vm'
-      })
-    ;
-  }
-}());
-
-(function() {
-  'use strict';
-
-  angular.module('organizerService', [])
-    .factory('organizerService', organizerService);
-
-  function organizerService($q, $http,Constants,ResultHandler) {
-      'ngInject';
-      var service = {
-        queryOrganizer:queryOrganizer,
-        queryDepositInfo:queryDepositInfo,
-        updateOrganizer:updateOrganizer
-      };
-
-
-      //GET /api/v1/account/query/deposit/{deposit_accnt_id}
-      //return
-      //{
-      //  "errno":0,
-      //  "error":"",
-      //  "data":{
-      //    "uid":10000001,
-      //     …………
-      //  }
-      //}
-      function queryOrganizer(id) {
-        var url = Constants.serverUrl + 'account/query/deposit/'+id;
-        return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
-      };
-
-
-      //post /api/v1/account/deposit/{deposit_accnt_id}/update
-      //  {
-      //    "orgname": "机构名称",
-      //    "contactphone": "13812345678",
-      //    "password":"abcd",
-      //    "weixinno":"微信号",
-      //    "address":"托管机构地址",
-      //    "contactname":"托管机构联系人（管理者）",
-      //    "remark":"托管机构信息描述"
-      //  };
-      //return
-      //{
-      //  "errno":0,
-      //    "error":"",
-      //    "data":{
-      //      "uid":11000001
-      //    }
-      //}
-      function updateOrganizer(id,data) {
-          var url = Constants.serverUrl + 'account/deposit/'+id+'/update';
-          return $http({
-            method: 'post',
-            url: url,
-            data: data
-          }).then(function (response) {
-            return response.data;
-          }, function (error) {
-            return $q.reject(error);
-          });
-      };
-
-      function queryDepositInfo(id) {
-          //http://172.18.1.166/api/v1/depositInfo/fetch/:depositid
-          var url = Constants.serverUrl + 'depositInfo/fetch/'+id;
-          return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
-      };
-
-      return service;
-
-
-  }
-
 }());
 
 (function() {
@@ -3642,6 +3309,695 @@ Date.prototype.Format = function(fmt) {
 
 (function() {
   "use strict";
+  angular.module('orderModule', [
+    'orderCtrl',
+    'orderRouter',
+    'orderService'
+  ]);
+
+}());
+
+(function() {
+    "use strict";
+    angular.module('orderCtrl', [])
+        .controller('orderCtrl', function($scope, Constants, StateService) {
+            'ngInject';
+            var vm = this;
+            vm.activated = false;
+            console.log("tabs come");
+            $scope.$on('$ionicView.afterEnter', activate);
+
+            function activate() {
+                vm.activated = true;
+                vm.version = Constants.buildID;
+            }
+
+            vm.goTo=function(where){
+                StateService.go(where);
+            };
+        });
+}());
+
+(function() {
+  'use strict';
+
+  angular.module('orderRouter', [])
+    .config(myRouter);
+
+
+  function myRouter($stateProvider, $urlRouterProvider) {
+    'ngInject';
+    $stateProvider
+      .state('tabs.order', {
+        url: "/order",
+          views: {
+            'tab-order': {
+              templateUrl: 'order/order.html',
+              controller: 'orderCtrl',
+              controllerAs: 'vm'
+            }
+          }
+      });
+  }
+}());
+
+(function() {
+  'use strict';
+
+  angular.module('orderService', [])
+    .factory('orderService', orderService);
+
+  function orderService( $q, $http) {
+    'ngInject';
+    var service = {
+    };
+    return service;
+
+
+  }
+
+}());
+
+(function() {
+  "use strict";
+  angular.module('organizerModule', [
+    'organizerCtrl',
+    'organizerInfoCtrl',
+    'organizerEditCtrl',
+    'organizerRouter',
+    'organizerService'
+  ]);
+
+}());
+
+(function() {
+    "use strict";
+    angular.module('organizerCtrl', [])
+        .controller('organizerCtrl', function($scope, Constants, StateService,organizerService,AuthService) {
+            'ngInject';
+            var vm = this;
+            vm.activated = false;
+            $scope.$on('$ionicView.afterEnter', activate);
+
+            function activate() {
+                vm.activated = true;
+                vm.version = Constants.buildID;
+            }
+
+            vm.goTo = function(addr){
+                StateService.go(addr);
+            };
+
+            vm.getOrganizer = function(){
+                organizerService.queryOrganizer(AuthService.getLoginID()).then(function(data) {
+                    if (data.errno == 0) {
+                        vm.organizer = data.data;
+                    }
+                });
+            };
+
+            vm.getChildren = function(){
+                organizerService.queryTeacher(AuthService.getLoginID()).then(function(data) {
+                    if (data.errno == 0) {
+                        vm.teacher = data.data;
+                    }
+                });
+            };
+        });
+}());
+
+(function() {
+    "use strict";
+    angular.module('organizerEditCtrl', [])
+        .controller('organizerEditCtrl', function($scope, $stateParams, Constants, MessageToaster, AuthService, StateService, organizerService) {
+            'ngInject';
+            var vm = this;
+            vm.activated = false;
+
+            $scope.$on('$ionicView.afterEnter', activate);
+
+            function activate() {
+                vm.activated = true;
+                vm.version = Constants.buildID;
+
+                vm.getOrganizer();
+            }
+
+            vm.back=function(){
+                StateService.back();
+            };
+
+            vm.save=function(){
+                var data={
+                    contactphone: vm.organizer.ContactPhone,
+                    address:vm.organizer.Address,
+                    contactname:vm.organizer.ContactName,
+                    remark:"备注描述"
+                };
+                if(angular.isUndefined(vm.organizer.Address)||vm.organizer.Address==null||vm.organizer.Address.length==0){
+                    MessageToaster.error("机构地址不正确");
+                    return ;
+                }
+                if(angular.isUndefined(vm.organizer.ContactName)||vm.organizer.ContactName==null||vm.organizer.ContactName.length==0){
+                    MessageToaster.error("联系人不正确");
+                    return ;
+                }
+                if(angular.isUndefined(vm.organizer.ContactPhone)||vm.organizer.ContactPhone==null||vm.organizer.ContactPhone.length==0
+                    ||vm.organizer.ContactPhone.length!=11){
+                    MessageToaster.error("联系人电话不正确");
+                    return ;
+                }
+                organizerService.updateOrganizer(AuthService.getLoginID(),data).then(function(response) {
+                    console.log(response);
+                    if(response.errno==0)
+                        MessageToaster.success("更新成功");
+                    else
+                        MessageToaster.error("更新失败");
+                    return ;
+                }).finally(function() {
+                    StateService.back();
+                });
+
+            };
+
+            vm.getOrganizer = function(){
+                organizerService.queryOrganizer(AuthService.getLoginID()).then(function(data) {
+                    if (data.errno == 0) {
+                        console.log(data.data);
+                        vm.organizer = data.data;
+                    }
+                });
+            };
+
+
+        });
+}());
+
+(function() {
+    "use strict";
+    angular.module('organizerInfoCtrl', [])
+        .controller('organizerInfoCtrl', function($scope,Constants,StateService,organizerService,AuthService) {
+            'ngInject';
+            var vm = this;
+            vm.activated = false;
+            $scope.$on('$ionicView.afterEnter', activate);
+
+            function activate() {
+                vm.activated = true;
+                vm.version = Constants.buildID;
+                //vm.organizer = {name:'abc 托管',contactName:"sam",contactPhone:"15986632761"};
+                vm.getOrganizer();
+            }
+
+            vm.back=function(){
+                StateService.back();
+            };
+
+            vm.edit=function(id){
+                //编辑机构信息
+                StateService.go('organizerEdit');
+            };
+
+            vm.getOrganizer = function(){
+                organizerService.queryOrganizer(AuthService.getLoginID()).then(function(data) {
+                    if (data.errno == 0) {
+                        console.log(data.data);
+                        vm.organizer = data.data;
+                    }
+                });
+            };
+        });
+}());
+
+(function() {
+  'use strict';
+
+  angular.module('organizerRouter', [])
+    .config(myRouter);
+
+
+  function myRouter($stateProvider, $urlRouterProvider) {
+    'ngInject';
+    $stateProvider
+      .state('tabs.organizer', {
+        url: "/organizer",
+          views: {
+            'tab-orgnize': {
+              templateUrl: 'organizer/organizer.html',
+              controller: 'organizerCtrl',
+              controllerAs: 'vm'
+            }
+          }
+      })
+      .state('organizerInfo', {
+        url: "/organizerInfo",
+        templateUrl: 'organizer/organizerInfo.html',
+        controller: 'organizerInfoCtrl',
+        controllerAs: 'vm'
+      })
+      .state('organizerEdit', {
+        url: "/organizerEdit",
+        templateUrl: 'organizer/organizerEdit.html',
+        controller: 'organizerEditCtrl',
+        controllerAs: 'vm'
+      })
+    ;
+  }
+}());
+
+(function() {
+  'use strict';
+
+  angular.module('organizerService', [])
+    .factory('organizerService', organizerService);
+
+  function organizerService($q, $http,Constants,ResultHandler) {
+      'ngInject';
+      var service = {
+        queryOrganizer:queryOrganizer,
+        queryDepositInfo:queryDepositInfo,
+        updateOrganizer:updateOrganizer
+      };
+
+
+      //GET /api/v1/account/query/deposit/{deposit_accnt_id}
+      //return
+      //{
+      //  "errno":0,
+      //  "error":"",
+      //  "data":{
+      //    "uid":10000001,
+      //     …………
+      //  }
+      //}
+      function queryOrganizer(id) {
+        var url = Constants.serverUrl + 'account/query/deposit/'+id;
+        return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
+      };
+
+
+      //post /api/v1/account/deposit/{deposit_accnt_id}/update
+      //  {
+      //    "orgname": "机构名称",
+      //    "contactphone": "13812345678",
+      //    "password":"abcd",
+      //    "weixinno":"微信号",
+      //    "address":"托管机构地址",
+      //    "contactname":"托管机构联系人（管理者）",
+      //    "remark":"托管机构信息描述"
+      //  };
+      //return
+      //{
+      //  "errno":0,
+      //    "error":"",
+      //    "data":{
+      //      "uid":11000001
+      //    }
+      //}
+      function updateOrganizer(id,data) {
+          var url = Constants.serverUrl + 'account/deposit/'+id+'/update';
+          return $http({
+            method: 'post',
+            url: url,
+            data: data
+          }).then(function (response) {
+            return response.data;
+          }, function (error) {
+            return $q.reject(error);
+          });
+      };
+
+      function queryDepositInfo(id) {
+          //http://172.18.1.166/api/v1/depositInfo/fetch/:depositid
+          var url = Constants.serverUrl + 'depositInfo/fetch/'+id;
+          return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
+      };
+
+      return service;
+
+
+  }
+
+}());
+
+(function() {
+  "use strict";
+  angular.module('parentModule', [
+    'parentCtrl',
+    'parentEditCtrl',
+    'parentRouter',
+    'parentService'
+  ]);
+
+}());
+
+(function() {
+    "use strict";
+    angular.module('parentCtrl', [])
+        .controller('parentCtrl', function($scope, Constants, StateService, parentService, AuthService) {
+            'ngInject';
+            var vm = this;
+            vm.activated = false;
+            $scope.$on('$ionicView.afterEnter', activate);
+
+            function activate() {
+                vm.activated = true;
+                vm.version = Constants.buildID;
+                vm.getTeacher();
+                vm.getChildren();
+            }
+
+            vm.back = function(){
+                StateService.back();
+            };
+
+            vm.getTeacher = function(){
+                parentService.queryParent(AuthService.getLoginID()).then(function(data) {
+                    if (data.errno == 0) {
+                        console.log(data.data);
+                        vm.parent = data.data;
+                    }
+                });
+            };
+
+            vm.getChildren = function(){
+                parentService.queryChildren(AuthService.getLoginID()).then(function(data) {
+                    if (data.errno == 0) {
+                        console.log(data.data);
+                        vm.children = data.data;
+                    }
+                });
+            };
+
+        });
+}());
+
+(function() {
+    "use strict";
+    angular.module('parentEditCtrl', [])
+        .controller('parentEditCtrl', function($scope, Constants,AuthService,parentService) {
+            'ngInject';
+            var vm = this;
+            vm.activated = false;
+            $scope.$on('$ionicView.afterEnter', activate);
+
+            function activate() {
+                vm.activated = true;
+                vm.version = Constants.buildID;
+                vm.getChildren();
+            }
+
+
+            vm.getChildren = function(){
+                parentService.queryChildren(AuthService.getLoginID()).then(function(data) {
+                    if (data.errno == 0) {
+                        console.log(data.data);
+                        vm.children = data.data;
+                    }
+                });
+            };
+
+        });
+}());
+
+(function() {
+  'use strict';
+
+  angular.module('parentRouter', [])
+    .config(myRouter);
+
+
+  function myRouter($stateProvider, $urlRouterProvider) {
+    'ngInject';
+    $stateProvider
+      .state('parent', {
+        url: "/parent",
+        templateUrl: 'parent/parent.html',
+        controller: 'parentCtrl',
+        controllerAs: 'vm'
+      })
+      .state('parentEdit', {
+        url: "/parentEdit",
+        templateUrl: 'parent/parentEdit.html',
+        controller: 'parentEditCtrl',
+        controllerAs: 'vm'
+      })
+    ;
+  }
+}());
+
+(function() {
+  'use strict';
+
+  angular.module('parentService', [])
+    .factory('parentService', parentService);
+
+  function parentService( $q, $http, Constants, ResultHandler) {
+    'ngInject';
+    var service = {
+      queryParent:queryParent,
+      queryChildren:queryChildren
+    };
+
+    //-----HTTP Header => Authorization: Bearer-{$token}-----//
+
+    //GET /api/v1/account/query/parent/{parent_accnt_id}
+    //return
+    //{
+    //  "errno":0,
+    //  "error":"",
+    //  "data":{
+    //  "uid":10000001,
+    //      "name":"张粑粑",
+    //      "sex":1,
+    //      "mobile":"18612345678",
+    //      "nick":"sam"
+    //  }
+    //}
+    function queryParent(id) {
+      console.log($http.defaults.headers);
+      var url = Constants.serverUrl + 'account/query/parent/'+id;
+      return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
+    };
+
+    //GET /api/v1/account/query/parentChildren/{parent_accnt_id}
+    //return
+    //{
+    //  "errno":0,
+    //  "error":"",
+    //  "data":[
+    //    {
+    //      "uid":10000001,
+    //      "relationship":1,
+    //      "name":"赵大萌",
+    //      "sex":1,
+    //      "fingerfeature":"xxxxx",
+    //      "remark":"xxxx"
+    //    },
+    //    ...
+    //  ]
+    //}
+    function queryChildren(id) {
+      var url = Constants.serverUrl + 'account/query/parentChildren/'+id;
+      return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
+    };
+
+    return service;
+
+
+  }
+
+}());
+
+(function() {
+  "use strict";
+  angular.module('photoModule', [
+    'photoCtrl',
+    'photoRouter'
+  ]);
+
+}());
+
+(function() {
+    "use strict";
+    angular.module('photoCtrl', [])
+        .controller('photoCtrl', function($scope, Constants,$stateParams,Session,StateService,$ionicSlideBoxDelegate,$timeout) {
+            'ngInject';
+            var vm = this;
+            vm.activated = false;
+            $scope.$on('$ionicView.afterEnter', activate);
+
+            function activate() {
+                vm.activated = true;
+                vm.version = Constants.buildID;
+                vm.msg=Session.temp;
+                vm.images=[];
+                vm.imgCount=0;
+                if(vm.msg.photolink1!=null && vm.msg.photolink1!=""){
+                    vm.images[vm.imgCount]=vm.msg.photolink1;
+                    vm.imgCount++;
+                }
+                if(vm.msg.photolink2!=null && vm.msg.photolink2!=""){
+                    vm.images[vm.imgCount]=vm.msg.photolink2;
+                    vm.imgCount++;
+                }
+                if(vm.msg.photolink3!=null && vm.msg.photolink3!=""){
+                    vm.images[vm.imgCount]=vm.msg.photolink3;
+                    vm.imgCount++;
+                }
+                if(vm.msg.photolink4!=null && vm.msg.photolink4!=""){
+                    vm.images[vm.imgCount]=vm.msg.photolink4;
+                    vm.imgCount++;
+                }
+                if(vm.msg.photolink5!=null && vm.msg.photolink5!=""){
+                    vm.images[vm.imgCount]=vm.msg.photolink5;
+                    vm.imgCount++;
+                }
+                if(vm.msg.photolink6!=null && vm.msg.photolink6!=""){
+                    vm.images[vm.imgCount]=vm.msg.photolink6;
+                    vm.imgCount++;
+                }
+                console.log(vm.images);
+                vm.index=$stateParams.index;
+                console.log(vm.index);
+                //vm.image=vm.images[vm.index];
+                $timeout(function(){
+                    $scope.slider.slideTo(vm.index);
+                    $scope.slider.updateLoop();
+                    //$ionicSlideBoxDelegate.enableSlide(true);
+                    //$ionicSlideBoxDelegate.slide(vm.index);
+                    //console.log($ionicSlideBoxDelegate.currentIndex()+" - "+$ionicSlideBoxDelegate.slidesCount());
+                }, 300);
+
+            }
+            vm.back=function(){
+                StateService.back();
+            };
+
+            $scope.options = {
+                loop: false
+            }
+
+            $scope.$on("$ionicSlides.sliderInitialized", function(event, data){
+                // data.slider is the instance of Swiper
+                console.log(data);
+                $scope.slider = data.slider;
+            });
+
+            $scope.$on("$ionicSlides.slideChangeStart", function(event, data){
+                console.log('Slide change is beginning');
+                //console.log(event);
+                //console.log(data);
+            });
+
+            $scope.$on("$ionicSlides.slideChangeEnd", function(event, data){
+                // note: the indexes are 0-based
+                //console.log(event);
+                console.log($scope.slider.activeIndex+" - "+$scope.slider.previousIndex);
+                //$scope.activeIndex = data.activeIndex;
+                //$scope.previousIndex = data.previousIndex;
+                //console.log('Slide from '+data.previousIndex +' to '+data.activeIndex);
+            });
+        });
+}());
+
+(function() {
+  'use strict';
+
+  angular.module('photoRouter', [])
+    .config(myRouter);
+
+
+  function myRouter($stateProvider, $urlRouterProvider) {
+    'ngInject';
+    $stateProvider
+        .state('photo', {
+          url: "/photo?:index",
+          params:{
+            index:0
+          },
+          templateUrl: 'photo/photo.html',
+          controller: 'photoCtrl',
+          controllerAs: 'vm'
+        })
+      ;
+  }
+}());
+
+(function() {
+  "use strict";
+  angular.module('profileModule', [
+    'profileCtrl',
+    'profileRouter',
+    'profileService'
+  ]);
+
+}());
+
+(function() {
+    "use strict";
+    angular.module('profileCtrl', [])
+        .controller('profileCtrl', function($scope, $state, Constants, StateService) {
+            'ngInject';
+            var vm = this;
+            vm.activated = false;
+            $scope.$on('$ionicView.afterEnter', activate);
+
+            function activate() {
+                vm.activated = true;
+                vm.version = Constants.buildID;
+            }
+
+            vm.goTo = function(addr){
+                console.log(addr);
+                StateService.go(addr);
+            };
+
+        });
+}());
+
+(function() {
+  'use strict';
+
+  angular.module('profileRouter', [])
+    .config(myRouter);
+
+
+  function myRouter($stateProvider, $urlRouterProvider) {
+    'ngInject';
+    $stateProvider
+      .state('tabs.profile', {
+        url: "/profile",
+          views: {
+            'tab-profile': {
+              templateUrl: 'profile/profile.html',
+              controller: 'profileCtrl',
+              controllerAs: 'vm'
+            }
+          }
+      });
+  }
+}());
+
+(function() {
+  'use strict';
+
+  angular.module('profileService', [])
+    .factory('profileService', profileService);
+
+  function profileService( $q, $http) {
+    'ngInject';
+    var service = {
+    };
+    return service;
+
+
+  }
+
+}());
+
+(function() {
+  "use strict";
   angular.module('registerModule', [
     'registerCtrl',
     'registerRouter',
@@ -4005,121 +4361,6 @@ Date.prototype.Format = function(fmt) {
     return service;
   }
 
-}());
-
-(function() {
-  "use strict";
-  angular.module('photoModule', [
-    'photoCtrl',
-    'photoRouter'
-  ]);
-
-}());
-
-(function() {
-    "use strict";
-    angular.module('photoCtrl', [])
-        .controller('photoCtrl', function($scope, Constants,$stateParams,Session,StateService,$ionicSlideBoxDelegate,$timeout) {
-            'ngInject';
-            var vm = this;
-            vm.activated = false;
-            $scope.$on('$ionicView.afterEnter', activate);
-
-            function activate() {
-                vm.activated = true;
-                vm.version = Constants.buildID;
-                vm.msg=Session.temp;
-                vm.images=[];
-                vm.imgCount=0;
-                if(vm.msg.photolink1!=null && vm.msg.photolink1!=""){
-                    vm.images[vm.imgCount]=vm.msg.photolink1;
-                    vm.imgCount++;
-                }
-                if(vm.msg.photolink2!=null && vm.msg.photolink2!=""){
-                    vm.images[vm.imgCount]=vm.msg.photolink2;
-                    vm.imgCount++;
-                }
-                if(vm.msg.photolink3!=null && vm.msg.photolink3!=""){
-                    vm.images[vm.imgCount]=vm.msg.photolink3;
-                    vm.imgCount++;
-                }
-                if(vm.msg.photolink4!=null && vm.msg.photolink4!=""){
-                    vm.images[vm.imgCount]=vm.msg.photolink4;
-                    vm.imgCount++;
-                }
-                if(vm.msg.photolink5!=null && vm.msg.photolink5!=""){
-                    vm.images[vm.imgCount]=vm.msg.photolink5;
-                    vm.imgCount++;
-                }
-                if(vm.msg.photolink6!=null && vm.msg.photolink6!=""){
-                    vm.images[vm.imgCount]=vm.msg.photolink6;
-                    vm.imgCount++;
-                }
-                console.log(vm.images);
-                vm.index=$stateParams.index;
-                console.log(vm.index);
-                //vm.image=vm.images[vm.index];
-                $timeout(function(){
-                    $scope.slider.slideTo(vm.index);
-                    $scope.slider.updateLoop();
-                    //$ionicSlideBoxDelegate.enableSlide(true);
-                    //$ionicSlideBoxDelegate.slide(vm.index);
-                    //console.log($ionicSlideBoxDelegate.currentIndex()+" - "+$ionicSlideBoxDelegate.slidesCount());
-                }, 300);
-
-            }
-            vm.back=function(){
-                StateService.back();
-            };
-
-            $scope.options = {
-                loop: false
-            }
-
-            $scope.$on("$ionicSlides.sliderInitialized", function(event, data){
-                // data.slider is the instance of Swiper
-                console.log(data);
-                $scope.slider = data.slider;
-            });
-
-            $scope.$on("$ionicSlides.slideChangeStart", function(event, data){
-                console.log('Slide change is beginning');
-                //console.log(event);
-                //console.log(data);
-            });
-
-            $scope.$on("$ionicSlides.slideChangeEnd", function(event, data){
-                // note: the indexes are 0-based
-                //console.log(event);
-                console.log($scope.slider.activeIndex+" - "+$scope.slider.previousIndex);
-                //$scope.activeIndex = data.activeIndex;
-                //$scope.previousIndex = data.previousIndex;
-                //console.log('Slide from '+data.previousIndex +' to '+data.activeIndex);
-            });
-        });
-}());
-
-(function() {
-  'use strict';
-
-  angular.module('photoRouter', [])
-    .config(myRouter);
-
-
-  function myRouter($stateProvider, $urlRouterProvider) {
-    'ngInject';
-    $stateProvider
-        .state('photo', {
-          url: "/photo?:index",
-          params:{
-            index:0
-          },
-          templateUrl: 'photo/photo.html',
-          controller: 'photoCtrl',
-          controllerAs: 'vm'
-        })
-      ;
-  }
 }());
 
 (function() {
@@ -5063,247 +5304,6 @@ Date.prototype.Format = function(fmt) {
       return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
     };
 
-    return service;
-
-
-  }
-
-}());
-
-(function() {
-  "use strict";
-  angular.module('parentModule', [
-    'parentCtrl',
-    'parentEditCtrl',
-    'parentRouter',
-    'parentService'
-  ]);
-
-}());
-
-(function() {
-    "use strict";
-    angular.module('parentCtrl', [])
-        .controller('parentCtrl', function($scope, Constants, StateService, parentService, AuthService) {
-            'ngInject';
-            var vm = this;
-            vm.activated = false;
-            $scope.$on('$ionicView.afterEnter', activate);
-
-            function activate() {
-                vm.activated = true;
-                vm.version = Constants.buildID;
-                vm.getTeacher();
-                vm.getChildren();
-            }
-
-            vm.back = function(){
-                StateService.back();
-            };
-
-            vm.getTeacher = function(){
-                parentService.queryParent(AuthService.getLoginID()).then(function(data) {
-                    if (data.errno == 0) {
-                        console.log(data.data);
-                        vm.parent = data.data;
-                    }
-                });
-            };
-
-            vm.getChildren = function(){
-                parentService.queryChildren(AuthService.getLoginID()).then(function(data) {
-                    if (data.errno == 0) {
-                        console.log(data.data);
-                        vm.children = data.data;
-                    }
-                });
-            };
-
-        });
-}());
-
-(function() {
-    "use strict";
-    angular.module('parentEditCtrl', [])
-        .controller('parentEditCtrl', function($scope, Constants,AuthService,parentService) {
-            'ngInject';
-            var vm = this;
-            vm.activated = false;
-            $scope.$on('$ionicView.afterEnter', activate);
-
-            function activate() {
-                vm.activated = true;
-                vm.version = Constants.buildID;
-                vm.getChildren();
-            }
-
-
-            vm.getChildren = function(){
-                parentService.queryChildren(AuthService.getLoginID()).then(function(data) {
-                    if (data.errno == 0) {
-                        console.log(data.data);
-                        vm.children = data.data;
-                    }
-                });
-            };
-
-        });
-}());
-
-(function() {
-  'use strict';
-
-  angular.module('parentRouter', [])
-    .config(myRouter);
-
-
-  function myRouter($stateProvider, $urlRouterProvider) {
-    'ngInject';
-    $stateProvider
-      .state('parent', {
-        url: "/parent",
-        templateUrl: 'parent/parent.html',
-        controller: 'parentCtrl',
-        controllerAs: 'vm'
-      })
-      .state('parentEdit', {
-        url: "/parentEdit",
-        templateUrl: 'parent/parentEdit.html',
-        controller: 'parentEditCtrl',
-        controllerAs: 'vm'
-      })
-    ;
-  }
-}());
-
-(function() {
-  'use strict';
-
-  angular.module('parentService', [])
-    .factory('parentService', parentService);
-
-  function parentService( $q, $http, Constants, ResultHandler) {
-    'ngInject';
-    var service = {
-      queryParent:queryParent,
-      queryChildren:queryChildren
-    };
-
-    //-----HTTP Header => Authorization: Bearer-{$token}-----//
-
-    //GET /api/v1/account/query/parent/{parent_accnt_id}
-    //return
-    //{
-    //  "errno":0,
-    //  "error":"",
-    //  "data":{
-    //  "uid":10000001,
-    //      "name":"张粑粑",
-    //      "sex":1,
-    //      "mobile":"18612345678",
-    //      "nick":"sam"
-    //  }
-    //}
-    function queryParent(id) {
-      console.log($http.defaults.headers);
-      var url = Constants.serverUrl + 'account/query/parent/'+id;
-      return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
-    };
-
-    //GET /api/v1/account/query/parentChildren/{parent_accnt_id}
-    //return
-    //{
-    //  "errno":0,
-    //  "error":"",
-    //  "data":[
-    //    {
-    //      "uid":10000001,
-    //      "relationship":1,
-    //      "name":"赵大萌",
-    //      "sex":1,
-    //      "fingerfeature":"xxxxx",
-    //      "remark":"xxxx"
-    //    },
-    //    ...
-    //  ]
-    //}
-    function queryChildren(id) {
-      var url = Constants.serverUrl + 'account/query/parentChildren/'+id;
-      return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
-    };
-
-    return service;
-
-
-  }
-
-}());
-
-(function() {
-  "use strict";
-  angular.module('profileModule', [
-    'profileCtrl',
-    'profileRouter',
-    'profileService'
-  ]);
-
-}());
-
-(function() {
-    "use strict";
-    angular.module('profileCtrl', [])
-        .controller('profileCtrl', function($scope, $state, Constants, StateService) {
-            'ngInject';
-            var vm = this;
-            vm.activated = false;
-            $scope.$on('$ionicView.afterEnter', activate);
-
-            function activate() {
-                vm.activated = true;
-                vm.version = Constants.buildID;
-            }
-
-            vm.goTo = function(addr){
-                console.log(addr);
-                StateService.go(addr);
-            };
-
-        });
-}());
-
-(function() {
-  'use strict';
-
-  angular.module('profileRouter', [])
-    .config(myRouter);
-
-
-  function myRouter($stateProvider, $urlRouterProvider) {
-    'ngInject';
-    $stateProvider
-      .state('tabs.profile', {
-        url: "/profile",
-          views: {
-            'tab-profile': {
-              templateUrl: 'profile/profile.html',
-              controller: 'profileCtrl',
-              controllerAs: 'vm'
-            }
-          }
-      });
-  }
-}());
-
-(function() {
-  'use strict';
-
-  angular.module('profileService', [])
-    .factory('profileService', profileService);
-
-  function profileService( $q, $http) {
-    'ngInject';
-    var service = {
-    };
     return service;
 
 
