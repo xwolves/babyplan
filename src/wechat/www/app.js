@@ -74,94 +74,6 @@
 
 (function() {
   "use strict";
-  angular.module('config', [
-    'environmentConfig',
-    'constant',
-    'httpRelConfig'
-  ]);
-
-}());
-
-(function() {
-    "use strict";
-    angular.module('constant', [])
-        .constant('Path',{
-            'ParentRolePath':'tabs.children',
-            'OrganizerRolePath':'tabs.organizer',
-            'TeacherRolePath':'tabs.message'
-        })
-        .constant('Role',{
-            'unknown':'-1',
-            'Organizer':'1',
-            'Parent':'2',
-            'Teacher':'3',
-            'Children':'4',
-            'ThirdParty':'5',
-            'Consultant':'6'
-        })
-        .constant('Weixin', {
-        })
-        .constant('AUTH_EVENTS', {
-            loginSuccess: 'auth-login-success',
-            loginFailed: 'auth-login-failed',
-            logoutSuccess: 'auth-logout-success',
-            sessionTimeout: 'auth-session-timeout',
-            notAuthenticated: 'auth-not-authenticated',
-            notAuthorized: 'auth-not-authorized'
-        })
-        .constant('ErrorMessage', {
-            ACCESS_FAIL: '通讯异常，请稍后再试！',
-            TOKEN_INVALID: '连接超时，请重新登录！'
-        })
-        .constant('SuccessMessage', {
-            SUBMIT_SUCESS: '提交成功',
-            OPERATION_SUCESS:'操作完成'
-        });
-}());
-
-(function() {
-    "use strict";
-    angular.module('environmentConfig', [])
-        .constant('Constants', {
-            'appTitle':'托管系统',
-            'serverUrl': '/api/v1/',
-            'dfsUrl': '/',
-            'buildID': '20161202v1',
-            'ENVIRONMENT':'release'
-        });
-}());
-//'serverUrl': 'http://120.76.226.47/api/v2/',
-//    'dfsUrl': 'http://120.76.226.47/',
-//http://localhost:8090/
-//http://wx.zxing-tech.cn
-(function() {
-    "use strict";
-    angular.module('httpDevConfig', [])
-        .config(function($httpProvider) {
-            $httpProvider.defaults.headers.post["Content-Type"] = "application/x-www-form-urlencoded";
-            $httpProvider.defaults.headers.put["Content-Type"] = "application/x-www-form-urlencoded";
-        });
-}());
-
-(function() {
-    "use strict";
-    angular.module('httpRelConfig', [])
-    .config(function($httpProvider) {
-        $httpProvider.defaults.cache = false;
-        if (!$httpProvider.defaults.headers.get) {
-           $httpProvider.defaults.headers.get = {};
-        }
-        // disable IE ajax request caching
-        $httpProvider.defaults.headers.get['If-Modified-Since'] = '0';
-
-        // Disable IE ajax request caching
-        $httpProvider.defaults.headers.get['Cache-Control'] = 'no-cache';
-        $httpProvider.defaults.headers.get['Pragma'] = 'no-cache';
-    });
-}());
-
-(function() {
-  "use strict";
   angular.module('AuthService', []).factory('AuthService', function(Session,Path,Role) {
     'ngInject';
 
@@ -593,6 +505,94 @@ app.filter('statusChange', function () {
 }());
 
 (function() {
+  "use strict";
+  angular.module('config', [
+    'environmentConfig',
+    'constant',
+    'httpRelConfig'
+  ]);
+
+}());
+
+(function() {
+    "use strict";
+    angular.module('constant', [])
+        .constant('Path',{
+            'ParentRolePath':'tabs.children',
+            'OrganizerRolePath':'tabs.organizer',
+            'TeacherRolePath':'tabs.message'
+        })
+        .constant('Role',{
+            'unknown':'-1',
+            'Organizer':'1',
+            'Parent':'2',
+            'Teacher':'3',
+            'Children':'4',
+            'ThirdParty':'5',
+            'Consultant':'6'
+        })
+        .constant('Weixin', {
+        })
+        .constant('AUTH_EVENTS', {
+            loginSuccess: 'auth-login-success',
+            loginFailed: 'auth-login-failed',
+            logoutSuccess: 'auth-logout-success',
+            sessionTimeout: 'auth-session-timeout',
+            notAuthenticated: 'auth-not-authenticated',
+            notAuthorized: 'auth-not-authorized'
+        })
+        .constant('ErrorMessage', {
+            ACCESS_FAIL: '通讯异常，请稍后再试！',
+            TOKEN_INVALID: '连接超时，请重新登录！'
+        })
+        .constant('SuccessMessage', {
+            SUBMIT_SUCESS: '提交成功',
+            OPERATION_SUCESS:'操作完成'
+        });
+}());
+
+(function() {
+    "use strict";
+    angular.module('environmentConfig', [])
+        .constant('Constants', {
+            'appTitle':'托管系统',
+            'serverUrl': '/api/v1/',
+            'dfsUrl': '/',
+            'buildID': '20161207v1',
+            'ENVIRONMENT':'release'
+        });
+}());
+//'serverUrl': 'http://120.76.226.47/api/v2/',
+//    'dfsUrl': 'http://120.76.226.47/',
+//http://localhost:8090/
+//http://wx.zxing-tech.cn
+(function() {
+    "use strict";
+    angular.module('httpDevConfig', [])
+        .config(function($httpProvider) {
+            $httpProvider.defaults.headers.post["Content-Type"] = "application/x-www-form-urlencoded";
+            $httpProvider.defaults.headers.put["Content-Type"] = "application/x-www-form-urlencoded";
+        });
+}());
+
+(function() {
+    "use strict";
+    angular.module('httpRelConfig', [])
+    .config(function($httpProvider) {
+        $httpProvider.defaults.cache = false;
+        if (!$httpProvider.defaults.headers.get) {
+           $httpProvider.defaults.headers.get = {};
+        }
+        // disable IE ajax request caching
+        $httpProvider.defaults.headers.get['If-Modified-Since'] = '0';
+
+        // Disable IE ajax request caching
+        $httpProvider.defaults.headers.get['Cache-Control'] = 'no-cache';
+        $httpProvider.defaults.headers.get['Pragma'] = 'no-cache';
+    });
+}());
+
+(function() {
     "use strict";
     angular.module('directive', [
 
@@ -618,14 +618,6 @@ Date.prototype.Format = function(fmt) {
     return fmt;
 };
 (function() {
-  "use strict";
-  angular.module('tools', [
-    
-  ]);
-
-}());
-
-(function() {
     "use strict";
     angular.module('modules', [
         'LoginModule',
@@ -649,6 +641,14 @@ Date.prototype.Format = function(fmt) {
         'exitModule',
         'photoModule'
     ]);
+
+}());
+
+(function() {
+  "use strict";
+  angular.module('tools', [
+    
+  ]);
 
 }());
 
@@ -2713,7 +2713,7 @@ Date.prototype.Format = function(fmt) {
                         //vm.item = data.data;
                         vm.isEditing=false;
                         vm.itembackup=null;
-                        MessageToaster.error("更新成功");
+                        MessageToaster.success("更新成功");
                         vm.getComment(AuthService.getLoginID(),vm.cid);
                     }else{
                         console.log('error,get comment fail');
@@ -2860,7 +2860,7 @@ Date.prototype.Format = function(fmt) {
             vm.point = null;
             vm.city = 'shenzhen';
             vm.show=false;
-            vm.distance = 5000;
+            vm.distance = 5000000;
             vm.changeName = '列表';
             $scope.temp={mine:null,baidu:null};
             vm.list=[];
@@ -3109,7 +3109,7 @@ Date.prototype.Format = function(fmt) {
 (function() {
     "use strict";
     angular.module('nearbyDepositInfoCtrl', [])
-        .controller('nearbyDepositInfoCtrl', function($scope, Constants,nearbyService,CacheData,$stateParams,StateService,organizerService,depositCommentService) {
+        .controller('nearbyDepositInfoCtrl', function($scope, Constants,nearbyService,CacheData,$stateParams,StateService,organizerService,depositCommentService,parentService,AuthService) {
             'ngInject';
             var vm = this;
             vm.activated = false;
@@ -3126,6 +3126,7 @@ Date.prototype.Format = function(fmt) {
                 console.log(vm.item);
                 vm.getMoreInfo(vm.cid);
                 vm.getComment(vm.cid);
+                vm.getParentChildren();
             }
 
             vm.back=function(){
@@ -3133,7 +3134,29 @@ Date.prototype.Format = function(fmt) {
             };
 
             vm.gotoDepositComment=function(){
-                StateService.go('depositComment',{id:vm.cid});
+                if(vm.access) {
+                    StateService.go('depositComment', {id: vm.cid});
+                }else{
+                    console.log('not allow');
+                }
+            };
+
+            vm.getParentChildren=function() {
+                parentService.queryChildren(AuthService.getLoginID()).then(function(data) {
+                    if (data.errno == 0) {
+                        console.log(data.data);
+                        vm.deposits = data.data;
+                        for(var i=0;i<vm.deposits.length;i++){
+                            if( vm.cid == vm.deposits[i].depositid){
+                                vm.access=true;
+                                break;
+                            }
+                        }
+
+                    }else{
+                        console.log(data);
+                    }
+                });
             };
 
             vm.getMoreInfo=function(id){
@@ -3308,9 +3331,78 @@ Date.prototype.Format = function(fmt) {
 }());
 
 (function() {
+    "use strict";
+    angular.module('depositListctrl', [])
+        .controller('depositListctrl', function($scope,Constants,StateService,$ionicListDelegate,$ionicPopup,AuthService,parentService,vipBuyService) {
+            'ngInject';
+            var vm = this;
+            vm.activated = false;
+            $scope.$on('$ionicView.afterEnter', activate);
+
+            function activate() {
+                vm.activated = true;
+                vm.version = Constants.buildID;
+                vm.getRecords();
+            };
+
+            vm.getDeposits = function(){
+                parentService.queryChildren(AuthService.getLoginID()).then(function(data) {
+                    if (data.errno == 0) {
+                        console.log(data.data);
+                        vm.deposits = [];
+                        var array=[];
+                        //获取deposits，取出唯一
+                        data.data.forEach(function(item){
+                            var obj={};
+                            obj.depositid=item.depositid;
+                            obj.orgname=item.orgname;
+                            //console.log(array);
+                            // console.log(item.depositid);
+                            if(!array.includes(item.depositid)&& item.depositid ){
+                                array[array.length]=item.depositid;
+                                vm.deposits[vm.deposits.length]=obj;
+                            }
+                            //获取机构信息，获取权限是否能查看编辑
+                        });
+                    }
+                });
+            };
+
+            vm.getRecords = function () {
+                vipBuyService.getOrders(AuthService.getLoginID()).then(function(data) {
+                    var isDO=false;
+                    if (data.errno == 0) {
+                        console.log(data.data);
+                        data.data.forEach(function(item){
+                            if(item.PayStatus==1){
+                                if(!isDO) {
+                                    vm.getDeposits();
+                                    isDO = true;
+                                }
+                            }
+
+                        });
+                        return false;
+                    }
+                });
+            };
+
+            vm.back=function(){
+                StateService.back();
+            };
+
+            vm.goToDepositComment=function(did){
+                StateService.go('depositComment', {id: did});
+            };
+
+        });
+}());
+
+(function() {
   "use strict";
   angular.module('orderModule', [
     'orderCtrl',
+    'depositListctrl',
     'orderRouter',
     'orderService'
   ]);
@@ -3357,7 +3449,14 @@ Date.prototype.Format = function(fmt) {
               controllerAs: 'vm'
             }
           }
-      });
+      })
+      .state('vipOrg', {
+        url: "/vipOrg",
+        templateUrl: 'order/depositList.html',
+        controller: 'depositListctrl',
+        controllerAs: 'vm'
+      })
+    ;
   }
 }());
 

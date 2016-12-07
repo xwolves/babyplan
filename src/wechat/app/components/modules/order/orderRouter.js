@@ -17,6 +17,13 @@
               controllerAs: 'vm'
             }
           }
-      });
+      })
+      .state('vipOrg', {
+        url: "/vipOrg",
+        templateUrl: 'order/depositList.html',
+        controller: 'depositListctrl',
+        controllerAs: 'vm'
+      })
+    ;
   }
 }());

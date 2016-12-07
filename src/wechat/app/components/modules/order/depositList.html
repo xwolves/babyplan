@@ -1,0 +1,19 @@
+<ion-view view-title="机构列表">
+
+    <ion-nav-buttons side="left">
+        <a class="button button-icon icon ion-ios-arrow-back" ng-click="vm.back()"></a>
+    </ion-nav-buttons>
+
+    <ion-content>
+        <ion-list>
+            <ion-item class="item" ng-click="vm.goToDepositComment(item.depositid)" collection-repeat="item in vm.deposits">
+                <p>{{item.orgname}}</p>
+           </ion-item>
+
+            <div class="item" ng-if="vm.deposits !== undefined && !vm.deposits.length" class="no-results">
+                <p>无相关记录</p>
+            </div>
+        </ion-list>
+    </ion-content>
+
+</ion-view>

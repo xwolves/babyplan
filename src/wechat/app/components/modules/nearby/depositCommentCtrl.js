@@ -54,7 +54,7 @@
                         //vm.item = data.data;
                         vm.isEditing=false;
                         vm.itembackup=null;
-                        MessageToaster.error("更新成功");
+                        MessageToaster.success("更新成功");
                         vm.getComment(AuthService.getLoginID(),vm.cid);
                     }else{
                         console.log('error,get comment fail');

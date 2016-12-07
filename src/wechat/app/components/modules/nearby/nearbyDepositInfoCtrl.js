@@ -1,7 +1,7 @@
 (function() {
     "use strict";
     angular.module('nearbyDepositInfoCtrl', [])
-        .controller('nearbyDepositInfoCtrl', function($scope, Constants,nearbyService,CacheData,$stateParams,StateService,organizerService,depositCommentService) {
+        .controller('nearbyDepositInfoCtrl', function($scope, Constants,nearbyService,CacheData,$stateParams,StateService,organizerService,depositCommentService,parentService,AuthService) {
             'ngInject';
             var vm = this;
             vm.activated = false;
@@ -18,6 +18,7 @@
                 console.log(vm.item);
                 vm.getMoreInfo(vm.cid);
                 vm.getComment(vm.cid);
+                vm.getParentChildren();
             }
 
             vm.back=function(){
@@ -25,7 +26,29 @@
             };
 
             vm.gotoDepositComment=function(){
-                StateService.go('depositComment',{id:vm.cid});
+                if(vm.access) {
+                    StateService.go('depositComment', {id: vm.cid});
+                }else{
+                    console.log('not allow');
+                }
+            };
+
+            vm.getParentChildren=function() {
+                parentService.queryChildren(AuthService.getLoginID()).then(function(data) {
+                    if (data.errno == 0) {
+                        console.log(data.data);
+                        vm.deposits = data.data;
+                        for(var i=0;i<vm.deposits.length;i++){
+                            if( vm.cid == vm.deposits[i].depositid){
+                                vm.access=true;
+                                break;
+                            }
+                        }
+
+                    }else{
+                        console.log(data);
+                    }
+                });
             };
 
             vm.getMoreInfo=function(id){
