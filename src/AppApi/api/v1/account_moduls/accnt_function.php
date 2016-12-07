@@ -128,7 +128,6 @@ class Account{
             $column = array();
             $key_col = "(createtime";
             $val_col = ") values (now()";
-
             if(1 == intval($type)){
                 $tb_name = "tb_accnt_deposit";
                 $column = array("accountid", "orgname", "address", "markid", "contactname", "contactphone", "licensetype", "placecontracttype",
@@ -149,13 +148,12 @@ class Account{
                     "course","opentime", "depositcardid", "deposittype", "benefit");
                 $sql_str = "insert into tb_parent_children (parentid, childrenid, createtime) values (:parentid, :childrenid, now())";
                 $stmt = $this->DB->prepare($sql_str);
-                $stmt->bindParam(":parentid", intval($info['p_uid']), PDO::PARAM_INT);
+  $stmt->bindParam(":parentid", intval($info['p_uid']), PDO::PARAM_INT);
                 $stmt->bindParam(":childrenid", intval($accountId), PDO::PARAM_INT);
-                if(!$stmt->execute())
+		if(!$stmt->execute())
                     return 10001;
                 if($stmt->rowCount() <= 0)
                     return 10002;
-
             }else if(5 == intval($type)){
                 $tb_name = "tb_accnt_3rd";
                 $column = array("accountid", "orgname", "address", "markid", "contactname", "contactname", "password", "wexinno", "longitude", "latitude");
@@ -201,6 +199,7 @@ class Account{
             return $accountId;
         }catch (PDOException $e) {
             $errs = $e->getMessage();
+//var_dump( $e);
             return 10000;
         }
 
@@ -363,6 +362,7 @@ class Account{
             return $accountid;
         }catch (PDOException $e) {
             $errs = $e->getMessage();
+//var_dump($e);
             return 10000;
         }
     }
@@ -433,8 +433,10 @@ class Account{
     public function queryChildrenList($parentid){
         try{
             $info = array();
-            $sql_str = "SELECT c.accountid, b.relationship, c.name, c.sex, c.fingerfeature, c.remark FROM
-                (SELECT * FROM tb_parent_children a WHERE a.ParentID=:parentid) b LEFT JOIN tb_accnt_children c ON c.accountid=b.childrenid";
+            $sql_str = "SELECT f.*, g.orgname, g.address, g.markid, g.contactname, g.contactphone FROM 
+                (SELECT d.*, e.depositid FROM (SELECT c.accountid, b.relationship, c.name, c.sex, c.fingerfeature, c.remark FROM
+                (SELECT * FROM tb_parent_children a WHERE a.ParentID=:parentid) b LEFT JOIN tb_accnt_children c ON c.accountid=b.childrenid) d
+                LEFT JOIN tb_deposit_children e ON e.childrenid = d.accountid) f LEFT JOIN tb_accnt_deposit g ON g.accountid = f.depositid ";
             $stmt = $this->DB->prepare($sql_str);
             $stmt->bindParam(":parentid", intval($parentid), PDO::PARAM_INT);
             if (!$stmt->execute())
@@ -447,6 +449,13 @@ class Account{
                 $tmp_info['sex'] = $row['sex'];
                 $tmp_info['fingerfeature'] = $row['fingerfeature'];
                 $tmp_info['remark'] = $row['remark'];
+                $tmp_info['depositid'] = $row['depositid'];
+                $tmp_info['orgname'] = $row['orgname'];
+                $tmp_info['address'] = $row['address'];
+                $tmp_info['markid'] = $row['markid'];
+                $tmp_info['contactname'] = $row['contactname'];
+                $tmp_info['contactphone'] = $row['contactphone'];
+
                 $info[] = $tmp_info;
             }
 

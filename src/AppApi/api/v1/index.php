@@ -160,13 +160,14 @@ $app->post(
         $rsp_data = array();
         $response = $app->response;
         $request = $app->request->getBody();
-        $token = $app->request->headers('token');
+        /*
+	$token = $app->request->headers('token');
         $depositInfo = $redis->get($token);
         if(!$depositInfo){
             $response->setBody(rspData(10005));
             return;
         }
-
+*/
         $a_request = json_decode($request, true);
         if(empty($a_request)){
             $response->setBody(rspData(12001));
@@ -445,11 +446,13 @@ $app->get(
     function ($parent_accnt_id) use ($app, $sql_db, $redis){
         $response = $app->response;
         $token = $app->request->headers('token');
+        /*
         $depositInfo = $redis->get($token);
         if(!$depositInfo){
             $response->setBody(rspData(10005));
             return;
         }
+         */
         $account = new Account($sql_db);
         $ret = $account->queryChildrenList($parent_accnt_id);
         if(count($ret) == 0)
@@ -1032,6 +1035,7 @@ $app->get(
 $app->get(
     '/nearbyDepositList/:longitude/:latitude',
     function ($longitude, $latitude) use($app, $sql_db, $redis){
+        $app->getLog()->debug("Debug ".date('Y-m-d H:i:s')." longitude : ".$longitude.", latitude" . $latitude);
         $response = $app->response;
         $token = $app->request->headers('token');
         $depositInfo = $redis->get($token);
@@ -1186,26 +1190,28 @@ $app->post(
  * 家长评论机构
  */
 $app->post(
-    '/comment/deposit/parent/:parentid',
-    function ($parentid) use ($app, $sql_db, $redis){
+    '/comments/parent/deposit',
+    function () use ($app, $sql_db, $redis){
         $rsp_data = array();
         $response = $app->response;
         $request = $app->request->getBody();
         $token = $app->request->headers('token');
+        /*
         $depositInfo = $redis->get($token);
         if(!$depositInfo){
             $response->setBody(rspData(10005));
             return;
         }
-        $a_request = json_decode($request,true);
-        if(empty($a_request)){
+         */
+        if(empty($request)){
             $response->setBody(rspData(12001));
             return;
         }
+        $a_request = json_decode($request,true);
         $a_request = array_change_key_case($a_request, CASE_LOWER);
-        $a_request['commentby'] = $parentid;
-        if(!getParentPurview($sql_db, $parentid))
-            return $response->setBody(rspData(16005));
+        $parentid = $a_request['parentid'];
+        //if(!getParentPurview($sql_db, $parentid))
+        //    return $response->setBody(rspData(16005));
             
         $comment = new Comment($sql_db);
         $ret = $comment->parentCommentDeposit($a_request);
@@ -1214,12 +1220,20 @@ $app->post(
 );
 
 /*
- * 通过机构id拉取机构的所有评论
+ * 获取家长对机构的评分
+ * /comments/parent/deposit?parentid=30000001&depositid=10000001
  */
 $app->get(
-    '/comment/deposit/fetch/:depositid',
-    function ($depositid) use ($app, $sql_db, $redis){
+    '/comments/parent/deposit',
+    function () use ($app, $sql_db, $redis){
         $response = $app->response;
+        $params = $app->request->params();
+        if(!array_key_exists("parentid", $params) || !array_key_exists("depositid", $params)){
+            $response->setBody(rspData(15002));
+            return;
+        }
+        $parentid = $params['parentid'];
+        $depositid = $params['depositid'];
         $token = $app->request->headers('token');
         $depositInfo = $redis->get($token);
         if(!$depositInfo){
@@ -1227,7 +1241,37 @@ $app->get(
             return;
         }
         $comment = new Comment($sql_db);
-        $ret = $comment->getDepositComments($depositid);
+        $ret = $comment->getParentDepositComments($parentid, $depositid);
+        if(gettype($ret) != "array"){
+            $response->setBody(rspData($ret));
+        }else{
+            $response->setBody(rspData(0, $ret));
+        }
+    }
+);
+
+/*
+ * 获取总评分
+ * /comments/deposit?depositid=10000001
+ */
+$app->get(
+    '/comments/deposit',
+    function () use ($app, $sql_db, $redis){
+        $response = $app->response;
+        $params = $app->request->params();
+        if(!array_key_exists("depositid", $params)){
+            $response->setBody(rspData(15002));
+            return;
+        }
+        $depositid = $params['depositid'];
+        $token = $app->request->headers('token');
+        $depositInfo = $redis->get($token);
+        if(!$depositInfo){
+            $response->setBody(rspData(10005));
+            return;
+        }
+        $comment = new Comment($sql_db);
+        $ret = $comment->getDepositScores($depositid);
         if(gettype($ret) != "array"){
             $response->setBody(rspData($ret));
         }else{
@@ -1257,6 +1301,13 @@ $app->put(
       curl_close($ch);
 	$response = $app->response;
       $response->setBody($document);
+    }
+);
+
+$app->get(
+    '/test',
+    function() use ($app){
+        echo "haha";
     }
 );
 
