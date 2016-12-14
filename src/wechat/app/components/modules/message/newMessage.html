@@ -24,7 +24,7 @@
                     <div class="weui_uploader">
                         <div class="weui_uploader_hd weui_cell">
                             <div class="weui_cell_bd weui_cell_primary">相片上传</div>
-                            <div class="weui_cell_ft">{{vm.imgs.length}}/6</div>
+                            <div class="weui_cell_ft">{{vm.imgs.length}}/4</div>
                         </div>
                         <div class="weui_uploader_bd">
 
@@ -45,7 +45,7 @@
                                  </li>
                                 -->
                             </ul>
-                            <div class="weui_uploader_input_wrp" ng-hide="vm.imgshow.length==6">
+                            <div class="weui_uploader_input_wrp" ng-hide="vm.imgshow.length==4">
                                 <input class="weui_uploader_input" type="file" id="fileinput" accept="image/*" onchange="angular.element(this).scope().fileSelect(event)"/>
                             </div>
                         </div>
