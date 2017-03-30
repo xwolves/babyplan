@@ -123,7 +123,7 @@ func signIn(deviceId string, depositId, childId int, photoLink string) error {
 		CreateTime,
 		ChildID)VALUES(?,?,?,now(),now(),?)`
 
-	res, err := tx.Exec(sqlBind, depositId, childId, photoLink)
+	res, err := tx.Exec(sqlBind, depositId, childId)
 	if err != nil {
 		tx.Rollback()
 		e := SignErr{ERR_DB_FAIL, fmt.Sprintf("replace into tb_deposit_children fail. %v", err)}
@@ -135,7 +135,7 @@ func signIn(deviceId string, depositId, childId int, photoLink string) error {
 		return err
 	}
 
-	res, err = tx.Exec(sqlSignin, deviceId, depositId, childId)
+	res, err = tx.Exec(sqlSignin, deviceId, depositId, photoLink, childId)
 	if err != nil {
 		tx.Rollback()
 		e := SignErr{ERR_DB_FAIL, fmt.Sprintf("insert into tb_children_signin fail. %v", err)}
