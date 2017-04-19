@@ -115,8 +115,8 @@ class Comment extends Charge{
             $rsp_data = array();
             $sql_str = "select b.accountid as accountid, (IFNULL(b.score*0.4,0) + c.totalscore*0.6) as total_score from
                 (select score, AccountID from tb_accnt_deposit where AccountID = :accountid) b LEFT JOIN
-                (select a.kitchenscore+a.foodscore+a.roadsafetyscore+a.edufiresafetyscore+a.teacherrespscore as totalscore, DepositID from 
-                (SELECT SUM(Kitchen) as kitchenscore, SUM(food) as foodscore, SUM(RoadSafety) as roadsafetyscore, SUM(edufiresafety) as edufiresafetyscore, 
+                (select a.kitchenscore+a.foodscore+a.roadsafetyscore+a.edufiresafetyscore+a.teacherrespscore as totalscore, DepositID from
+                (SELECT SUM(Kitchen) as kitchenscore, SUM(food) as foodscore, SUM(RoadSafety) as roadsafetyscore, SUM(edufiresafety) as edufiresafetyscore,
                 SUM(TeacherResp) as teacherrespscore, DepositID FROM tb_deposit_parent_comments where depositid=:depositid) a)c
                 on c.depositid = b.accountid";
             $stmt = $this->DB->prepare($sql_str);
@@ -129,6 +129,13 @@ class Comment extends Charge{
             if(!$row)
                 return 10003;
             $rsp_data['scores'] = $row['total_score'];
+            $sql_str = "select CommentText as comment, CommentTime as create_date, (select REPLACE (name,substring(name,2),'**') from tb_accnt_parent where AccountID = ParentID ) as creator from db_deposit.tb_deposit_parent_comments a where a.DepositID = :depositid";
+            $stmt = $this->DB->prepare($sql_str);
+            $stmt->bindParam(":depositid", intval($depositid), PDO::PARAM_INT);
+            if(!$stmt->execute())
+                return 10001;
+            $row = $stmt->fetchAll(PDO::FETCH_CLASS);
+            $rsp_data['comments'] = $row;
 
             return $rsp_data;
 

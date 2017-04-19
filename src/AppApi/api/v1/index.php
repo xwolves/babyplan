@@ -969,6 +969,76 @@ $app->get(
 );
 
 /*
+* 通过家长id分批获取孩子的打卡信息
+*/
+$app->get(
+    '/parent/children/fp/:parentid',
+    function($parentid) use($app, $sql_db, $redis){
+        $rsp_data = array();
+        $response = $app->response;
+        $request = $app->request->getBody();
+        $token = $app->request->headers('token');
+        $depositInfo = $redis->get($token);
+        if(!$depositInfo){
+            $response->setBody(rspData(10005));
+            return;
+        }
+        if(!getParentPurview($sql_db, $parentid))
+            return $response->setBody(rspData(16005));
+        $params = $app->request->params();
+        $params = array_change_key_case($params, CASE_LOWER);
+        if(empty($params) || !array_key_exists("offset", $params) || !array_key_exists("limitcount", $params)){
+                $response->setBody(rspData(FAILED, "请指定分页信息"));
+                return;
+            }
+        $limitcount = $params['limitcount'];
+        $offset = $params['offset'];
+        $info = new Info($sql_db);
+        $ret = $info->getChldrenFp($parentid, $offset, $limitcount);
+        if(gettype($ret) != "array"){
+            $response->setBody(rspData($ret));
+        }else{
+            $response->setBody(rspData(0, $ret));
+        }
+    }
+);
+
+/*
+* 通过家长id分批获取孩子的机构发布信息
+*/
+$app->get(
+    '/parent/children/msg/:parentid',
+    function($parentid) use($app, $sql_db, $redis){
+        $rsp_data = array();
+        $response = $app->response;
+        $request = $app->request->getBody();
+        $token = $app->request->headers('token');
+        $depositInfo = $redis->get($token);
+        if(!$depositInfo){
+            $response->setBody(rspData(10005));
+            return;
+        }
+        if(!getParentPurview($sql_db, $parentid))
+            return $response->setBody(rspData(16005));
+        $params = $app->request->params();
+        $params = array_change_key_case($params, CASE_LOWER);
+        if(empty($params) || !array_key_exists("offset", $params) || !array_key_exists("limitcount", $params)){
+                $response->setBody(rspData(FAILED, "请指定分页信息"));
+                return;
+            }
+        $limitcount = $params['limitcount'];
+        $offset = $params['offset'];
+        $info = new Info($sql_db);
+        $ret = $info->getChldrenMsg($parentid, $offset, $limitcount);
+        if(gettype($ret) != "array"){
+            $response->setBody(rspData($ret));
+        }else{
+            $response->setBody(rspData(0, $ret));
+        }
+    }
+);
+
+/*
  * 通过家长id获取所有孩子的打卡信息和机构发布信息
  * /parent/childrenInformation/fetch/:parentid?offset=2&limitcount=30
  */
@@ -1066,6 +1136,24 @@ $app->get(
             $response->setBody(rspData(10005));
             return;
         }
+        $info = new Info($sql_db);
+        $ret = $info->getDepositInfo($depositid);
+        if(gettype($ret) != "array"){
+            $response->setBody(rspData($ret));
+        }else{
+            $response->setBody(rspData(0, $ret));
+        }
+    }
+);
+
+
+/*
+ * 通过机构id获取机构详情信息(无token)
+ */
+$app->get(
+    '/depositInfo/:depositid',
+    function ($depositid) use ($app, $sql_db, $redis){
+        $response = $app->response;
         $info = new Info($sql_db);
         $ret = $info->getDepositInfo($depositid);
         if(gettype($ret) != "array"){
@@ -1212,7 +1300,7 @@ $app->post(
         $parentid = $a_request['parentid'];
         //if(!getParentPurview($sql_db, $parentid))
         //    return $response->setBody(rspData(16005));
-            
+
         $comment = new Comment($sql_db);
         $ret = $comment->parentCommentDeposit($a_request);
         $response->setBody(rspData($ret));
@@ -1301,6 +1389,55 @@ $app->put(
       curl_close($ch);
 	$response = $app->response;
       $response->setBody($document);
+    }
+);
+
+$app->post(
+    '/parentLogin',
+    function () use ($app, $sql_db, $redis) {
+        $response = $app->response;
+        $request = $app->request->getBody();
+        $type = 0;
+        //$params = $app->request->params();
+        $a_request = json_decode($request, true);
+        if(empty($a_request)){
+            $response->setBody(rspData(12001));
+            return;
+        }
+        $a_request = array_change_key_case($a_request, CASE_LOWER);
+        if(!array_key_exists("username", $a_request) || !array_key_exists("password", $a_request)){
+            $response->setBody(rspData(12002));
+            return;
+        }
+        $account = new Account($sql_db);
+        $ret = $account->parentLogin($a_request, $redis);
+        if(gettype($ret) != "array"){
+            $response->setBody(rspData($ret));
+        }else{
+            $response->setBody(rspData(0, $ret));
+        }
+
+});
+
+$app->get(
+    '/parent/children/deposit/:parentid',
+    function () use ($app, $sql_db, $redis){
+        $rsp_data = array();
+        $response = $app->response;
+        $request = $app->request->getBody();
+        $token = $app->request->headers('token');
+        $depositInfo = $redis->get($token);
+        if(!$depositInfo){
+            $response->setBody(rspData(10005));
+            return;
+        }
+        $info = new Info($sql_db);
+        $ret = $info->getChildrenDeposit($parentid);
+        if(gettype($ret) != "array"){
+            $response->setBody(rspData($ret));
+        }else{
+            $response->setBody(rspData(0, $ret));
+        }
     }
 );
 

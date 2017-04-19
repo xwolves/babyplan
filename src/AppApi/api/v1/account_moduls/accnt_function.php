@@ -92,8 +92,8 @@ class Account{
                     $info[] = $d_info;
                 else{
                     if(!empty($t_info)){
-                        $info[] = $t_info;	
-                    }	
+                        $info[] = $t_info;
+                    }
                 }
             }else if(intval($type) == 2){
                 if(!empty($p_info))
@@ -433,7 +433,7 @@ class Account{
     public function queryChildrenList($parentid){
         try{
             $info = array();
-            $sql_str = "SELECT f.*, g.orgname, g.address, g.markid, g.contactname, g.contactphone FROM 
+            $sql_str = "SELECT f.*, g.orgname, g.address, g.markid, g.contactname, g.contactphone FROM
                 (SELECT d.*, e.depositid FROM (SELECT c.accountid, b.relationship, c.name, c.sex, c.fingerfeature, c.remark FROM
                 (SELECT * FROM tb_parent_children a WHERE a.ParentID=:parentid) b LEFT JOIN tb_accnt_children c ON c.accountid=b.childrenid) d
                 LEFT JOIN tb_deposit_children e ON e.childrenid = d.accountid) f LEFT JOIN tb_accnt_deposit g ON g.accountid = f.depositid ";
@@ -498,7 +498,7 @@ class Account{
 
             if(!$row)
                 return 12008;
-            
+
 
             return $row;
         }catch (PDOException $e) {
@@ -568,6 +568,42 @@ class Account{
             $errs = $e->getMessage();
             return 10000;
         }
+    }
+
+    public function parentLogin($params, $redis){
+        try{
+            $userId = $params['username'];
+            $psw = $params['password'];
+            $token = "";
+            $info = array();
+            $redisInfo = array();
+            $sql_str = "select accountid, name, mobile from tb_accnt_parent where password = :psw and ( mobile = :userId or AccountID = :userId )" ;
+            $stmt = $this->DB->prepare($sql_str);
+            $stmt->bindParam(":psw", $psw, PDO::PARAM_STR);
+            $stmt->bindParam(":userId", $userId, PDO::PARAM_STR);
+            if(!$stmt->execute())
+                return 10001;
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+            if($row){
+                $info['uid'] = $row['accountid'];
+                $info['name'] = $row['name'];
+                $info['type'] = 2;
+                $redisInfo['uid'] = $row['accountid'];
+                $redisInfo['name'] = $row['name'];
+                $redisInfo['mobile'] = $row['mobile'];
+                $token = strtolower($this->guid());
+                if(!$redis->set($token, json_encode($redisInfo)))
+                    return 10004;
+                $info['token'] = $token;
+                return $info;
+            }else{
+              return 10003;
+            }
+        }catch (PDOException $e) {
+            $errs = $e->getMessage();
+            return 10000;
+        }
+
     }
 
     private $DB;

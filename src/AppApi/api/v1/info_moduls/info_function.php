@@ -101,9 +101,59 @@ class Info{
         }
     }
 
+    public function getChldrenFp($parentid, $offset, $limitcount){
+        try{
+            $sql_str =  "select * from (
+            select * ,
+            (select pc.ParentID from tb_parent_children pc WHERE pc.ChildrenID = cs.ChildID and  pc.ParentID = :parentid limit 0,1 ) as parentID,
+            (select ac.Name from tb_accnt_children ac WHERE ac.AccountID = cs.ChildID) as childName
+            from tb_children_signin cs ) a
+            ORDER BY SignInTime DESC limit $offset, $limitcount" ;
+            $stmt = $this->DB->prepare($sql_str);
+            $stmt->bindParam(":parentid", $parentid, PDO::PARAM_STR);
+            if(!$stmt->execute())
+                return 10001;
+            $info = array();
+            while($row = $stmt->fetch(PDO::FETCH_ASSOC)){
+                $info[] = $row;
+            }
+            return $info;
+        }catch (PDOException $e) {
+            $errs = $e->getMessage();
+            return 10000;
+        }
+    }
+
+    public function getChldrenMsg($parentid, $offset, $limitcount){
+        try{
+            $sql_str =  "SELECT * FROM
+                    (SELECT dd.*, b.childrenid, parentid, childname FROM tb_deposit_daily dd LEFT JOIN (
+                        SELECT dc.ChildrenID, dc.DepositID,
+                        (SELECT pc.ParentID FROM tb_parent_children pc WHERE pc.ChildrenID = dc.ChildrenID LIMIT 0, 1) AS parentID,
+                        (SELECT ac.Name FROM tb_accnt_children ac WHERE ac.AccountID = dc.ChildrenID) AS childName
+                        FROM tb_deposit_children dc ) b
+                        ON b.DepositID = dd.DepositID) publish
+                        WHERE publish.parentID = :parentid
+                     ORDER BY publish.createtime DESC limit $offset, $limitcount ";
+            $stmt = $this->DB->prepare($sql_str);
+            $stmt->bindParam(":parentid", $parentid, PDO::PARAM_STR);
+            if(!$stmt->execute())
+                return 10001;
+            $info = array();
+            while($row = $stmt->fetch(PDO::FETCH_ASSOC)){
+                $info[] = $row;
+            }
+            return $info;
+        }catch (PDOException $e) {
+            $errs = $e->getMessage();
+            return 10000;
+        }
+    }
+
+
     public function getChldrenAllInformation($parentid, $offset, $limitcount){
         try{
-            $sql_str =  "select * from (SELECT * FROM 
+            $sql_str =  "select * from (SELECT * FROM
                 (
                     SELECT * FROM
                     (SELECT 1 AS datatype, dd.*, b.childrenid, parentid, childname FROM tb_deposit_daily dd LEFT JOIN (
@@ -112,15 +162,15 @@ class Info{
                         (SELECT ac.Name FROM tb_accnt_children ac WHERE ac.AccountID = dc.ChildrenID) AS childName
                         FROM tb_deposit_children dc ) b
                         ON b.DepositID = dd.DepositID) publish
-                        WHERE publish.parentID = :parentid 
+                        WHERE publish.parentID = :parentid
                         UNION ALL
-                        SELECT * FROM 
-                        (SELECT 2 AS datatype, signinid AS infoid, deviceid AS publisherid, depositid, '' AS longitude, '' AS latitude, 0 AS clickcount, 0 AS infotype, 
-                        '' AS description, '' AS photolink1, '' AS photolink2, '' AS photolink3, '' AS photolink4, '' AS photolink5, '' AS photolink6, 0 AS STATUS, 
+                        SELECT * FROM
+                        (SELECT 2 AS datatype, signinid AS infoid, deviceid AS publisherid, depositid, '' AS longitude, '' AS latitude, 0 AS clickcount, 0 AS infotype,
+                        '' AS description, '' AS photolink1, '' AS photolink2, '' AS photolink3, '' AS photolink4, '' AS photolink5, '' AS photolink6, 0 AS STATUS,
                         createtime, 0 AS starcount, childid AS childrenid,
                         (SELECT pc.ParentID FROM tb_parent_children pc WHERE pc.ChildrenID = cs.ChildID  LIMIT 0,1 ) AS parentID,
                         (SELECT ac.Name FROM tb_accnt_children ac WHERE ac.AccountID = cs.ChildID) AS childName
-                        FROM tb_children_signin cs ) signin WHERE signin.parentid = :parentid 
+                        FROM tb_children_signin cs ) signin WHERE signin.parentid = :parentid
                     ) total ORDER BY total.createtime DESC) bbb limit $offset, $limitcount ";
             $stmt = $this->DB->prepare($sql_str);
             $stmt->bindParam(":parentid", $parentid, PDO::PARAM_STR);
@@ -371,7 +421,7 @@ class Info{
 
     public function getSigninInfo($childuid){
         try{
-            $sql_str = "SELECT deviceid, depositid, signintime FROM tb_children_signin where childid=:childuid order by signintime desc";
+            $sql_str = "SELECT deviceid, depositid, childid, photolink, signintime FROM tb_children_signin where childid=:childuid order by signintime desc";
             $stmt = $this->DB->prepare($sql_str);
             $stmt->bindParam(":childuid", $childuid, PDO::PARAM_STR);
             if(!$stmt->execute())
@@ -381,6 +431,8 @@ class Info{
                 $tmp_ar = array();
                 $tmp_ar['deviceid'] = $row['deviceid'];
                 $tmp_ar['depositid'] = $row['depositid'];
+                $tmp_ar['childid'] = $row['childid'];
+                $tmp_ar['photolink'] = $row['photolink'];
                 $tmp_ar['signintime'] = $row['signintime'];
                 $info[] = $tmp_ar;
             }
@@ -413,6 +465,7 @@ class Info{
                 $tmp_ar['childrenName'] = $row['childName'];
                 $tmp_ar['deviceid'] = $row['DeviceID'];
                 $tmp_ar['depositid'] = $row['DepositID'];
+                $tmp_ar['photolink'] = $row['PhotoLink'];
                 $tmp_ar['signintime'] = $row['SignInTime'];
                 $info[] = $tmp_ar;
             }
@@ -436,7 +489,7 @@ class Info{
                 $child_ar = array();
                 $childuid = $row['childrenid'];
                 $child_ar['childuid'] = $childuid;
-                $sql_str = "SELECT deviceid, depositid, signintime FROM tb_children_signin where childid=:childuid order by signintime desc";
+                $sql_str = "SELECT deviceid, depositid,childid,photolink,signintime FROM tb_children_signin where childid=:childuid order by signintime desc";
                 $stmt = $this->DB->prepare($sql_str);
                 $stmt->bindParam(":childuid", $childuid, PDO::PARAM_STR);
                 if(!$stmt->execute())
@@ -446,6 +499,8 @@ class Info{
                     $tmp_ar = array();
                     $tmp_ar['deviceid'] = $row['deviceid'];
                     $tmp_ar['depositid'] = $row['depositid'];
+                    $tmp_ar['childid'] = $row['childid'];
+                    $tmp_ar['photolink'] = $row['photolink'];
                     $tmp_ar['signintime'] = $row['signintime'];
                     $timeline[] = $tmp_ar;
                 }
@@ -501,6 +556,22 @@ class Info{
         }
     }
 
+
+    public function getChildrenDeposit($parentId){
+        try{
+            $sql_str = "select DISTINCT DepositID from tb_parent_children a left join tb_deposit_children b on b.childrenid = a.ChildrenID  where a.ParentID = :parentId";
+            $stmt = $this->DB->prepare($sql_str);
+            $stmt->bindParam(":parentId", $parentId, PDO::PARAM_STR);
+            if(!$stmt->execute())
+                return 10001;
+            while($row = $stmt->fetch(PDO::FETCH_ASSOC))
+                $rsp_data[] = $row;
+            return $rsp_data;
+        }catch (PDOException $e) {
+            $errs = $e->getMessage();
+            return 10000;
+        }
+    }
 
     private $DB;
 }
