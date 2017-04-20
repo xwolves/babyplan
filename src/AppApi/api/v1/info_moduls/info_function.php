@@ -123,13 +123,15 @@ class Info{
     public function getChldrenMsg($parentid, $offset, $limitcount){
         try{
             $sql_str =  "SELECT * FROM
-                    (SELECT dd.*, b.childrenid, parentid, childname FROM tb_deposit_daily dd LEFT JOIN (
+                    (SELECT dd.*, b.childrenid, parentid, childname, t.name as teacherName ,t.PhotoLink as teacherPhoto FROM tb_deposit_daily dd LEFT JOIN (
                         SELECT dc.ChildrenID, dc.DepositID,
                         (SELECT pc.ParentID FROM tb_parent_children pc WHERE pc.ChildrenID = dc.ChildrenID LIMIT 0, 1) AS parentID,
                         (SELECT ac.Name FROM tb_accnt_children ac WHERE ac.AccountID = dc.ChildrenID) AS childName
                         FROM tb_deposit_children dc ) b
-                        ON b.DepositID = dd.DepositID) publish
-                        WHERE publish.parentID = :parentid
+                        ON b.DepositID = dd.DepositID
+						            Left join tb_accnt_teacher t on dd.publisherid = t.AccountID
+					           ) publish
+                     WHERE publish.parentID = :parentid
                      ORDER BY publish.createtime DESC limit $offset, $limitcount ";
             $stmt = $this->DB->prepare($sql_str);
             $stmt->bindParam(":parentid", $parentid, PDO::PARAM_STR);
