@@ -122,17 +122,21 @@ class Info{
 
     public function getChldrenMsg($parentid, $offset, $limitcount){
         try{
-            $sql_str =  "SELECT * FROM
-                    (SELECT dd.*, b.childrenid, parentid, childname, t.name as teacherName ,t.PhotoLink as teacherPhoto FROM tb_deposit_daily dd LEFT JOIN (
-                        SELECT dc.ChildrenID, dc.DepositID,
-                        (SELECT pc.ParentID FROM tb_parent_children pc WHERE pc.ChildrenID = dc.ChildrenID LIMIT 0, 1) AS parentID,
-                        (SELECT ac.Name FROM tb_accnt_children ac WHERE ac.AccountID = dc.ChildrenID) AS childName
-                        FROM tb_deposit_children dc ) b
-                        ON b.DepositID = dd.DepositID
-						            Left join tb_accnt_teacher t on dd.publisherid = t.AccountID
-					           ) publish
-                     WHERE publish.parentID = :parentid
-                     ORDER BY publish.createtime DESC limit $offset, $limitcount ";
+            //$sql_str =  "SELECT * FROM
+            //        (SELECT dd.*, b.childrenid, parentid, childname, t.name as teacherName ,t.PhotoLink as teacherPhoto FROM tb_deposit_daily dd LEFT JOIN (
+            //            SELECT dc.ChildrenID, dc.DepositID,
+            //            (SELECT pc.ParentID FROM tb_parent_children pc WHERE pc.ChildrenID = dc.ChildrenID LIMIT 0, 1) AS parentID,
+            //            (SELECT ac.Name FROM tb_accnt_children ac WHERE ac.AccountID = dc.ChildrenID) AS childName
+            //            FROM tb_deposit_children dc ) b
+            //            ON b.DepositID = dd.DepositID
+						//            Left join tb_accnt_teacher t on dd.publisherid = t.AccountID
+					  //         ) publish
+            //         WHERE publish.parentID = :parentid
+            //         ORDER BY publish.createtime DESC limit $offset, $limitcount ";
+            $sql_str = "select dd.*, t.name as teacherName, t.photolink as teacherPhoto
+                  from tb_deposit_daily dd left join  tb_accnt_teacher t on t.accountid = dd.publisherid
+                  where dd.DepositID in (select DISTINCT b.DepositID from tb_parent_children a left join tb_deposit_children b on b.childrenid = a.ChildrenID  where a.ParentID = :parentid )
+                  ORDER BY dd.createtime DESC limit $offset, $limitcount";
             $stmt = $this->DB->prepare($sql_str);
             $stmt->bindParam(":parentid", $parentid, PDO::PARAM_STR);
             if(!$stmt->execute())

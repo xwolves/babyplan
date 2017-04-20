@@ -1107,12 +1107,12 @@ $app->get(
     function ($longitude, $latitude) use($app, $sql_db, $redis){
         $app->getLog()->debug("Debug ".date('Y-m-d H:i:s')." longitude : ".$longitude.", latitude" . $latitude);
         $response = $app->response;
-        $token = $app->request->headers('token');
-        $depositInfo = $redis->get($token);
-        if(!$depositInfo){
-            $response->setBody(rspData(10005));
-            return;
-        }
+        //$token = $app->request->headers('token');
+        //$depositInfo = $redis->get($token);
+        //if(!$depositInfo){
+        //    $response->setBody(rspData(10005));
+        //    return;
+        //}
         $info = new Info($sql_db);
         $ret = $info->getNearbyDepositList($longitude, $latitude);
         if(gettype($ret) != "array"){
@@ -1352,12 +1352,12 @@ $app->get(
             return;
         }
         $depositid = $params['depositid'];
-        $token = $app->request->headers('token');
-        $depositInfo = $redis->get($token);
-        if(!$depositInfo){
-            $response->setBody(rspData(10005));
-            return;
-        }
+        //$token = $app->request->headers('token');
+        //$depositInfo = $redis->get($token);
+        //if(!$depositInfo){
+        //    $response->setBody(rspData(10005));
+        //    return;
+        //}
         $comment = new Comment($sql_db);
         $ret = $comment->getDepositScores($depositid);
         if(gettype($ret) != "array"){
