@@ -103,11 +103,7 @@ class Info{
 
     public function getChldrenFp($parentid, $offset, $limitcount){
         try{
-            $sql_str =  "select * from (
-            select * ,
-            (select pc.ParentID from tb_parent_children pc WHERE pc.ChildrenID = cs.ChildID and  pc.ParentID = :parentid limit 0,1 ) as parentID,
-            (select ac.Name from tb_accnt_children ac WHERE ac.AccountID = cs.ChildID) as childName
-            from tb_children_signin cs ) a
+            $sql_str =  "select a.*,c.name,d.OrgName as Deposit, d.FrontDeskLink as DepositPhoto from tb_children_signin a  left join tb_parent_children b on b.ChildrenId=a.ChildID left join tb_accnt_children c on c.AccountID= a.ChildID  left join tb_accnt_deposit d on d.AccountID = a.DepositID where b.ParentID = :parentid
             ORDER BY SignInTime DESC limit $offset, $limitcount" ;
             $stmt = $this->DB->prepare($sql_str);
             $stmt->bindParam(":parentid", $parentid, PDO::PARAM_STR);

@@ -1421,7 +1421,7 @@ $app->post(
 
 $app->get(
     '/parent/children/deposit/:parentid',
-    function () use ($app, $sql_db, $redis){
+    function ($parentid) use ($app, $sql_db, $redis){
         $rsp_data = array();
         $response = $app->response;
         $request = $app->request->getBody();
