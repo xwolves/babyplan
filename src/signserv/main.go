@@ -20,6 +20,7 @@ type SignInReq struct {
 	DepositId int    `json:"deposit_id"`
 	ChildId   int    `json:"child_id"`
 	PhotoLink string `json:"photo_link"`
+	Mode      int    `json:"mode"`
 }
 
 type ApiRsp struct {
@@ -91,7 +92,7 @@ func childSignIn(w http.ResponseWriter, r *http.Request) {
 	if !httpReqCheck(w, r, &req) {
 		return
 	}
-	httpRspProcess(w, nil, signIn("", req.DepositId, req.ChildId, req.PhotoLink))
+	httpRspProcess(w, nil, signIn("", req.DepositId, req.ChildId, req.Mode, req.PhotoLink))
 }
 
 type childInfo struct {

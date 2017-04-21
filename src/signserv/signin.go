@@ -97,7 +97,7 @@ func binding(depositId, childId int, depositType int, remark string) error {
 	return nil
 }
 
-func signIn(deviceId string, depositId, childId int, photoLink string) error {
+func signIn(deviceId string, depositId, childId, mode int, photoLink string) error {
 	db := getDB()
 	if db == nil {
 		return SignErr{ERR_DB_FAIL, "signIn get db fail."}
@@ -121,7 +121,8 @@ func signIn(deviceId string, depositId, childId int, photoLink string) error {
 		PhotoLink,
 		SignInTime,
 		CreateTime,
-		ChildID)VALUES(?,?,?,now(),now(),?)`
+		ChildID,
+	    Mode )VALUES(?,?,?,now(),now(),?,?)`
 
 	res, err := tx.Exec(sqlBind, depositId, childId)
 	if err != nil {
@@ -135,7 +136,7 @@ func signIn(deviceId string, depositId, childId int, photoLink string) error {
 		return err
 	}
 
-	res, err = tx.Exec(sqlSignin, deviceId, depositId, photoLink, childId)
+	res, err = tx.Exec(sqlSignin, deviceId, depositId, photoLink, childId, mode)
 	if err != nil {
 		tx.Rollback()
 		e := SignErr{ERR_DB_FAIL, fmt.Sprintf("insert into tb_children_signin fail. %v", err)}
