@@ -1442,6 +1442,66 @@ $app->get(
 );
 
 $app->get(
+    '/dailyComment/:infoId',
+    function ($infoId) use ($app, $sql_db, $redis){
+        $rsp_data = array();
+        $response = $app->response;
+        $request = $app->request->getBody();
+        $token = $app->request->headers('token');
+        $depositInfo = $redis->get($token);
+        if(!$depositInfo){
+            $response->setBody(rspData(10005));
+            return;
+        }
+        $info = new Comment($sql_db);
+        $ret = $info->getDailyComment($infoId);
+        if(gettype($ret) != "array"){
+            $response->setBody(rspData($ret));
+        }else{
+            $response->setBody(rspData(0, $ret));
+        }
+    }
+);
+
+$app->post(
+    '/dailyComment',
+    function ($infoId) use ($app, $sql_db, $redis){
+        $rsp_data = array();
+        $response = $app->response;
+        $request = $app->request->getBody();
+        $token = $app->request->headers('token');
+        $depositInfo = $redis->get($token);
+        if(!$depositInfo){
+            $response->setBody(rspData(10005));
+            return;
+        }
+        $a_request = json_decode($request,true);
+        $a_request = array_change_key_case($a_request, CASE_LOWER);
+        $info = new Comment($sql_db);
+        $ret = $info->createDailyComment($a_request);
+        $response->setBody(rspData($ret));
+    }
+);
+
+$app->delete(
+    '/dailyComment/:Id',
+    function ($Id) use ($app, $sql_db, $redis){
+        $rsp_data = array();
+        $response = $app->response;
+        $request = $app->request->getBody();
+        $token = $app->request->headers('token');
+        $depositInfo = $redis->get($token);
+        if(!$depositInfo){
+            $response->setBody(rspData(10005));
+            return;
+        }
+        $info = new Comment($sql_db);
+        $ret = $info->delDailyComment($Id);
+        $response->setBody(rspData($ret));
+    }
+);
+
+$app->get(
     '/test',
     function() use ($app){
         echo "haha";

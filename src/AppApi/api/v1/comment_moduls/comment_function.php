@@ -145,6 +145,76 @@ class Comment extends Charge{
         }
     }
 
+
+    public function getDailyComment($infoId){
+        try{
+            $rsp_data = array();
+            $sql_str = "select * from tb_deposit_daily_comments where CommentData is not NULL and InfoID = :infoId ";
+            $stmt = $this->DB->prepare($sql_str);
+            $stmt->bindParam(":infoId", $infoId, PDO::PARAM_INT);
+            if(!$stmt->execute())
+                return 10001;
+            $row = $stmt->fetchAll(PDO::FETCH_CLASS);
+            $rsp_data['comments'] = $row;
+            $sql_str = "select * from tb_deposit_daily_comments where CommentData is NULL and InfoID = :infoId ";
+            $stmt = $this->DB->prepare($sql_str);
+            $stmt->bindParam(":infoId", $infoId, PDO::PARAM_INT);
+            if(!$stmt->execute())
+                return 10001;
+            $row = $stmt->fetchAll(PDO::FETCH_CLASS);
+            $rsp_data['likes'] = $row;
+
+            return $rsp_data;
+        }catch (PDOException $e) {
+            $errs = $e->getMessage();
+            return 10000;
+        }
+    }
+
+    public function createDailyComment($params){
+        try{
+            $column = array("infoid", "commentby", "commentdata");
+            if(!array_key_exists("infoid", $params) || !array_key_exists("commentby", $params) || empty($params['infoid']) || empty($params['commentby']))
+                return 15002;
+
+            $infoid = $params['infoid'];
+            $commentby = $params['commentby'];
+            $commentdata = $params['commentdata'];
+            $update_flg = true;
+            $sql_str = "insert into tb_deposit_daily_comments (infoID,commentBy,commentData,createtime) value(:infoid,:commentby,:commentdata,now());";
+            $stmt = $this->DB->prepare($sql_str);
+            $stmt->bindParam(":infoid", intval($infoid), PDO::PARAM_INT);
+            $stmt->bindParam(":commentby", intval($commentby), PDO::PARAM_INT);
+            $stmt->bindParam(":commentdata", intval($commentdata), PDO::PARAM_STR);
+            if(!$stmt->execute())
+                return 10001;
+
+            $stmt = $this->DB->prepare($sql_str);
+            if(!$stmt->execute($params))
+                return 10001;
+            return 0;
+        }catch (PDOException $e) {
+            $errs = $e->getMessage();
+            var_dump($errs);
+            return 10000;
+        }
+    }
+
+    public function delDailyComment($Id){
+        try{
+            $rsp_data = array();
+            $sql_str = "delete from tb_deposit_daily_comments where COMMENTID = :Id ";
+            $stmt = $this->DB->prepare($sql_str);
+            $stmt->bindParam(":Id", $Id, PDO::PARAM_INT);
+            if(!$stmt->execute())
+                return 10001;
+            return 0;
+        }catch (PDOException $e) {
+            $errs = $e->getMessage();
+            return 10000;
+        }
+    }
+
     private $DB;
 }
 ?>
