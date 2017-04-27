@@ -6,6 +6,7 @@ static $errCode = array(
     10003 => 'No Data',
     10004 => 'Redis Set Failed',
     10005 => 'Redis Get No Data',
+    10006 => 'Params Empty',
 
     12001 => 'Account Parames Empty',
     12002 => 'Account Parames Required Defect',
@@ -127,10 +128,10 @@ function getParentPurview($sql_db, $uid){
         if(intval($type) != 2 && intval($type) != 4)
             return false;
         if(intval($type) == 4){
-            $sql_str = "SELECT parentid, TIMESTAMPDIFF(DAY, NOW(), cutofftime) as retdays, businessid FROM tb_parent_order 
+            $sql_str = "SELECT parentid, TIMESTAMPDIFF(DAY, NOW(), cutofftime) as retdays, businessid FROM tb_parent_order
                 WHERE paystatus = 1 AND NOW() <= cutofftime AND parentid=(select parentid from tb_parent_children where childrenid=:uid)";
         }else{
-            $sql_str = "SELECT parentid, TIMESTAMPDIFF(DAY, NOW(), cutofftime) as retdays, businessid FROM tb_parent_order 
+            $sql_str = "SELECT parentid, TIMESTAMPDIFF(DAY, NOW(), cutofftime) as retdays, businessid FROM tb_parent_order
                 WHERE paystatus = 1 AND NOW() <= cutofftime AND parentid=:uid";
         }
         $stmt = $sql_db->prepare($sql_str);

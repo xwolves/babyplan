@@ -1447,6 +1447,12 @@ $app->get(
         $rsp_data = array();
         $response = $app->response;
         $request = $app->request->getBody();
+        $params = $app->request->params();
+        if(!array_key_exists("index", $params)){
+            $response->setBody(rspData(10006));
+            return;$
+        }
+        $index = $params['index'];
         $token = $app->request->headers('token');
         $depositInfo = $redis->get($token);
         if(!$depositInfo){
@@ -1458,6 +1464,7 @@ $app->get(
         if(gettype($ret) != "array"){
             $response->setBody(rspData($ret));
         }else{
+            $ret['index'] = $index;
             $response->setBody(rspData(0, $ret));
         }
     }

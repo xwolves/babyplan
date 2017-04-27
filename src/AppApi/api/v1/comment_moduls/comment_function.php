@@ -149,14 +149,14 @@ class Comment extends Charge{
     public function getDailyComment($infoId){
         try{
             $rsp_data = array();
-            $sql_str = "select * from tb_deposit_daily_comments where CommentData is not NULL and InfoID = :infoId ";
+            $sql_str = "select dc.*,ap.Name,ap.AvatarLink from tb_deposit_daily_comments dc left JOIN tb_accnt_parent ap on dc.CommentBy = ap.AccountID where CommentData is not NULL and InfoID = :infoId ";
             $stmt = $this->DB->prepare($sql_str);
             $stmt->bindParam(":infoId", $infoId, PDO::PARAM_INT);
             if(!$stmt->execute())
                 return 10001;
             $row = $stmt->fetchAll(PDO::FETCH_CLASS);
             $rsp_data['comments'] = $row;
-            $sql_str = "select * from tb_deposit_daily_comments where CommentData is NULL and InfoID = :infoId ";
+            $sql_str = "select dc.*,ap.Name,ap.AvatarLink from tb_deposit_daily_comments dc left JOIN tb_accnt_parent ap on dc.CommentBy = ap.AccountID where CommentData is NULL and InfoID = :infoId ";
             $stmt = $this->DB->prepare($sql_str);
             $stmt->bindParam(":infoId", $infoId, PDO::PARAM_INT);
             if(!$stmt->execute())
