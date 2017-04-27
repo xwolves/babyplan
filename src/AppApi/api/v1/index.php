@@ -1450,7 +1450,7 @@ $app->get(
         $params = $app->request->params();
         if(!array_key_exists("index", $params)){
             $response->setBody(rspData(10006));
-            return;$
+            return;
         }
         $index = $params['index'];
         $token = $app->request->headers('token');
