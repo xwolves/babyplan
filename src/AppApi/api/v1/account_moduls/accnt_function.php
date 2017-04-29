@@ -596,9 +596,9 @@ class Account{
                     return 10004;
                 $info['token'] = $token;
                 //eshop login
-                $eshopData = array('username' => $ret,'password' => $a_request['password']);
+                $eshopData = array('username' => $row['accountid'],'password' => $psw);
                 $info = new Info($this->DB);
-                $eshop = $info->eshopRegister($eshopData);
+                $eshop = $info->eshopLogin(json_encode($eshopData));
                 $info['eshopToken']=$eshop['token'];
                 return $info;
             }else{

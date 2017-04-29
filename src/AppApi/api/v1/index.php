@@ -1533,7 +1533,7 @@ $app->post(
         //create eshop account
         $eshopData = array('username' => $ret,'password' => $a_request['password'],'email' => $a_request['email']);
         $info = new Info($sql_db);
-        $eshop = $info->eshopRegister($eshopData);
+        $eshop = $info->eshopRegister(json_encode($eshopData));
         $eshopToken=$eshop['token'];
         //getToken
         $my_request=array('username' => $ret,'password' => $a_request['password']);
