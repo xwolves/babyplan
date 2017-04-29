@@ -1517,16 +1517,15 @@ $app->get(
 
 $app->get(
     '/camera/:id',
-    function ($id) use ($app){
+    function ($id) use ($app, $sql_db, $redis){
         $response = $app->response;
-    //     $ch = curl_init();
-    //  　　curl_setopt($ch, CURLOPT_URL, "http://wx.zxing-tech.cn/api/v1/cgi-bin/video.pl?did="+$did);
-    //  　　curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-    //  　　curl_setopt($ch, CURLOPT_HEADER, 0);
-    //  　　$output = curl_exec($ch);
-    //  　　curl_close($ch);
-    //     $response->setBody($output);
-        $response->setBody(0);
+        $info = new Info($sql_db);
+        $ret = $info->getCamera($id);
+        if(gettype($ret) != "array"){
+            $response->setBody(rspData($ret));
+        }else{
+            $response->setBody(rspData(0, $ret));
+        }
     }
 );
 
