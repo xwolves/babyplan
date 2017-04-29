@@ -577,7 +577,7 @@ class Info{
 
     public function getCamera($Id){
       $ch = curl_init();
-      curl_setopt($ch, CURLOPT_URL, "http://wx.zxing-tech.cn/api/v1/cgi-bin/video.pl?did=".$did);
+      curl_setopt($ch, CURLOPT_URL, "http://wx.zxing-tech.cn/api/v1/cgi-bin/video.pl?did=".$Id);
       curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
       curl_setopt($ch, CURLOPT_HEADER, 0);
       $output = curl_exec($ch);

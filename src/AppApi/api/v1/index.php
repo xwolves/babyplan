@@ -1508,6 +1508,46 @@ $app->delete(
     }
 );
 
+$app->post(
+    '/account/parentRegister',
+    function () use ($app, $sql_db) {
+        $rsp_data = array();
+        $response = $app->response;
+        $request = $app->request->getBody();
+        $a_request = json_decode($request, true);
+        if(empty($a_request)){
+            $response->setBody(rspData(12001));
+            return;
+        }
+        $a_request = array_change_key_case($a_request, CASE_LOWER);
+        if(!array_key_exists("sex", $a_request) || !array_key_exists("mobile", $a_request)
+            || !array_key_exists("email", $a_request)
+            || !array_key_exists("password", $a_request) || !array_key_exists("name", $a_request)){
+            $response->setBody(rspData(12002));
+            return;
+        }
+        $account = new Account($sql_db);
+        $ret = $account->createAccount($a_request, 2);
+        //$rsp_data['uid'] = $ret;
+        //$response->setBody(rspData($ret, $rsp_data));
+        //create eshop account
+        $eshopData = array('username' => $ret,'password' => $a_request['password'],'email' => $a_request['email']);
+        $info = new Info($sql_db);
+        $eshop = $info->eshopRegister($eshopData);
+        $eshopToken=$eshop['token'];
+        //getToken
+        $my_request=array('username' => $ret,'password' => $a_request['password']);
+        $account = new Account($sql_db);
+        $ret = $account->parentLogin($my_request, $redis);
+        if(gettype($ret) != "array"){
+            $response->setBody(rspData($ret));
+        }else{
+            $ret['eshopToken']=$eshopToken;
+            $response->setBody(rspData(0, $ret));
+        }
+    }
+);
+
 $app->get(
     '/test',
     function() use ($app){

@@ -595,6 +595,11 @@ class Account{
                 if(!$redis->set($token, json_encode($redisInfo)))
                     return 10004;
                 $info['token'] = $token;
+                //eshop login
+                $eshopData = array('username' => $ret,'password' => $a_request['password']);
+                $info = new Info($this->DB);
+                $eshop = $info->eshopRegister($eshopData);
+                $info['eshopToken']=$eshop['token'];
                 return $info;
             }else{
               return 10003;
