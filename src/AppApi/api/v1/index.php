@@ -1534,7 +1534,7 @@ $app->post(
         $eshopData = array('username' => $ret,'password' => $a_request['password'],'email' => $a_request['email']);
         $info = new Info($sql_db);
         $eshop = $info->eshopRegister(json_encode($eshopData));
-        $eshopToken=$eshop['token'];
+        //$eshopToken=$eshop['token'];
         //getToken
         $my_request=array('username' => $ret,'password' => $a_request['password']);
         $account = new Account($sql_db);
@@ -1542,7 +1542,7 @@ $app->post(
         if(gettype($ret) != "array"){
             $response->setBody(rspData($ret));
         }else{
-            $ret['eshopToken']=$eshopToken;
+            $ret['eshop']=$eshop;
             $response->setBody(rspData(0, $ret));
         }
     }

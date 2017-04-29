@@ -599,7 +599,7 @@ class Account{
                 $eshopData = array('username' => $row['accountid'],'password' => $psw);
                 $infoObj = new Info($this->DB);
                 $eshop = $infoObj->eshopLogin(json_encode($eshopData));
-                $info['eshopToken']=$eshop['token'];
+                $info['eshop']=$eshop;
                 return $info;
             }else{
               return 10003;
