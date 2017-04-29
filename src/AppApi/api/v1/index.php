@@ -1509,23 +1509,24 @@ $app->delete(
 );
 
 $app->get(
-    '/camera/:did',
-    function($did) use ($app){
-       $response = $app->response;
-       $ch = curl_init();
-    　　curl_setopt($ch, CURLOPT_URL, "http://wx.zxing-tech.cn/api/v1/cgi-bin/video.pl?did="+$did);
-    　　curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-    　　curl_setopt($ch, CURLOPT_HEADER, 0);
-    　　$output = curl_exec($ch);
-    　　curl_close($ch);
-       $response->setBody(rspData(0, $output));
+    '/test',
+    function() use ($app){
+        echo "haha";
     }
 );
 
 $app->get(
-    '/test',
-    function() use ($app){
-        echo "haha";
+    '/camera/:id',
+    function ($id) use ($app){
+        $response = $app->response;
+    //     $ch = curl_init();
+    //  　　curl_setopt($ch, CURLOPT_URL, "http://wx.zxing-tech.cn/api/v1/cgi-bin/video.pl?did="+$did);
+    //  　　curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    //  　　curl_setopt($ch, CURLOPT_HEADER, 0);
+    //  　　$output = curl_exec($ch);
+    //  　　curl_close($ch);
+    //     $response->setBody($output);
+        $response->setBody(0);
     }
 );
 
