@@ -1521,11 +1521,8 @@ $app->get(
         $response = $app->response;
         $info = new Info($sql_db);
         $ret = $info->getCamera($id);
-        if(gettype($ret) != "array"){
-            $response->setBody(rspData($ret));
-        }else{
-            $response->setBody(rspData(0, $ret));
-        }
+        $response->setBody(rspData(0, $ret));
+
     }
 );
 

@@ -576,13 +576,67 @@ class Info{
     }
 
     public function getCamera($Id){
-          $ch = curl_init();
-       　　curl_setopt($ch, CURLOPT_URL, "http://wx.zxing-tech.cn/api/v1/cgi-bin/video.pl?did="+$did);
-       　　curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-       　　curl_setopt($ch, CURLOPT_HEADER, 0);
-       　　$output = curl_exec($ch);
-       　　curl_close($ch);
-          return $output;
+      $ch = curl_init();
+      curl_setopt($ch, CURLOPT_URL, "http://wx.zxing-tech.cn/api/v1/cgi-bin/video.pl?did=".$did);
+      curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+      curl_setopt($ch, CURLOPT_HEADER, 0);
+      $output = curl_exec($ch);
+      curl_close($ch);
+      return json_decode($output,true);
+    }
+
+    public function eshopRegister($data){
+      $url = "http://api.mall.zxing-tech.cn/v2/ecapi.auth.default.signup";
+      $ch = curl_init();
+      curl_setopt($ch, CURLOPT_POST, 1);
+      curl_setopt($ch, CURLOPT_URL, $url);
+      //curl_setopt($ch, CURLOPT_HEADER, TRUE);    //表示需要response header
+      curl_setopt($ch, CURLOPT_NOBODY, FALSE); //表示需要response body
+      curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+      curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+      curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+        'Content-Type: application/json;charset=utf-8',
+        'Content-Length: ' . strlen($data))
+      );
+      $result = curl_exec($ch);
+      curl_close($ch);
+      return json_decode($result, true);
+    }
+
+    public function eshopLogin($data){
+      $url = "http://api.mall.zxing-tech.cn/v2/ecapi.auth.signin";
+      $ch = curl_init();
+      curl_setopt($ch, CURLOPT_POST, 1);
+      curl_setopt($ch, CURLOPT_URL, $url);
+      //curl_setopt($ch, CURLOPT_HEADER, TRUE);    //表示需要response header
+      curl_setopt($ch, CURLOPT_NOBODY, FALSE); //表示需要response body
+      curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+      curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+      curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+        'Content-Type: application/json;charset=utf-8',
+        'Content-Length: ' . strlen($data))
+      );
+      $result = curl_exec($ch);
+      curl_close($ch);
+      return json_decode($result, true);
+    }
+
+    public function eshopChangePsw($data){
+      $url = " http://api.mall.zxing-tech.cn/v2/ecapi.user.password.update";
+      $ch = curl_init();
+      curl_setopt($ch, CURLOPT_POST, 1);
+      curl_setopt($ch, CURLOPT_URL, $url);
+      //curl_setopt($ch, CURLOPT_HEADER, TRUE);    //表示需要response header
+      curl_setopt($ch, CURLOPT_NOBODY, FALSE); //表示需要response body
+      curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+      curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+      curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+        'Content-Type: application/json;charset=utf-8',
+        'Content-Length: ' . strlen($data))
+      );
+      $result = curl_exec($ch);
+      curl_close($ch);
+      return json_decode($result, true);
     }
 
     private $DB;
