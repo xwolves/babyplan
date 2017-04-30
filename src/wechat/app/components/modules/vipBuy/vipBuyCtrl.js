@@ -16,7 +16,7 @@
 
             vm.gotoBuy = function(){
                 var where = vm.menu[vm.isSelected];
-                Session.temp=where;
+                Session.setData('temp',where);
                 StateService.go('buy',{index:where.businessid});
             };
 

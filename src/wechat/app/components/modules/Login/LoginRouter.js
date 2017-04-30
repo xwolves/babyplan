@@ -8,18 +8,11 @@
   function LoginRouter($stateProvider,$urlRouterProvider) {
     'ngInject';
     $stateProvider
-    .state('wxlogin', {
-      url: "/wxlogin?:user&:type",
-      params:{
-        user:null,
-        type:0
-      },
-      templateUrl: 'Login/wxlogin.html',
-      controller: 'WXLoginCtrl',
+    .state('login', {
+      url: "/login",
+      templateUrl: 'Login/login.html',
+      controller: 'LoginCtrl',
       controllerAs: 'vm'
     });
-    // $urlRouterProvider.when('', '/wxlogin');
-    $urlRouterProvider.otherwise('/wxlogin');
-
   }
 }());

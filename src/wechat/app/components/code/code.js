@@ -8,7 +8,8 @@
     'LoadingAlert',
     'ResultHandler',
     'MessageToaster',
-    'CustomFilter'
+    'CustomFilter',
+    'BaiduService'
   ]);
 
 }());

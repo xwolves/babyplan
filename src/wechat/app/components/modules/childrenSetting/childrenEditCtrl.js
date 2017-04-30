@@ -8,7 +8,7 @@
 
             vm.query = function(id){
                 console.log("child id = "+id);
-                vm.child=Session.temp;
+                vm.child=Session.getData('temp');
                 childrenSettingService.queryChild(id).then(function(data) {
                     if (data.errno == 0) {
                         console.log(data.data);

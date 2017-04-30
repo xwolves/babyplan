@@ -2,10 +2,11 @@
     "use strict";
     angular.module('environmentConfig', [])
         .constant('Constants', {
-            'appTitle':'托管系统',
-            'serverUrl': '/api/v1/',
+            'appTitle':'托管之家',
+            'serverUrl': 'http://wx.zxing-tech.cn/api/v1/',
+            'eshopApiUrl': 'http://api.mall.zxing-tech.cn/v2/',
             'dfsUrl': '/',
-            'buildID': '20161214v1',
+            'buildID': '20170428v1',
             'ENVIRONMENT':'release'
         });
 }());

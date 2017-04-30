@@ -7,6 +7,6 @@
             'toaster',
             'ui.rCalendar.tpls',
             'baiduMap',
-            'ionic.rating'
+            'ionic-ratings'
         ]);
 }());

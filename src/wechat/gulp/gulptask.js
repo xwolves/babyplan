@@ -78,6 +78,11 @@ gulp.task('images', function() {
         .pipe(gulp.dest(getPath() + '/img'));
 });
 
+gulp.task('eshop', function() {
+    return gulp.src(paths.eshop)
+        .pipe(gulp.dest(getPath() + '/eshop'));
+});
+
 gulp.task('environmentConfig', function() {
     gulp.src(paths.environmentConfig)
         .pipe(gulpNgConfig('environmentConfig'))

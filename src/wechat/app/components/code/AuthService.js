@@ -13,31 +13,33 @@
     };
 
     function getLoginID() {
-      return Session.userId;
+      return Session.getData('userId');
     };
 
     function getLoginToken() {
-      return Session.token;
+      return Session.getData('token');
     };
 
     function getUserRole() {
-      return Session.userRole;
+      return Session.getData('userRole');
     };
     function getWechatId(){
-      return Session.wechat;
+      return Session.getData('wechat');
     }
 
-    function setSession(id,token,role,wechat){
-      Session.create(token,id,role,wechat);
+    function setSession(id,token,eshop,role,wechat){
+      Session.create(token,eshop,id,role,wechat);
     };
 
     function getNextPath() {
-      if(Session.userRole==Role.Organizer){
+      if(Session.getData('userRole')==Role.Organizer){
         return Path.OrganizerRolePath;
-      }else if(Session.userRole==Role.Parent){
+      }else if(Session.getData('userRole')==Role.Parent){
         return Path.ParentRolePath;
-      }else if(Session.userRole==Role.Teacher){
+      }else if(Session.getData('userRole')==Role.Teacher){
         return Path.TeacherRolePath;
+      }else if(Session.getData('userRole')==Role.visitor){
+        return Path.VisitorRolePath;
       }
     };
 

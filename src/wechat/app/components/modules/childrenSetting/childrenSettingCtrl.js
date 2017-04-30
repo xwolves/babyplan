@@ -29,7 +29,7 @@
             vm.goTo=function(id,child){
                 //查看孩子信息
                 $ionicListDelegate.closeOptionButtons();
-                Session.temp=child;
+                Session.setData('temp',child);
                 StateService.go('childrenEdit',{cid:id,type:0});
             };
 
@@ -48,7 +48,7 @@
             vm.editChild=function(id,child){
                 //编辑孩子信息
                 $ionicListDelegate.closeOptionButtons();
-                Session.temp=child;
+                Session.setData('temp',child);
                 StateService.go('childrenEdit',{cid:id,type:2});
             };
 

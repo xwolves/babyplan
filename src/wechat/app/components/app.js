@@ -13,7 +13,7 @@
         $ionicPlatform.ready(function() {
             // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
             // for form inputs)
-            if (window.cordova && window.cordova.plugins.Keyboard) {
+            if (window.cordova && window.cordova.plugins && window.cordova.plugins.Keyboard) {
                 cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
                 cordova.plugins.Keyboard.disableScroll(true);
 
@@ -38,11 +38,25 @@
                     return $injector.get('AuthInterceptor');
                 }
             ]);
+            $ionicConfigProvider.platform.ios.tabs.style('standard');
+            $ionicConfigProvider.platform.ios.tabs.position('bottom');
+            $ionicConfigProvider.platform.android.tabs.style('standard');
             $ionicConfigProvider.platform.android.tabs.position('bottom');
-            $ionicConfigProvider.views.transition('none');
-            $ionicConfigProvider.backButton.text('返回').icon('ion-ios-arrow-left');
-            $ionicConfigProvider.tabs.style("standard");
-            $ionicConfigProvider.navBar.alignTitle('center');
+
+            $ionicConfigProvider.platform.ios.navBar.alignTitle('center');
+            $ionicConfigProvider.platform.android.navBar.alignTitle('center');
+
+            $ionicConfigProvider.platform.ios.backButton.previousTitleText('').icon('ion-ios-arrow-thin-left');
+            $ionicConfigProvider.platform.android.backButton.previousTitleText('').icon('ion-android-arrow-back');
+
+            $ionicConfigProvider.platform.ios.views.transition('ios');
+            $ionicConfigProvider.platform.android.views.transition('android');
+
+            // $ionicConfigProvider.platform.android.tabs.position('bottom');
+            // $ionicConfigProvider.views.transition('none');
+            // $ionicConfigProvider.backButton.text('返回').icon('ion-ios-arrow-left');
+            // $ionicConfigProvider.tabs.style("standard");
+            // $ionicConfigProvider.navBar.alignTitle('center');
         })
         .factory('AuthInterceptor', function($rootScope, $q, AUTH_EVENTS) {
             return {

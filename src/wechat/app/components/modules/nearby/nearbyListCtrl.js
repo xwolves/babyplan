@@ -1,7 +1,7 @@
 (function() {
     "use strict";
     angular.module('nearbyListCtrl', [])
-        .controller('nearbyListCtrl', function($scope, Constants,nearbyService,StateService,Session,CacheData) {
+        .controller('nearbyListCtrl', function($scope, Constants,nearbyService,StateService,CacheData) {
             'ngInject';
             var vm = this;
             vm.activated = false;
@@ -50,7 +50,6 @@
             };
 
             vm.goto=function(item){
-                //Session.temp=item;
                 CacheData.putObject(item.AccountID,item);
                 StateService.go('nearbyDepositInfo',{id:item.AccountID});
             };

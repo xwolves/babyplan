@@ -2,6 +2,8 @@
     "use strict";
     angular.module('modules', [
         'LoginModule',
+        'WxLoginModule',
+        'childrenSteamModule',
         'registerModule',
         'tabsModule',
         'childrenModule',
@@ -20,7 +22,9 @@
         'vipTipsModule',
         'commentModule',
         'exitModule',
-        'photoModule'
+        'photoModule',
+        'MapModule',
+        'eshopEntryModule'
     ]);
 
 }());

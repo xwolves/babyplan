@@ -17,7 +17,7 @@
             }
 
             vm.goPhoto=function(msgIndex,index){
-                Session.temp=vm.msg[msgIndex];
+                Session.setData('temp',vm.msg[msgIndex]);
                 StateService.go("photo",{index:index});
             };
 

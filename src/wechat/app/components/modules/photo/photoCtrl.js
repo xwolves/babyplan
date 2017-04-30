@@ -10,7 +10,7 @@
             function activate() {
                 vm.activated = true;
                 vm.version = Constants.buildID;
-                vm.msg=Session.temp;
+                vm.msg=Session.getData('temp');
                 vm.images=[];
                 vm.imgCount=0;
                 if(vm.msg.photolink1!=null && vm.msg.photolink1!=""){

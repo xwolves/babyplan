@@ -42,14 +42,15 @@
 
             vm.query = function(id){
                 console.log(" index = "+id);
-                if(Session.temp.businessid == id)
-                    vm.item=Session.temp;
+                var temp=Session.getData('temp');
+                if(temp.businessid == id)
+                    vm.item=temp;
 
             };
 
             vm.back = function(){
                 StateService.back();
-                Session.temp = null;
+                Session.rmData('temp');
             };
 
             vm.getEndDate = function(payTime,numOfDays){

@@ -13,7 +13,7 @@
         $ionicPlatform.ready(function() {
             // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
             // for form inputs)
-            if (window.cordova && window.cordova.plugins.Keyboard) {
+            if (window.cordova && window.cordova.plugins && window.cordova.plugins.Keyboard) {
                 cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
                 cordova.plugins.Keyboard.disableScroll(true);
 
@@ -38,11 +38,25 @@
                     return $injector.get('AuthInterceptor');
                 }
             ]);
+            $ionicConfigProvider.platform.ios.tabs.style('standard');
+            $ionicConfigProvider.platform.ios.tabs.position('bottom');
+            $ionicConfigProvider.platform.android.tabs.style('standard');
             $ionicConfigProvider.platform.android.tabs.position('bottom');
-            $ionicConfigProvider.views.transition('none');
-            $ionicConfigProvider.backButton.text('返回').icon('ion-ios-arrow-left');
-            $ionicConfigProvider.tabs.style("standard");
-            $ionicConfigProvider.navBar.alignTitle('center');
+
+            $ionicConfigProvider.platform.ios.navBar.alignTitle('center');
+            $ionicConfigProvider.platform.android.navBar.alignTitle('center');
+
+            $ionicConfigProvider.platform.ios.backButton.previousTitleText('').icon('ion-ios-arrow-thin-left');
+            $ionicConfigProvider.platform.android.backButton.previousTitleText('').icon('ion-android-arrow-back');
+
+            $ionicConfigProvider.platform.ios.views.transition('ios');
+            $ionicConfigProvider.platform.android.views.transition('android');
+
+            // $ionicConfigProvider.platform.android.tabs.position('bottom');
+            // $ionicConfigProvider.views.transition('none');
+            // $ionicConfigProvider.backButton.text('返回').icon('ion-ios-arrow-left');
+            // $ionicConfigProvider.tabs.style("standard");
+            // $ionicConfigProvider.navBar.alignTitle('center');
         })
         .factory('AuthInterceptor', function($rootScope, $q, AUTH_EVENTS) {
             return {
@@ -68,7 +82,7 @@
             'toaster',
             'ui.rCalendar.tpls',
             'baiduMap',
-            'ionic.rating'
+            'ionic-ratings'
         ]);
 }());
 
@@ -87,31 +101,33 @@
     };
 
     function getLoginID() {
-      return Session.userId;
+      return Session.getData('userId');
     };
 
     function getLoginToken() {
-      return Session.token;
+      return Session.getData('token');
     };
 
     function getUserRole() {
-      return Session.userRole;
+      return Session.getData('userRole');
     };
     function getWechatId(){
-      return Session.wechat;
+      return Session.getData('wechat');
     }
 
-    function setSession(id,token,role,wechat){
-      Session.create(token,id,role,wechat);
+    function setSession(id,token,eshop,role,wechat){
+      Session.create(token,eshop,id,role,wechat);
     };
 
     function getNextPath() {
-      if(Session.userRole==Role.Organizer){
+      if(Session.getData('userRole')==Role.Organizer){
         return Path.OrganizerRolePath;
-      }else if(Session.userRole==Role.Parent){
+      }else if(Session.getData('userRole')==Role.Parent){
         return Path.ParentRolePath;
-      }else if(Session.userRole==Role.Teacher){
+      }else if(Session.getData('userRole')==Role.Teacher){
         return Path.TeacherRolePath;
+      }else if(Session.getData('userRole')==Role.visitor){
+        return Path.VisitorRolePath;
       }
     };
 
@@ -227,20 +243,25 @@
 }());
 (function() {
     "use strict";
-    angular.module('Session', []).service('Session', function($http) {
+    angular.module('Session', []).service('Session', function($http,$window) {
         'ngInject';
 
         var session = {
             create: create,
             destroy: destroy,
-            updateRoles: updateRoles
+            updateRoles: updateRoles,
+            setData:setData,
+            getData:getData,
+            rmData:rmData,
         };
 
-        function create(token, userId, roles, wechat) {
-            session.token = token;
-            session.userId = userId;
-            session.userRole = roles;
-            session.wechat = wechat;
+        function create(token, eshop, userId, roles, wechat) {
+            $window.localStorage.setItem("token", token);
+            $window.localStorage.setItem("eshop_auth", JSON.stringify(eshop));
+            $window.localStorage.setItem("userId", userId);
+            $window.localStorage.setItem("userRole", roles);
+            $window.localStorage.setItem("wechat", wechat);
+
             if(token!=null){
                 //$http.defaults.headers.common.Authorization = "Bearer-"+token;
                 $http.defaults.headers.common.token = token;
@@ -251,15 +272,30 @@
         }
 
         function destroy() {
-            session.token = null;
-            session.userId = null;
-            session.userRole = null;
-            session.wechat = null;
+            $window.localStorage.removeItem("eshop_auth");
+            $window.localStorage.removeItem("token");
+            $window.localStorage.removeItem("userId");
+            $window.localStorage.removeItem("userRole");
+            $window.localStorage.removeItem("wechat");
+
         }
 
         function updateRoles(roles) {
-            session.userRole = roles;
+            $window.localStorage.setItem("userRole", roles);
         };
+
+        function setData(name,data) {
+            $window.localStorage.setItem(name, data);
+        }
+
+        function getData(name) {
+            return $window.localStorage.getItem(name);
+        }
+
+        function rmData(name) {
+            $window.localStorage.removeItem(name);
+        }
+
         return session;
     });
 
@@ -365,6 +401,126 @@
 }());
 
 (function() {
+  'use strict';
+
+/**
+ * 机构搜索本地服务
+ */
+angular.module('BaiduService',[])
+  .service('BaiduService', function ($q, $http, Constants) {
+
+      /**
+       * 转换原始路径为缩略图路径
+       * @param {*} imgUrl
+       */
+      function _convertThumbUrl(imgUrl){
+        if(!imgUrl) return;
+          return imgUrl.replace(/.(jpg|png|gif)/,'_400x200.$1');
+      }
+
+    /**
+     * 根据经纬度获取附近机构列表
+     * @param {*} longitude
+     * @param {*} latitude
+     */
+    function _getNearbyDeposits(longitude, latitude) {
+        var defer = $q.defer(),
+       // apiUrl = Constants.serverUrl+ 'nearbyDepositList/113.271/23.135';
+         apiUrl = Constants.serverUrl + 'nearbyDepositList/'+longitude+'/'+latitude;
+
+        $http.get(apiUrl).success(function (data, status, headers, congfig) {
+          defer.resolve(data.data);
+        }).error(function (err) {
+          defer.reject(err);
+        });
+        return defer.promise;
+      }
+
+      /**
+       * 获取机构详细信息
+       * @param {*} depositId
+       */
+      function _getDepositInfo(depositId) {
+        var defer = $q.defer(),
+          apiUrl = Constants.serverUrl + 'depositInfo/' + depositId;
+
+        $http.get(apiUrl).success(function (data, status, headers, congfig) {
+          defer.resolve(data.data);
+        }).error(function (err) {
+          defer.reject(err);
+        });
+
+        return defer.promise;
+      }
+
+      /**
+       * 获取机构评论列表
+       * @param {*} depositId
+       */
+      function _getDepositComments (depositId) {
+        var defer = $q.defer(),
+          apiUrl = Constants.serverUrl + 'comments/deposit?depositid=' + depositId;
+
+        $http.get(apiUrl).success(function (data, status, headers, congfig) {
+          defer.resolve(data.data);
+        }).error(function (err) {
+          defer.reject(err);
+        });
+
+        return defer.promise;
+      }
+
+      /**
+       * 获取机构详情并带有评论信息
+       * @param {*} depositId
+       */
+      function _getDepositInfoWithComments (depositId) {
+        var defer = $q.defer();
+
+        var getDepositDeferred = _getDepositInfo(depositId);
+        var getDepositCommentsDeferred = _getDepositComments(depositId);
+
+        $q.all([getDepositDeferred, getDepositCommentsDeferred]).then(function (results) {
+            var depositInfo = results[0],
+              commentsData = results[1];
+
+            depositInfo.Score = commentsData.scores || 0;
+            depositInfo.Comments = [];
+
+            //转换所有图片为数组，以用于轮播图片源
+            depositInfo.Images = [];
+            depositInfo.FrontDeskLink && depositInfo.Images.push(_convertThumbUrl(depositInfo.FrontDeskLink));
+            depositInfo.PublicZoneLink && depositInfo.Images.push(_convertThumbUrl(depositInfo.PublicZoneLink));
+            depositInfo.KitchenLink && depositInfo.Images.push(_convertThumbUrl(depositInfo.KitchenLink));
+            depositInfo.DiningRoomLink && depositInfo.Images.push(_convertThumbUrl(depositInfo.DiningRoomLink));
+            depositInfo.RestRoomLink1 && depositInfo.Images.push(_convertThumbUrl(depositInfo.RestRoomLink1));
+            depositInfo.RestRoomLink2 && depositInfo.Images.push(_convertThumbUrl(depositInfo.RestRoomLink2));
+            depositInfo.ClassRoomLink1 && depositInfo.Images.push(_convertThumbUrl(depositInfo.ClassRoomLink1));
+            depositInfo.ClassRoomLink2 && depositInfo.Images.push(_convertThumbUrl(depositInfo.ClassRoomLink2));
+
+            for (var j = 0; j < commentsData.comments.length; j++) {
+                depositInfo.Comments.push(commentsData.comments[j]);
+            }
+
+            defer.resolve(depositInfo);
+        }, function (err) {
+            defer.reject(err);
+        });
+
+        return defer.promise;
+      }
+
+      return {
+          getNearbyDeposits: _getNearbyDeposits,
+          getDepositInfo: _getDepositInfo,
+          getDepositComments: _getDepositComments,
+          getDepositInfoWithComments: _getDepositInfoWithComments
+      };
+  });
+
+}());
+
+(function() {
   "use strict";
   angular.module('code', [
     'Session',
@@ -374,7 +530,8 @@
     'LoadingAlert',
     'ResultHandler',
     'MessageToaster',
-    'CustomFilter'
+    'CustomFilter',
+    'BaiduService'
   ]);
 
 }());
@@ -435,9 +592,13 @@ app.filter('dateChange', function () {
         if(time>24*60*60*1000){
             return d.Format('MM月dd日');
         }else if(time>60*60*1000){
-            return d.Format('hh')+"小时前";
+            //return d.Format('hh')+"小时前";
+            var hour=parseInt(time/(60*60*1000));
+            return hour+"小时前";
         }else{
-            return d.Format('mm')+"分钟前";
+            //return d.Format('mm')+"分钟前";
+            var min=parseInt(time/(60*1000));
+            return min+"分钟前";
         }
     };
 });
@@ -449,6 +610,21 @@ app.filter('ImageMin', function () {
             var fileName = input.substring(0,input.lastIndexOf('.'));
             if(fileExtension.toLowerCase()=='jpg' ||fileExtension.toLowerCase() =='png' || fileExtension.toLowerCase()=='gif'){
                 return fileName+"_64x64"+"."+fileExtension;
+            }return input;
+        }else{
+            return '';
+        }
+
+    };
+});
+
+app.filter('changeSize', function () {
+    return function (input,params) {
+        if(input!=null){
+            var fileExtension = input.substring(input.lastIndexOf('.') + 1);
+            var fileName = input.substring(0,input.lastIndexOf('.'));
+            if(fileExtension.toLowerCase()=='jpg' ||fileExtension.toLowerCase() =='png' || fileExtension.toLowerCase()=='gif'){
+                return fileName+"_"+params+"."+fileExtension;
             }return input;
         }else{
             return '';
@@ -469,6 +645,40 @@ app.filter('statusChange', function () {
         }
     };
 });
+
+ app.filter('formatDist', function () {
+      return function (dist) {
+          dist = dist || 0
+          if (dist > 0) {
+              return (dist / 1000).toFixed(2) + '千米';
+          } else {
+              return '';
+          }
+      };
+  });
+
+  app.filter('formatTime', function () {
+     return function (time) {
+         var now = new Date();
+         time = new Date(time) || now;
+
+         var timeSpan = now.getTime() - time.getTime(),
+               days = Math.floor(timeSpan / (24 * 3600 * 1000)),
+               months = Math.floor(days / (30)),
+               years = Math.floor(days / (365)),
+               leave1 = timeSpan % (24 * 3600 * 1000),
+               hours = Math.floor(leave1 / (3600 * 1000)),
+                leave2 = leave1 % (3600 * 1000),
+                minutes = Math.floor(leave2 / (60 * 1000));
+
+         if (years > 0) return years + '年前';
+         if (months > 0) return months + '月前';
+         if (days > 0) return days + '天前';
+         if (hours > 0) return hours + '小时前';
+         if (minutes > 0) return minutes + '分钟前';
+         return '';
+     };
+   });
 }());
 
 (function() {
@@ -518,12 +728,13 @@ app.filter('statusChange', function () {
     "use strict";
     angular.module('constant', [])
         .constant('Path',{
-            'ParentRolePath':'tabs.children',
+            'ParentRolePath':'tabs.childrenSteam',
             'OrganizerRolePath':'tabs.organizer',
-            'TeacherRolePath':'tabs.message'
+            'TeacherRolePath':'tabs.message',
+            'VisitorRolePath':'tabs.nearby'
         })
         .constant('Role',{
-            'unknown':'-1',
+            'visitor':'-1',
             'Organizer':'1',
             'Parent':'2',
             'Teacher':'3',
@@ -555,10 +766,11 @@ app.filter('statusChange', function () {
     "use strict";
     angular.module('environmentConfig', [])
         .constant('Constants', {
-            'appTitle':'托管系统',
-            'serverUrl': '/api/v1/',
+            'appTitle':'托管之家',
+            'serverUrl': 'http://wx.zxing-tech.cn/api/v1/',
+            'eshopApiUrl': 'http://api.mall.zxing-tech.cn/v2/',
             'dfsUrl': '/',
-            'buildID': '20161214v1',
+            'buildID': '20170428v1',
             'ENVIRONMENT':'release'
         });
 }());
@@ -566,6 +778,7 @@ app.filter('statusChange', function () {
 //    'dfsUrl': 'http://120.76.226.47/',
 //http://localhost:8090/
 //http://wx.zxing-tech.cn
+
 (function() {
     "use strict";
     angular.module('httpDevConfig', [])
@@ -592,14 +805,6 @@ app.filter('statusChange', function () {
     });
 }());
 
-(function() {
-    "use strict";
-    angular.module('directive', [
-
-    ]);
-
-}());
-
 Date.prototype.Format = function(fmt) {
     var o = {
         "M+": this.getMonth() + 1, //月份
@@ -619,8 +824,611 @@ Date.prototype.Format = function(fmt) {
 };
 (function() {
     "use strict";
+    angular.module('directive', [
+      'BaiduMapDirective'
+    ]);
+
+}());
+
+(function() {
+'use strict';
+
+var app = angular.module('BaiduMapDirective', []);
+
+  app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $ionicSlideBoxDelegate, MessageToaster, BaiduService) {
+    'ngInject';
+      /**
+       * 加载百度地图
+       * @param {object}  $q angular $q
+       * @param {string} apiKey 百度apiKey
+       * @param {string} version 版本号
+       */
+      function loadMap(apiKey) {
+
+          // 判断是否执行过加载过程
+          if (window.loadBaiduPromise) {
+              return window.loadBaiduPromise;
+          }
+
+          var deferred = $q.defer(),
+            resolve = function () {
+                deferred.resolve(window.BMap ? window.BMap : false);
+            },
+            callbackName = 'loadBaiduMaps_' + (new Date().getTime()),
+            params = {
+                'ak': apiKey
+            };
+
+          if (window.BMap) {
+              resolve();
+          } else {
+              angular.extend(params, {
+                  'v': '2.0',
+                  'callback': callbackName
+              });
+
+              // 百度地图加载成功后回调用方法
+              window[callbackName] = function () {
+                  // 标识异步任务完成
+                  resolve();
+
+                  // 成功后删除全局回调方法
+                  $timeout(function () {
+                      try {
+                          delete window[callbackName];
+                      } catch (e) { }
+                  }, 20);
+              }
+
+              // 加载百度地图脚本
+              var head = document.getElementsByTagName('HEAD').item(0);
+              var bdscript = document.createElement('script');
+              bdscript.type = 'text/javascript';
+              bdscript.src = 'http://api.map.baidu.com/api?v=' + params.v + '&ak=' + params.ak + '&callback=' + params.callback;
+              head.appendChild(bdscript);
+          }
+          window.loadBaiduPromise = deferred.promise;
+
+          // 返回异步任务对象
+          return window.loadBaiduPromise;
+      }
+
+      /**
+       * 绑定地图事件，以便地图上触发的事件都转换为地图元素触发的对应事件
+       * @param {*} scope  范围
+       * @param {*} eventsStr 事件
+       * @param {*} baiduObject 百度地图对象
+       * @param {*} element 元素
+       * @param {*} prefix 地图事件前缀
+       */
+      function bindMapEvents(scope, baiduObject) {
+          var events = scope.$eval(attrs.mapEvent);
+          angular.forEach(events, function (uiEvent, eventName) {
+              var fn = $parse(uiEvent);
+
+              baiduObject.addEventListener(eventName, function (event) {
+                  var params = Array.prototype.slice.call(arguments);
+                  params = params.splice(1);
+                  fn(scope, {
+                      $event: evt,
+                      $params: params
+                  });
+                  if (!scope.$$phase) {
+                      scope.$apply();
+                  }
+              })
+          })
+      }
+
+      /**
+       * 在指定容器中构建渲染百度地图组件
+       * @param {*} container
+       * @param {*} options
+       */
+      function buildMap(container, options) {
+          if (!options.apiKey) {
+              throw new Error('请设置apiKey!');
+          }
+
+          var map = new window.BMap.Map(container, {
+              enableMapClick: true
+          });
+
+          if (options.enableScrollWheelZoom) {
+              map.enableScrollWheelZoom();
+          }
+
+          return map;
+      }
+
+      /**
+       * 根据位置做标记
+       * @param {*} map
+       * @param {*} point
+       * @param {*} clickCallback
+       * @param {*} poInfo
+       */
+      function addMapMarker(map, point, clickCallback, poInfo) {
+          var mk = new BMap.Marker(point);
+          map.addOverlay(mk);
+          mk.babyPoi = poInfo;
+
+          if (clickCallback) {
+              mk.addEventListener('click', clickCallback);
+          }
+
+          return mk;
+      }
+
+      /**
+       * 添加地图导航控件
+       * @param {*} map
+       * @param {*} anchor
+       */
+      function addMapNavigation(map, anchor) {
+          var navigation = new window.BMap.NavigationControl({
+              anchor: anchor
+          });
+          map.addControl(navigation);
+      }
+
+      /**
+       * 获取当前位置
+       * @param {*} map
+       * @param {*} options
+       */
+      function getCurrentPosition(map, options) {
+          var deferred = $q.defer();
+
+          if (!!options.center) {
+              var point = new BMap.Point(options.center.longitude, options.center.latitude); // 定义一个中心点坐标
+              deferred.resolve(point);
+          } else {
+              if (typeof baidumap_location !== 'undefined') {
+                  // 获取GPS当前位置
+                  baidumap_location.getCurrentPosition(function (result) {
+                      var point = new BMap.Point(result.lontitude, result.latitude);
+                      deferred.resolve(point);
+                  }, function (error) {
+                      deferred.reject(error);
+                  });
+              } else {
+                  deferred.reject();
+              }
+          }
+          return deferred.promise;
+      }
+
+      /**
+       * 添加搜索框自动完成功能
+       * @param {*} map
+       * @param {*} scope
+       */
+      function addMapAutoComplete(map, scope) {
+          function onConfirm(e) {
+              var selectedVal = e.item.value;
+              var keywrod = selectedVal.province + selectedVal.city + selectedVal.district + selectedVal.street + selectedVal.business;
+              baiDuLocalSearchAndMark(map, keywrod).then(function (results) {
+                  scope.baiDuSearchResults = results;
+              }, function (err) {
+                  //ionicToast.show('检索异常!', 'middle', false, 3000);
+                  MessageToaster.error("检索异常!");
+              });
+          }
+          var ac = new BMap.Autocomplete({
+              'input': 'mech-map-searchbox',
+              'location': map
+          });
+          ac.addEventListener('onconfirm', onConfirm);
+
+          var ac1 = new BMap.Autocomplete({
+              'input': 'mech-list-searchbox',
+              'location': map
+          });
+          ac1.addEventListener('onconfirm', onConfirm);
+      }
+
+      /**
+       * 根据关键字在百度搜索位置信息
+       * @param {*} map
+       * @param {*} keyword
+       */
+      function baiDuLocalSearch(map, keyword) {
+          var deferred = $q.defer();
+
+          function onSearchComplete(results) {
+              try {
+                  var pois = [];
+                  if (!angular.isArray(results)) {
+                      results = [results];
+                  }
+                  for (var j = 0; j < results.length; j++) {
+                      var result = results[j];
+                      for (let i = 0; i < result.ur.length; i++) {
+                          var poi = result.getPoi(i),
+                            tempPoi = {
+                                AccountID: 0,
+                                OrgName: poi.title,
+                                Address: poi.address,
+                                Tel: poi.phoneNumber,
+                                Latitude: poi.point.lat,
+                                Longitude: poi.point.lng
+                            };
+
+                          if (!!map.scope.currentPosition) {
+                              tempPoi["Dist"] = map.getDistance(poi.point, map.scope.currentPosition).toFixed(2);
+                          }
+                          pois.push(tempPoi);
+                      }
+                  }
+
+                  deferred.resolve(pois);
+              } catch (err) {
+                  deferred.reject(err);
+              }
+          }
+          var local = new BMap.LocalSearch(map, {
+              onSearchComplete: onSearchComplete,
+              pageCapacity: 10
+          });
+          local.search(keyword);
+          return deferred.promise;
+      }
+
+      /**
+       * 根据关键字搜索百度数据并打标记
+       * @param {*} map
+       * @param {*} keyword
+       */
+      function baiDuLocalSearchAndMark(map, keyword) {
+          var deferred = $q.defer();
+
+          baiDuLocalSearch(map, keyword).then(function (results) {
+              map.clearOverlays();
+              var point;
+              for (var i = 0; i < results.length; i++) {
+                  point = new BMap.Point(results[i].Longitude, results[i].Latitude);
+                  addMapMarker(map, point, openInfoWindow, results[i]);
+              }
+              point && map.panTo(point);
+
+              deferred.resolve(results);
+          }, function (err) {
+              deferred.reject(err);
+          });
+
+          return deferred.promise;
+      }
+
+      /**
+       * 根据位置搜索本地系统维护的后台数据
+       * @param {*} point
+       */
+      function babyPlanLocalSearch(point) {
+          return BaiduService.getNearbyDeposits(point.longitude, point.latitude);
+      }
+
+      /**
+       * 打开当前位置标记的详情页面
+       * @param {*} e
+       */
+      function openInfoWindow(e) {
+          var p = e.target,
+            map = e.target.map;
+
+          if (!p.babyPoi) {
+              return;
+          }
+
+          if (p.babyPoi.AccountID > 0) {
+              map.scope.openDepositInfoForm(p.babyPoi);
+          } else {
+              var opts = {
+                  width: 250, // 信息窗口宽度
+                  height: 80, // 信息窗口高度
+                  title: p.babyPoi.OrgName,
+                  enableMessage: true // 设置允许信息窗发送短息
+              },
+                content = p.babyPoi.Address;
+              var point = new BMap.Point(p.babyPoi.Longitude, p.babyPoi.Latitude);
+              var infoWindow = new BMap.InfoWindow(content, opts);
+              map.openInfoWindow(infoWindow, point);
+          }
+      }
+
+
+      return {
+          restrict: 'EA',
+          scope: {
+              mapOptions: '='
+          },
+          templateUrl: 'ui-map.html',
+          replace: true,
+          link: function (scope, elm, attrs) {
+              var opts = angular.extend({}, scope.mapOptions);
+
+              var MAP_MODES = scope.MAP_MODES = {
+                  MAP_SHOW: 0,
+                  MAP_SEARCH: 1,
+                  LIST_SHOW: 2,
+                  LIST_SEARCH: 3
+              };
+              scope.currMode = MAP_MODES.MAP_SHOW;
+              scope.baiDuSearchResults = [];
+              scope.babyPlanSearchResults = [];
+              scope.keyword1 = '';
+              scope.keyword2 = '';
+              scope.depositInfo = {};
+              // scope.depositInfo = {
+              //   OrgName: '南科大',
+              //   Address: '学苑大道1088号',
+              //   FrontDeskLink1: 'http://120.76.226.47/group1/M00/00/03/Ci5ek1jxwpWAD29ZAC84O4JhWyE096.jpg',
+              //   LicenseType: null,
+              //   ContactPhone: '1311111111',
+              //   Score: 50,
+              //   Remark: '宝宝的托管机构，宝宝的安全托管机构',
+              //   Images: ['http://120.76.226.47/group1/M00/00/03/Ci5ek1jxwpWAD29ZAC84O4JhWyE096.jpg', null],
+              //   Comments: [{comment: '对于缩略图视图，您可以在文件夹上放一个图片来提醒您它的内容。',create_date: '2017-4-23 12:00:00',creator: 'X*'}, {comment: '机构不错',create_date: '2017-4-21 12:00:00',creator: 'X*'}]
+              // }
+
+              /**
+               * 拨打电话
+               */
+              scope.dial = function (tel) {
+                  $window.location.href = 'tel:' + tel;
+              };
+
+              /**
+               * 定位
+               */
+              scope.location = function (poi) {
+                  // 切换到地图模式
+                  scope.currMode = MAP_MODES.MAP_SHOW;
+
+                  // 清除所有标记，并添加当前位置标记
+                  scope.map.clearOverlays();
+                  var point = new BMap.Point(poi.Longitude, poi.Latitude);
+                  addMapMarker(scope.map, point, openInfoWindow, poi);
+
+                  $timeout(function () {
+                      scope.map.panTo(point);
+                  }, 20);
+              };
+
+              /**
+               * 定位到当前位置
+               */
+              scope.locationCurrent = function () {
+                  $timeout(function () {
+                      addMapMarker(scope.map, scope.currentPosition, openInfoWindow, null);
+                      scope.currentPosition && scope.map.panTo(scope.currentPosition);
+                  }, 20);
+              };
+
+              /**
+               * 定位标记所有位置
+               */
+              scope.locationAll = function () {
+                  // 切换到地图模式
+                  scope.currMode = MAP_MODES.MAP_SHOW;
+
+                  // 清除所有标记，并添加当前位置标记
+                  scope.map.clearOverlays();
+
+                  var poi, point;
+                  for (var i = 0; i < scope.baiDuSearchResults.length; i++) {
+                      poi = scope.baiDuSearchResults[i];
+                      point = new BMap.Point(poi.Longitude, poi.Latitude);
+                      addMapMarker(scope.map, point, openInfoWindow, poi);
+                  }
+
+                  for (var i = 0; i < scope.babyPlanSearchResults.length; i++) {
+                      poi = scope.babyPlanSearchResults[i];
+                      point = new BMap.Point(poi.Longitude, poi.Latitude);
+                      addMapMarker(scope.map, point, openInfoWindow, poi);
+                  }
+
+                  $timeout(function () {
+                      try {
+                          point && scope.map.panTo(point);
+                      } catch (e) { }
+                  }, 20);
+              };
+
+              /**
+               * 关闭详情页面
+               */
+              scope.closeDepositInfoForm = function () {
+                  scope.modal.hide();
+              };
+
+              /**
+               * 打开详情页面
+               */
+              scope.openDepositInfoForm = function (deposit) {
+                  if (!deposit || deposit.AccountID == 0) return;
+
+                  // 根据ID获取机构详情和评论信息
+                  BaiduService.getDepositInfoWithComments(deposit.AccountID).then(function (depositInfo) {
+                      scope.depositInfo = depositInfo;
+
+                      // 判断详情页面是否已经加载，如果已经加载过直接打开，否则加载并打开页面
+                      if (!scope.modal) {
+                          $ionicModal.fromTemplateUrl('ui-map-info.html', {
+                              scope: scope,
+                              animation: 'slide-in-up'
+                          }).then(function (modal) {
+                              scope.modal = modal;
+                              scope.modal.show();
+                          });
+                      } else {
+                          scope.modal.show();
+                      }
+                  }, function (err) {
+                      //ionicToast.show('获取机构详情信息失败!', 'middle', false, 3000);
+                      MessageToaster.error("获取机构详情信息失败!");
+                  })
+              };
+
+              /**
+               * 回退到地图模式
+               */
+              scope.backToMapView = function () {
+                  scope.currMode = MAP_MODES.MAP_SHOW;
+              };
+
+              /**
+               * 切换模式
+               */
+              scope.switchMode = function (mode) {
+                  //
+                  if (scope.currMode === mode) return;
+
+                  // 如果切换的目标模式为空，根据当前模式修正为正确目标模式
+                  if (!mode) {
+                      switch (scope.currMode) {
+                          case MAP_MODES.MAP_SEARCH:
+                              mode = MAP_MODES.MAP_SHOW;
+                              break;
+                          case MAP_MODES.MAP_SHOW:
+                              mode = MAP_MODES.LIST_SHOW;
+                              break;
+
+                          case MAP_MODES.LIST_SEARCH:
+                              mode = MAP_MODES.LIST_SHOW;
+                              break;
+                          case MAP_MODES.LIST_SHOW:
+                              mode = MAP_MODES.MAP_SHOW;
+                              break;
+                      }
+                  }
+
+                  // 切换关键字
+                  // if (scope.currMode <= MAP_MODES.MAP_SEARCH && mode > MAP_MODES.MAP_SEARCH) {
+                  //   scope.keyword2 = scope.keyword1
+                  // } else if (scope.currMode > MAP_MODES.MAP_SEARCH && mode <= MAP_MODES.MAP_SEARCH) {
+                  //   scope.keyword1 = scope.keyword2
+                  // }
+                  //
+
+                  // 根据当前模式不同触发不同的行为
+                  switch (scope.currMode) {
+                      case MAP_MODES.MAP_SEARCH:
+                          // if (!scope.keyword1) {
+                          //  // ionicToast.show('请录入搜索关键字!', 'middle', false, 3000)
+                          //   return
+                          // }
+                          !!scope.keyword1 && baiDuLocalSearchAndMark(scope.map, scope.keyword1).then(function (results) {
+                              scope.baiDuSearchResults = results;
+                          }, function (err) {
+                              //ionicToast.show('百度本地搜索失败!', 'middle', false, 3000);
+                              MessageToaster.error("百度本地搜索失败!");
+                          });
+                          break;
+                      case MAP_MODES.LIST_SEARCH:
+                          // if (!scope.keyword2) {
+                          //   ionicToast.show('请录入搜索关键字!', 'middle', false, 3000)
+                          //   return
+                          // }
+                          !!scope.keyword2 && baiDuLocalSearchAndMark(scope.map, scope.keyword2).then(function (results) {
+                              scope.baiDuSearchResults = results;
+                          }, function (err) {
+                              //ionicToast.show('百度本地搜索失败!', 'middle', false, 3000);
+                              MessageToaster.error("百度本地搜索失败!");
+                          });
+                          break;
+                      case MAP_MODES.LIST_SHOW:
+                          mode === MAP_MODES.MAP_SHOW && scope.locationAll();
+                          break;
+                  }
+
+                  scope.currMode = mode;
+              };
+
+              /**
+               * 地图组件销毁时处理逻辑
+               */
+              scope.$on('$destroy', function () {
+                  scope.modal && scope.modal.remove();
+              });
+
+              var onLoadMapSuccessed = function () {
+
+                  try{
+
+                      // 创建百度地图
+                      var map = scope.map = buildMap(document.getElementById('map'), opts);
+                      map.scope = scope;
+
+                      // 添加导航栏
+                      addMapNavigation(map, BMAP_ANCHOR_BOTTOM_RIGHT);
+
+                      // 添加地图搜索框自动完成功能
+                      addMapAutoComplete(map, scope);
+
+                      // 设置地图可视区中心位置
+                      getCurrentPosition(map, opts).then(function (p) {
+                          // 记录当前位置并标记
+                          scope.currentPosition = p;
+
+                          var marker = addMapMarker(map, p, openInfoWindow, null);
+                          // 设置为中心
+                          map.centerAndZoom(p, 16);
+
+                          // 根据关键字检索百度相关位置数据和根据当前位置检索后台维护附近数据
+                          var bpSearchDeferred = babyPlanLocalSearch(p);
+                          var bdSearchDeferred = baiDuLocalSearch(map, opts.keywords);
+                          $q.all([bpSearchDeferred, bdSearchDeferred]).then(function (results) {
+
+                              // 缓存结果
+                              scope.baiDuSearchResults = results[1];
+                              scope.babyPlanSearchResults = results[0];
+
+                              // 对满足条件的位置进行标记，
+                              var point;
+                              for (var j = 0; j < results.length; j++) {
+                                  var result = results[j];
+                                  for (var i = 0; i < result.length; i++) {
+                                      point = new BMap.Point(result[i].Longitude, result[i].Latitude);
+                                      addMapMarker(map, point, openInfoWindow, result[i]);
+                                  }
+                              }
+
+                              // 把最后一个位置移动到地图中心
+                              // point && map.panTo(point)
+                          }, function (err) {
+                              //ionicToast.show('获取位置信息失败!', 'middle', false, 3000);
+                              MessageToaster.error("获取位置信息失败!");
+                          })
+                      })
+                  } catch (err) {
+                      alert("error" + err.message);
+                  }
+
+                  // 通知地图加载完成
+                  elm.triggerHandler('map-loaded', {
+                      bmap: map
+                  });
+              };
+
+              // 加载地图失败处理逻辑
+              var onLoadMapFailed = function () {
+                  opts.onMapLoadFailded();
+              };
+
+              // 加载地图
+              loadMap(opts.apiKey).then(onLoadMapSuccessed, onLoadMapFailed);
+          }
+      }
+  });
+}());
+
+(function() {
+    "use strict";
     angular.module('modules', [
         'LoginModule',
+        'WxLoginModule',
+        'childrenSteamModule',
         'registerModule',
         'tabsModule',
         'childrenModule',
@@ -639,66 +1447,129 @@ Date.prototype.Format = function(fmt) {
         'vipTipsModule',
         'commentModule',
         'exitModule',
-        'photoModule'
+        'photoModule',
+        'MapModule',
+        'eshopEntryModule'
     ]);
 
 }());
 
 (function() {
   "use strict";
-  angular.module('tools', [
-    
-  ]);
+  angular.module('tools', []).service('tools', tools);
+    function tools() {
+        'ngInject';
+
+        var tools = {
+            getAgent: getAgent
+        };
+
+        function getAgent() {
+           var browser = {
+               versions: function () {
+                   var u = navigator.userAgent,
+                       app = navigator.appVersion;
+                   return { //移动终端浏览器版本信息
+                       trident: u.indexOf('Trident') > -1, //IE内核
+                       presto: u.indexOf('Presto') > -1, //opera内核
+                       webKit: u.indexOf('AppleWebKit') > -1, //苹果、谷歌内核
+                       gecko: u.indexOf('Gecko') > -1 && u.indexOf('KHTML') == -1, //火狐内核
+                       mobile: !!u.match(/AppleWebKit.*Mobile.*/), //是否为移动终端
+                       ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
+                       android: u.indexOf('Android') > -1 || u.indexOf('Linux') > -1, //android终端或uc浏览器
+                       iPhone: u.indexOf('iPhone') > -1, //是否为iPhone或者QQHD浏览器
+                       iPad: u.indexOf('iPad') > -1, //是否iPad
+                       webApp: u.indexOf('Safari') == -1 //是否web应该程序，没有头部与底部
+                   };
+               }(),
+               language: (navigator.browserLanguage || navigator.language).toLowerCase()
+           };
+           if (browser.versions.mobile) {
+               var ua = navigator.userAgent.toLowerCase(); //获取判断用的对象
+               if (ua.match(/MicroMessenger/i) == "micromessenger") {
+                   return 'wx';
+               } else if (ua.match(/QQ/i) == "qq") {
+                   return 'qq';
+               } else
+                   return 'mobile';
+           } else {
+               return 'pc';
+           }
+       }
+
+      return tools;
+    };
 
 }());
 
 (function() {
     "use strict";
     angular.module('LoginModule', [
-        'WXLoginCtrl',
+        'LoginCtrl',
         'LoginRouter',
         'LoginService'
-    ]).run(function($rootScope, Session, StateService,$location) {
-        $rootScope.$on('$stateChangeStart', function(event, next) {
-          if (next.url.indexOf('wxlogin')>0 ) {
-              console.log("wxlogin");
-          }else if(next.url.indexOf('login')>0){
-              console.log("login");
-          }else if(next.url.indexOf('register')>0){
-              //未绑定用户者,进入注册绑定页面
-              console.log("register");
-          }else{
-            if (Session.userId && Session.token) {
-                //login successed
-            } else {
-                console.log("user not login with ");
-                event.preventDefault();
-                StateService.clearAllAndGo('wxlogin');
+    ])
+}());
+
+(function() {
+    "use strict";
+    angular.module('LoginCtrl', [])
+        .controller('LoginCtrl', function(Constants, AuthService, MessageToaster, LoginService, $timeout, $scope, Session, $stateParams, StateService, $ionicModal, Role,$http) {
+            'ngInject';
+
+            var vm = this;
+            vm.isDev = Constants.ENVIRONMENT == 'dev' ? true : false;
+            vm.type = '2';
+            $scope.$on('$ionicView.beforeEnter', validate);
+            vm.user={userId:18603070911,password:"82267049"}
+            function validate() {
+                if (Session.getData('userId') && Session.getData('token')) {
+                    //AuthService.setSession(response.data.uid, response.data.token, response.data.eshop, response.data.type);
+                    $http.defaults.headers.common.token = Session.getData('token');
+                    StateService.clearAllAndGo(AuthService.getNextPath());
+                }else{
+                    console.log("normal login");
+                }
             }
-          }
+
+            //WeuiModalLoading
+            vm.login=function(user){
+                //test
+                //AuthService.setSession('1', '123', '1');
+                //StateService.go(AuthService.getNextPath());
+                //test
+                if(user){
+                  LoginService.login(user.userId, user.password).then(function(response) {
+                      console.log(response);
+                      if(response.errno==0){
+                        //MessageToaster.success(response.message);
+                        AuthService.setSession(response.data.uid, response.data.token, response.data.eshop, response.data.type);
+                        StateService.clearAllAndGo(AuthService.getNextPath());
+                      }else{
+                        MessageToaster.error(response.error);
+                      }
+                  },
+                  function(error) {
+                    MessageToaster.error(error);
+                  }).finally(function() {
+                      //WeuiModalLoading.hide();
+                  });
+                }else{
+                    MessageToaster.error("请输入正确账号密码");
+                }
+            }
+
+            vm.visit = function() {
+              AuthService.setSession( '-1', '-1', '-1', '-1' );
+              StateService.clearAllAndGo(AuthService.getNextPath());
+            }
+
+            vm.register=function(){
+              StateService.clearAllAndGo("register",{type:vm.type});
+            }
+
+
         });
-        //alert($location.absUrl());
-        var url = $location.absUrl();
-        //获取ticket参数，因为angualr的路径不规范，会出现http://10.20.68.73:8080/casOauth/?ticket=ST-16-HzIjcAlxbKvlyJQAX2XI-cas01.sustc.edu.cn#/login，无法用公共方法获取
-        var start = url.indexOf('user=') + 5;
-        var end = url.indexOf('&type=');
-        //如果是http://10.20.68.73:8080/casOauth?ticket=ST-16-HzIjcAlxbKvlyJQAX2XI-cas01.sustc.edu.cn这种情况
-        //或者是是http://10.20.68.73:8080/casOauth/#/login?ticket=ST-16-HzIjcAlxbKvlyJQAX2XI-cas01.sustc.edu.cn这种情况
-        if (end == -1 || end < start) end = url.length;
-        console.log("login 1" + start + " - " + end);
-        var myUser = url.toString().substring(start, end);
-        console.log("get user = " + myUser);
-
-        var start = url.indexOf('&type=') + 6;
-        var end = url.indexOf('#/wxlogin');
-        if (end == -1 || end < start) end = url.length;
-        console.log("login 2" + start + " - " + end);
-        var myType = url.toString().substring(start, end);
-        console.log("get type = " + myType);
-
-        StateService.clearAllAndGo('wxlogin',{user:myUser,type:myType});
-    });
-
 }());
 
 (function() {
@@ -711,19 +1582,12 @@ Date.prototype.Format = function(fmt) {
   function LoginRouter($stateProvider,$urlRouterProvider) {
     'ngInject';
     $stateProvider
-    .state('wxlogin', {
-      url: "/wxlogin?:user&:type",
-      params:{
-        user:null,
-        type:0
-      },
-      templateUrl: 'Login/wxlogin.html',
-      controller: 'WXLoginCtrl',
+    .state('login', {
+      url: "/login",
+      templateUrl: 'Login/login.html',
+      controller: 'LoginCtrl',
       controllerAs: 'vm'
     });
-    // $urlRouterProvider.when('', '/wxlogin');
-    $urlRouterProvider.otherwise('/wxlogin');
-
   }
 }());
 
@@ -734,6 +1598,265 @@ Date.prototype.Format = function(fmt) {
         .factory('LoginService', LoginService);
 
     function LoginService($q, $http, ResultHandler, Constants) {
+        'ngInject';
+        var service = {
+            login: login,
+            logout: logout
+        };
+
+        function logout() {
+
+        }
+
+        function login(userId, password) {
+            var data = {
+                username: userId,
+                password: password,
+                type: 2
+            };
+            var url = Constants.serverUrl + 'parentLogin';
+            console.log(url);
+            return $http({
+                method: 'post',
+                url: url,
+                data: data
+            }).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
+        }
+
+        return service;
+
+
+    }
+
+}());
+
+(function() {
+    "use strict";
+    angular.module('WxLoginModule', [
+        'WxLoginCtrl',
+        'WxLoginRouter',
+        'WxLoginService'
+    ]).run(function($rootScope, Session, StateService,$location,tools) {
+        $rootScope.$on('$stateChangeStart', function(event, next) {
+          console.log("stateChangeStart");
+          console.log(next);
+
+          if (next.url.indexOf('wxlogin')>0 ) {
+              console.log("wxlogin");
+              //alert($location.absUrl());
+              var url = $location.absUrl();
+              //获取ticket参数，因为angualr的路径不规范，会出现http://10.20.68.73:8080/casOauth/?ticket=ST-16-HzIjcAlxbKvlyJQAX2XI-cas01.sustc.edu.cn#/login，无法用公共方法获取
+              var start = url.indexOf('user=') + 5;
+              var end = url.indexOf('&type=');
+              if(!start<=5 && end <= 0){
+                StateService.clearAllAndGo('login');
+              }else{
+                //如果是http://10.20.68.73:8080/casOauth?ticket=ST-16-HzIjcAlxbKvlyJQAX2XI-cas01.sustc.edu.cn这种情况
+                //或者是是http://10.20.68.73:8080/casOauth/#/login?ticket=ST-16-HzIjcAlxbKvlyJQAX2XI-cas01.sustc.edu.cn这种情况
+                if (end == -1 || end < start) end = url.length;
+                console.log("wxlogin 1" + start + " - " + end);
+                var myUser = url.toString().substring(start, end);
+                console.log("get user = " + myUser);
+
+                var start = url.indexOf('&type=') + 6;
+                var end = url.indexOf('#/wxlogin');
+                if (end == -1 || end < start) end = url.length;
+                console.log("wxlogin 2" + start + " - " + end);
+                var myType = url.toString().substring(start, end);
+                console.log("get type = " + myType);
+                StateService.clearAllAndGo('wxlogin',{user:myUser,type:myType});
+              }
+          }else if(next.url.indexOf('login')>0){
+              console.log("login");
+          }else if(next.url.indexOf('register')>0){
+              //未绑定用户者,进入注册绑定页面
+              console.log("register");
+          }else{
+            if (Session.getData('userId') && Session.getData('token')) {
+                //login successed
+            } else {
+                console.log("user not login with ");
+                event.preventDefault();
+                if (tools.getAgent() != 'wx')
+                    StateService.clearAllAndGo('login');
+                else
+                    StateService.clearAllAndGo('wxlogin');
+            }
+          }
+        });
+
+    });
+
+}());
+
+(function() {
+    "use strict";
+    angular.module('WxLoginCtrl', [])
+        .controller('WxLoginCtrl', function(Constants, AuthService, MessageToaster, LoginService, $timeout, $scope, Session, $stateParams, StateService, $ionicModal, Role) {
+            'ngInject';
+
+            var vm = this;
+            vm.wxlogin = wxlogin;
+            vm.isDev = Constants.ENVIRONMENT == 'dev' ? true : false;
+            $scope.$on('$ionicView.beforeEnter', validate);
+
+            function validate() {
+                vm.user = $stateParams.user;
+                vm.type = $stateParams.type;
+                console.log("vm.type = "+vm.type+" with "+vm.user);
+            /////////////////////////////////////////////////////////
+            //    vm.user = "o_Nkcw4CsZh5dbE2v8XVLUxfd96A";//"oVyGDuNPkAbtljfJKusP4oaCrYG0";//test
+            //    vm.type = 2;//test
+            ////////////////////////////////////////////////////////
+                //MessageToaster.info('user = '+vm.user);
+                if (vm.user) {
+                    //login failed
+                    //MessageToaster.info('logining....');
+                    vm.info = "正在登录，请稍后...";
+                    vm.showLoginModal = showLoginModal;
+                    //vm.roleList = [{type:1,user:'1111'}];//test
+                    vm.showChooseModal = showChooseModal;
+                    vm.login = login;
+                    vm.select = selectChoose;
+                    //获取到微信uid后先尝试登陆对应的用户类型
+                    if(vm.type){
+                        vm.wxlogin(vm.user,vm.type);
+                    }else{
+                        vm.showChooseModal();
+                    }
+                }
+            }
+
+            function wxlogin(userid,type) {
+                console.log(userid+"  type = "+type);
+                //MessageToaster.info('准备登录');
+                LoginService.wxLogin(userid,type).then(function(response) {
+                    console.log(response);
+                    if(response.errno==0) {
+                        var result = response.data;
+                        if (result instanceof Array && result.length > 1) {
+                            //modal select type
+                            vm.roleList=result;
+                            //MessageToaster.info("have select "+result.length);
+                            vm.showChooseModal();
+                        }else{
+                            var u=result[0];
+                            if (u.uid != null && u.token != null && u.type != null) {
+                                AuthService.setSession(u.uid, u.token, u.eshop, u.type,userid);
+                                StateService.clearAllAndGo(AuthService.getNextPath());
+                            }
+                        }
+                    }else{
+                        if(response.errno==12004){
+                            //no data found
+                            AuthService.setSession(null, null, null, Role.unknown,userid);
+
+                            StateService.clearAllAndGo("register",{type:vm.type});
+                        }
+                        //MessageToaster.error(response.error);
+                    }
+                });
+            };
+
+            //WeuiModalLoading
+            function login(user) {
+                //WeuiModalLoading.show();
+                //test
+                AuthService.setSession('1', '123', '1');
+                StateService.go(AuthService.getNextPath());
+                //test
+
+                LoginService.login(user.userId, user.password).then(function(response) {
+                    if (vm.modal)
+                        vm.closeDetailsModal();
+                    MessageToaster.success(response.message);
+                    AuthService.setSession(response.data.uid, response.data.token,response.data.eshop,response.data.type);
+                    StateService.clearAllAndGo(AuthService.getNextPath());
+                }).finally(function() {
+                    //WeuiModalLoading.hide();
+                });
+            }
+
+            function showLoginModal() {
+                $ionicModal.fromTemplateUrl('Login/LoginModal.html', {
+                    scope: $scope,
+                    animation: 'slide-in-up'
+                }).then(function(modal) {
+                    vm.modal = modal;
+                    vm.modal.show();
+                });
+
+                vm.closeDetailsModal = function() {
+                    vm.modal.remove();
+                };
+                $scope.$on('$ionicView.leave', function() {
+                    vm.modal.remove();
+                });
+            }
+
+            function showChooseModal() {
+                $ionicModal.fromTemplateUrl('Login/ChooseModal.html', {
+                    scope: $scope,
+                    animation: 'slide-in-up'
+                }).then(function(modal) {
+                    vm.cmodal = modal;
+                    vm.cmodal.show();
+                });
+
+                vm.closeChooseModal = function() {
+                    vm.cmodal.remove();
+                };
+                $scope.$on('$ionicView.leave', function() {
+                    vm.cmodal.remove();
+                });
+            }
+
+            function selectChoose(){
+                if(vm.choose!=null){
+                    //know user choose then login agin with type
+                    wxlogin(vm.user, vm.choose);
+                }
+            }
+        });
+}());
+
+(function() {
+  'use strict';
+
+  angular.module('WxLoginRouter', [])
+    .config(wxLoginRouter);
+
+
+  function wxLoginRouter($stateProvider,$urlRouterProvider) {
+    'ngInject';
+    $stateProvider
+    .state('wxlogin', {
+      url: "/wxlogin?:user&:type",
+      params:{
+        user:null,
+        type:0
+      },
+      templateUrl: 'WxLogin/wxlogin.html',
+      controller: 'WxLoginCtrl',
+      controllerAs: 'vm'
+    });
+    // $urlRouterProvider.when('', '/wxlogin');
+    //$urlRouterProvider.otherwise('/wxlogin');
+    $urlRouterProvider.otherwise(function($injector, $location) {
+          //console.log("Could not find " + $location);
+          $location.path('/wxlogin');
+    });
+
+  }
+}());
+
+(function() {
+    'use strict';
+
+    angular.module('WxLoginService', [])
+        .factory('WxLoginService', wxLoginService);
+
+    function wxLoginService($q, $http, ResultHandler, Constants) {
         'ngInject';
         var service = {
             login: login,
@@ -801,137 +1924,6 @@ Date.prototype.Format = function(fmt) {
 
     }
 
-}());
-
-(function() {
-    "use strict";
-    angular.module('WXLoginCtrl', [])
-        .controller('WXLoginCtrl', function(Constants, AuthService, MessageToaster, LoginService, $timeout, $scope, Session, $stateParams, StateService, $ionicModal, Role) {
-            'ngInject';
-
-            var vm = this;
-            vm.wxlogin = wxlogin;
-            vm.isDev = Constants.ENVIRONMENT == 'dev' ? true : false;
-            $scope.$on('$ionicView.beforeEnter', validate);
-
-            function validate() {
-                vm.user = $stateParams.user;
-                vm.type = $stateParams.type;
-                console.log("vm.type = "+vm.type+" with "+vm.user);
-            /////////////////////////////////////////////////////////
-            //    vm.user = "o_Nkcw4CsZh5dbE2v8XVLUxfd96A";//"oVyGDuNPkAbtljfJKusP4oaCrYG0";//test "o_Nkcw4CsZh5dbE2v8XVLUxfd96A";//
-            //    vm.type = 2;//test
-            ////////////////////////////////////////////////////////
-                //MessageToaster.info('user = '+vm.user);
-                if (vm.user) {
-                    //login failed
-                    //MessageToaster.info('logining....');
-                    vm.info = "正在登录，请稍后...";
-                    vm.showLoginModal = showLoginModal;
-                    //vm.roleList = [{type:1,user:'1111'}];//test
-                    vm.showChooseModal = showChooseModal;
-                    vm.login = login;
-                    vm.select = selectChoose;
-                    //获取到微信uid后先尝试登陆对应的用户类型
-                    if(vm.type){
-                        vm.wxlogin(vm.user,vm.type);
-                    }else{
-                        vm.showChooseModal();
-                    }
-                }
-            }
-
-            function wxlogin(userid,type) {
-                console.log(userid+"  type = "+type);
-                //MessageToaster.info('准备登录');
-                LoginService.wxLogin(userid,type).then(function(response) {
-                    console.log(response);
-                    if(response.errno==0) {
-                        var result = response.data;
-                        if (result instanceof Array && result.length > 1) {
-                            //modal select type
-                            vm.roleList=result;
-                            //MessageToaster.info("have select "+result.length);
-                            vm.showChooseModal();
-                        }else{
-                            var u=result[0];
-                            if (u.uid != null && u.token != null && u.type != null) {
-                                AuthService.setSession(u.uid, u.token, u.type,userid);
-                                StateService.clearAllAndGo(AuthService.getNextPath());
-                            }
-                        }
-                    }else{
-                        if(response.errno==12004){
-                            //no data found
-                            AuthService.setSession(null, null, Role.unknown,userid);
-
-                            StateService.clearAllAndGo("register",{type:vm.type});
-                        }
-                        //MessageToaster.error(response.error);
-                    }
-                });
-            };
-
-            //WeuiModalLoading
-            function login(user) {
-                //WeuiModalLoading.show();
-                //test
-                AuthService.setSession('1', '123', '1');
-                StateService.go(AuthService.getNextPath());
-                //test
-
-                LoginService.login(user.userId, user.password).then(function(response) {
-                    if (vm.modal)
-                        vm.closeDetailsModal();
-                    MessageToaster.success(response.message);
-                    AuthService.setSession(response.data.uid, response.data.token,response.data.type);
-                    StateService.clearAllAndGo(AuthService.getNextPath());
-                }).finally(function() {
-                    //WeuiModalLoading.hide();
-                });
-            }
-
-            function showLoginModal() {
-                $ionicModal.fromTemplateUrl('Login/LoginModal.html', {
-                    scope: $scope,
-                    animation: 'slide-in-up'
-                }).then(function(modal) {
-                    vm.modal = modal;
-                    vm.modal.show();
-                });
-
-                vm.closeDetailsModal = function() {
-                    vm.modal.remove();
-                };
-                $scope.$on('$ionicView.leave', function() {
-                    vm.modal.remove();
-                });
-            }
-
-            function showChooseModal() {
-                $ionicModal.fromTemplateUrl('Login/ChooseModal.html', {
-                    scope: $scope,
-                    animation: 'slide-in-up'
-                }).then(function(modal) {
-                    vm.cmodal = modal;
-                    vm.cmodal.show();
-                });
-
-                vm.closeChooseModal = function() {
-                    vm.cmodal.remove();
-                };
-                $scope.$on('$ionicView.leave', function() {
-                    vm.cmodal.remove();
-                });
-            }
-
-            function selectChoose(){
-                if(vm.choose!=null){
-                    //know user choose then login agin with type
-                    wxlogin(vm.user, vm.choose);
-                }
-            }
-        });
 }());
 
 (function() {
@@ -1040,7 +2032,7 @@ Date.prototype.Format = function(fmt) {
             };
 
             vm.goPhoto=function(msgIndex,index){
-                Session.temp=vm.msg[msgIndex];
+                Session.setData('temp',vm.msg[msgIndex]);
                 StateService.go("photo",{index:index});
             };
 
@@ -1176,238 +2168,6 @@ Date.prototype.Format = function(fmt) {
                 $scope.slideIndex = index;
             };
 
-        });
-}());
-
-(function() {
-    "use strict";
-    angular.module('childrenCtrl_old', [])
-        .controller('childrenCtrl_old', function($scope, Constants,childrenService,AuthService,Session, StateService,$ionicModal, $ionicSlideBoxDelegate) {
-            'ngInject';
-            console.log("childrenCtrl");
-            var vm = this;
-            vm.activated = false;
-            vm.parent={};
-            vm.fingerprintLogs=[];
-            vm.fingerprintLogSample=[];
-            vm.messages=[];
-
-            $scope.$on('$ionicView.afterEnter', activate);
-
-            function activate() {
-                vm.activated = true;
-                vm.version = Constants.buildID;
-                //从微信获取家长的基本信息
-                vm.getWechatInfo(AuthService.getWechatId());
-                //vm.parent.wechat={
-                //    "nickname": "Band",
-                //    "sex": 1,
-                //    "language": "zh_CN",
-                //    "city": "广州",
-                //    "province": "广东",
-                //    "country": "中国",
-                //    "headimgurl":  "http://wx.qlogo.cn/mmopen/g3MonUZtNHkdmzicIlibx6iaFqAc56vxLSUfpb6n5WKSYVY0ChQKkiaJSgQ1dZuTOgvLLrhJbERQQ4eMsv84eavHiaiceqxibJxCfHe/0"
-                //};
-                vm.getChildrenInfo(AuthService.getLoginID());
-
-                vm.getChildrenMsg(AuthService.getLoginID());
-
-                vm.getChildren();
-            };
-
-            vm.getChildrenInfo = function(pId){
-                childrenService.getChildrenSignIn(pId).then(function(data) {
-                    if (data.errno == 0) {
-                        console.log("getChildrenSignIn: ");
-                        console.log(data.data);
-                        vm.fingerprintLogs=data.data;
-                        for(var i=0;i<vm.fingerprintLogs.length;i++){
-                            vm.fingerprintLogSample[i]=vm.fingerprintLogs[i];
-                            if(i>=1){
-                                break;
-                            }
-                        }
-                        console.log(vm.fingerprintLogSample);
-                    }else{
-                        console.log(data);
-                    }
-                });
-            };
-            vm.getChildrenMsg = function(pId){
-                childrenService.getChildrenMsg(pId).then(function(data) {
-                    if (data.errno == 0) {
-                        console.log("getChildrenMsg: ");
-                        console.log(data.data);
-                        vm.msg = data.data;
-                    }
-                });
-            };
-
-            vm.getWechatInfo = function(wId){
-                console.log("wechat id : "+wId);
-                childrenService.getWechatInfo(wId).then(function(data) {
-                    if (data.errno == 0) {
-                        console.log("wechat info: ");
-                        console.log(data.data);
-                        vm.parent.wechat = data.data;
-                    }
-                });
-            };
-
-            vm.goPhoto=function(msgIndex,index){
-                Session.temp=vm.msg[msgIndex];
-                StateService.go("photo",{index:index});
-            };
-
-            // {childuid: "40000003", childname: "赵小萌", timeline: Array[1]}
-            //childname:"赵小萌"
-            //childuid:"40000003"
-            //timeline:Array[1]
-            //0:Object
-            //clickcount:"0"
-            //createtime:"2016-08-12 09:29:36"
-            //depositid:"10000001"
-            //description:null
-            //infoid:"1"
-            //infotype:null
-            //latitude:null
-            //longitude:null
-            //photolink1:"http://a"
-            //photolink2:"http://b"
-            //photolink3:null
-            //photolink4:null
-            //photolink5:null
-            //photolink6:null
-            //publisherid:"0"
-            //status:"1"
-            vm.getMsg = function(childId){
-                childrenService.getMsg(childId).then(function(data) {
-                    if (data.errno == 0) {
-                        console.log(data.data);
-                        vm.msg = data.data;
-                    }
-                });
-            };
-            vm.getChildSignIn = function(childId,name){
-                childrenService.getChildSignIn(childId).then(function(data) {
-                    if (data.errno == 0 ) {
-                        data.data.forEach(function(item){
-                            item.childId=childId;
-                            item.childName=name;
-                            vm.fingerprintLogs.push(item);
-                        });
-                    }
-                    console.log(JSON.stringify(vm.fingerprintLogs));
-                });
-            };
-
-            vm.getChildren = function(){
-                childrenService.getChildren(AuthService.getLoginID()).then(function(data) {
-                    var title="";
-                    if (data.errno == 0) {
-                        console.log(data.data);
-                        vm.childs = data.data;
-                        for(var i=0;i<vm.childs.length;i++){
-                            if(i==vm.childs.length-1)
-                                title+=(vm.childs[i].name+"的家长");
-                            else
-                                title+=(vm.childs[i].name+",");
-                            //vm.getMsg(vm.childs[i].uid);
-                            //vm.getChildSignIn(vm.childs[i].uid,vm.childs[i].name);
-                        }
-                        vm.parent.title=title;
-                    }
-                    //vm.fingerprintLogs.sort(function(a,b){return a.log-b.log});
-                });
-            };
-
-            vm.getImages=function(msg){
-                vm.imgCount=0;
-                if(msg.photolink1!=null && msg.photolink1!=""){
-                    var data={src:msg.photolink1,msg:''};
-                    vm.images[vm.imgCount]=data;
-                    vm.imgCount++;
-                }
-                if(msg.photolink2!=null && msg.photolink2!=""){
-                    var data={src:msg.photolink2,msg:''};
-                    vm.images[vm.imgCount]=data;
-                    vm.imgCount++;
-                }
-                if(msg.photolink3!=null && msg.photolink3!=""){
-                    var data={src:msg.photolink3,msg:''};
-                    vm.images[vm.imgCount]=data;
-                    vm.imgCount++;
-                }
-                if(msg.photolink4!=null && msg.photolink4!=""){
-                    var data={src:msg.photolink4,msg:''};
-                    vm.images[vm.imgCount]=data;
-                    vm.imgCount++;
-                }
-                if(msg.photolink5!=null && msg.photolink5!=""){
-                    var data={src:msg.photolink5,msg:''};
-                    vm.images[vm.imgCount]=data;
-                    vm.imgCount++;
-                }
-                if(msg.photolink6!=null && msg.photolink6!=""){
-                    var data={src:msg.photolink6,msg:''};
-                    vm.images[vm.imgCount]=data;
-                    vm.imgCount++;
-                }
-                console.log(vm.images);
-            };
-
-            $ionicModal.fromTemplateUrl('message/image-modal.html', {
-                scope: $scope,
-                animation: 'slide-in-up'
-            }).then(function(modal) {
-                $scope.modal = modal;
-            });
-
-            $scope.openModal = function() {
-                $ionicSlideBoxDelegate.slide(0);
-                $scope.modal.show();
-            };
-
-            $scope.closeModal = function() {
-                $scope.modal.hide();
-            };
-
-            // Cleanup the modal when we're done with it!
-            $scope.$on('$destroy', function() {
-                $scope.modal.remove();
-            });
-            // Execute action on hide modal
-            $scope.$on('modal.hide', function() {
-                // Execute action
-            });
-            // Execute action on remove modal
-            $scope.$on('modal.removed', function() {
-                // Execute action
-            });
-            $scope.$on('modal.shown', function() {
-                console.log('Modal is shown!');
-            });
-
-            // Call this functions if you need to manually control the slides
-            $scope.next = function() {
-                $ionicSlideBoxDelegate.next();
-            };
-
-            $scope.previous = function() {
-                $ionicSlideBoxDelegate.previous();
-            };
-
-            $scope.goToSlide = function(index,msg) {
-                vm.images=[];
-                vm.getImages(msg);
-                $scope.modal.show();
-                $ionicSlideBoxDelegate.slide(index);
-            };
-
-            // Called each time the slide changes
-            $scope.slideChanged = function(index) {
-                $scope.slideIndex = index;
-            };
         });
 }());
 
@@ -1666,7 +2426,7 @@ Date.prototype.Format = function(fmt) {
 
             vm.query = function(id){
                 console.log("child id = "+id);
-                vm.child=Session.temp;
+                vm.child=Session.getData('temp');
                 childrenSettingService.queryChild(id).then(function(data) {
                     if (data.errno == 0) {
                         console.log(data.data);
@@ -1758,63 +2518,6 @@ Date.prototype.Format = function(fmt) {
 }());
 
 (function() {
-    "use strict";
-    angular.module('childrenEditCtrl_old', [])
-        .controller('childrenEditCtrl_old', function($scope, $stateParams, Constants, StateService,childrenSettingService,AuthService,Session) {
-            'ngInject';
-            var vm = this;
-            vm.activated = false;
-
-            vm.query = function(id){
-                console.log("child id = "+id);
-                vm.child=Session.temp;
-            };
-
-            $scope.$on('$ionicView.afterEnter', activate);
-
-            function activate() {
-                console.log($stateParams);
-                vm.cid = $stateParams.cid;
-                //0:query 1:create 2:update
-                vm.type = $stateParams.type;
-                if(vm.type=='0')vm.isEditing = false;
-                else vm.isEditing = true;
-
-                vm.activated = true;
-                vm.version = Constants.buildID;
-
-                if(vm.type!='1')vm.query(vm.cid);
-                else vm.child = {name:'',sex:'',remark:'',relationship:''};
-            }
-
-            vm.back=function(){
-                StateService.back();
-            };
-
-            vm.save=function(){
-                //save
-                if(vm.type=='1'){
-                    //create
-                    childrenSettingService.registerChildren(vm.child,AuthService.getLoginID()).then(function(data) {
-                        if (data.errno == 0) {
-                            //var userId = data.data.uid;
-                            //wxlogin(vm.user.wechat);
-                            StateService.back();
-                        }
-                    });
-
-                }else{
-                    //update
-                    StateService.back();
-                }
-
-            };
-
-
-        });
-}());
-
-(function() {
   "use strict";
   angular.module('childrenSettingModule', [
     'childrenSettingCtrl',
@@ -1857,7 +2560,7 @@ Date.prototype.Format = function(fmt) {
             vm.goTo=function(id,child){
                 //查看孩子信息
                 $ionicListDelegate.closeOptionButtons();
-                Session.temp=child;
+                Session.setData('temp',child);
                 StateService.go('childrenEdit',{cid:id,type:0});
             };
 
@@ -1876,7 +2579,7 @@ Date.prototype.Format = function(fmt) {
             vm.editChild=function(id,child){
                 //编辑孩子信息
                 $ionicListDelegate.closeOptionButtons();
-                Session.temp=child;
+                Session.setData('temp',child);
                 StateService.go('childrenEdit',{cid:id,type:2});
             };
 
@@ -2051,6 +2754,626 @@ Date.prototype.Format = function(fmt) {
 
   }
 
+}());
+
+(function() {
+  "use strict";
+  angular.module('childrenSteamModule', [
+    'childrenSteamCtrl',
+    'childrenSteamRouter',
+    'childrenSteamService',
+    'videoCtrl'
+  ]);
+
+}());
+
+(function() {
+    "use strict";
+    angular.module('childrenSteamCtrl', [])
+        .controller('childrenSteamCtrl', function($scope, $sce,Constants,childrenService,childrenSteamService,AuthService,Session, StateService,$ionicModal, $ionicSlideBoxDelegate) {
+            'ngInject';
+            console.log("childrenSteamCtrl");
+            var vm = this;
+            vm.activated = false;
+            vm.parent={};
+            vm.deposits={};
+            vm.fingerprintLogs=[];
+            vm.messages=[];
+            vm.cameras=[];
+
+            vm.simpleFilter='';
+            vm.offset=[0,0,0];
+            vm.limit=30;
+            vm.canLoadMore=[true,true,true];
+            $scope.$on('$ionicView.afterEnter', activate);
+
+            function activate() {
+                vm.activated = true;
+                vm.version = Constants.buildID;
+                //从微信获取家长的基本信息
+                //vm.getWechatInfo(AuthService.getWechatId());
+                //vm.parent.wechat={
+                //    "nickname": "Band",
+                //    "sex": 1,
+                //    "language": "zh_CN",
+                //    "city": "广州",
+                //    "province": "广东",
+                //    "country": "中国",
+                //    "headimgurl":  "http://wx.qlogo.cn/mmopen/g3MonUZtNHkdmzicIlibx6iaFqAc56vxLSUfpb6n5WKSYVY0ChQKkiaJSgQ1dZuTOgvLLrhJbERQQ4eMsv84eavHiaiceqxibJxCfHe/0"
+                //};
+                //vm.getChildrenInfo(AuthService.getLoginID(),vm.offset,vm.limit);
+                //vm.getChildren();
+                vm.getChildrenDeposit();
+                var steam=Session.getData('steam');
+
+                if(steam===null){
+                  steam=1;
+                  console.log('steam = '+steam);
+                }
+                vm.changeSteam(steam);
+            };
+
+            vm.changeSteam = function(index){
+              Session.setData('steam',index);
+              if(index===0){
+                vm.showCamera=true;
+                vm.showFingerPrint=false;
+                vm.showNotificatin=false;
+                if(vm.cameras.length===0)vm.getCamera();
+              }else if(index===1){
+                vm.showCamera=false;
+                vm.showFingerPrint=true;
+                vm.showNotificatin=false;
+                console.log('fingerprintLogs = '+vm.fingerprintLogs);
+                if(vm.fingerprintLogs.length===0)vm.getFingerPrint(0,vm.limit);
+              }else if(index===2){
+                vm.showCamera=false;
+                vm.showFingerPrint=false;
+                vm.showNotificatin=true;
+                if(vm.messages.length===0)vm.getMessage(0,vm.limit);
+              }
+            };
+
+            vm.watchVideo = function(video,name){
+              video.deposit_name=name;
+              Session.setData('video',video);
+              StateService.go('video');
+            };
+
+            vm.getChildrenDeposit = function(){
+              childrenSteamService.getChildrenDeposit(AuthService.getLoginID()).then(function(data) {
+                  if (data.errno == 0) {
+                      console.log(data.data);
+                      vm.deposits=data.data;
+                  }
+              });
+            };
+
+            vm.getCamera = function(){
+              //获取摄像头信息
+              for(var i=0;i<vm.deposits.length;i++){
+                var id=vm.deposits[i].DepositID;
+                //get camera
+                if(id!=null){
+                  //console.log('http://v.zxing-tech.cn/?v='+id);
+                  //vm.cameraSrc = $sce.trustAsResourceUrl('http://v.zxing-tech.cn/?v='+id);
+                  childrenSteamService.getCamera(id).then(function(data) {
+                      vm.cameras[vm.cameras.length]=data.data;
+                  });
+                }
+              }
+            };
+
+            vm.getFingerPrint = function(offset,limit){
+              console.log("getFingerPrint");
+              childrenSteamService.getAllChildrenSignIn(AuthService.getLoginID(),offset,limit).then(function(data) {
+                  if (data.errno == 0) {
+                      console.log(data.data);
+                      if(vm.fingerprintLogs.length == 0)
+                          vm.fingerprintLogs=data.data;
+                      else
+                          vm.fingerprintLogs=vm.fingerprintLogs.concat(data.data);
+                      console.log(vm.fingerprintLogs);
+                      vm.offset[1]+=data.data.length;
+                      if(data.data.length < vm.limit){
+                          console.log("it is the last data");
+                          vm.canLoadMore[1] = false;
+                      }else{
+                          vm.canLoadMore[1] = true;
+                      }
+                      $scope.$broadcast('scroll.refreshComplete');
+                      $scope.$broadcast('scroll.infiniteScrollComplete');
+                  }else{
+                      console.log(data);
+                  }
+              });
+            };
+
+            vm.getMessage = function(offset,limit){
+              console.log("getMessage");
+              childrenSteamService.getAllChildrenMsg(AuthService.getLoginID(),offset,limit).then(function(data) {
+                  if (data.errno == 0) {
+                      console.log(data.data);
+                      var start=0;
+                      if(vm.messages.length == 0)
+                          vm.messages=data.data;
+                      else{
+                          start=vm.messages.length;
+                          vm.messages=vm.messages.concat(data.data);
+                        }
+                      console.log(vm.messages);
+                      //update comment
+                      for(var i=0;i<data.data.length;i++){
+                        //vm.messages[start+i]
+                        childrenSteamService.getDailyComment(vm.messages[start+i].InfoID,start+i).then(function(sdata) {
+                            if (data.errno == 0) {
+                                console.log("getDailyComment: ");
+                                console.log(sdata.data);
+                                var index=sdata.data.index;
+                                vm.messages[index].comments = sdata.data.comments;
+                                vm.messages[index].likes = sdata.data.likes;
+                            }
+                        });
+                      }
+                      vm.offset[2]+=data.data.length;
+                      if(data.data.length < vm.limit){
+                          console.log("it is the last data");
+                          vm.canLoadMore[2] = false;
+                      }else{
+                          vm.canLoadMore[2] = true;
+                      }
+                      $scope.$broadcast('scroll.refreshComplete');
+                      $scope.$broadcast('scroll.infiniteScrollComplete');
+                  }else{
+                      console.log(data);
+                  }
+              });
+            };
+
+            vm.doRefresh = function(type,offset){
+                if(index===0){
+                  vm.getCamera();
+                }else if(index===1){
+                  vm.getFingerPrint(offset,vm.limit);
+                }else if(index===2){
+                  vm.getMessage(offset,vm.limit);
+                }
+            };
+
+            vm.getChildrenInfo = function(pId,offset,limit){
+                childrenService.getChildrenAllInfo(pId,offset,limit).then(function(data) {
+                    if (data.errno == 0) {
+                        console.log("getChildrenAllInfo: ");
+                        console.log(data.data);
+                        if(vm.messages.length == 0)
+                            vm.messages=data.data;
+                        else
+                            vm.messages=vm.messages.concat(data.data);
+                        console.log(vm.messages);
+                        vm.offset+=data.data.length;
+                        if(data.data.length < vm.limit){
+                            console.log("it is the last data");
+                            vm.canLoadMore = false;
+                        }else{
+                            vm.canLoadMore = true;
+                        }
+                        $scope.$broadcast('scroll.refreshComplete');
+                        $scope.$broadcast('scroll.infiniteScrollComplete');
+                    }else{
+                        console.log(data);
+                    }
+                });
+            };
+
+            vm.getWechatInfo = function(wId){
+                console.log("wechat id : "+wId);
+                childrenService.getWechatInfo(wId).then(function(data) {
+                    if (data.errno == 0) {
+                        console.log("wechat info: ");
+                        console.log(data.data);
+                        vm.parent.wechat = data.data;
+                    }
+                });
+            };
+
+            vm.getImg = function(type){
+                if(type == 1){
+                    return {name:"就餐",src:"img/dinner.png"};
+                }else if(type == 2){
+                    return {name:"培训",src:"img/traning.png"};
+                }else if(type == 3){
+                    return {name:"活动",src:"img/play.png"};
+                }else if(type == 4){
+                    return {name:"作业",src:"img/homework.png"};
+                }else if(type == 5){
+                    return {name:"接入",src:"img/login.png"};
+                }else if(type == 6){
+                    return {name:"送到",src:"img/logout.png"};
+                }else{
+                    return {name:"未知信息类型",src:"img/unknown.png"};
+                }
+            };
+
+            vm.goPhoto=function(msgIndex,index){
+                Session.setData('temp',vm.msg[msgIndex]);
+                StateService.go("photo",{index:index});
+            };
+
+            vm.star = function(){
+                console.log("add star");
+            };
+
+            vm.like = function(info){
+              //如果已经like，去like
+              //没有like，加like
+            };
+
+            vm.comment = function(info){
+
+            };
+
+            vm.getChildren = function(){
+                childrenService.getChildren(AuthService.getLoginID()).then(function(data) {
+                    var title="";
+                    if (data.errno == 0) {
+                        console.log(data.data);
+                        vm.childs = data.data;
+                        for(var i=0;i<vm.childs.length;i++){
+                            if(i==vm.childs.length-1)
+                                title+=(vm.childs[i].name+"的家长");
+                            else
+                                title+=(vm.childs[i].name+",");
+                            //vm.getMsg(vm.childs[i].uid);
+                            //vm.getChildSignIn(vm.childs[i].uid,vm.childs[i].name);
+                        }
+                        vm.parent.title=title;
+                    }
+                    //vm.fingerprintLogs.sort(function(a,b){return a.log-b.log});
+                });
+            };
+
+            vm.change = function(){
+                if(vm.simpleFilterSelect==='-1'){
+                    vm.simpleFilter="";
+                }else if(vm.simpleFilterSelect==='0'){
+                    vm.simpleFilter={datatype:'2'};
+                }else if(vm.simpleFilterSelect==='1'){
+                    vm.simpleFilter={datatype:'1',InfoType:'1'};
+                }else if(vm.simpleFilterSelect==='2'){
+                    vm.simpleFilter={datatype:'1',InfoType:'2'};
+                }else if(vm.simpleFilterSelect==='3'){
+                    vm.simpleFilter={datatype:'1',InfoType:'3'};
+                }else if(vm.simpleFilterSelect==='4'){
+                    vm.simpleFilter={datatype:'1',InfoType:'4'};
+                }else if(vm.simpleFilterSelect==='5'){
+                    vm.simpleFilter={datatype:'1',InfoType:'5'};
+                }else if(vm.simpleFilterSelect==='6'){
+                    vm.simpleFilter={datatype:'1',InfoType:'6'};
+                }
+            };
+
+            vm.getImages=function(msg){
+                vm.imgCount=0;
+                if(msg.PhotoLink1!=null && msg.PhotoLink1!=""){
+                    var data={src:msg.PhotoLink1,msg:''};
+                    vm.images[vm.imgCount]=data;
+                    vm.imgCount++;
+                }
+                if(msg.PhotoLink2!=null && msg.PhotoLink2!=""){
+                    var data={src:msg.PhotoLink2,msg:''};
+                    vm.images[vm.imgCount]=data;
+                    vm.imgCount++;
+                }
+                if(msg.PhotoLink3!=null && msg.PhotoLink3!=""){
+                    var data={src:msg.PhotoLink3,msg:''};
+                    vm.images[vm.imgCount]=data;
+                    vm.imgCount++;
+                }
+                if(msg.PhotoLink4!=null && msg.PhotoLink4!=""){
+                    var data={src:msg.PhotoLink4,msg:''};
+                    vm.images[vm.imgCount]=data;
+                    vm.imgCount++;
+                }
+                if(msg.PhotoLink5!=null && msg.PhotoLink5!=""){
+                    var data={src:msg.PhotoLink5,msg:''};
+                    vm.images[vm.imgCount]=data;
+                    vm.imgCount++;
+                }
+                if(msg.PhotoLink6!=null && msg.PhotoLink6!=""){
+                    var data={src:msg.PhotoLink6,msg:''};
+                    vm.images[vm.imgCount]=data;
+                    vm.imgCount++;
+                }
+                console.log(vm.images);
+            };
+
+            $ionicModal.fromTemplateUrl('message/image-modal.html', {
+                scope: $scope,
+                animation: 'slide-in-up'
+            }).then(function(modal) {
+                $scope.modal = modal;
+            });
+
+            $scope.openModal = function() {
+                $ionicSlideBoxDelegate.slide(0);
+                $scope.modal.show();
+            };
+
+            $scope.closeModal = function() {
+                $scope.modal.hide();
+            };
+
+            // Cleanup the modal when we're done with it!
+            $scope.$on('$destroy', function() {
+                $scope.modal.remove();
+            });
+            // Execute action on hide modal
+            $scope.$on('modal.hide', function() {
+                // Execute action
+            });
+            // Execute action on remove modal
+            $scope.$on('modal.removed', function() {
+                // Execute action
+            });
+            $scope.$on('modal.shown', function() {
+                console.log('Modal is shown!');
+            });
+
+            // Call this functions if you need to manually control the slides
+            $scope.next = function() {
+                $ionicSlideBoxDelegate.next();
+            };
+
+            $scope.previous = function() {
+                $ionicSlideBoxDelegate.previous();
+            };
+
+            $scope.goToSlide = function(index,msg) {
+                vm.images=[];
+                vm.getImages(msg);
+                $scope.modal.show();
+                $ionicSlideBoxDelegate.slide(index);
+            };
+
+            // Called each time the slide changes
+            $scope.slideChanged = function(index) {
+                $scope.slideIndex = index;
+            };
+
+        });
+}());
+
+(function() {
+  'use strict';
+
+  angular.module('childrenSteamRouter', [])
+    .config(myRouter);
+
+
+  function myRouter($stateProvider, $urlRouterProvider) {
+    'ngInject';
+    $stateProvider
+      .state('tabs.childrenSteam', {
+        url: "/childrenSteam",
+          views: {
+            'tab-childrenSteam': {
+              templateUrl: 'childrenSteam/childrenSteam.html',
+              controller: 'childrenSteamCtrl',
+              controllerAs: 'vm'
+            }
+          }
+      })
+      .state('video', {
+        url: "/video",
+        templateUrl: 'childrenSteam/video.html',
+        controller: 'videoCtrl',
+        controllerAs: 'vm'
+      });
+  }
+}());
+
+(function() {
+  'use strict';
+
+  angular.module('childrenSteamService', [])
+    .factory('childrenSteamService', childrenSteamService);
+
+  function childrenSteamService( $q, $http,Constants,ResultHandler) {
+    'ngInject';
+    var service = {
+      getMsg:getMsg,
+      getChildrenMsg:getChildrenMsg,
+      getChildren:getChildren,
+      getChildSignIn:getChildSignIn,
+      getChildrenSignIn:getChildrenSignIn,
+      getWechatInfo:getWechatInfo,
+      getChildrenAllInfo:getChildrenAllInfo,
+      getAllChildrenSignIn:getAllChildrenSignIn,
+      getAllChildrenMsg:getAllChildrenMsg,
+      getChildrenDeposit:getChildrenDeposit,
+      getDailyComment:getDailyComment,
+      createDailyComment:createDailyComment,
+      delDailyComment:delDailyComment,
+      getCamera:getCamera
+    };
+
+    //字段名	类型	备注
+    //InfoID 	int64 	信息编号，自增即可
+    //PublisherID 	int64 	发布老师的账号
+    //DepositID 	int64 	托管机构账号
+    //Longitude 	float 	信息发布的位置经度
+    //Latitude 	float 	信息发布的位置纬度
+    //ClickCount 	int64 	总浏览次数
+    //InfoType 	int32 	信息类型（1：就餐；2：培训；3：活动；4：作业）
+    //Description 	varchar2 	老师的描述，不超出1000字
+    //PhotoLink1 	varchar2 	照片/视频1的信息
+    //PhotoLink2 	varchar2 	照片/视频2的信息
+    //PhotoLink3 	varchar2 	照片/视频3的信息
+    //PhotoLink4 	varchar2 	照片/视频4的信息
+    //PhotoLink5 	varchar2 	照片/视频5的信息
+    //PhotoLink6 	varchar2 	照片/视频6的信息
+    //Status	int	1:正常发布，2:撤回,
+    //CreateTime 	datetime 	创建时间
+
+
+    /*
+     GET /api/v1/children/information/{$childuid}
+     return
+     {
+     "errno":0,
+     "error":"",
+     "data":{
+     "childuid":41000001,
+     "childname":"xxx",
+     "childavatarlink":"http://xxxxxxx.jpg",
+     "timeline":[
+     {
+     "timestamp":1468051200,
+     "actiontype":0,
+     "actionname":"signin",
+     "actiondata":{}
+     },
+     {
+     "timestamp":146805200,
+     "actiontype":1,
+     "actionname":"dining",
+     "actiondata":{
+     "imgs":["http://xxxxxxxxxx1.jpg", "http://xxxxxxxxx2.jpg",...],
+     "desc":"孩子们愉快的享受着美味"
+     }
+     },
+     ]
+     "signin":1468051200,
+     "name":"yyy",
+     "avatarlink":"http://yyyyyyyyyyy.jpg",
+     }
+     ]
+     }
+     */
+    function getMsg(childId) {
+        var url = Constants.serverUrl + 'parent/children/information/'+childId;
+        return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
+    };
+
+    /*
+     GET /api/v1/parent/childrenlist/{$parentuid}
+     return
+     {
+     "errno":0,
+     "error":"",
+     "data":[
+     {
+     "uid":41000001,
+     "name":"xxx",
+     "avatarlink":"http://xxxxxxx.jpg",
+     },
+     {
+     "uid":41000002,
+     "name":"yyy",
+     "avatarlink":"http://yyyyyyyyyyy.jpg",
+     }
+     ]
+     }
+     */
+    function getChildren(parentId) {
+        var url = Constants.serverUrl + 'parent/childrenList/'+parentId;
+        return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
+    };
+
+    function getChildSignIn(childId) {
+        var url = Constants.serverUrl + 'parent/children/signin/'+childId;
+        return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
+    };
+
+    function getChildrenMsg(parentId) {
+        var url = Constants.serverUrl + 'parent/children/allInformation/'+parentId;
+        return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
+    };
+
+    function getChildrenSignIn(parentId) {
+        var url = Constants.serverUrl + 'parent/children/allSignin/'+parentId;
+        return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
+    };
+
+    function getAllChildrenSignIn(parentId,offset,count) {
+        var url = Constants.serverUrl + 'parent/children/fp/'+parentId+'?offset='+offset+'&limitcount='+count;
+        return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
+    };
+
+    function getAllChildrenMsg(parentId,offset,count){
+        var url = Constants.serverUrl + 'parent/children/msg/'+parentId+'?offset='+offset+'&limitcount='+count;
+        return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
+    };
+
+    function getChildrenAllInfo(parentId,offset,count){
+        var url = Constants.serverUrl + 'parent/childrenInformation/fetch/'+parentId+'?offset='+offset+'&limitcount='+count;
+        return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
+    };
+
+    function getWechatInfo(wid) {
+        var url = Constants.serverUrl + 'wechat/'+wid;
+        return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
+    };
+
+    function getChildrenDeposit(pid) {
+        var url = Constants.serverUrl + 'parent/children/deposit/'+pid;
+        return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
+    };
+
+    function getDailyComment(infoId,index) {
+        var url = Constants.serverUrl + 'dailyComment/'+infoId+'?index='+index;
+        return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
+    };
+
+    function createDailyComment(data) {
+        var url = Constants.serverUrl + 'dailyComment';
+        return $http({
+            method: 'post',
+            url: url,
+            data: data
+        }).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
+    };
+
+    function delDailyComment(id) {
+        var url = Constants.serverUrl + 'dailyComment/'+id;
+        return $http.delete(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
+    };
+
+    function getCamera(did){
+      //var url =  Constants.serverUrl +"cgi-bin/video.pl?did="+did;
+      var url =  Constants.serverUrl +"camera/"+did;
+      return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
+    };
+
+    return service;
+
+
+  }
+
+
+}());
+
+(function() {
+    "use strict";
+    angular.module('videoCtrl', [])
+        .controller('videoCtrl', function($scope, Session, StateService, Constants) {
+            'ngInject';
+
+            var vm = this;
+            vm.activated = false;
+
+            $scope.$on('$ionicView.afterEnter', activate);
+            function activate() {
+                vm.activated = true;
+                vm.version = Constants.buildID;
+                vm.video=Session.getData('video');
+                console.log(vm.video);
+            }
+
+            vm.back = function(){
+                StateService.back();
+            };
+        });
 }());
 
 (function() {
@@ -2237,6 +3560,58 @@ Date.prototype.Format = function(fmt) {
 
 (function() {
   "use strict";
+  angular.module('eshopEntryModule', [
+    'eshopEntryRouter',
+    'eshopEntryCtrl'
+  ]);
+
+}());
+
+(function() {
+    "use strict";
+    angular.module('eshopEntryCtrl', [])
+        .controller('eshopEntryCtrl', function($scope, $sce, Constants, $location, StateService) {
+            'ngInject';
+            window.location.href='./eshop/index.html';
+            
+            var vm = this;
+            vm.activated = false;
+            $scope.$on('$ionicView.afterEnter', activate);
+            function activate() {
+                vm.activated = true;
+                vm.version = Constants.buildID;
+                //vm.src = $sce.trustAsResourceUrl('./eshop/index.html');//iframe redirect
+                //$location.path("myEShop/index.html");
+                //$location.replace();
+            }
+        });
+}());
+
+(function() {
+  'use strict';
+
+  angular.module('eshopEntryRouter', [])
+    .config(myRouter);
+
+
+  function myRouter($stateProvider, $urlRouterProvider) {
+    'ngInject';
+    $stateProvider
+      .state('tabs.eshop', {
+        url: "/eshop",
+          views: {
+            'tab-eshop': {
+              templateUrl: 'eshop/eshopEntry.html',
+              controller: 'eshopEntryCtrl',
+              controllerAs: 'vm'
+            }
+          }
+      });
+  }
+}());
+
+(function() {
+  "use strict";
   angular.module('exitModule', [
     'exitCtrl',
     'exitRouter',
@@ -2338,6 +3713,86 @@ Date.prototype.Format = function(fmt) {
 }());
 
 (function() {
+    "use strict";
+    angular.module('MapCtrl', [])
+        .controller('MapCtrl', function($scope, $state, Constants, StateService, $ionicModal, $window,BaiduService) {
+            'ngInject';
+            var vm = this;
+            vm.activated = false;
+            $scope.$on('$ionicView.afterEnter', activate);
+            $scope.mapOpts = {
+                apiKey: '7482d6d695c8d7d8dccca6d5de410704',
+                //center: {longitude:113.271,latitude:23.1353},
+                keywords: ['托管'],
+                zoom: 16,
+                onMapLoadFailded: function () {
+                    //ionicToast.show('地图加载失败!', 'middle', false, 3000)
+                    console.log('地图加载失败');
+                }
+            };
+            function activate() {
+                vm.activated = true;
+                vm.version = Constants.buildID;
+            }
+
+            vm.goTo = function(addr){
+                console.log(addr);
+                StateService.go(addr);
+            };
+
+        });
+}());
+
+(function() {
+  'use strict';
+
+  angular.module('MapRouter', [])
+    .config(MapRouter);
+
+
+  function MapRouter($stateProvider,$urlRouterProvider) {
+    'ngInject';
+    $stateProvider
+    .state('tabs.map', {
+      url: "/map",
+      views: {
+        'tab-map': {
+          templateUrl: 'map/map.html',
+          controller: 'MapCtrl',
+          controllerAs: 'vm'
+        }
+      }
+    });
+  }
+}());
+
+(function() {
+  'use strict';
+
+  angular.module('MapService', [])
+    .factory('MapService', mapService);
+
+  function mapService( $q, $http) {
+    'ngInject';
+    var service = {
+    };
+    return service;
+
+
+  }
+
+}());
+
+(function() {
+    "use strict";
+    angular.module('MapModule', [
+        'MapCtrl',
+        'MapRouter',
+        'MapService'
+    ])
+}());
+
+(function() {
   "use strict";
   angular.module('messageModule', [
     'messageCtrl',
@@ -2367,7 +3822,7 @@ Date.prototype.Format = function(fmt) {
             }
 
             vm.goPhoto=function(msgIndex,index){
-                Session.temp=vm.msg[msgIndex];
+                Session.setData('temp',vm.msg[msgIndex]);
                 StateService.go("photo",{index:index});
             };
 
@@ -2536,7 +3991,6 @@ Date.prototype.Format = function(fmt) {
     function postPhoto(data){
       var fd = new FormData();
       fd.append('file', data);
-      //var url = "http://zssys.sustc.edu.cn/testApi/" + 'upload1';
       var url = Constants.dfsUrl + 'upload';
       console.log(fd);
       return $http({
@@ -2851,7 +4305,7 @@ Date.prototype.Format = function(fmt) {
 (function() {
     "use strict";
     angular.module('nearbyCtrl', [])
-        .controller('nearbyCtrl', function($scope, Constants,nearbyService,MessageToaster,StateService,Session,CacheData) {
+        .controller('nearbyCtrl', function($scope, Constants,nearbyService,MessageToaster,StateService,CacheData) {
             'ngInject';
 
             var vm = this;
@@ -2860,7 +4314,7 @@ Date.prototype.Format = function(fmt) {
             vm.point = null;
             vm.city = 'shenzhen';
             vm.show=false;
-            vm.distance = 5000000;
+            vm.distance = 5000;
             vm.changeName = '列表';
             $scope.temp={mine:null,baidu:null};
             vm.list=[];
@@ -3087,7 +4541,6 @@ Date.prototype.Format = function(fmt) {
             vm.goto=function(item){
                 if(item.AccountID.length!=8){
                     MessageToaster.error("暂不提供此信息");
-                    //StateService.go('depositComment',{id:item.AccountID});
                 }else {
                     CacheData.putObject(item.AccountID, item);
                     StateService.go('nearbyDepositInfo', {id: item.AccountID});
@@ -3192,7 +4645,7 @@ Date.prototype.Format = function(fmt) {
 (function() {
     "use strict";
     angular.module('nearbyListCtrl', [])
-        .controller('nearbyListCtrl', function($scope, Constants,nearbyService,StateService,Session,CacheData) {
+        .controller('nearbyListCtrl', function($scope, Constants,nearbyService,StateService,CacheData) {
             'ngInject';
             var vm = this;
             vm.activated = false;
@@ -3241,7 +4694,6 @@ Date.prototype.Format = function(fmt) {
             };
 
             vm.goto=function(item){
-                //Session.temp=item;
                 CacheData.putObject(item.AccountID,item);
                 StateService.go('nearbyDepositInfo',{id:item.AccountID});
             };
@@ -3929,7 +5381,7 @@ Date.prototype.Format = function(fmt) {
             function activate() {
                 vm.activated = true;
                 vm.version = Constants.buildID;
-                vm.msg=Session.temp;
+                vm.msg=Session.getData('temp');
                 vm.images=[];
                 vm.imgCount=0;
                 if(vm.msg.photolink1!=null && vm.msg.photolink1!=""){
@@ -4218,7 +5670,7 @@ Date.prototype.Format = function(fmt) {
                             console.log(result[0]);
                             if (result[0].uid != null && result[0].token != null && result[0].type != null) {
                                 console.log("goto next");
-                                AuthService.setSession(result[0].uid, result[0].token, result[0].type, userid);
+                                AuthService.setSession(result[0].uid, result[0].token, result[0].eshop, result[0].type, userid);
                                 StateService.clearAllAndGo(AuthService.getNextPath());
                             }
                         }
@@ -4524,51 +5976,9 @@ Date.prototype.Format = function(fmt) {
     function tabsService($q, $http) {
         'ngInject';
         var service = {
-            getHomeOptions: getHomeOptions,
-            getSlideBoxImgs: getSlideBoxImgs
+
         };
 
-        function getHomeOptions() {
-            return [{
-                label: '填写信息',
-                iconSrc: 'img/home_icon1.png',
-                state: 'PersonalDetails',
-                textColor:"#DC5858"
-            }, {
-                label: '到校方式',
-                iconSrc: 'img/home_icon2.png',
-                state: 'PersonalDetails',
-                textColor:"#5976DF"
-            }, {
-                label: '新生报到',
-                iconSrc: 'img/home_icon3.png',
-                state: 'Register',
-                textColor:"#27CAD4"
-            }, {
-                label: '修改密码',
-                iconSrc: 'img/home_icon4.png',
-                state: 'ModifyPsw',
-                textColor:"#DC75E0"
-            }, {
-                label: '关于应用',
-                iconSrc: 'img/home_icon5.png',
-                state: 'About',
-                textColor:"#75E084"
-            }]
-        }
-
-        function getSlideBoxImgs() {
-            return [{
-                index: 0,
-                src: "img/home_bg1.png"
-            }, {
-                index: 1,
-                src: "img/home_bg2.png"
-            }, {
-                index: 2,
-                src: "img/home_bg3.png"
-            }];
-        }
         return service;
 
 
@@ -4953,14 +6363,15 @@ Date.prototype.Format = function(fmt) {
 
             vm.query = function(id){
                 console.log(" index = "+id);
-                if(Session.temp.businessid == id)
-                    vm.item=Session.temp;
+                var temp=Session.getData('temp');
+                if(temp.businessid == id)
+                    vm.item=temp;
 
             };
 
             vm.back = function(){
                 StateService.back();
-                Session.temp = null;
+                Session.rmData('temp');
             };
 
             vm.getEndDate = function(payTime,numOfDays){
@@ -5084,7 +6495,7 @@ Date.prototype.Format = function(fmt) {
 
             vm.gotoBuy = function(){
                 var where = vm.menu[vm.isSelected];
-                Session.temp=where;
+                Session.setData('temp',where);
                 StateService.go('buy',{index:where.businessid});
             };
 
@@ -5220,14 +6631,15 @@ Date.prototype.Format = function(fmt) {
 
             vm.query = function(id){
                 console.log(" index = "+id);
-                if(Session.temp.OrderID == id)
-                    vm.item=Session.temp;
+                var temp=Session.getData('temp');
+                if(temp.OrderID == id)
+                    vm.item=temp;
 
             };
 
             vm.back = function(){
                 StateService.back();
-                Session.temp = null;
+                Session.rmData('temp');
             };
 
 
@@ -5266,7 +6678,7 @@ Date.prototype.Format = function(fmt) {
             };
 
             vm.goTo=function(id,item){
-                Session.temp=item;
+                Session.setData('temp',item);
                 StateService.go('record',{index:id});
             };
 

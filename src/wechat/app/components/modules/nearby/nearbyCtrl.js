@@ -1,7 +1,7 @@
 (function() {
     "use strict";
     angular.module('nearbyCtrl', [])
-        .controller('nearbyCtrl', function($scope, Constants,nearbyService,MessageToaster,StateService,Session,CacheData) {
+        .controller('nearbyCtrl', function($scope, Constants,nearbyService,MessageToaster,StateService,CacheData) {
             'ngInject';
 
             var vm = this;

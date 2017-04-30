@@ -3,7 +3,7 @@ var runSequence = require('run-sequence');
 var paths = require('./gulp/path.js');
 
 
-gulp.task('default', ['sass', 'scripts', 'environmentConfig', 'images', 'templateCache', 'indexHtml', 'bowerMerge']);
+gulp.task('default', ['sass', 'scripts', 'environmentConfig', 'images', 'eshop', 'templateCache', 'indexHtml', 'bowerMerge']);
 
 gulp.task('watch', function() {
     gulp.watch(paths.sass, function() {
@@ -17,6 +17,9 @@ gulp.task('watch', function() {
     });
     gulp.watch(paths.images, function() {
         runSequence('images');
+    });
+    gulp.watch(paths.eshop, function() {
+        runSequence('eshop');
     });
     gulp.watch(paths.javascript, function() {
         runSequence('scripts');

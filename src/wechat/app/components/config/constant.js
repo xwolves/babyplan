@@ -2,12 +2,13 @@
     "use strict";
     angular.module('constant', [])
         .constant('Path',{
-            'ParentRolePath':'tabs.children',
+            'ParentRolePath':'tabs.childrenSteam',
             'OrganizerRolePath':'tabs.organizer',
-            'TeacherRolePath':'tabs.message'
+            'TeacherRolePath':'tabs.message',
+            'VisitorRolePath':'tabs.nearby'
         })
         .constant('Role',{
-            'unknown':'-1',
+            'visitor':'-1',
             'Organizer':'1',
             'Parent':'2',
             'Teacher':'3',

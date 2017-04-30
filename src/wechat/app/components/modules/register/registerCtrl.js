@@ -111,7 +111,7 @@
                             console.log(result[0]);
                             if (result[0].uid != null && result[0].token != null && result[0].type != null) {
                                 console.log("goto next");
-                                AuthService.setSession(result[0].uid, result[0].token, result[0].type, userid);
+                                AuthService.setSession(result[0].uid, result[0].token, result[0].eshop, result[0].type, userid);
                                 StateService.clearAllAndGo(AuthService.getNextPath());
                             }
                         }

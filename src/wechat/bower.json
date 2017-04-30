@@ -13,6 +13,7 @@
     "ionic-calendar":"*",
     "AngularJS-Toaster": "^2.0.0",
     "angular-baidu-map":"^2.1.0",
+    "video.js":"*",
     "ionic-weui": "https://github.com/jarden-liu/ionic-weui.git"
   }
 }

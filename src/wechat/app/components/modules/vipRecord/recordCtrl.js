@@ -21,14 +21,15 @@
 
             vm.query = function(id){
                 console.log(" index = "+id);
-                if(Session.temp.OrderID == id)
-                    vm.item=Session.temp;
+                var temp=Session.getData('temp');
+                if(temp.OrderID == id)
+                    vm.item=temp;
 
             };
 
             vm.back = function(){
                 StateService.back();
-                Session.temp = null;
+                Session.rmData('temp');
             };
 
 

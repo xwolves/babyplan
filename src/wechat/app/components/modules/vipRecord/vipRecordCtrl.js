@@ -19,7 +19,7 @@
             };
 
             vm.goTo=function(id,item){
-                Session.temp=item;
+                Session.setData('temp',item);
                 StateService.go('record',{index:id});
             };
 
