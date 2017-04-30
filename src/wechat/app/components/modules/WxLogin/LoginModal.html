@@ -1,0 +1,25 @@
+<ion-modal-view>
+    <ion-header-bar class="bar-positive">
+        <h1 class="title">登陆</h1>
+        <!-- <button class="button" style="padding-right: 12px" ng-click="vm.closeDetailsModal()"><span class="icon ion-close"></span></button> -->
+        <button class="button icon ion-close" ng-click="vm.closeDetailsModal()"></button>
+
+    </ion-header-bar>
+    <ion-content>
+        <form id="loginForm" name="loginForm" >
+            <div class="list">
+                <label class="item item-input">
+                    <span class="input-label">学号</span>
+                    <input required type="number" ng-model="vm.user.userId">
+                </label>
+                <label class="item item-input">
+                    <span class="input-label">密码</span>
+                    <input required type="password" ng-model="vm.user.password">
+                </label>
+                <div class="padding" style="margin-top:20px">
+                    <button ng-disabled="loginForm.$invalid" ng-click="vm.login(vm.user)" class="button button-block button-small button-positive">登录</button>
+                </div>
+            </div>
+        </form>
+    </ion-content>
+</ion-modal-view>

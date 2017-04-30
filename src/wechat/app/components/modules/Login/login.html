@@ -1,0 +1,30 @@
+<ion-view view-title="托管系统">
+    <ion-content>
+
+            <div class="weui_icon_area" style="text-align:center;">
+                <img ng-src="img/title.png" />
+            </div>
+            <form id="loginForm" name="loginForm" >
+                <div class="list">
+                    <label class="item item-input">
+                        <span class="input-label">帐号</span>
+                        <input required type="number" ng-model="vm.user.userId">
+                    </label>
+                    <label class="item item-input">
+                        <span class="input-label">密码</span>
+                        <input required type="password" ng-model="vm.user.password">
+                    </label>
+                    <!-- <div>角色选择。。。</div> -->
+                    <div class="padding">
+                        <button ng-click="vm.login(vm.user)" class="button button-block button-small button-positive">登    录</button>
+                          <button ng-click="vm.visit()" class="button button-block button-small button-positive">游客浏览</button>
+                          <button ng-click="vm.register()" class="button button-block button-small button-positive">&nbsp;&nbsp;注&nbsp;&nbsp;&nbsp;&nbsp;册&nbsp;&nbsp;</button>
+                    </div>
+
+
+
+                </div>
+            </form>
+
+    </ion-content>
+</ion-view>

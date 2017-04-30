@@ -1,0 +1,54 @@
+<div class="mech">
+    <!--机构地图模式-->
+    <div class="mech-map" ng-show="currMode==MAP_MODES.MAP_SHOW || currMode==MAP_MODES.MAP_SEARCH">
+        <!--地图模式搜索栏-->
+        <div class="bar bar-header item-input-inset mech-map-searchbar">
+            <label class="item-input-wrapper">
+                <i class="icon ion-ios-search placeholder-icon"></i>
+                <input id="mech-map-searchbox" type="search" ng-model="keyword1" placeholder="搜索" ng-focus="switchMode(MAP_MODES.MAP_SEARCH)" ng-blur="switchMode(MAP_MODES.MAP_SHOW)" />
+            </label>
+            <button class="button button-icon icon ion-navicon" ng-class="{'ion-navicon':currMode==MAP_MODES.MAP_SHOW,'ion-ios-search':currMode==MAP_MODES.MAP_SEARCH}" ng-click="switchMode()"></button>
+        </div>
+        <!--地图展示容器-->
+        <div id="map" style="height:100%;"> </div>
+        <button class="map-location-btn icon ion-pinpoint" ng-click="locationCurrent()"></button>
+    </div>
+    <!--地图列表模式-->
+    <div class="mech-list" ng-show="currMode==MAP_MODES.LIST_SHOW || currMode==MAP_MODES.LIST_SEARCH ">
+        <!--列表模式下搜索栏展示-->
+        <div class="bar bar-header item-input-inset mech-list-searchbar">
+            <button class="button button-icon icon ion-ios-arrow-back" ng-click="backToMapView()"></button>
+            <label class="item-input-wrapper">
+                <i class="icon ion-ios-search placeholder-icon"></i>
+                <input id="mech-list-searchbox" ng-model="keyword2" type="search" placeholder="搜索" ng-focus="switchMode(MAP_MODES.LIST_SEARCH)" ng-blur="switchMode(MAP_MODES.LIST_SHOW)">
+            </label>
+            <button class="button button-icon icon ion-location" ng-class="{'ion-location':currMode==MAP_MODES.LIST_SHOW,'ion-ios-search':currMode==MAP_MODES.LIST_SEARCH}" ng-click="switchMode()"></button>
+        </div>
+        <div class="list card">
+            <!--百度搜索结果展示列表-->
+            <div class="item" ng-repeat="u in baiDuSearchResults">
+                <span class="item-note">
+                    {{u.Dist | formatDist}}
+                </span>
+                <h2>{{u.OrgName}}</h2>
+                <p>{{u.Address}}</p>
+                <div class="button-bar">
+                    <a class="button button-small ion-ios-navigate-outline" ng-click="location(u)">位置</a>
+                    <a class="button button-small ion-ios-telephone-outline" ng-click="dial(u.Tel)" ng-disabled="!u.Tel">电话</a>
+                </div>
+            </div>
+            <!--本地后台数据展示列表-->
+            <div class="item" ng-repeat="u in babyPlanSearchResults">
+                <span class="item-note">
+                    {{u.Dist | formatDist}}
+                </span>
+                <h2>{{u.OrgName}}</h2>
+                <p>{{u.Address}}</p>
+                <div class="button-bar">
+                    <a class="button button-small ion-ios-navigate-outline" ng-click="location(u)">位置</a>
+                    <a class="button button-small ion-ios-eye-outline" ng-click="openDepositInfoForm(u)">详情</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

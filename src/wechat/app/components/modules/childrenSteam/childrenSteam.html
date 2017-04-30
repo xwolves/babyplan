@@ -1,0 +1,168 @@
+<ion-view view-title="托管中心">
+    <ion-content>
+        <div align="center">
+            <button class="button-icon" style="margin-left:10px;margin-right:30px;" ng-click="vm.changeSteam(0)"><img src="./img/steam_camera.PNG" width="32" height="32"><div>监控</div></button>
+            <button class="button-icon" style="margin-left:30px;margin-right:30px;" ng-click="vm.changeSteam(1)"><img src="./img/steam_fingerprint.PNG" width="32" height="32"><div>指纹</div></button>
+            <button class="button-icon" style="margin-left:30px;margin-right:10px;" ng-click="vm.changeSteam(2)"><img src="./img/steam_notifcation.PNG" width="32" height="32"><div>动态</div></button>
+        </div>
+        <hr>
+        <ion-refresher pulling-text="刷新信息" on-refresh="vm.doRefresh(1,0)"></ion-refresher>
+
+        <!-- 监控 -->
+
+        <!-- {"deposit_id":"10000001","deposit_name":"鍗楃澶�","vedio_list":[{"rtmp_src":"rtmp://v.zxing-tech.cn/10000001/106","hls_src":"http://v.zxing-tech.cn/10000001/106.m3u8","room_name":null,"room_id":"106","poster":"http://v.zxing-tech.cn/10000001/106-poster-003.png"}]} -->
+        <div ng-show="vm.showCamera">
+            <!-- <iframe data-tap-disabled="true" style="height:100%;width:100%;" ng-src="{{vm.cameraSrc}}"></iframe> -->
+            <div  ng-repeat="item in vm.cameras">
+              <p>{{item.deposit_name}}</p>
+              <div ng-repeat="c in item.vedio_list  track by $index" style="float:left;">
+                <button class="button-icon" style="margin-left:10px;margin-right:30px;"  ng-click="vm.watchVideo(c,item.deposit_name)"><img ng-src="{{c.poster}}" width="160" height="100">
+                  <div>{{c.room_name!=null?c.room_name:c.room_id}}</div>
+                </button>
+              </div>
+              <!-- <div class="row" ng-if="item.vedio_list.length>0">
+                <div class="col col-33">
+                  <button class="button-icon" style="margin-left:10px;margin-right:30px;"  ng-click="vm.watchVideo(item.vedio_list[0],item.deposit_name)"><img ng-src="{{item.vedio_list[0].poster}}" width="120" height="80">
+                    <div>{{item.vedio_list[0].room_name!=null?item.vedio_list[0].room_name:item.vedio_list[0].room_id}}</div>
+                  </button>
+                </div>
+                <div class="col col-33" ng-if="item.vedio_list.length>1"><button class="button-icon" style="margin-left:10px;margin-right:30px;" ng-click="vm.changeSteam(1)"><img src="./img/camera.png" width="70" height="80"><div>监控2</div></button></div>
+                <div class="col col-33" ng-if="item.vedio_list.length>2"><button class="button-icon" style="margin-left:10px;margin-right:30px;" ng-click="vm.changeSteam(1)"><img src="./img/camera.png" width="70" height="80"><div>监控3</div></button></div>
+              </div>
+              <div class="row" ng-if="item.vedio_list.length>3">
+                <div class="col col-33"><button class="button-icon" style="margin-left:10px;margin-right:30px;" ng-click="vm.changeSteam(1)"><img src="./img/camera.png" width="70" height="80"><div>监控1</div></button></div>
+                <div class="col col-33" ng-if="item.vedio_list.length>4"><button class="button-icon" style="margin-left:10px;margin-right:30px;" ng-click="vm.changeSteam(1)"><img src="./img/camera.png" width="70" height="80"><div>监控2</div></button></div>
+                <div class="col col-33" ng-if="item.vedio_list.length>5"><button class="button-icon" style="margin-left:10px;margin-right:30px;" ng-click="vm.changeSteam(1)"><img src="./img/camera.png" width="70" height="80"><div>监控3</div></button></div>
+              </div>
+              <div class="row" ng-if="item.vedio_list.length>6">
+                <div class="col col-33"><button class="button-icon" style="margin-left:10px;margin-right:30px;" ng-click="vm.changeSteam(1)"><img src="./img/camera.png" width="70" height="80"><div>监控1</div></button></div>
+                <div class="col col-33" ng-if="item.vedio_list.length>7"><button class="button-icon" style="margin-left:10px;margin-right:30px;" ng-click="vm.changeSteam(1)"><img src="./img/camera.png" width="70" height="80"><div>监控2</div></button></div>
+                <div class="col col-33" ng-if="item.vedio_list.length>8"><button class="button-icon" style="margin-left:10px;margin-right:30px;" ng-click="vm.changeSteam(1)"><img src="./img/camera.png" width="70" height="80"><div>监控3</div></button></div>
+              </div> -->
+            </div>
+        </div>
+
+        <!-- 指纹 -->
+        <div ng-show="vm.showFingerPrint">
+
+          <div class="msg_flow" ng-repeat="item in vm.fingerprintLogs track by $index">
+                  <div class="row" style="margin-top: 0px;padding-top: 0px;margin-bottom: 0px;padding-bottom: 0px;">
+                        <div class="col col-20" style="padding-top:18px;">
+                            <img ng-src="{{item.DepositPhoto|ImageMin}}" alt="机构前台图像" >
+                        </div>
+
+                        <div class="col col-80">
+                            <div class="row">
+                                <div class="col col-80" style="text-align:left;font-weight:bold;">
+                                    <font color="blue">{{item.Deposit}}&nbsp;&nbsp;<span>{{item.SignInTime|dateChange}}</span></font>
+                                </div>
+                                <div class="col col-20">
+                                    <img src="./img/finger.png" height="20px" alt="指纹记录" >
+                                </div>
+                            </div>
+                            <div ng-if="item.Mode!=2">
+                              你的孩子{{item.Name}}今天平安到达{{item.Deposit}}，打卡时间为{{item.SignInTime}},请放心。
+                              你也可以通过监控实时观看你孩子的动态喔！
+                            </div>
+                            <div ng-if="item.Mode==2">
+                              你的孩子{{item.Name}}今天已离开{{item.Deposit}}，打卡时间为{{item.SignInTime}}。
+                            </div>
+                          <div ng-if="item.PhotoLink">
+                              <img ng-src="{{item.PhotoLink|changeSize:'120x70'}}" alt="指纹记录" >
+                          </div>
+                        </div>
+                  </div>
+                  <hr>
+            </div>
+
+
+            </div>
+
+        </div>
+
+        <!-- 动态 -->
+        <div ng-show="vm.showNotificatin">
+          <div class="msg_flow" ng-repeat="item in vm.messages track by $index">
+                  <div class="row" style="margin-top: 0px;padding-top: 0px;margin-bottom: 0px;padding-bottom: 0px;">
+                      <div class="col col-20" style="padding-top:18px;">
+                          <img ng-if="!item.teacherPhoto" src='/img/teacher.png' height="60px">
+                          <img ng-if="item.teacherPhoto" ng-src="{{item.teacherPhoto|ImageMin}}" alt="老师图像">
+                      </div>
+                      <div class="col col-80">
+                          <div class="row">
+                            <div class="col col-80" style="text-align:left;font-weight:bold;">
+                              <font color="blue">{{item.teacherName}}&nbsp;&nbsp;<span>{{item.CreateTime|dateChange}}</span></font>
+                            </div>
+                            <div class="col col-20">
+                                <img ng-src="{{vm.getImg(item.InfoType).src}}" height="20px" alt="指纹记录" >
+                            </div>
+                        </div>
+                        <div ng-if="item.Description">
+                          {{item.Description}}
+                        </div>
+                        <div>
+                          <div class="row" style="display:inline-block;"  ng-if="item.PhotoLink1">
+                              <img style="float: left;" ng-src="{{item.PhotoLink1|ImageMin}}" ng-click="goToSlide(0,item)"
+                                   onload='if (this.width>64 || this.height>100) if (this.width/this.height>64/100) this.width=64; else this.height=100;' >
+                              <img style="float: left;margin-left: 10px;" ng-src="{{item.PhotoLink2|ImageMin}}" ng-click="goToSlide(1,item)"
+                                   onload='if (this.width>64 || this.height>100) if (this.width/this.height>64/100) this.width=64; else this.height=100;' >
+                          </div>
+                          <div class="row" style="display:inline-block;" ng-if="item.PhotoLink3">
+                              <img style="float: left;" ng-src="{{item.PhotoLink3|ImageMin}}" ng-click="vm.goPhoto(2,item)"
+                                   onload='if (this.width>64 || this.height>100) if (this.width/this.height>64/100) this.width=64; else this.height=100;' >
+                              <img style="float: left;margin-left: 10px;" ng-src="{{item.PhotoLink4|ImageMin}}"  ng-if="item.PhotoLink4" ng-click="goToSlide(3,item)"
+                                   onload='if (this.width>64 || this.height>100) if (this.width/this.height>64/100) this.width=64; else this.height=100;' >
+                          </div>
+                        </div>
+                        <!-- like button and comment button -->
+                        <div style="float:right;">
+
+                           <button style="width:60px;" class="button button-dark button-small icon ion-heart" ng-click="vm.like(item)">&nbsp;赞</button>&nbsp;<button style="width:60px;" class="button button-dark button-small icon ion-chatbox" ng-click="vm.comment(item)">&nbsp;评论</button>
+
+                        </div>
+                        <!-- comment button -->
+                        <div class="rounded" style="background:#E5E4E2;margin-top:40px;margin-left:10px;margin-right:10px;">
+                          <!--like-->
+                          <div class="row" ng-if="item.likes.length>0">
+                              <div class="col col-10">
+                                  <i class="icon ion-ios-heart-outline"></i>
+                              </div>
+                              <div class="col col-90">
+                                  <div class="list" ng-repeat="sitem in item.likes track by $index">
+                                    <img ng-src='{{sitem.AvatarLink}}' height="30px">
+                                  </div>
+                              </div>
+                          </div>
+                          <hr>
+                          <!--comment-->
+                          <div class="row" ng-if="item.comments.length>0">
+                              <div class="col col-10">
+                                  <i class="icon ion-ios-chatboxes-outline"></i>
+                              </div>
+                              <div class="col col-90">
+                                <div class="list"  ng-repeat="citem in item.comments">
+                                    <div>
+                                        <img ng-src='{{citem.AvatarLink}}' height="30px">
+                                        <div style="float:right;">
+                                          <p><span>{{citem.Name}}</span><span  style="float:right">{{citem.CreateTime}}</span></p>
+                                          <p>{{citem.CommentData}}</p>
+                                        </div>
+                                    </div>
+                                    <hr>
+                                </div>
+                              </div>
+
+                          </div>
+                      </div>
+                      <!-- comment button end -->
+
+                  </div>
+                  <hr>
+            </div>
+            </div>
+        </div>
+        <!-- 动态 end -->
+        <ion-infinite-scroll ng-if="vm.canLoadMore[1]" immediate-check="false" icon="ion-loading-c" on-infinite="vm.doRefresh(1,vm.offset[1])"></ion-infinite-scroll>
+
+    </ion-content>
+</ion-view>

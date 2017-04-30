@@ -1,0 +1,15 @@
+<ion-view view-title="实时监控">
+
+    <ion-nav-buttons side="left">
+        <a class="button button-icon icon ion-ios-arrow-back" ng-click="vm.back()"></a>
+    </ion-nav-buttons>
+
+    <ion-content>
+      <div class="videobox">
+          <h4 style="background:red;">{{vm.video.deposit_name}}</h4>
+          <p>{{item.video.room_name!=null?item.video.room_name:item.video.room_id}}</p>
+          <video src="{{vm.video.hls_src}}" controls="controls" webkit-playsinline="true" autoplay></video>
+      </div>
+    </ion-content>
+
+</ion-view>

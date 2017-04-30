@@ -1,0 +1,21 @@
+{
+    "prepare_queue": {
+        "installed": [],
+        "uninstalled": []
+    },
+    "config_munge": {
+        "files": {}
+    },
+    "installed_plugins": {
+        "cordova-plugin-baidumaplocation": {
+            "ANDROID_KEY": "PKGl12s0aR7ec29wB9d5GjV1czzQdaEP",
+            "IOS_KEY": "EVpYXRdGSKTeZb6bn0GeOUYOnX1riay8",
+            "IOS_LOCATION_DESC": "请点击'好'以允许访问。",
+            "PACKAGE_NAME": "com.trusteeship"
+        },
+        "cordova-plugin-whitelist": {
+            "PACKAGE_NAME": "com.trusteeship"
+        }
+    },
+    "dependent_plugins": {}
+}

@@ -1,0 +1,66 @@
+<ion-modal-view hide-nav-bar="false" class="mech-map-info ">
+  <ion-header-bar>
+    <button class="button button-icon icon ion-ios-arrow-back" ng-click="closeDepositInfoForm()"></button>
+    <h1 class="title">{{depositInfo.OrgName}}</h1>
+  </ion-header-bar>
+  <ion-content>
+    <div class="list card">
+
+      <!--机构图片轮播展区-->
+      <div class="item item-image mech-image">
+        <ion-slide-box auto-play="true" ng-if="depositInfo.Images.length>0">
+          <ion-slide ng-repeat="img in depositInfo.Images">
+            <img ng-src="{{img || 'img/default.png'}}" />
+          </ion-slide>
+        </ion-slide-box>
+        <img ng-src="{{depositInfo.FrontDeskLink || 'img/default.png'}}" ng-if="!depositInfo.Images || depositInfo.Images.length==0">
+      </div>
+
+      <!--分割条-->
+      <div class="item-divider-small">
+      </div>
+
+      <!--备注展示区-->
+      <div class="item">
+        <h2>{{depositInfo.Remark||'无备注'}}</h2>
+        <div>
+          <span class="button button-small button-royal">
+            工商执照
+          </span>
+        </div>
+      </div>
+
+      <!--分割条-->
+      <div class="item-divider-small">
+      </div>
+
+      <!--地址电话展示区-->
+      <div class="item">
+        <p><strong>地址:</strong>{{depositInfo.Address||''}} </p>
+        <p><strong>电话:</strong>{{depositInfo.ContactPhone||''}} </p>
+      </div>
+
+      <!--分割条-->
+      <div class="item-divider-small">
+      </div>
+
+      <!--评论展示区-->
+      <a class="item item-icon-right item-comment-header" href="#">
+    最新评论
+      <span class="icon ion-heart  mech-comment"><i>{{depositInfo.Score}}</i></span>
+      </a>
+      <div class="list comment-list">
+        <div class="no-data" ng-if="!depositInfo.Comments || depositInfo.Comments.length==0">
+          暂时无评论!
+        </div>
+        <a class="item item-note-right item-text-wrap" ng-repeat="c in depositInfo.Comments" href="#">
+          <span class="item-note">
+            {{c.create_date | formatTime}}
+          </span>
+          <h2>{{c.creator || '匿名'}}</h2>
+          <p>{{c.comment || ''}}</p>
+        </a>
+      </div>
+    </div>
+  </ion-content>
+</ion-modal-view>
