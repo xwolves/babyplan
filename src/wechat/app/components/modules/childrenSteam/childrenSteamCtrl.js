@@ -21,6 +21,7 @@
             function activate() {
                 vm.activated = true;
                 vm.version = Constants.buildID;
+                vm.user = AuthService.getLoginID();
                 //从微信获取家长的基本信息
                 //vm.getWechatInfo(AuthService.getWechatId());
                 //vm.parent.wechat={
@@ -237,10 +238,34 @@
             vm.like = function(info){
               //如果已经like，去like
               //没有like，加like
+              for (var i=0;i<info.likes.length;i++){
+                if(info.likes[i].CommentBy==vm.user){
+                  //remove
+                  childrenSteamService.delDailyComment(info.likes[i].CommentID).then(function(data) {
+                      console.log('rmComment likes');
+                      console.log(data);
+                      return;
+                  });
+                }
+              }
+              //add
+              var comment = {InfoID:info.InfoID,CommentID:vm.user,};
+              childrenSteamService.createDailyComment(comment).then(function(data) {
+                  console.log('addComment likes');
+                  console.log(data);
+                  return;
+              });
             };
 
             vm.comment = function(info){
+                //dialog
+            };
 
+            vm.rmComment = function(comment){
+              childrenSteamService.delDailyComment(comment.CommentID).then(function(data) {
+                  console.log('rmComment');
+                  console.log(data);
+              });
             };
 
             vm.getChildren = function(){

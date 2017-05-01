@@ -140,15 +140,12 @@
                                   <i class="icon ion-ios-chatboxes-outline"></i>
                               </div>
                               <div class="col col-90">
-                                <div class="list"  ng-repeat="citem in item.comments">
-                                    <div>
-                                        <img ng-src='{{citem.AvatarLink}}' height="30px">
-                                        <div style="float:right;">
-                                          <p><span>{{citem.Name}}</span><span  style="float:right">{{citem.CreateTime}}</span></p>
-                                          <p>{{citem.CommentData}}</p>
-                                        </div>
-                                    </div>
-                                    <hr>
+                                <div class="list" ng-repeat="citem in item.comments">
+                                    <li class="item item-avatar" href="#" style="background:#E5E4E2;">
+                                      <img ng-src='{{citem.AvatarLink}}'>
+                                      <p>{{citem.Name}}<button class="icon ion-trash-a" style="float:right" ng-if='citem.CommentBy==vm.user' ng-click='vm.rmComment(citem)'></button><span  style="float:right">{{citem.CreateTime|dateChange}}</span></p>
+                                      <h2>{{citem.CommentData}}</h2>
+                                    </li>
                                 </div>
                               </div>
 

@@ -273,7 +273,7 @@ var app = angular.module('BaiduMapDirective', []);
        * @param {*} point
        */
       function babyPlanLocalSearch(point) {
-          return BaiduService.getNearbyDeposits(point.longitude, point.latitude);
+          return BaiduService.getNearbyDeposits(point.lng, point.lat);
       }
 
       /**

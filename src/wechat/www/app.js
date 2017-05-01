@@ -805,23 +805,6 @@ app.filter('statusChange', function () {
     });
 }());
 
-Date.prototype.Format = function(fmt) {
-    var o = {
-        "M+": this.getMonth() + 1, //月份
-        "d+": this.getDate(), //日
-        "h+": this.getHours(), //小时
-        "m+": this.getMinutes(), //分
-        "s+": this.getSeconds(), //秒
-        "q+": Math.floor((this.getMonth() + 3) / 3), //季度
-        "S": this.getMilliseconds() //毫秒
-    };
-    if (/(y+)/.test(fmt))
-        fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
-    for (var k in o)
-        if (new RegExp("(" + k + ")").test(fmt))
-            fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
-    return fmt;
-};
 (function() {
     "use strict";
     angular.module('directive', [
@@ -1105,7 +1088,7 @@ var app = angular.module('BaiduMapDirective', []);
        * @param {*} point
        */
       function babyPlanLocalSearch(point) {
-          return BaiduService.getNearbyDeposits(point.longitude, point.latitude);
+          return BaiduService.getNearbyDeposits(point.lng, point.lat);
       }
 
       /**
@@ -1423,6 +1406,23 @@ var app = angular.module('BaiduMapDirective', []);
   });
 }());
 
+Date.prototype.Format = function(fmt) {
+    var o = {
+        "M+": this.getMonth() + 1, //月份
+        "d+": this.getDate(), //日
+        "h+": this.getHours(), //小时
+        "m+": this.getMinutes(), //分
+        "s+": this.getSeconds(), //秒
+        "q+": Math.floor((this.getMonth() + 3) / 3), //季度
+        "S": this.getMilliseconds() //毫秒
+    };
+    if (/(y+)/.test(fmt))
+        fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+    for (var k in o)
+        if (new RegExp("(" + k + ")").test(fmt))
+            fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+    return fmt;
+};
 (function() {
     "use strict";
     angular.module('modules', [
@@ -2790,6 +2790,7 @@ var app = angular.module('BaiduMapDirective', []);
             function activate() {
                 vm.activated = true;
                 vm.version = Constants.buildID;
+                vm.user = AuthService.getLoginID();
                 //从微信获取家长的基本信息
                 //vm.getWechatInfo(AuthService.getWechatId());
                 //vm.parent.wechat={
@@ -3006,10 +3007,34 @@ var app = angular.module('BaiduMapDirective', []);
             vm.like = function(info){
               //如果已经like，去like
               //没有like，加like
+              for (var i=0;i<info.likes.length;i++){
+                if(info.likes[i].CommentBy==vm.user){
+                  //remove
+                  childrenSteamService.delDailyComment(info.likes[i].CommentID).then(function(data) {
+                      console.log('rmComment likes');
+                      console.log(data);
+                      return;
+                  });
+                }
+              }
+              //add
+              var comment = {InfoID:info.InfoID,CommentID:vm.user,};
+              childrenSteamService.createDailyComment(comment).then(function(data) {
+                  console.log('addComment likes');
+                  console.log(data);
+                  return;
+              });
             };
 
             vm.comment = function(info){
+                //dialog
+            };
 
+            vm.rmComment = function(comment){
+              childrenSteamService.delDailyComment(comment.CommentID).then(function(data) {
+                  console.log('rmComment');
+                  console.log(data);
+              });
             };
 
             vm.getChildren = function(){
@@ -3721,7 +3746,7 @@ var app = angular.module('BaiduMapDirective', []);
             vm.activated = false;
             $scope.$on('$ionicView.afterEnter', activate);
             $scope.mapOpts = {
-                apiKey: '7482d6d695c8d7d8dccca6d5de410704',
+                apiKey: 'IGp7UfrinXNxV6IwrQTC0PWoDCQlf0TR',
                 //center: {longitude:113.271,latitude:23.1353},
                 keywords: ['托管'],
                 zoom: 16,

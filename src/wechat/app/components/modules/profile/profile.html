@@ -1,5 +1,39 @@
 <ion-view view-title="设置">
     <ion-content>
+        <div style="width:100%;margin-top:30px;" class='center'>
+            <img src='./img/play.png'>
+            <h4>红红火火</h4>
+            <p>哈哈哈哈小朋友</p>
+            <hr>
+            <div class="row button-icon-top" >
+              <div class="col col-25">
+                <button class="button button-icon">
+                  <i class="icon ion-ios-color-filter-outline"></i>
+                  机构排名
+                </button>
+              </div>
+              <div class="col col-25">
+                  <button class="button button-icon">
+                    <i class="icon ion-podium"></i>
+                    教师排名
+                  </button>
+              </div>
+              <div class="col col-25">
+                  <button class="button button-icon">
+                    <i class="icon ion-map"></i>
+                    附近机构
+                  </button>
+              </div>
+              <div class="col col-25">
+                  <button class="button button-icon">
+                      <i class="icon ion-card"></i>
+                      缴费中心
+                  </button>
+              </div>
+
+        </div>
+          <hr>
+        </div>
         <ul class="list">
             <li class="item" onclick="window.location.href='./eshop/index.html'">
                 <i class="icon ion-ios-contact"></i>&nbsp;&nbsp;我的商城</i>
@@ -9,6 +43,12 @@
             </li>
             <li class="item" ng-click="vm.goTo('childrenSetting')">
                 <i class="icon ion-ios-people"></i>&nbsp;&nbsp;孩子管理</i>
+            </li>
+            <li class="item" ng-click="vm.goTo('register')">
+                <i class="icon ion-ios-book"></i>&nbsp;&nbsp;帮助及反馈</i>
+            </li>
+            <li class="item" ng-click="vm.goTo('register')">
+                <i class="icon ion-ios-cog"></i>&nbsp;&nbsp;设置</i>
             </li>
             <!--<li class="item" ng-click="vm.goTo('childrenSetting')">-->
                 <!--<i class="icon ion-android-home"></i>&nbsp;&nbsp;托管机构信息</i>-->

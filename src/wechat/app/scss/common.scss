@@ -170,3 +170,17 @@ ul.rating li i {
 }
 
 video {width: 100%;display: blcok;}
+
+.button-icon-top {
+  width: 100%;
+  margin: auto;
+}
+.button-icon-top .button {
+  font-size: 12px;
+  line-height: 12px;
+}
+.button-icon-top .button-icon .icon {
+  display: block;
+  font-size: 30px;
+  margin-bottom: 3px !important;
+}
