@@ -68,7 +68,7 @@
 
             vm.watchVideo = function(video,name){
               video.deposit_name=name;
-              Session.setData('video',video);
+              Session.setData('video',JSON.stringify(video));
               StateService.go('video');
             };
 

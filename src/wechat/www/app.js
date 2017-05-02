@@ -2837,7 +2837,7 @@ Date.prototype.Format = function(fmt) {
 
             vm.watchVideo = function(video,name){
               video.deposit_name=name;
-              Session.setData('video',video);
+              Session.setData('video',JSON.stringify(video));
               StateService.go('video');
             };
 
@@ -3391,7 +3391,8 @@ Date.prototype.Format = function(fmt) {
             function activate() {
                 vm.activated = true;
                 vm.version = Constants.buildID;
-                vm.video=Session.getData('video');
+                vm.video=JSON.parse(Session.getData('video'));
+
                 console.log(vm.video);
             }
 

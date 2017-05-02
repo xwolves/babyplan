@@ -7,9 +7,8 @@
     <ion-content>
       <div class="videobox">
           <h4 style="background:red;">{{vm.video.deposit_name}}</h4>
-          <p>{{item.video.room_name!=null?item.video.room_name:item.video.room_id}}</p>
+          <p>{{vm.video.room_name!=null?vm.video.room_name:vm.video.room_id}}</p>
           <video src="{{vm.video.hls_src}}" controls="controls" webkit-playsinline="true" autoplay></video>
       </div>
     </ion-content>
-
 </ion-view>

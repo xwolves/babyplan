@@ -11,7 +11,8 @@
             function activate() {
                 vm.activated = true;
                 vm.version = Constants.buildID;
-                vm.video=Session.getData('video');
+                vm.video=JSON.parse(Session.getData('video'));
+
                 console.log(vm.video);
             }
 
