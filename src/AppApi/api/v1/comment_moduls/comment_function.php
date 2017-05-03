@@ -188,10 +188,6 @@ class Comment extends Charge{
             $stmt->bindParam(":commentdata", $commentdata, PDO::PARAM_STR);
             if(!$stmt->execute())
                 return 10001;
-
-            $stmt = $this->DB->prepare($sql_str);
-            if(!$stmt->execute($params))
-                return 10001;
             return 0;
         }catch (PDOException $e) {
             $errs = $e->getMessage();
