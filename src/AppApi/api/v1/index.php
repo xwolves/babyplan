@@ -21,7 +21,7 @@ $app->config('debug', true);
 $app->response->headers->set('Content-Type', 'application/json');
 $app->response->headers->set('Access-Control-Allow-Origin', '*');
 $app->response->headers->set('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, token, if-modified-since, cache-control, pragma');
-$app->response->headers->set('Access-Control-Allow-Methods', 'GET, POST, PUT, OPTIONS');
+$app->response->headers->set('Access-Control-Allow-Methods', 'GET, POST, PUT,DELETE,PATCH, OPTIONS');
 $app->response->headers->set('Access-Control-Max-Age', '60');
 
 static $sql_db;
