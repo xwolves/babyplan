@@ -185,7 +185,7 @@ class Comment extends Charge{
             $stmt = $this->DB->prepare($sql_str);
             $stmt->bindParam(":infoid", intval($infoid), PDO::PARAM_INT);
             $stmt->bindParam(":commentby", intval($commentby), PDO::PARAM_INT);
-            $stmt->bindParam(":commentdata", intval($commentdata), PDO::PARAM_STR);
+            $stmt->bindParam(":commentdata", $commentdata, PDO::PARAM_STR);
             if(!$stmt->execute())
                 return 10001;
 
@@ -195,7 +195,7 @@ class Comment extends Charge{
             return 0;
         }catch (PDOException $e) {
             $errs = $e->getMessage();
-            var_dump($errs);
+            //var_dump($errs);
             return 10000;
         }
     }
