@@ -1472,7 +1472,7 @@ $app->get(
 
 $app->post(
     '/dailyComment',
-    function ($infoId) use ($app, $sql_db, $redis){
+    function () use ($app, $sql_db, $redis){
         $rsp_data = array();
         $response = $app->response;
         $request = $app->request->getBody();
