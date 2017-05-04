@@ -407,7 +407,7 @@ class Account{
     public function queryParentInfo($parentid){
         try{
             $info = array();
-            $sql_str = "SELECT accountid, name, sex, mobile, weixinno, remark, nick FROM tb_accnt_parent where accountid=:parentid";
+            $sql_str = "SELECT accountid, name, sex, mobile, weixinno, remark, nick, avatarlink FROM tb_accnt_parent where accountid=:parentid";
             $stmt = $this->DB->prepare($sql_str);
             $stmt->bindParam(":parentid", intval($parentid), PDO::PARAM_INT);
             if (!$stmt->execute())
