@@ -117,7 +117,7 @@
                         <!-- like button and comment button -->
                         <div style="float:right;">
 
-                           <button style="width:60px;" class="button button-dark button-small icon ion-heart" ng-click="vm.like(item)">&nbsp;赞</button>&nbsp;<button style="width:60px;" class="button button-dark button-small icon ion-chatbox" ng-click="vm.comment(item)">&nbsp;评论</button>
+                           <button style="width:60px;" class="button button-dark button-small icon ion-heart" ng-click="vm.like(item,$index)">&nbsp;赞</button>&nbsp;<button style="width:60px;" class="button button-dark button-small icon ion-chatbox" ng-click="vm.comment(item,$index)">&nbsp;评论</button>
 
                         </div>
                         <!-- comment button -->
@@ -143,7 +143,7 @@
                                 <div class="list" ng-repeat="citem in item.comments">
                                     <li class="item item-avatar" href="#" style="background:#E5E4E2;">
                                       <img ng-src='{{citem.AvatarLink}}'>
-                                      <p>{{citem.Name}}<button class="icon ion-trash-a" style="float:right" ng-if='citem.CommentBy==vm.user' ng-click='vm.rmComment(citem)'></button><span  style="float:right">{{citem.CreateTime|dateChange}}</span></p>
+                                      <p>{{citem.Name}}<button class="icon ion-trash-a" style="float:right" ng-if='citem.CommentBy==vm.user' ng-click='vm.rmComment(citem,$index)'></button><span  style="float:right">{{citem.CreateTime|dateChange}}</span></p>
                                       <h2>{{citem.CommentData}}</h2>
                                     </li>
                                 </div>

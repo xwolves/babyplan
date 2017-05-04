@@ -1,7 +1,7 @@
 (function() {
     "use strict";
     angular.module('childrenSteamCtrl', [])
-        .controller('childrenSteamCtrl', function($scope, $sce,Constants,childrenService,childrenSteamService,AuthService,Session, StateService,$ionicModal, $ionicSlideBoxDelegate) {
+        .controller('childrenSteamCtrl', function($scope,$ionicPopup,$sce,Constants,childrenService,childrenSteamService,AuthService,Session, StateService,$ionicModal, $ionicSlideBoxDelegate) {
             'ngInject';
             console.log("childrenSteamCtrl");
             var vm = this;
@@ -11,7 +11,7 @@
             vm.fingerprintLogs=[];
             vm.messages=[];
             vm.cameras=[];
-
+            vm.myComment;
             vm.simpleFilter='';
             vm.offset=[0,0,0];
             vm.limit=30;
@@ -235,37 +235,96 @@
                 console.log("add star");
             };
 
-            vm.like = function(info){
+            vm.getDailyComments = function(infoid,index){
+              console.log("getDailyComments index = "+index);
+              childrenSteamService.getDailyComment(infoid,index).then(function(sdata) {
+                  if (sdata.errno == 0) {
+                      console.log("getDailyComment: ");
+                      console.log(sdata.data);
+                      var sindex=sdata.data.index;
+                      vm.messages[sindex].comments = sdata.data.comments;
+                      vm.messages[sindex].likes = sdata.data.likes;
+                  }
+              });
+            };
+
+            vm.like = function(info,index){
               //如果已经like，去like
               //没有like，加like
+              console.log(info+" and index="+index);
+              var needAdd = true;
               for (var i=0;i<info.likes.length;i++){
                 if(info.likes[i].CommentBy==vm.user){
                   //remove
+                  needAdd=false;
                   childrenSteamService.delDailyComment(info.likes[i].CommentID).then(function(data) {
                       console.log('rmComment likes');
                       console.log(data);
+                      vm.getDailyComments(info.InfoID,index);
                       return;
                   });
                 }
               }
               //add
-              var comment = {InfoID:info.InfoID,CommentID:vm.user,};
-              childrenSteamService.createDailyComment(comment).then(function(data) {
-                  console.log('addComment likes');
-                  console.log(data);
-                  return;
-              });
+              if(needAdd){
+                var comment = {infoid:info.InfoID,commentby:vm.user,commentdata:null};
+                childrenSteamService.createDailyComment(comment).then(function(data) {
+                    console.log('addComment likes');
+                    console.log(data);
+                    vm.getDailyComments(info.InfoID,index);
+                    return;
+                });
+              }
             };
 
-            vm.comment = function(info){
-                //dialog
+            vm.comment = function(info,index){
+                console.log(info+" and index="+index);
+                vm.showPopup(info,index);
             };
 
-            vm.rmComment = function(comment){
+            vm.rmComment = function(comment,index){
               childrenSteamService.delDailyComment(comment.CommentID).then(function(data) {
                   console.log('rmComment');
                   console.log(data);
+                  vm.getDailyComments(comment.InfoID,index);
               });
+            };
+
+            vm.showPopup = function(info,index) {
+                var myPopup = $ionicPopup.show({
+                  template: '<input type="edittext" ng-model="vm.myComment">',
+                  title: '请输入评论内容',
+                  scope: $scope,
+                  buttons: [
+                    { text: '取消' },
+                    {
+                      text: '<b>提交</b>',
+                      type: 'button-positive',
+                      onTap: function(e) {
+                        if (!vm.myComment) {
+                          e.preventDefault();
+                        } else {
+                          return vm.myComment;
+                        }
+                      }
+                    }
+                  ]
+                  });
+
+                  myPopup.then(function(res) {
+                    console.log('Tapped!', res);
+                    //add comment
+                    if(res.length>0){
+                      var comment = {infoid:info.InfoID,commentby:vm.user,commentdata:res};
+                      childrenSteamService.createDailyComment(comment).then(function(data) {
+                          console.log('addComment comments');
+                          console.log(data);
+                          vm.myComment = null;
+                          vm.getDailyComments(info.InfoID,index);
+                          return;
+                      });
+                    }
+                  });
             };
 
             vm.getChildren = function(){
