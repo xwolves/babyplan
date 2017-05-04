@@ -422,7 +422,7 @@ class Account{
             $info['mobile'] = $row['mobile'];
             $info['weixinno'] = $row['weixinno'];
             $info['remark'] = $row['remark'];
-
+            $info['avatarlink'] = $row['avatarlink']; 
             return $info;
         }catch (PDOException $e) {
             $errs = $e->getMessage();
