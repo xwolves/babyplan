@@ -1449,7 +1449,10 @@ Date.prototype.Format = function(fmt) {
         'exitModule',
         'photoModule',
         'MapModule',
-        'eshopEntryModule'
+        'eshopEntryModule',
+        'estimateModule',
+        'helpModule',
+        'settingsModule'
     ]);
 
 }());
@@ -1622,6 +1625,302 @@ Date.prototype.Format = function(fmt) {
                 data: data
             }).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
         }
+
+        return service;
+
+
+    }
+
+}());
+
+(function() {
+    "use strict";
+    angular.module('WxLoginModule', [
+        'WxLoginCtrl',
+        'WxLoginRouter',
+        'WxLoginService'
+    ]).run(function($rootScope, Session, StateService,$location,tools) {
+        $rootScope.$on('$stateChangeStart', function(event, next) {
+          console.log("stateChangeStart");
+          console.log(next);
+
+          if (next.url.indexOf('wxlogin')>0 ) {
+              console.log("wxlogin");
+              //alert($location.absUrl());
+              var url = $location.absUrl();
+              //获取ticket参数，因为angualr的路径不规范，会出现http://10.20.68.73:8080/casOauth/?ticket=ST-16-HzIjcAlxbKvlyJQAX2XI-cas01.sustc.edu.cn#/login，无法用公共方法获取
+              var start = url.indexOf('user=') + 5;
+              var end = url.indexOf('&type=');
+              if(!start<=5 && end <= 0){
+                StateService.clearAllAndGo('login');
+              }else{
+                //如果是http://10.20.68.73:8080/casOauth?ticket=ST-16-HzIjcAlxbKvlyJQAX2XI-cas01.sustc.edu.cn这种情况
+                //或者是是http://10.20.68.73:8080/casOauth/#/login?ticket=ST-16-HzIjcAlxbKvlyJQAX2XI-cas01.sustc.edu.cn这种情况
+                if (end == -1 || end < start) end = url.length;
+                console.log("wxlogin 1" + start + " - " + end);
+                var myUser = url.toString().substring(start, end);
+                console.log("get user = " + myUser);
+
+                var start = url.indexOf('&type=') + 6;
+                var end = url.indexOf('#/wxlogin');
+                if (end == -1 || end < start) end = url.length;
+                console.log("wxlogin 2" + start + " - " + end);
+                var myType = url.toString().substring(start, end);
+                console.log("get type = " + myType);
+                StateService.clearAllAndGo('wxlogin',{user:myUser,type:myType});
+              }
+          }else if(next.url.indexOf('login')>0){
+              console.log("login");
+          }else if(next.url.indexOf('register')>0){
+              //未绑定用户者,进入注册绑定页面
+              console.log("register");
+          }else{
+            if (Session.getData('userId') && Session.getData('token')) {
+                //login successed
+            } else {
+                console.log("user not login with ");
+                event.preventDefault();
+                if (tools.getAgent() != 'wx')
+                    StateService.clearAllAndGo('login');
+                else
+                    StateService.clearAllAndGo('wxlogin');
+            }
+          }
+        });
+
+    });
+
+}());
+
+(function() {
+    "use strict";
+    angular.module('WxLoginCtrl', [])
+        .controller('WxLoginCtrl', function(Constants, AuthService, MessageToaster, LoginService, $timeout, $scope, Session, $stateParams, StateService, $ionicModal, Role) {
+            'ngInject';
+
+            var vm = this;
+            vm.wxlogin = wxlogin;
+            vm.isDev = Constants.ENVIRONMENT == 'dev' ? true : false;
+            $scope.$on('$ionicView.beforeEnter', validate);
+
+            function validate() {
+                vm.user = $stateParams.user;
+                vm.type = $stateParams.type;
+                console.log("vm.type = "+vm.type+" with "+vm.user);
+            /////////////////////////////////////////////////////////
+            //    vm.user = "o_Nkcw4CsZh5dbE2v8XVLUxfd96A";//"oVyGDuNPkAbtljfJKusP4oaCrYG0";//test
+            //    vm.type = 2;//test
+            ////////////////////////////////////////////////////////
+                //MessageToaster.info('user = '+vm.user);
+                if (vm.user) {
+                    //login failed
+                    //MessageToaster.info('logining....');
+                    vm.info = "正在登录，请稍后...";
+                    vm.showLoginModal = showLoginModal;
+                    //vm.roleList = [{type:1,user:'1111'}];//test
+                    vm.showChooseModal = showChooseModal;
+                    vm.login = login;
+                    vm.select = selectChoose;
+                    //获取到微信uid后先尝试登陆对应的用户类型
+                    if(vm.type){
+                        vm.wxlogin(vm.user,vm.type);
+                    }else{
+                        vm.showChooseModal();
+                    }
+                }
+            }
+
+            function wxlogin(userid,type) {
+                console.log(userid+"  type = "+type);
+                //MessageToaster.info('准备登录');
+                LoginService.wxLogin(userid,type).then(function(response) {
+                    console.log(response);
+                    if(response.errno==0) {
+                        var result = response.data;
+                        if (result instanceof Array && result.length > 1) {
+                            //modal select type
+                            vm.roleList=result;
+                            //MessageToaster.info("have select "+result.length);
+                            vm.showChooseModal();
+                        }else{
+                            var u=result[0];
+                            if (u.uid != null && u.token != null && u.type != null) {
+                                AuthService.setSession(u.uid, u.token, u.eshop, u.type,userid);
+                                StateService.clearAllAndGo(AuthService.getNextPath());
+                            }
+                        }
+                    }else{
+                        if(response.errno==12004){
+                            //no data found
+                            AuthService.setSession(null, null, null, Role.unknown,userid);
+
+                            StateService.clearAllAndGo("register",{type:vm.type});
+                        }
+                        //MessageToaster.error(response.error);
+                    }
+                });
+            };
+
+            //WeuiModalLoading
+            function login(user) {
+                //WeuiModalLoading.show();
+                //test
+                AuthService.setSession('1', '123', '1');
+                StateService.go(AuthService.getNextPath());
+                //test
+
+                LoginService.login(user.userId, user.password).then(function(response) {
+                    if (vm.modal)
+                        vm.closeDetailsModal();
+                    MessageToaster.success(response.message);
+                    AuthService.setSession(response.data.uid, response.data.token,response.data.eshop,response.data.type);
+                    StateService.clearAllAndGo(AuthService.getNextPath());
+                }).finally(function() {
+                    //WeuiModalLoading.hide();
+                });
+            }
+
+            function showLoginModal() {
+                $ionicModal.fromTemplateUrl('Login/LoginModal.html', {
+                    scope: $scope,
+                    animation: 'slide-in-up'
+                }).then(function(modal) {
+                    vm.modal = modal;
+                    vm.modal.show();
+                });
+
+                vm.closeDetailsModal = function() {
+                    vm.modal.remove();
+                };
+                $scope.$on('$ionicView.leave', function() {
+                    vm.modal.remove();
+                });
+            }
+
+            function showChooseModal() {
+                $ionicModal.fromTemplateUrl('Login/ChooseModal.html', {
+                    scope: $scope,
+                    animation: 'slide-in-up'
+                }).then(function(modal) {
+                    vm.cmodal = modal;
+                    vm.cmodal.show();
+                });
+
+                vm.closeChooseModal = function() {
+                    vm.cmodal.remove();
+                };
+                $scope.$on('$ionicView.leave', function() {
+                    vm.cmodal.remove();
+                });
+            }
+
+            function selectChoose(){
+                if(vm.choose!=null){
+                    //know user choose then login agin with type
+                    wxlogin(vm.user, vm.choose);
+                }
+            }
+        });
+}());
+
+(function() {
+  'use strict';
+
+  angular.module('WxLoginRouter', [])
+    .config(wxLoginRouter);
+
+
+  function wxLoginRouter($stateProvider,$urlRouterProvider) {
+    'ngInject';
+    $stateProvider
+    .state('wxlogin', {
+      url: "/wxlogin?:user&:type",
+      params:{
+        user:null,
+        type:0
+      },
+      templateUrl: 'WxLogin/wxlogin.html',
+      controller: 'WxLoginCtrl',
+      controllerAs: 'vm'
+    });
+    // $urlRouterProvider.when('', '/wxlogin');
+    //$urlRouterProvider.otherwise('/wxlogin');
+    $urlRouterProvider.otherwise(function($injector, $location) {
+          //console.log("Could not find " + $location);
+          $location.path('/wxlogin');
+    });
+
+  }
+}());
+
+(function() {
+    'use strict';
+
+    angular.module('WxLoginService', [])
+        .factory('WxLoginService', wxLoginService);
+
+    function wxLoginService($q, $http, ResultHandler, Constants) {
+        'ngInject';
+        var service = {
+            login: login,
+            logout: logout,
+            wxLogin: wxLogin
+        };
+
+        function logout() {
+
+        }
+
+        function login(userId, password) {
+            var data = {
+                id: md5(userId),
+                psw: md5(password)
+            };
+            var url = Constants.serverUrl + 'login';
+            return $http({
+                method: 'post',
+                url: url,
+                data: data
+            }).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
+        }
+
+        //POST /api/v1/login
+        //Request Body:
+        //{
+        //    "weixinno": "xxxxxx"
+        //}
+        //Response Body:
+        //{
+        //    "errno":0,
+        //    "error":"",
+        //    "data":{
+        //        "token":"fdddsdsdddsssssdfff",
+        //        "uid":"用户id",
+        //        "type":"用户类型"   uid的第一位数
+        //    }
+        //}
+        function wxLogin(wxId,type) {
+            var data = {
+                weixinno: wxId
+            };
+            var end="";
+            if(type!=null){
+                //console.log("include type "+type);
+                data.type=type;
+                end="?type="+type;
+            }
+            var url = Constants.serverUrl + 'login'+end;
+            return $http({
+                method: 'post',
+                url: url,
+                data: data
+            }).then(function (response) {
+                return response.data;
+            }, function (error) {
+                return $q.reject(error);
+            });
+        }
+
 
         return service;
 
@@ -2039,302 +2338,6 @@ Date.prototype.Format = function(fmt) {
 
   }
 
-
-}());
-
-(function() {
-    "use strict";
-    angular.module('WxLoginModule', [
-        'WxLoginCtrl',
-        'WxLoginRouter',
-        'WxLoginService'
-    ]).run(function($rootScope, Session, StateService,$location,tools) {
-        $rootScope.$on('$stateChangeStart', function(event, next) {
-          console.log("stateChangeStart");
-          console.log(next);
-
-          if (next.url.indexOf('wxlogin')>0 ) {
-              console.log("wxlogin");
-              //alert($location.absUrl());
-              var url = $location.absUrl();
-              //获取ticket参数，因为angualr的路径不规范，会出现http://10.20.68.73:8080/casOauth/?ticket=ST-16-HzIjcAlxbKvlyJQAX2XI-cas01.sustc.edu.cn#/login，无法用公共方法获取
-              var start = url.indexOf('user=') + 5;
-              var end = url.indexOf('&type=');
-              if(!start<=5 && end <= 0){
-                StateService.clearAllAndGo('login');
-              }else{
-                //如果是http://10.20.68.73:8080/casOauth?ticket=ST-16-HzIjcAlxbKvlyJQAX2XI-cas01.sustc.edu.cn这种情况
-                //或者是是http://10.20.68.73:8080/casOauth/#/login?ticket=ST-16-HzIjcAlxbKvlyJQAX2XI-cas01.sustc.edu.cn这种情况
-                if (end == -1 || end < start) end = url.length;
-                console.log("wxlogin 1" + start + " - " + end);
-                var myUser = url.toString().substring(start, end);
-                console.log("get user = " + myUser);
-
-                var start = url.indexOf('&type=') + 6;
-                var end = url.indexOf('#/wxlogin');
-                if (end == -1 || end < start) end = url.length;
-                console.log("wxlogin 2" + start + " - " + end);
-                var myType = url.toString().substring(start, end);
-                console.log("get type = " + myType);
-                StateService.clearAllAndGo('wxlogin',{user:myUser,type:myType});
-              }
-          }else if(next.url.indexOf('login')>0){
-              console.log("login");
-          }else if(next.url.indexOf('register')>0){
-              //未绑定用户者,进入注册绑定页面
-              console.log("register");
-          }else{
-            if (Session.getData('userId') && Session.getData('token')) {
-                //login successed
-            } else {
-                console.log("user not login with ");
-                event.preventDefault();
-                if (tools.getAgent() != 'wx')
-                    StateService.clearAllAndGo('login');
-                else
-                    StateService.clearAllAndGo('wxlogin');
-            }
-          }
-        });
-
-    });
-
-}());
-
-(function() {
-    "use strict";
-    angular.module('WxLoginCtrl', [])
-        .controller('WxLoginCtrl', function(Constants, AuthService, MessageToaster, LoginService, $timeout, $scope, Session, $stateParams, StateService, $ionicModal, Role) {
-            'ngInject';
-
-            var vm = this;
-            vm.wxlogin = wxlogin;
-            vm.isDev = Constants.ENVIRONMENT == 'dev' ? true : false;
-            $scope.$on('$ionicView.beforeEnter', validate);
-
-            function validate() {
-                vm.user = $stateParams.user;
-                vm.type = $stateParams.type;
-                console.log("vm.type = "+vm.type+" with "+vm.user);
-            /////////////////////////////////////////////////////////
-            //    vm.user = "o_Nkcw4CsZh5dbE2v8XVLUxfd96A";//"oVyGDuNPkAbtljfJKusP4oaCrYG0";//test
-            //    vm.type = 2;//test
-            ////////////////////////////////////////////////////////
-                //MessageToaster.info('user = '+vm.user);
-                if (vm.user) {
-                    //login failed
-                    //MessageToaster.info('logining....');
-                    vm.info = "正在登录，请稍后...";
-                    vm.showLoginModal = showLoginModal;
-                    //vm.roleList = [{type:1,user:'1111'}];//test
-                    vm.showChooseModal = showChooseModal;
-                    vm.login = login;
-                    vm.select = selectChoose;
-                    //获取到微信uid后先尝试登陆对应的用户类型
-                    if(vm.type){
-                        vm.wxlogin(vm.user,vm.type);
-                    }else{
-                        vm.showChooseModal();
-                    }
-                }
-            }
-
-            function wxlogin(userid,type) {
-                console.log(userid+"  type = "+type);
-                //MessageToaster.info('准备登录');
-                LoginService.wxLogin(userid,type).then(function(response) {
-                    console.log(response);
-                    if(response.errno==0) {
-                        var result = response.data;
-                        if (result instanceof Array && result.length > 1) {
-                            //modal select type
-                            vm.roleList=result;
-                            //MessageToaster.info("have select "+result.length);
-                            vm.showChooseModal();
-                        }else{
-                            var u=result[0];
-                            if (u.uid != null && u.token != null && u.type != null) {
-                                AuthService.setSession(u.uid, u.token, u.eshop, u.type,userid);
-                                StateService.clearAllAndGo(AuthService.getNextPath());
-                            }
-                        }
-                    }else{
-                        if(response.errno==12004){
-                            //no data found
-                            AuthService.setSession(null, null, null, Role.unknown,userid);
-
-                            StateService.clearAllAndGo("register",{type:vm.type});
-                        }
-                        //MessageToaster.error(response.error);
-                    }
-                });
-            };
-
-            //WeuiModalLoading
-            function login(user) {
-                //WeuiModalLoading.show();
-                //test
-                AuthService.setSession('1', '123', '1');
-                StateService.go(AuthService.getNextPath());
-                //test
-
-                LoginService.login(user.userId, user.password).then(function(response) {
-                    if (vm.modal)
-                        vm.closeDetailsModal();
-                    MessageToaster.success(response.message);
-                    AuthService.setSession(response.data.uid, response.data.token,response.data.eshop,response.data.type);
-                    StateService.clearAllAndGo(AuthService.getNextPath());
-                }).finally(function() {
-                    //WeuiModalLoading.hide();
-                });
-            }
-
-            function showLoginModal() {
-                $ionicModal.fromTemplateUrl('Login/LoginModal.html', {
-                    scope: $scope,
-                    animation: 'slide-in-up'
-                }).then(function(modal) {
-                    vm.modal = modal;
-                    vm.modal.show();
-                });
-
-                vm.closeDetailsModal = function() {
-                    vm.modal.remove();
-                };
-                $scope.$on('$ionicView.leave', function() {
-                    vm.modal.remove();
-                });
-            }
-
-            function showChooseModal() {
-                $ionicModal.fromTemplateUrl('Login/ChooseModal.html', {
-                    scope: $scope,
-                    animation: 'slide-in-up'
-                }).then(function(modal) {
-                    vm.cmodal = modal;
-                    vm.cmodal.show();
-                });
-
-                vm.closeChooseModal = function() {
-                    vm.cmodal.remove();
-                };
-                $scope.$on('$ionicView.leave', function() {
-                    vm.cmodal.remove();
-                });
-            }
-
-            function selectChoose(){
-                if(vm.choose!=null){
-                    //know user choose then login agin with type
-                    wxlogin(vm.user, vm.choose);
-                }
-            }
-        });
-}());
-
-(function() {
-  'use strict';
-
-  angular.module('WxLoginRouter', [])
-    .config(wxLoginRouter);
-
-
-  function wxLoginRouter($stateProvider,$urlRouterProvider) {
-    'ngInject';
-    $stateProvider
-    .state('wxlogin', {
-      url: "/wxlogin?:user&:type",
-      params:{
-        user:null,
-        type:0
-      },
-      templateUrl: 'WxLogin/wxlogin.html',
-      controller: 'WxLoginCtrl',
-      controllerAs: 'vm'
-    });
-    // $urlRouterProvider.when('', '/wxlogin');
-    //$urlRouterProvider.otherwise('/wxlogin');
-    $urlRouterProvider.otherwise(function($injector, $location) {
-          //console.log("Could not find " + $location);
-          $location.path('/wxlogin');
-    });
-
-  }
-}());
-
-(function() {
-    'use strict';
-
-    angular.module('WxLoginService', [])
-        .factory('WxLoginService', wxLoginService);
-
-    function wxLoginService($q, $http, ResultHandler, Constants) {
-        'ngInject';
-        var service = {
-            login: login,
-            logout: logout,
-            wxLogin: wxLogin
-        };
-
-        function logout() {
-
-        }
-
-        function login(userId, password) {
-            var data = {
-                id: md5(userId),
-                psw: md5(password)
-            };
-            var url = Constants.serverUrl + 'login';
-            return $http({
-                method: 'post',
-                url: url,
-                data: data
-            }).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
-        }
-
-        //POST /api/v1/login
-        //Request Body:
-        //{
-        //    "weixinno": "xxxxxx"
-        //}
-        //Response Body:
-        //{
-        //    "errno":0,
-        //    "error":"",
-        //    "data":{
-        //        "token":"fdddsdsdddsssssdfff",
-        //        "uid":"用户id",
-        //        "type":"用户类型"   uid的第一位数
-        //    }
-        //}
-        function wxLogin(wxId,type) {
-            var data = {
-                weixinno: wxId
-            };
-            var end="";
-            if(type!=null){
-                //console.log("include type "+type);
-                data.type=type;
-                end="?type="+type;
-            }
-            var url = Constants.serverUrl + 'login'+end;
-            return $http({
-                method: 'post',
-                url: url,
-                data: data
-            }).then(function (response) {
-                return response.data;
-            }, function (error) {
-                return $q.reject(error);
-            });
-        }
-
-
-        return service;
-
-
-    }
 
 }());
 
@@ -3697,6 +3700,55 @@ Date.prototype.Format = function(fmt) {
 
 (function() {
   "use strict";
+  angular.module('estimateModule', [
+    'estimateCtrl',
+    'estimateRouter'
+  ]);
+
+}());
+
+(function() {
+    "use strict";
+    angular.module('estimateCtrl', [])
+        .controller('estimateCtrl', function($scope, Constants, StateService) {
+            'ngInject';
+            var vm = this;
+            vm.activated = false;
+            $scope.$on('$ionicView.afterEnter', activate);
+
+            function activate() {
+                vm.activated = true;
+                vm.version = Constants.buildID;
+            }
+
+            vm.goTo = function(addr){
+                console.log('go to path : '+addr);
+                StateService.go(addr);
+            };
+        });
+}());
+
+(function() {
+  'use strict';
+
+  angular.module('estimateRouter', [])
+    .config(myRouter);
+
+
+  function myRouter($stateProvider, $urlRouterProvider) {
+    'ngInject';
+    $stateProvider
+        .state('estimate', {
+          url: "/estimate",
+          templateUrl: 'estimate/estimate.html',
+          controller: 'estimateCtrl',
+          controllerAs: 'vm'
+        })
+  }
+}());
+
+(function() {
+  "use strict";
   angular.module('exitModule', [
     'exitCtrl',
     'exitRouter',
@@ -3798,9 +3850,58 @@ Date.prototype.Format = function(fmt) {
 }());
 
 (function() {
+  "use strict";
+  angular.module('helpModule', [
+    'helpCtrl',
+    'helpRouter'
+  ]);
+
+}());
+
+(function() {
+    "use strict";
+    angular.module('helpCtrl', [])
+        .controller('helpCtrl', function($scope, Constants, StateService) {
+            'ngInject';
+            var vm = this;
+            vm.activated = false;
+            $scope.$on('$ionicView.afterEnter', activate);
+
+            function activate() {
+                vm.activated = true;
+                vm.version = Constants.buildID;
+            }
+
+            vm.goTo = function(addr){
+                console.log('go to path : '+addr);
+                StateService.go(addr);
+            };
+        });
+}());
+
+(function() {
+  'use strict';
+
+  angular.module('helpRouter', [])
+    .config(myRouter);
+
+
+  function myRouter($stateProvider, $urlRouterProvider) {
+    'ngInject';
+    $stateProvider
+        .state('help', {
+          url: "/help",
+          templateUrl: 'help/help.html',
+          controller: 'helpCtrl',
+          controllerAs: 'vm'
+        })
+  }
+}());
+
+(function() {
     "use strict";
     angular.module('MapCtrl', [])
-        .controller('MapCtrl', function($scope, $state, Constants, StateService, $ionicModal, $window,BaiduService) {
+        .controller('MapCtrl', function($scope, $state, $stateParams,Constants, StateService, $ionicModal, $window,BaiduService) {
             'ngInject';
             var vm = this;
             vm.activated = false;
@@ -3818,6 +3919,8 @@ Date.prototype.Format = function(fmt) {
             function activate() {
                 vm.activated = true;
                 vm.version = Constants.buildID;
+                vm.type = $stateParams.type;
+                console.log("vm.type = "+vm.type);
             }
 
             vm.goTo = function(addr){
@@ -3847,6 +3950,15 @@ Date.prototype.Format = function(fmt) {
           controllerAs: 'vm'
         }
       }
+    })
+    .state('orgmap', {
+      url: "/orgmap?:type",
+      templateUrl: 'map/map.html',
+      params:{
+        type:0
+      },
+      controller: 'MapCtrl',
+      controllerAs: 'vm'
     });
   }
 }());
@@ -4194,153 +4306,6 @@ Date.prototype.Format = function(fmt) {
                 };
             }
         });
-}());
-
-(function() {
-    "use strict";
-    angular.module('depositListctrl', [])
-        .controller('depositListctrl', function($scope,Constants,StateService,$ionicListDelegate,$ionicPopup,AuthService,parentService,vipBuyService) {
-            'ngInject';
-            var vm = this;
-            vm.activated = false;
-            $scope.$on('$ionicView.afterEnter', activate);
-
-            function activate() {
-                vm.activated = true;
-                vm.version = Constants.buildID;
-                vm.getRecords();
-            };
-
-            vm.getDeposits = function(){
-                parentService.queryChildren(AuthService.getLoginID()).then(function(data) {
-                    if (data.errno == 0) {
-                        console.log(data.data);
-                        vm.deposits = [];
-                        var array=[];
-                        //获取deposits，取出唯一
-                        data.data.forEach(function(item){
-                            var obj={};
-                            obj.depositid=item.depositid;
-                            obj.orgname=item.orgname;
-                            //console.log(array);
-                            // console.log(item.depositid);
-                            if(!array.includes(item.depositid)&& item.depositid ){
-                                array[array.length]=item.depositid;
-                                vm.deposits[vm.deposits.length]=obj;
-                            }
-                            //获取机构信息，获取权限是否能查看编辑
-                        });
-                    }
-                });
-            };
-
-            vm.getRecords = function () {
-                vipBuyService.getOrders(AuthService.getLoginID()).then(function(data) {
-                    var isDO=false;
-                    if (data.errno == 0) {
-                        console.log(data.data);
-                        data.data.forEach(function(item){
-                            if(item.PayStatus==1){
-                                if(!isDO) {
-                                    vm.getDeposits();
-                                    isDO = true;
-                                }
-                            }
-
-                        });
-                        return false;
-                    }
-                });
-            };
-
-            vm.back=function(){
-                StateService.back();
-            };
-
-            vm.goToDepositComment=function(did){
-                StateService.go('depositComment', {id: did});
-            };
-
-        });
-}());
-
-(function() {
-  "use strict";
-  angular.module('orderModule', [
-    'orderCtrl',
-    'depositListctrl',
-    'orderRouter',
-    'orderService'
-  ]);
-
-}());
-
-(function() {
-    "use strict";
-    angular.module('orderCtrl', [])
-        .controller('orderCtrl', function($scope, Constants, StateService) {
-            'ngInject';
-            var vm = this;
-            vm.activated = false;
-            console.log("tabs come");
-            $scope.$on('$ionicView.afterEnter', activate);
-
-            function activate() {
-                vm.activated = true;
-                vm.version = Constants.buildID;
-            }
-
-            vm.goTo=function(where){
-                StateService.go(where);
-            };
-        });
-}());
-
-(function() {
-  'use strict';
-
-  angular.module('orderRouter', [])
-    .config(myRouter);
-
-
-  function myRouter($stateProvider, $urlRouterProvider) {
-    'ngInject';
-    $stateProvider
-      .state('tabs.order', {
-        url: "/order",
-          views: {
-            'tab-order': {
-              templateUrl: 'order/order.html',
-              controller: 'orderCtrl',
-              controllerAs: 'vm'
-            }
-          }
-      })
-      .state('vipOrg', {
-        url: "/vipOrg",
-        templateUrl: 'order/depositList.html',
-        controller: 'depositListctrl',
-        controllerAs: 'vm'
-      })
-    ;
-  }
-}());
-
-(function() {
-  'use strict';
-
-  angular.module('orderService', [])
-    .factory('orderService', orderService);
-
-  function orderService( $q, $http) {
-    'ngInject';
-    var service = {
-    };
-    return service;
-
-
-  }
-
 }());
 
 (function() {
@@ -5015,6 +4980,159 @@ Date.prototype.Format = function(fmt) {
 }());
 
 (function() {
+    "use strict";
+    angular.module('depositListctrl', [])
+        .controller('depositListctrl', function($scope,Constants,StateService,$ionicListDelegate,$ionicPopup,AuthService,parentService,vipBuyService) {
+            'ngInject';
+            var vm = this;
+            vm.activated = false;
+            $scope.$on('$ionicView.afterEnter', activate);
+
+            function activate() {
+                vm.activated = true;
+                vm.version = Constants.buildID;
+                vm.getRecords();
+            };
+
+            vm.getDeposits = function(){
+                parentService.queryChildren(AuthService.getLoginID()).then(function(data) {
+                    if (data.errno == 0) {
+                        console.log(data.data);
+                        vm.deposits = [];
+                        var array=[];
+                        //获取deposits，取出唯一
+                        data.data.forEach(function(item){
+                            var obj={};
+                            obj.depositid=item.depositid;
+                            obj.orgname=item.orgname;
+                            //console.log(array);
+                            // console.log(item.depositid);
+                            if(!array.includes(item.depositid)&& item.depositid ){
+                                array[array.length]=item.depositid;
+                                vm.deposits[vm.deposits.length]=obj;
+                            }
+                            //获取机构信息，获取权限是否能查看编辑
+                        });
+                    }
+                });
+            };
+
+            vm.getRecords = function () {
+                vipBuyService.getOrders(AuthService.getLoginID()).then(function(data) {
+                    var isDO=false;
+                    if (data.errno == 0) {
+                        console.log(data.data);
+                        data.data.forEach(function(item){
+                            if(item.PayStatus==1){
+                                if(!isDO) {
+                                    vm.getDeposits();
+                                    isDO = true;
+                                }
+                            }
+
+                        });
+                        return false;
+                    }
+                });
+            };
+
+            vm.back=function(){
+                StateService.back();
+            };
+
+            vm.goToDepositComment=function(did){
+                StateService.go('depositComment', {id: did});
+            };
+
+        });
+}());
+
+(function() {
+  "use strict";
+  angular.module('orderModule', [
+    'orderCtrl',
+    'depositListctrl',
+    'orderRouter',
+    'orderService'
+  ]);
+
+}());
+
+(function() {
+    "use strict";
+    angular.module('orderCtrl', [])
+        .controller('orderCtrl', function($scope, Constants, StateService) {
+            'ngInject';
+            var vm = this;
+            vm.activated = false;
+            console.log("tabs come");
+            $scope.$on('$ionicView.afterEnter', activate);
+
+            function activate() {
+                vm.activated = true;
+                vm.version = Constants.buildID;
+            }
+
+            vm.goTo=function(where){
+                StateService.go(where);
+            };
+        });
+}());
+
+(function() {
+  'use strict';
+
+  angular.module('orderRouter', [])
+    .config(myRouter);
+
+
+  function myRouter($stateProvider, $urlRouterProvider) {
+    'ngInject';
+    $stateProvider
+      .state('tabs.order', {
+        url: "/order",
+          views: {
+            'tab-order': {
+              templateUrl: 'order/order.html',
+              controller: 'orderCtrl',
+              controllerAs: 'vm'
+            }
+          }
+      })
+      .state('orders', {
+        url: "/orders",
+        templateUrl: 'order/order.html',
+        controller: 'orderCtrl',
+        controllerAs: 'vm'
+      })
+      .state('vipOrg', {
+        url: "/vipOrg",
+        templateUrl: 'order/depositList.html',
+        controller: 'depositListctrl',
+        controllerAs: 'vm'
+      })
+    ;
+  }
+}());
+
+(function() {
+  'use strict';
+
+  angular.module('orderService', [])
+    .factory('orderService', orderService);
+
+  function orderService( $q, $http) {
+    'ngInject';
+    var service = {
+    };
+    return service;
+
+
+  }
+
+}());
+
+(function() {
   "use strict";
   angular.module('organizerModule', [
     'organizerCtrl',
@@ -5282,7 +5400,8 @@ Date.prototype.Format = function(fmt) {
     'parentCtrl',
     'parentEditCtrl',
     'parentRouter',
-    'parentService'
+    'parentService',
+    'parentInfoCtrl'
   ]);
 
 }());
@@ -5357,6 +5476,28 @@ Date.prototype.Format = function(fmt) {
 }());
 
 (function() {
+    "use strict";
+    angular.module('parentInfoCtrl', [])
+        .controller('parentInfoCtrl', function($scope, Constants, StateService) {
+            'ngInject';
+            var vm = this;
+            vm.activated = false;
+            $scope.$on('$ionicView.afterEnter', activate);
+
+            function activate() {
+                vm.activated = true;
+                vm.version = Constants.buildID;
+            };
+
+            vm.goTo = function(addr){
+                console.log('go to path : '+addr);
+                StateService.go(addr);
+            };
+
+        });
+}());
+
+(function() {
   'use strict';
 
   angular.module('parentRouter', [])
@@ -5366,6 +5507,12 @@ Date.prototype.Format = function(fmt) {
   function myRouter($stateProvider, $urlRouterProvider) {
     'ngInject';
     $stateProvider
+    .state('parentInfo', {
+        url: "/parentInfo",
+        templateUrl: 'parent/parentInfo.html',
+        controller: 'parentInfoCtrl',
+        controllerAs: 'vm'
+      })
       .state('parent', {
         url: "/parent",
         templateUrl: 'parent/parent.html',
@@ -5573,7 +5720,7 @@ Date.prototype.Format = function(fmt) {
 (function() {
     "use strict";
     angular.module('profileCtrl', [])
-        .controller('profileCtrl', function($scope, $state, Constants, StateService) {
+        .controller('profileCtrl', function($scope, $state, Constants, StateService, parentService, AuthService) {
             'ngInject';
             var vm = this;
             vm.activated = false;
@@ -5582,11 +5729,41 @@ Date.prototype.Format = function(fmt) {
             function activate() {
                 vm.activated = true;
                 vm.version = Constants.buildID;
-            }
+                vm.getParent();
+                vm.getChildren();
+            };
 
-            vm.goTo = function(addr){
-                console.log(addr);
-                StateService.go(addr);
+            vm.getParent = function(){
+              parentService.queryParent(AuthService.getLoginID()).then(function(data) {
+                  if (data.errno == 0) {
+                      console.log(data.data);
+                      vm.parent = data.data;
+                  }
+              });
+            };
+
+            vm.getChildren = function(){
+                parentService.queryChildren(AuthService.getLoginID()).then(function(data) {
+                    if (data.errno == 0) {
+                        console.log(data.data);
+                        vm.children = data.data;
+                        var children="";
+                        for(var i=0;i<vm.children.length;i++){
+                          if(children=="")
+                            children+=vm.children[i].name
+                          else {
+                            children+=","+vm.children[i].name
+                          }
+                        }
+                        vm.childrenName=children;
+                    }
+                });
+            };
+
+            vm.goTo = function(addr,params){
+                console.log('go to path : '+addr);
+                if(params)console.log(params);
+                StateService.go(addr,params);
             };
 
         });
@@ -5997,6 +6174,55 @@ Date.prototype.Format = function(fmt) {
     return service;
   }
 
+}());
+
+(function() {
+  "use strict";
+  angular.module('settingsModule', [
+    'settingsCtrl',
+    'settingsRouter'
+  ]);
+
+}());
+
+(function() {
+    "use strict";
+    angular.module('settingsCtrl', [])
+        .controller('settingsCtrl', function($scope, Constants, StateService) {
+            'ngInject';
+            var vm = this;
+            vm.activated = false;
+            $scope.$on('$ionicView.afterEnter', activate);
+
+            function activate() {
+                vm.activated = true;
+                vm.version = Constants.buildID;
+            }
+
+            vm.goTo = function(addr){
+                console.log('go to path : '+addr);
+                StateService.go(addr);
+            };
+        });
+}());
+
+(function() {
+  'use strict';
+
+  angular.module('settingsRouter', [])
+    .config(myRouter);
+
+
+  function myRouter($stateProvider, $urlRouterProvider) {
+    'ngInject';
+    $stateProvider
+        .state('settings', {
+          url: "/settings",
+          templateUrl: 'settings/settings.html',
+          controller: 'settingsCtrl',
+          controllerAs: 'vm'
+        })
+  }
 }());
 
 (function() {

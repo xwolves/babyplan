@@ -1,7 +1,7 @@
 (function() {
     "use strict";
     angular.module('MapCtrl', [])
-        .controller('MapCtrl', function($scope, $state, Constants, StateService, $ionicModal, $window,BaiduService) {
+        .controller('MapCtrl', function($scope, $state, $stateParams,Constants, StateService, $ionicModal, $window,BaiduService) {
             'ngInject';
             var vm = this;
             vm.activated = false;
@@ -19,6 +19,8 @@
             function activate() {
                 vm.activated = true;
                 vm.version = Constants.buildID;
+                vm.type = $stateParams.type;
+                console.log("vm.type = "+vm.type);
             }
 
             vm.goTo = function(addr){

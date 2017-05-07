@@ -17,6 +17,15 @@
           controllerAs: 'vm'
         }
       }
+    })
+    .state('orgmap', {
+      url: "/orgmap?:type",
+      templateUrl: 'map/map.html',
+      params:{
+        type:0
+      },
+      controller: 'MapCtrl',
+      controllerAs: 'vm'
     });
   }
 }());

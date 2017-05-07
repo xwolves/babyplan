@@ -24,7 +24,10 @@
         'exitModule',
         'photoModule',
         'MapModule',
-        'eshopEntryModule'
+        'eshopEntryModule',
+        'estimateModule',
+        'helpModule',
+        'settingsModule'
     ]);
 
 }());

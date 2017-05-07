@@ -18,6 +18,12 @@
             }
           }
       })
+      .state('orders', {
+        url: "/orders",
+        templateUrl: 'order/order.html',
+        controller: 'orderCtrl',
+        controllerAs: 'vm'
+      })
       .state('vipOrg', {
         url: "/vipOrg",
         templateUrl: 'order/depositList.html',

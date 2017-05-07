@@ -8,6 +8,12 @@
   function myRouter($stateProvider, $urlRouterProvider) {
     'ngInject';
     $stateProvider
+    .state('parentInfo', {
+        url: "/parentInfo",
+        templateUrl: 'parent/parentInfo.html',
+        controller: 'parentInfoCtrl',
+        controllerAs: 'vm'
+      })
       .state('parent', {
         url: "/parent",
         templateUrl: 'parent/parent.html',
