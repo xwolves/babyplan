@@ -1,7 +1,7 @@
 (function() {
     "use strict";
     angular.module('settingsCtrl', [])
-        .controller('settingsCtrl', function($scope, Constants, StateService) {
+        .controller('settingsCtrl', function($scope, Constants, StateService, $ionicPopup) {
             'ngInject';
             var vm = this;
             vm.activated = false;
@@ -15,6 +15,34 @@
             vm.goTo = function(addr){
                 console.log('go to path : '+addr);
                 StateService.go(addr);
+            };
+
+            vm.askClearCache = function() {
+              var confirmPopup = $ionicPopup.confirm({
+                  title: '确定要清除缓存？',
+                  buttons: [
+                      {text: '取消', type: 'button-positive'},
+                      {text: '确定', type: 'button-assertive',onTap: function(e) { return true}}
+                  ]
+              });
+              confirmPopup.then(function(result) {
+                  if(result) {
+                      console.log('confirm to clear cache');
+                      console.log(result);
+                      //delete(id);
+                      window.CacheClear(function(data){
+                        console.log(data);
+                      }, function(errordata){
+                        console.log(errordata);
+                      });
+                  } else {
+                      console.log('cancel delete');
+                  }
+              });
+            };
+
+            vm.back=function(){
+                StateService.back();
             };
         });
 }());

@@ -327,9 +327,9 @@
     }
 
     function back() {
-      var currentStateId = [$ionicHistory.currentView().stateId];
-      $ionicViewSwitcher.nextDirection('back');
-      $timeout(clearPreviousStateCache(currentStateId), 700);
+      //var currentStateId = [$ionicHistory.currentView().stateId];
+      //$ionicViewSwitcher.nextDirection('back');
+      //$timeout(clearPreviousStateCache(currentStateId), 700);
       $ionicHistory.goBack();
 
     }
@@ -805,6 +805,23 @@ app.filter('statusChange', function () {
     });
 }());
 
+Date.prototype.Format = function(fmt) {
+    var o = {
+        "M+": this.getMonth() + 1, //月份
+        "d+": this.getDate(), //日
+        "h+": this.getHours(), //小时
+        "m+": this.getMinutes(), //分
+        "s+": this.getSeconds(), //秒
+        "q+": Math.floor((this.getMonth() + 3) / 3), //季度
+        "S": this.getMilliseconds() //毫秒
+    };
+    if (/(y+)/.test(fmt))
+        fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+    for (var k in o)
+        if (new RegExp("(" + k + ")").test(fmt))
+            fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+    return fmt;
+};
 (function() {
     "use strict";
     angular.module('directive', [
@@ -1136,7 +1153,11 @@ var app = angular.module('BaiduMapDirective', []);
                   LIST_SHOW: 2,
                   LIST_SEARCH: 3
               };
-              scope.currMode = MAP_MODES.MAP_SHOW;
+              if(opts.mode){
+                scope.currMode = opts.mode;
+              }else{
+                scope.currMode = MAP_MODES.MAP_SHOW;
+              }
               scope.baiDuSearchResults = [];
               scope.babyPlanSearchResults = [];
               scope.keyword1 = '';
@@ -1406,57 +1427,6 @@ var app = angular.module('BaiduMapDirective', []);
   });
 }());
 
-Date.prototype.Format = function(fmt) {
-    var o = {
-        "M+": this.getMonth() + 1, //月份
-        "d+": this.getDate(), //日
-        "h+": this.getHours(), //小时
-        "m+": this.getMinutes(), //分
-        "s+": this.getSeconds(), //秒
-        "q+": Math.floor((this.getMonth() + 3) / 3), //季度
-        "S": this.getMilliseconds() //毫秒
-    };
-    if (/(y+)/.test(fmt))
-        fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
-    for (var k in o)
-        if (new RegExp("(" + k + ")").test(fmt))
-            fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
-    return fmt;
-};
-(function() {
-    "use strict";
-    angular.module('modules', [
-        'LoginModule',
-        'WxLoginModule',
-        'childrenSteamModule',
-        'registerModule',
-        'tabsModule',
-        'childrenModule',
-        'nearbyModule',
-        'orderModule',
-        'profileModule',
-        'organizerModule',
-        'messageModule',
-        'parentModule',
-        'childrenSettingModule',
-        'teacherModule',
-        'teacherSettingModule',
-        'depositChildrenModule',
-        'vipBuyModule',
-        'vipRecordModule',
-        'vipTipsModule',
-        'commentModule',
-        'exitModule',
-        'photoModule',
-        'MapModule',
-        'eshopEntryModule',
-        'estimateModule',
-        'helpModule',
-        'settingsModule'
-    ]);
-
-}());
-
 (function() {
   "use strict";
   angular.module('tools', []).service('tools', tools);
@@ -1502,6 +1472,40 @@ Date.prototype.Format = function(fmt) {
 
       return tools;
     };
+
+}());
+
+(function() {
+    "use strict";
+    angular.module('modules', [
+        'LoginModule',
+        'WxLoginModule',
+        'childrenSteamModule',
+        'registerModule',
+        'tabsModule',
+        'childrenModule',
+        'nearbyModule',
+        'orderModule',
+        'profileModule',
+        'organizerModule',
+        'messageModule',
+        'parentModule',
+        'childrenSettingModule',
+        'teacherModule',
+        'teacherSettingModule',
+        'depositChildrenModule',
+        'vipBuyModule',
+        'vipRecordModule',
+        'vipTipsModule',
+        'commentModule',
+        'exitModule',
+        'photoModule',
+        'MapModule',
+        'eshopEntryModule',
+        'estimateModule',
+        'helpModule',
+        'settingsModule'
+    ]);
 
 }());
 
@@ -3702,6 +3706,7 @@ Date.prototype.Format = function(fmt) {
   "use strict";
   angular.module('estimateModule', [
     'estimateCtrl',
+    'estimateDepositCtrl',
     'estimateRouter'
   ]);
 
@@ -3719,11 +3724,59 @@ Date.prototype.Format = function(fmt) {
             function activate() {
                 vm.activated = true;
                 vm.version = Constants.buildID;
-            }
+            };
 
             vm.goTo = function(addr){
                 console.log('go to path : '+addr);
                 StateService.go(addr);
+            };
+
+            vm.back=function(){
+                StateService.back();
+            };
+        });
+}());
+
+(function() {
+    "use strict";
+    angular.module('estimateDepositCtrl', [])
+        .controller('estimateDepositCtrl', function($scope, Constants, StateService, BaiduService, AuthService, childrenSteamService, MessageToaster, $ionicModal) {
+            'ngInject';
+            var vm = this;
+            vm.activated = false;
+            vm.list=[];
+            $scope.$on('$ionicView.afterEnter', activate);
+
+            function activate() {
+                vm.activated = true;
+                vm.version = Constants.buildID;
+                vm.getChildrenDeposit();
+            };
+
+            vm.getChildrenDeposit = function(){
+              childrenSteamService.getChildrenDeposit(AuthService.getLoginID()).then(function(data) {
+                  if (data.errno == 0) {
+                      console.log(data.data);
+                      var de=data.data;
+                      for(var i=0;i<de.length;i++){
+                        console.log(de[i]);
+                        if(de[i].DepositID!=null){
+                          BaiduService.getDepositInfoWithComments(de[i].DepositID).then(function (depositInfo) {
+                              console.log(depositInfo);
+                              depositInfo.show=false;
+                              vm.list.push(depositInfo);
+                          }, function (err) {
+                              //ionicToast.show('获取机构详情信息失败!', 'middle', false, 3000);
+                              //MessageToaster.error("获取机构详情信息失败!");
+                          })
+                        }
+                      }
+                  }
+              });
+            };
+
+            vm.back=function(){
+                StateService.back();
             };
         });
 }());
@@ -3742,6 +3795,12 @@ Date.prototype.Format = function(fmt) {
           url: "/estimate",
           templateUrl: 'estimate/estimate.html',
           controller: 'estimateCtrl',
+          controllerAs: 'vm'
+        })
+        .state('estimateDeposit', {
+          url: "/estimateDeposit",
+          templateUrl: 'estimate/estimateDeposit.html',
+          controller: 'estimateDepositCtrl',
           controllerAs: 'vm'
         })
   }
@@ -3853,6 +3912,7 @@ Date.prototype.Format = function(fmt) {
   "use strict";
   angular.module('helpModule', [
     'helpCtrl',
+    'helpDocCtrl',
     'helpRouter'
   ]);
 
@@ -3876,6 +3936,35 @@ Date.prototype.Format = function(fmt) {
                 console.log('go to path : '+addr);
                 StateService.go(addr);
             };
+
+            vm.back=function(){
+                StateService.back();
+            };
+        });
+}());
+
+(function() {
+    "use strict";
+    angular.module('helpDocCtrl', [])
+        .controller('helpDocCtrl', function($scope, Constants, StateService) {
+            'ngInject';
+            var vm = this;
+            vm.activated = false;
+            $scope.$on('$ionicView.afterEnter', activate);
+
+            function activate() {
+                vm.activated = true;
+                vm.version = Constants.buildID;
+            }
+
+            vm.goTo = function(addr){
+                console.log('go to path : '+addr);
+                StateService.go(addr);
+            };
+
+            vm.back=function(){
+                StateService.back();
+            };
         });
 }());
 
@@ -3893,6 +3982,12 @@ Date.prototype.Format = function(fmt) {
           url: "/help",
           templateUrl: 'help/help.html',
           controller: 'helpCtrl',
+          controllerAs: 'vm'
+        })
+        .state('helpDoc', {
+          url: "/helpDoc",
+          templateUrl: 'help/helpDoc.html',
+          controller: 'helpDocCtrl',
           controllerAs: 'vm'
         })
   }
@@ -3916,11 +4011,13 @@ Date.prototype.Format = function(fmt) {
                     console.log('地图加载失败');
                 }
             };
+            vm.type = $stateParams.type;
+            console.log("vm.type = "+vm.type);
+            if(vm.type==1)$scope.mapOpts.mode = 2;
+
             function activate() {
                 vm.activated = true;
                 vm.version = Constants.buildID;
-                vm.type = $stateParams.type;
-                console.log("vm.type = "+vm.type);
             }
 
             vm.goTo = function(addr){
@@ -5076,6 +5173,10 @@ Date.prototype.Format = function(fmt) {
             vm.goTo=function(where){
                 StateService.go(where);
             };
+
+            vm.back=function(){
+                StateService.back();
+            };
         });
 }());
 
@@ -5494,6 +5595,9 @@ Date.prototype.Format = function(fmt) {
                 StateService.go(addr);
             };
 
+            vm.back=function(){
+                StateService.back();
+            };
         });
 }());
 
@@ -6188,7 +6292,7 @@ Date.prototype.Format = function(fmt) {
 (function() {
     "use strict";
     angular.module('settingsCtrl', [])
-        .controller('settingsCtrl', function($scope, Constants, StateService) {
+        .controller('settingsCtrl', function($scope, Constants, StateService, $ionicPopup) {
             'ngInject';
             var vm = this;
             vm.activated = false;
@@ -6202,6 +6306,34 @@ Date.prototype.Format = function(fmt) {
             vm.goTo = function(addr){
                 console.log('go to path : '+addr);
                 StateService.go(addr);
+            };
+
+            vm.askClearCache = function() {
+              var confirmPopup = $ionicPopup.confirm({
+                  title: '确定要清除缓存？',
+                  buttons: [
+                      {text: '取消', type: 'button-positive'},
+                      {text: '确定', type: 'button-assertive',onTap: function(e) { return true}}
+                  ]
+              });
+              confirmPopup.then(function(result) {
+                  if(result) {
+                      console.log('confirm to clear cache');
+                      console.log(result);
+                      //delete(id);
+                      window.CacheClear(function(data){
+                        console.log(data);
+                      }, function(errordata){
+                        console.log(errordata);
+                      });
+                  } else {
+                      console.log('cancel delete');
+                  }
+              });
+            };
+
+            vm.back=function(){
+                StateService.back();
             };
         });
 }());

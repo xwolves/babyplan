@@ -10,11 +10,15 @@
             function activate() {
                 vm.activated = true;
                 vm.version = Constants.buildID;
-            }
+            };
 
             vm.goTo = function(addr){
                 console.log('go to path : '+addr);
                 StateService.go(addr);
+            };
+
+            vm.back=function(){
+                StateService.back();
             };
         });
 }());

@@ -16,5 +16,9 @@
                 console.log('go to path : '+addr);
                 StateService.go(addr);
             };
+
+            vm.back=function(){
+                StateService.back();
+            };
         });
 }());

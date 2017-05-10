@@ -16,5 +16,9 @@
             vm.goTo=function(where){
                 StateService.go(where);
             };
+
+            vm.back=function(){
+                StateService.back();
+            };
         });
 }());

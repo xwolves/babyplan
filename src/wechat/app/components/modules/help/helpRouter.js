@@ -14,5 +14,11 @@
           controller: 'helpCtrl',
           controllerAs: 'vm'
         })
+        .state('helpDoc', {
+          url: "/helpDoc",
+          templateUrl: 'help/helpDoc.html',
+          controller: 'helpDocCtrl',
+          controllerAs: 'vm'
+        })
   }
 }());

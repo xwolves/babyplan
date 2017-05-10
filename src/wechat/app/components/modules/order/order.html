@@ -1,4 +1,7 @@
 <ion-view view-title="VIP服务">
+    <ion-nav-buttons side="left">
+        <a class="button button-icon icon ion-ios-arrow-back" ng-click="vm.back()"></a>
+    </ion-nav-buttons>
     <ion-content>
         <ul class="list">
             <li class="item" ng-click="vm.goTo('vipBuy')">
@@ -10,9 +13,9 @@
             <!--<li class="item" ng-click="vm.goTo('vipTips')">-->
                 <!--<i class="icon ion-android-document"></i>&nbsp;&nbsp;VIP常见问题</i>-->
             <!--</li>-->
-            <li class="item" ng-click="vm.goTo('vipOrg')">
+            <!-- <li class="item" ng-click="vm.goTo('vipOrg')">
                 <i class="icon ion-heart"></i>&nbsp;&nbsp;机构评分</i>
-            </li>
+            </li> -->
         </ul>
     </ion-content>
 </ion-view>

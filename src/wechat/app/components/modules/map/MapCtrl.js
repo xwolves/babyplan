@@ -16,11 +16,13 @@
                     console.log('地图加载失败');
                 }
             };
+            vm.type = $stateParams.type;
+            console.log("vm.type = "+vm.type);
+            if(vm.type==1)$scope.mapOpts.mode = 2;
+
             function activate() {
                 vm.activated = true;
                 vm.version = Constants.buildID;
-                vm.type = $stateParams.type;
-                console.log("vm.type = "+vm.type);
             }
 
             vm.goTo = function(addr){

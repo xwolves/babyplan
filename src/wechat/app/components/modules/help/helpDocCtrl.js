@@ -1,7 +1,7 @@
 (function() {
     "use strict";
-    angular.module('parentInfoCtrl', [])
-        .controller('parentInfoCtrl', function($scope, Constants, StateService) {
+    angular.module('helpDocCtrl', [])
+        .controller('helpDocCtrl', function($scope, Constants, StateService) {
             'ngInject';
             var vm = this;
             vm.activated = false;
@@ -10,7 +10,7 @@
             function activate() {
                 vm.activated = true;
                 vm.version = Constants.buildID;
-            };
+            }
 
             vm.goTo = function(addr){
                 console.log('go to path : '+addr);
