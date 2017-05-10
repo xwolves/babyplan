@@ -25,18 +25,6 @@
             <button class="button button-icon icon ion-location" ng-class="{'ion-location':currMode==MAP_MODES.LIST_SHOW,'ion-ios-search':currMode==MAP_MODES.LIST_SEARCH}" ng-click="switchMode()"></button>
         </div>
         <div class="list card">
-            <!--百度搜索结果展示列表-->
-            <div class="item" ng-repeat="u in baiDuSearchResults">
-                <span class="item-note">
-                    {{u.Dist | formatDist}}
-                </span>
-                <h2>{{u.OrgName}}</h2>
-                <p>{{u.Address}}</p>
-                <div class="button-bar">
-                    <a class="button button-small ion-ios-navigate-outline" ng-click="location(u)">位置</a>
-                    <a class="button button-small ion-ios-telephone-outline" ng-click="dial(u.Tel)" ng-disabled="!u.Tel">电话</a>
-                </div>
-            </div>
             <!--本地后台数据展示列表-->
             <div class="item" ng-repeat="u in babyPlanSearchResults">
                 <span class="item-note">
@@ -47,6 +35,19 @@
                 <div class="button-bar">
                     <a class="button button-small ion-ios-navigate-outline" ng-click="location(u)">位置</a>
                     <a class="button button-small ion-ios-eye-outline" ng-click="openDepositInfoForm(u)">详情</a>
+                </div>
+            </div>
+
+            <!--百度搜索结果展示列表-->
+            <div class="item" ng-repeat="u in baiDuSearchResults">
+                <span class="item-note">
+                    {{u.Dist | formatDist}}
+                </span>
+                <h2>{{u.OrgName}}</h2>
+                <p>{{u.Address}}</p>
+                <div class="button-bar">
+                    <a class="button button-small ion-ios-navigate-outline" ng-click="location(u)">位置</a>
+                    <a class="button button-small ion-ios-telephone-outline" ng-click="dial(u.Tel)" ng-disabled="!u.Tel">电话</a>
                 </div>
             </div>
         </div>
