@@ -1,12 +1,18 @@
 <ion-view view-title="我的评价">
+    <ion-nav-buttons side="left">
+        <a class="button button-icon icon ion-ios-arrow-back" ng-click="vm.back()"></a>
+    </ion-nav-buttons>
     <ion-content>
         <ul class="list">
-            <li class="item" ng-click="vm.goTo('parent')">
+            <li class="item" ng-click="vm.goTo('estimateDeposit')">
                 <i class="icon ion-ios-contact"></i>&nbsp;&nbsp;机构评价</i>
             </li>
             <!-- <li class="item" ng-click="vm.goTo('childrenSetting')">
                 <i class="icon ion-ios-people"></i>&nbsp;&nbsp;老师评价</i>
             </li> -->
+            <li class="item" ng-click="vm.goTo('vipOrg')">
+                <i class="icon ion-heart"></i>&nbsp;&nbsp;机构评分</i>
+            </li>
         </ul>
     </ion-content>
 </ion-view>

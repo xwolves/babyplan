@@ -24,9 +24,9 @@
     }
 
     function back() {
-      var currentStateId = [$ionicHistory.currentView().stateId];
-      $ionicViewSwitcher.nextDirection('back');
-      $timeout(clearPreviousStateCache(currentStateId), 700);
+      //var currentStateId = [$ionicHistory.currentView().stateId];
+      //$ionicViewSwitcher.nextDirection('back');
+      //$timeout(clearPreviousStateCache(currentStateId), 700);
       $ionicHistory.goBack();
 
     }

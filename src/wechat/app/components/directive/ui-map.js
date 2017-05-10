@@ -321,7 +321,11 @@ var app = angular.module('BaiduMapDirective', []);
                   LIST_SHOW: 2,
                   LIST_SEARCH: 3
               };
-              scope.currMode = MAP_MODES.MAP_SHOW;
+              if(opts.mode){
+                scope.currMode = opts.mode;
+              }else{
+                scope.currMode = MAP_MODES.MAP_SHOW;
+              }
               scope.baiDuSearchResults = [];
               scope.babyPlanSearchResults = [];
               scope.keyword1 = '';

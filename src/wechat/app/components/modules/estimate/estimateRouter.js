@@ -14,5 +14,11 @@
           controller: 'estimateCtrl',
           controllerAs: 'vm'
         })
+        .state('estimateDeposit', {
+          url: "/estimateDeposit",
+          templateUrl: 'estimate/estimateDeposit.html',
+          controller: 'estimateDepositCtrl',
+          controllerAs: 'vm'
+        })
   }
 }());
