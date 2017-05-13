@@ -595,7 +595,7 @@ class Account{
           if($row){
               $info['uid'] = $row['accountid'];
               $info['name'] = $row['name'];
-              $info['type'] = 2;
+              $info['type'] = $type;
               $redisInfo['uid'] = $row['accountid'];
               $redisInfo['name'] = $row['name'];
               $redisInfo['mobile'] = $row['mobile'];
