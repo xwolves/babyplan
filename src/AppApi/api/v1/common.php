@@ -7,6 +7,7 @@ static $errCode = array(
     10004 => 'Redis Set Failed',
     10005 => 'Redis Get No Data',
     10006 => 'Params Empty',
+    10007 => 'Params error',
 
     12001 => 'Account Parames Empty',
     12002 => 'Account Parames Required Defect',

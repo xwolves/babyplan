@@ -422,7 +422,7 @@ class Account{
             $info['mobile'] = $row['mobile'];
             $info['weixinno'] = $row['weixinno'];
             $info['remark'] = $row['remark'];
-            $info['avatarlink'] = $row['avatarlink']; 
+            $info['avatarlink'] = $row['avatarlink'];
             return $info;
         }catch (PDOException $e) {
             $errs = $e->getMessage();
@@ -568,6 +568,54 @@ class Account{
             $errs = $e->getMessage();
             return 10000;
         }
+    }
+
+    public function teacherLogin($params, $redis){
+      try{
+          $userId = $params['username'];
+          $psw = $params['password'];
+          $type = $params['type'];
+          $token = "";
+          $info = array();
+          $redisInfo = array();
+          $sql_str = "" ;
+          if($type==1){
+            $sql_str = "select accountid, OrgName as name, ContactPhone as mobile  from tb_accnt_deposit where password = :psw and ( ContactPhone = :userId or AccountID = :userId )" ;
+          }else if($type==3){
+            $sql_str = "select accountid, name, mobile from tb_accnt_teacher where password = :psw and ( mobile = :userId or AccountID = :userId )" ;
+          }else{
+            return 10007;
+          }
+          $stmt = $this->DB->prepare($sql_str);
+          $stmt->bindParam(":psw", $psw, PDO::PARAM_STR);
+          $stmt->bindParam(":userId", $userId, PDO::PARAM_STR);
+          if(!$stmt->execute())
+              return 10001;
+          $row = $stmt->fetch(PDO::FETCH_ASSOC);
+          if($row){
+              $info['uid'] = $row['accountid'];
+              $info['name'] = $row['name'];
+              $info['type'] = 2;
+              $redisInfo['uid'] = $row['accountid'];
+              $redisInfo['name'] = $row['name'];
+              $redisInfo['mobile'] = $row['mobile'];
+              $token = strtolower($this->guid());
+              if(!$redis->set($token, json_encode($redisInfo)))
+                  return 10004;
+              $info['token'] = $token;
+              //eshop login
+              $eshopData = array('username' => $row['accountid'],'password' => $psw);
+              $infoObj = new Info($this->DB);
+              $eshop = $infoObj->eshopLogin(json_encode($eshopData));
+              $info['eshop']=$eshop;
+              return $info;
+          }else{
+            return 10003;
+          }
+      }catch (PDOException $e) {
+          $errs = $e->getMessage();
+          return 10000;
+      }
     }
 
     public function parentLogin($params, $redis){

@@ -1391,6 +1391,32 @@ $app->put(
       $response->setBody($document);
     }
 );
+$app->post(
+    '/teacherLogin',
+    function () use ($app, $sql_db, $redis) {
+        $response = $app->response;
+        $request = $app->request->getBody();
+        $type = 0;
+        //$params = $app->request->params();
+        $a_request = json_decode($request, true);
+        if(empty($a_request)){
+            $response->setBody(rspData(12001));
+            return;
+        }
+        $a_request = array_change_key_case($a_request, CASE_LOWER);
+        if(!array_key_exists("username", $a_request) || !array_key_exists("password", $a_request)){
+            $response->setBody(rspData(12002));
+            return;
+        }
+        $account = new Account($sql_db);
+        $ret = $account->teacherLogin($a_request, $redis);
+        if(gettype($ret) != "array"){
+            $response->setBody(rspData($ret));
+        }else{
+            $response->setBody(rspData(0, $ret));
+        }
+
+});
 
 $app->post(
     '/parentLogin',
