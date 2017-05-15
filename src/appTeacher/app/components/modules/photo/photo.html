@@ -1,0 +1,14 @@
+<ion-view view-title="相片展示">
+    <ion-nav-buttons side="left">
+        <a class="button button-icon icon ion-ios-arrow-back" ng-click="vm.back()"></a>
+    </ion-nav-buttons>
+    <ion-content>
+        <ion-slides options="options" slider="slider">
+
+            <ion-slide-page ng-repeat="item in vm.images">
+                <div><img ng-src="{{item}}"/></div>
+            </ion-slide-page>
+
+        </ion-slides>
+    </ion-content>
+</ion-view>

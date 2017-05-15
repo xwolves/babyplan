@@ -1,0 +1,16 @@
+<ion-modal-view>
+    <ion-header-bar class="bar-positive">
+        <h1 class="title">选择用户类型登录</h1>
+        <!--<button class="button icon ion-close" ng-click="vm.closeDetailsModal()"></button>-->
+    </ion-header-bar>
+
+    <ion-content>
+        <form id="chooseForm" name="chooseForm" >
+            <ion-list>
+                <ion-radio ng-model="vm.choose" collection-repeat="item in vm.roleList" ng-value="item.type" ng-click="vm.select()">
+                    {{item.type|JSchange}}
+                </ion-radio>
+            </ion-list>
+        </form>
+    </ion-content>
+</ion-modal-view>

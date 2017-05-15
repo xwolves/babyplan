@@ -1,0 +1,25 @@
+<ion-view view-title="机构信息">
+
+    <ion-nav-buttons side="left">
+        <a class="button button-icon icon ion-ios-arrow-back" ng-click="vm.back()"></a>
+    </ion-nav-buttons>
+    <ion-nav-buttons side="right">
+        <a class="button button-icon icon ion-edit" ng-click="vm.edit()"></a>
+    </ion-nav-buttons>
+
+    <ion-content>
+        <ul>
+            <li class="item"><span>机构名称</span><span style="float: right">{{vm.organizer.OrgName}}</span></li>
+            <li class="item"><span>机构地址</span><span style="float: right">{{vm.organizer.Address}}</span></li>
+            <li class="item"><span>坐标位置</span><span style="float: right">{{vm.organizer.MarkID}}</span></li>
+            <li class="item"><span>联系人姓名</span><span style="float: right">{{vm.organizer.ContactName}}</span></li>
+            <li class="item"><span>联系人电话</span><span style="float: right">{{vm.organizer.ContactPhone}}</span></li>
+            <li class="item"><span>机构类型</span><span style="float: right">{{vm.organizer.LicenseType}}</span></li>
+            <li class="item"><span>场地性质</span><span style="float: right">{{vm.organizer.PlaceContractType}}</span></li>
+            <li class="item"><span>法人资料</span><span style="float: right">{{vm.organizer.name}}</span></li>
+            <li class="item"><span>创建时间</span><span style="float: right">{{vm.organizer.CreateTime}}</span></li>
+            <li class="item item-thumbnail-right"><span>相片信息</span><img style="width: 200px;" src="{{vm.organizer.FrontDeskLink}}"></li>
+        </ul>
+    </ion-content>
+
+</ion-view>

@@ -1,0 +1,21 @@
+<ion-view view-title="当前托管孩子列表">
+
+    <ion-nav-buttons side="left">
+        <a class="button button-icon icon ion-ios-arrow-back" ng-click="vm.back()"></a>
+    </ion-nav-buttons>
+
+    <ion-content>
+        <ion-list>
+            <!--ng-click="vm.goTo(item.childrenID)"-->
+            <ion-item class="item" collection-repeat="item in vm.children">
+                <p>{{item.childName}}<span style="float: right">{{item.sex|gendarChange}}</span></p>
+                <p>亲人：{{item.parentName}}</p>
+            </ion-item>
+
+            <div class="item" ng-if="vm.children !== undefined && !vm.children.length" class="no-results">
+                <p>无相关记录</p>
+            </div>
+        </ion-list>
+    </ion-content>
+
+</ion-view>

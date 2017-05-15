@@ -1,0 +1,65 @@
+<ion-view view-title="个人中心">
+    <ion-content>
+        <div style="width:100%;margin-top:30px;" class='center'>
+            <img ng-src='{{vm.parent.avatarlink|ImageMin}}'>
+            <h4>{{vm.parent.name}}</h4>
+            <p>孩子姓名：{{vm.childrenName}}</p>
+            <hr>
+            <div class="row button-icon-top" >
+              <div class="col col-25">
+                  <button class="button button-icon" ng-click="vm.goTo('orgmap',{type:0,nav:true})">
+                    <i class="icon ion-map"></i>
+                    附近机构
+                  </button>
+              </div>
+              <div class="col col-25">
+                  <button class="button button-icon" ng-click="vm.goTo('orgmap',{type:1,nav:true})">
+                    <i class="icon ion-ios-color-filter-outline"></i>
+                    机构排名
+                  </button>
+              </div>
+              <div class="col col-25" ng-click="vm.goTo('parentInfo')">
+                  <button class="button button-icon">
+                    <i class="icon ion-podium"></i>
+                    个人信息
+                  </button>
+              </div>
+              <div class="col col-25" ng-click="vm.goTo('estimate')">
+                  <button class="button button-icon">
+                      <i class="icon ion-card"></i>
+                      我的评价
+                  </button>
+              </div>
+
+        </div>
+          <hr>
+        </div>
+        <ul class="list">
+            <li class="item" onclick="window.location.href='./eshop/index.html'">
+                <i class="icon ion-ios-cart"></i>&nbsp;&nbsp;我的商城</i>
+            </li>
+            <li class="item" ng-click="vm.goTo('orders')">
+                <i class="icon ion-android-person-add"></i>&nbsp;&nbsp;加入会员</i>
+            </li>
+            <!-- <li class="item" ng-click="vm.goTo('childrenSetting')">
+                <i class="icon ion-ios-people"></i>&nbsp;&nbsp;孩子管理</i>
+            </li> -->
+            <li class="item" ng-click="vm.goTo('help')">
+                <i class="icon ion-ios-book"></i>&nbsp;&nbsp;帮助及反馈</i>
+            </li>
+            <li class="item" ng-click="vm.goTo('settings')">
+                <i class="icon ion-ios-cog"></i>&nbsp;&nbsp;设置</i>
+            </li>
+            <!--<li class="item" ng-click="vm.goTo('childrenSetting')">-->
+                <!--<i class="icon ion-android-home"></i>&nbsp;&nbsp;托管机构信息</i>-->
+            <!--</li>-->
+            <!--<li class="item" ng-click="vm.goTo('exit')">-->
+                <!--<i class="icon ion-log-out"></i>&nbsp;&nbsp;用户退出</i>-->
+            <!--</li>-->
+            <!--<li class="item" ng-click="vm.goTo('register')">-->
+                <!--<i class="icon ion-ios-settings"></i>&nbsp;&nbsp;其它设置</i>-->
+            <!--</li>-->
+
+        </ul>
+    </ion-content>
+</ion-view>

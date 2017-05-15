@@ -1,0 +1,126 @@
+<ion-view view-title="信息">
+
+    <ion-nav-buttons side="right">
+        <a class="button button-icon icon ion-edit" ng-click="vm.new()"></a>
+    </ion-nav-buttons>
+
+    <ion-content>
+      <ion-refresher pulling-text="刷新信息" on-refresh="vm.doRefresh(0)"></ion-refresher>
+
+      <div class="msg_flow" ng-repeat="item in vm.messages track by $index">
+              <div class="row" style="margin-top: 0px;padding-top: 0px;margin-bottom: 0px;padding-bottom: 0px;">
+                  <div class="col col-20" style="padding-top:18px;">
+                      <img ng-if="!item.teacherPhoto||item.teacherPhoto==null" src='/img/teacher.png' height="60px">
+                      <img ng-if="item.teacherPhoto" ng-src="{{item.teacherPhoto|ImageMin}}" alt="老师图像">
+                  </div>
+                  <div class="col col-80">
+                      <div class="row">
+                        <div class="col col-80" style="text-align:left;font-weight:bold;">
+                          <font color="blue">{{item.teacherName}}&nbsp;&nbsp;<span>{{item.CreateTime|dateChange}}</span></font>
+                        </div>
+                        <div class="col col-20">
+                            <img ng-src="{{vm.getImg(item.InfoType).src}}" height="20px" alt="指纹记录" >
+                        </div>
+                    </div>
+                    <div ng-if="item.Description">
+                      {{item.Description}}
+                    </div>
+                    <div>
+                      <div class="row" style="display:inline-block;"  ng-if="item.PhotoLink1">
+                          <img style="float: left;" ng-src="{{item.PhotoLink1|ImageMin}}" ng-click="goToSlide(0,item)"
+                               onload='if (this.width>64 || this.height>100) if (this.width/this.height>64/100) this.width=64; else this.height=100;' >
+                          <img style="float: left;margin-left: 10px;" ng-src="{{item.PhotoLink2|ImageMin}}" ng-click="goToSlide(1,item)"
+                               onload='if (this.width>64 || this.height>100) if (this.width/this.height>64/100) this.width=64; else this.height=100;' >
+                      </div>
+                      <div class="row" style="display:inline-block;" ng-if="item.PhotoLink3">
+                          <img style="float: left;" ng-src="{{item.PhotoLink3|ImageMin}}" ng-click="vm.goPhoto(2,item)"
+                               onload='if (this.width>64 || this.height>100) if (this.width/this.height>64/100) this.width=64; else this.height=100;' >
+                          <img style="float: left;margin-left: 10px;" ng-src="{{item.PhotoLink4|ImageMin}}"  ng-if="item.PhotoLink4" ng-click="goToSlide(3,item)"
+                               onload='if (this.width>64 || this.height>100) if (this.width/this.height>64/100) this.width=64; else this.height=100;' >
+                      </div>
+                    </div>
+                    <!-- like button and comment button -->
+                    <!-- <div style="float:right;">
+
+                       <button style="width:60px;" class="button button-dark button-small icon ion-heart" ng-click="vm.like(item,$index)">&nbsp;赞</button>&nbsp;<button style="width:60px;" class="button button-dark button-small icon ion-chatbox" ng-click="vm.comment(item,$index)">&nbsp;评论</button>
+
+                    </div> -->
+                    <!-- comment button -->
+                    <div class="rounded" style="background:#E5E4E2;margin-top:40px;margin-left:10px;margin-right:10px;">
+                      <!--like-->
+                      <div class="row" ng-if="item.likes.length>0">
+                          <div class="col col-10">
+                              <i class="icon ion-ios-heart-outline"></i>
+                          </div>
+                          <div class="col col-90">
+                              <div class="list" ng-repeat="sitem in item.likes track by $index">
+                                <img ng-src='{{sitem.AvatarLink}}' height="30px">
+                              </div>
+                          </div>
+                      </div>
+                      <hr>
+                      <!--comment-->
+                      <div class="row" ng-if="item.comments.length>0">
+                          <div class="col col-10">
+                              <i class="icon ion-ios-chatboxes-outline"></i>
+                          </div>
+                          <div class="col col-90">
+                            <div class="list" ng-repeat="citem in item.comments">
+                                <li class="item item-avatar" href="#" style="background:#E5E4E2;">
+                                  <img ng-src='{{citem.AvatarLink}}'>
+                                  <p>{{citem.Name}}<button class="icon ion-trash-a" style="float:right" ng-if='citem.CommentBy==vm.user' ng-click='vm.rmComment(citem,$index)'></button><span  style="float:right">{{citem.CreateTime|dateChange}}</span></p>
+                                  <h2>{{citem.CommentData}}</h2>
+                                </li>
+                            </div>
+                          </div>
+
+                      </div>
+                  </div>
+                  <!-- comment button end -->
+
+              </div>
+              <hr>
+        </div>
+        </div>
+        <ion-infinite-scroll ng-if="vm.canLoadMore" immediate-check="false" icon="ion-loading-c" on-infinite="vm.doRefresh(vm.offset)"></ion-infinite-scroll>
+
+        <!--
+        <div class="weui_panel_bd">
+
+            <div class="weui_media_box weui_media_appmsg" ng-repeat="item in vm.msg">
+                <div class="weui_media_hd">
+                    <img class="weui_media_appmsg_thumb" src="./img/title.png" height="40px" width="40px" alt="小孩的头像">
+                </div>
+                <div class="weui_media_box weui_media_text">
+                    <h4 class="weui_media_title">{{item.childrenName}}</h4>
+                    <p class="weui_media_desc" ng-if="item.description">{{item.description}}</p>
+                    <div style="display:inline-block;" ng-if="item.photolink1">
+                        <img style="float: left;" ng-src="{{item.photolink1|ImageMin}}" ng-click="goToSlide(0,item)"
+                             onload='if (this.width>64 || this.height>100) if (this.width/this.height>64/100) this.width=64; else this.height=100;' >
+                        <img style="float: left;" ng-src="{{item.photolink2|ImageMin}}"  ng-if="item.photolink2" ng-click="goToSlide(1,item)"
+                             onload='if (this.width>64 || this.height>100) if (this.width/this.height>64/100) this.width=64; else this.height=100;' >
+                        <img style="float: left;" ng-src="{{item.photolink3|ImageMin}}"  ng-if="item.photolink3" ng-click="goToSlide(2,item)"
+                             onload='if (this.width>64 || this.height>100) if (this.width/this.height>64/100) this.width=64; else this.height=100;' >
+                    </div>
+                    <div style="display:inline-block;" ng-if="item.photolink4">
+                        <img style="float: left;" ng-src="{{item.photolink4|ImageMin}}" ng-click="goToSlide(3,item)"
+                             onload='if (this.width>64 || this.height>100) if (this.width/this.height>64/100) this.width=64; else this.height=100;' >
+                    -->
+                        <!--<img style="float: left;" ng-src="{{item.photolink5|ImageMin}}"  ng-if="item.photolink5" ng-click="goToSlide(4,item)"-->
+                             <!--onload='if (this.width>64 || this.height>100) if (this.width/this.height>64/100) this.width=64; else this.height=100;' >-->
+                        <!--<img style="float: left;" ng-src="{{item.photolink6|ImageMin}}"  ng-if="item.photolink6" ng-click="goToSlide(5,item)"-->
+                             <!--onload='if (this.width>64 || this.height>100) if (this.width/this.height>64/100) this.width=64; else this.height=100;' >-->
+                    <!--
+                    </div>
+                    <ul class="weui_media_info">
+                        <li class="weui_media_info_meta">来自{{item.publisherid}}老师</li>
+                        <li class="weui_media_info_meta weui_media_info_meta_extra">{{item.createtime|dateChange}}</li>
+                        <li class="weui_media_info_meta weui_media_info_meta_extra">{{item.clickcount}}</li>
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+        -->
+    </ion-content>
+</ion-view>

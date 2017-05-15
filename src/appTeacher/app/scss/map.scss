@@ -1,0 +1,151 @@
+
+.scroll {
+    height: 100%;
+}
+
+.tangram-suggestion-main {
+    z-index: 1000;
+}
+
+.no-data {
+    height: 100px;
+    text-align: center;
+    color: #b1aeae;
+    padding-top: 20px;
+}
+
+.mech-map {
+    height: 100%;
+}
+
+.mech-map>.mech-map-searchbar {
+    position: fixed;
+    top: 5px;
+    width: 95%;
+    margin-left: auto;
+    margin-right: auto;
+    border-radius: 5px;
+}
+
+.mech-map .map-location-btn{
+        position: fixed;
+    bottom: 10px;
+    left: 5px;
+    width: 32px;
+    height: 32px;
+    padding: 0px;
+    background-color: #fff;
+    border-radius: 5px;
+}
+
+.mech-map>.mech-map-searchbar .item-input-wrapper {
+    background: #fff !important;
+    border-right: solid 2px #eee;
+}
+
+.mech-list {
+    padding-top: 45px;
+    height: 100%;
+}
+
+.mech-list>.bar-header {
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    right: 0px;
+}
+
+.mech-list,
+.mech-list .list {
+    background-color: #f8f8f8;
+}
+
+.mech-list .list {
+    margin: 0px 0px 0px 0px;
+    height: 100%;
+    overflow: auto;
+    margin-bottom: 0px !important;
+}
+
+.mech-list .list>.item {
+    padding: 15px 10px 0px 15px;
+    margin-bottom: 20px;
+}
+
+.mech-list .list>.item:first-child {
+    margin-top: 20px;
+}
+
+.mech-list .list>.item:last-child {
+    border-bottom: 1px solid #ddd;
+}
+
+.mech-list .button-bar {
+    padding: 5px 0px 5px 0px;
+}
+
+.mech-list .button-bar,
+.mech-list .button-bar>.button {
+    font-size: 0.9em;
+    background-color: #fff;
+}
+
+.mech-list .button-bar>.button:first-child {
+    border-right: solid 1px #ddd;
+}
+
+.mech-list .button-bar>.button-small:before,
+.button-bar>.button-small .icon:before {
+    padding-right: 5px;
+}
+
+.mech-map-info .mech-image {
+    width: 100%;
+    height: 200px;
+}
+.mech-map-info .mech-image .slider{
+     width: 100%;
+      height: 100% !important;
+}
+.mech-map-info .mech-image img {
+    max-width: 100% !important;
+    height: 100% !important;
+}
+
+.mech-map-info .item-divider-small {
+    background-color: #f5f5f5;
+    height: 10px;
+}
+
+.mech-map-info .item>h2 {
+    font-weight: bold;
+}
+
+.mech-map-info .item .mech-comment {
+    font-size: 1em;
+}
+
+.mech-map-info .item>.icon::before {
+    width: 22px;
+}
+
+.mech-map-info .item .mech-comment>i {
+    font-size: 0.8em;
+    color: #cbcbc1
+}
+
+.mech-map-info .item.item-note-right>h2 {
+    margin-right: 50px;
+}
+
+.mech-map-info .item-comment-header {
+    border-bottom: 2px solid #f5f5f5;
+}
+
+.mech-map-info .comment-list .item {
+    border-color: #f5f5f5;
+}
+
+.mech-map-info .list.card{
+    margin-bottom: 10px;
+}

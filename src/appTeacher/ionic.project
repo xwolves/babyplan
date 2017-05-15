@@ -1,0 +1,20 @@
+{
+  "name": "trusteeshipTeacher",
+  "app_id": "",
+  "gulpStartupTasks": [
+    "default",
+    "watch"
+  ],
+  "browsers": [
+    {
+      "platform": "android",
+      "browser": "crosswalk",
+      "version": "12.41.296.5"
+    }
+  ],
+  "watchPatterns": [
+    "www/index.html",
+    "www/css/*.css",
+    "www/*.js"
+  ]
+}

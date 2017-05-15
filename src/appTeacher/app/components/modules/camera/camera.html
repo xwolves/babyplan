@@ -1,0 +1,16 @@
+<ion-view view-title="监控信息">
+  <ion-nav-buttons side="left">
+      <a class="button button-icon icon ion-ios-arrow-back" ng-click="vm.back()"></a>
+  </ion-nav-buttons>
+
+    <ion-content>
+        <div>
+          <p>{{vm.cameras.deposit_name}}</p>
+          <div ng-repeat="c in vm.cameras.vedio_list  track by $index" style="float:left;">
+            <button class="button-icon" style="margin-left:10px;margin-right:30px;"  ng-click="vm.watchVideo(c,vm.cameras.deposit_name)"><img ng-src="{{c.poster}}" width="160" height="100">
+              <div>{{c.room_name!=null?c.room_name:c.room_id}}</div>
+            </button>
+          </div>
+        </div>
+    </ion-content>
+</ion-view>

@@ -1,0 +1,47 @@
+
+<ion-view view-title="机构信息更新">
+
+    <ion-content>
+        <div class="list">
+            <label class="item item-input">
+                <span class="input-label">机构名称</span>
+                <input type="text" ng-model="vm.organizer.OrgName" disabled required>
+            </label>
+            <label class="item item-input">
+                <span class="input-label">机构地址</span>
+                <input type="text" ng-model="vm.organizer.Address" required>
+            </label>
+            <label class="item item-input">
+                <span class="input-label">坐标位置</span>
+                <input type="text" value="{{vm.organizer.Longitude +' , '+ vm.organizer.Latitude}}" disabled required>
+            </label>
+            <label class="item item-input">
+                <span class="input-label">联系人姓名</span>
+                <input type="text" ng-model="vm.organizer.ContactName" required>
+            </label>
+            <label class="item item-input">
+                <span class="input-label">联系人电话</span>
+                <input type="text" ng-model="vm.organizer.ContactPhone" required>
+            </label>
+            <!--<label class="item item-input">-->
+                <!--<span class="input-label">机构类型</span>-->
+                <!--<input type="text" ng-model="vm.item.name" required>-->
+            <!--</label>-->
+            <!--<label class="item item-input">-->
+                <!--<span class="input-label">场地性质</span>-->
+                <!--<input type="text" ng-model="vm.item.name" required>-->
+            <!--</label>-->
+            <!--<label class="item item-input">-->
+                <!--<span class="input-label">法人身份证号</span>-->
+                <!--<input type="text" ng-model="vm.item.name" required>-->
+            <!--</label>-->
+        </div>
+    </ion-content>
+
+    <div class="bar bar-footer">
+        <div class="button-bar">
+            <a class="button button-positive" style="margin-right: 1px;" ng-click="vm.save()">保存</a>
+            <a class="button button-positive" style="margin-left: 1px;" ng-click="vm.back()">取消</a>
+        </div>
+    </div>
+</ion-view>
