@@ -715,113 +715,39 @@ app.filter('statusChange', function () {
 }());
 
 (function() {
-  "use strict";
-  angular.module('config', [
-    'environmentConfig',
-    'constant',
-    'httpRelConfig'
-  ]);
-
-}());
-
-(function() {
     "use strict";
-    angular.module('constant', [])
-        .constant('Path',{
-            'ParentRolePath':'tabs.childrenSteam',
-            'OrganizerRolePath':'tabs.organizer',
-            'TeacherRolePath':'tabs.message',
-            'VisitorRolePath':'tabs.nearby'
-        })
-        .constant('Role',{
-            'visitor':'-1',
-            'Organizer':'1',
-            'Parent':'2',
-            'Teacher':'3',
-            'Children':'4',
-            'ThirdParty':'5',
-            'Consultant':'6'
-        })
-        .constant('Weixin', {
-        })
-        .constant('AUTH_EVENTS', {
-            loginSuccess: 'auth-login-success',
-            loginFailed: 'auth-login-failed',
-            logoutSuccess: 'auth-logout-success',
-            sessionTimeout: 'auth-session-timeout',
-            notAuthenticated: 'auth-not-authenticated',
-            notAuthorized: 'auth-not-authorized'
-        })
-        .constant('ErrorMessage', {
-            ACCESS_FAIL: '通讯异常，请稍后再试！',
-            TOKEN_INVALID: '连接超时，请重新登录！'
-        })
-        .constant('SuccessMessage', {
-            SUBMIT_SUCESS: '提交成功',
-            OPERATION_SUCESS:'操作完成'
-        });
+    angular.module('modules', [
+        'LoginModule',
+        'WxLoginModule',
+        'childrenSteamModule',
+        'registerModule',
+        'tabsModule',
+        'childrenModule',
+        'nearbyModule',
+        'orderModule',
+        'profileModule',
+        'organizerModule',
+        'messageModule',
+        'parentModule',
+        'childrenSettingModule',
+        'teacherModule',
+        'teacherSettingModule',
+        'depositChildrenModule',
+        'vipBuyModule',
+        'vipRecordModule',
+        'vipTipsModule',
+        'commentModule',
+        'exitModule',
+        'photoModule',
+        'MapModule',
+        'eshopEntryModule',
+        'estimateModule',
+        'helpModule',
+        'settingsModule'
+    ]);
+
 }());
 
-(function() {
-    "use strict";
-    angular.module('environmentConfig', [])
-        .constant('Constants', {
-            'appTitle':'托管之家',
-            'serverUrl': 'http://wx.zxing-tech.cn/api/v1/',
-            'eshopApiUrl': 'http://api.mall.zxing-tech.cn/v2/',
-            'dfsUrl': '/',
-            'buildID': '20170428v1',
-            'ENVIRONMENT':'release'
-        });
-}());
-//'serverUrl': 'http://120.76.226.47/api/v2/',
-//    'dfsUrl': 'http://120.76.226.47/',
-//http://localhost:8090/
-//http://wx.zxing-tech.cn
-
-(function() {
-    "use strict";
-    angular.module('httpDevConfig', [])
-        .config(function($httpProvider) {
-            $httpProvider.defaults.headers.post["Content-Type"] = "application/x-www-form-urlencoded";
-            $httpProvider.defaults.headers.put["Content-Type"] = "application/x-www-form-urlencoded";
-        });
-}());
-
-(function() {
-    "use strict";
-    angular.module('httpRelConfig', [])
-    .config(function($httpProvider) {
-        $httpProvider.defaults.cache = false;
-        if (!$httpProvider.defaults.headers.get) {
-           $httpProvider.defaults.headers.get = {};
-        }
-        // disable IE ajax request caching
-        $httpProvider.defaults.headers.get['If-Modified-Since'] = '0';
-
-        // Disable IE ajax request caching
-        $httpProvider.defaults.headers.get['Cache-Control'] = 'no-cache';
-        $httpProvider.defaults.headers.get['Pragma'] = 'no-cache';
-    });
-}());
-
-Date.prototype.Format = function(fmt) {
-    var o = {
-        "M+": this.getMonth() + 1, //月份
-        "d+": this.getDate(), //日
-        "h+": this.getHours(), //小时
-        "m+": this.getMinutes(), //分
-        "s+": this.getSeconds(), //秒
-        "q+": Math.floor((this.getMonth() + 3) / 3), //季度
-        "S": this.getMilliseconds() //毫秒
-    };
-    if (/(y+)/.test(fmt))
-        fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
-    for (var k in o)
-        if (new RegExp("(" + k + ")").test(fmt))
-            fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
-    return fmt;
-};
 (function() {
     "use strict";
     angular.module('directive', [
@@ -1427,6 +1353,114 @@ var app = angular.module('BaiduMapDirective', []);
   });
 }());
 
+Date.prototype.Format = function(fmt) {
+    var o = {
+        "M+": this.getMonth() + 1, //月份
+        "d+": this.getDate(), //日
+        "h+": this.getHours(), //小时
+        "m+": this.getMinutes(), //分
+        "s+": this.getSeconds(), //秒
+        "q+": Math.floor((this.getMonth() + 3) / 3), //季度
+        "S": this.getMilliseconds() //毫秒
+    };
+    if (/(y+)/.test(fmt))
+        fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+    for (var k in o)
+        if (new RegExp("(" + k + ")").test(fmt))
+            fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+    return fmt;
+};
+(function() {
+  "use strict";
+  angular.module('config', [
+    'environmentConfig',
+    'constant',
+    'httpRelConfig'
+  ]);
+
+}());
+
+(function() {
+    "use strict";
+    angular.module('constant', [])
+        .constant('Path',{
+            'ParentRolePath':'tabs.childrenSteam',
+            'OrganizerRolePath':'tabs.organizer',
+            'TeacherRolePath':'tabs.message',
+            'VisitorRolePath':'tabs.nearby'
+        })
+        .constant('Role',{
+            'visitor':'-1',
+            'Organizer':'1',
+            'Parent':'2',
+            'Teacher':'3',
+            'Children':'4',
+            'ThirdParty':'5',
+            'Consultant':'6'
+        })
+        .constant('Weixin', {
+        })
+        .constant('AUTH_EVENTS', {
+            loginSuccess: 'auth-login-success',
+            loginFailed: 'auth-login-failed',
+            logoutSuccess: 'auth-logout-success',
+            sessionTimeout: 'auth-session-timeout',
+            notAuthenticated: 'auth-not-authenticated',
+            notAuthorized: 'auth-not-authorized'
+        })
+        .constant('ErrorMessage', {
+            ACCESS_FAIL: '通讯异常，请稍后再试！',
+            TOKEN_INVALID: '连接超时，请重新登录！'
+        })
+        .constant('SuccessMessage', {
+            SUBMIT_SUCESS: '提交成功',
+            OPERATION_SUCESS:'操作完成'
+        });
+}());
+
+(function() {
+    "use strict";
+    angular.module('environmentConfig', [])
+        .constant('Constants', {
+            'appTitle':'托管之家',
+            'serverUrl': 'http://wx.zxing-tech.cn/api/v1/',
+            'eshopApiUrl': 'http://api.mall.zxing-tech.cn/v2/',
+            'dfsUrl': '/',
+            'buildID': '20170428v1',
+            'ENVIRONMENT':'release'
+        });
+}());
+//'serverUrl': 'http://120.76.226.47/api/v2/',
+//    'dfsUrl': 'http://120.76.226.47/',
+//http://localhost:8090/
+//http://wx.zxing-tech.cn
+
+(function() {
+    "use strict";
+    angular.module('httpDevConfig', [])
+        .config(function($httpProvider) {
+            $httpProvider.defaults.headers.post["Content-Type"] = "application/x-www-form-urlencoded";
+            $httpProvider.defaults.headers.put["Content-Type"] = "application/x-www-form-urlencoded";
+        });
+}());
+
+(function() {
+    "use strict";
+    angular.module('httpRelConfig', [])
+    .config(function($httpProvider) {
+        $httpProvider.defaults.cache = false;
+        if (!$httpProvider.defaults.headers.get) {
+           $httpProvider.defaults.headers.get = {};
+        }
+        // disable IE ajax request caching
+        $httpProvider.defaults.headers.get['If-Modified-Since'] = '0';
+
+        // Disable IE ajax request caching
+        $httpProvider.defaults.headers.get['Cache-Control'] = 'no-cache';
+        $httpProvider.defaults.headers.get['Pragma'] = 'no-cache';
+    });
+}());
+
 (function() {
   "use strict";
   angular.module('tools', []).service('tools', tools);
@@ -1477,40 +1511,6 @@ var app = angular.module('BaiduMapDirective', []);
 
 (function() {
     "use strict";
-    angular.module('modules', [
-        'LoginModule',
-        'WxLoginModule',
-        'childrenSteamModule',
-        'registerModule',
-        'tabsModule',
-        'childrenModule',
-        'nearbyModule',
-        'orderModule',
-        'profileModule',
-        'organizerModule',
-        'messageModule',
-        'parentModule',
-        'childrenSettingModule',
-        'teacherModule',
-        'teacherSettingModule',
-        'depositChildrenModule',
-        'vipBuyModule',
-        'vipRecordModule',
-        'vipTipsModule',
-        'commentModule',
-        'exitModule',
-        'photoModule',
-        'MapModule',
-        'eshopEntryModule',
-        'estimateModule',
-        'helpModule',
-        'settingsModule'
-    ]);
-
-}());
-
-(function() {
-    "use strict";
     angular.module('LoginModule', [
         'LoginCtrl',
         'LoginRouter',
@@ -1530,7 +1530,7 @@ var app = angular.module('BaiduMapDirective', []);
             $scope.$on('$ionicView.beforeEnter', validate);
             vm.user={userId:18603070911,password:"82267049"}
             function validate() {
-                if (Session.getData('userId') && Session.getData('token')) {
+                if (Session.getData('userId') && Session.getData('token') && Session.getData('userId')!='-1') {
                     //AuthService.setSession(response.data.uid, response.data.token, response.data.eshop, response.data.type);
                     $http.defaults.headers.common.token = Session.getData('token');
                     StateService.clearAllAndGo(AuthService.getNextPath());
@@ -1851,7 +1851,7 @@ var app = angular.module('BaiduMapDirective', []);
     //$urlRouterProvider.otherwise('/wxlogin');
     $urlRouterProvider.otherwise(function($injector, $location) {
           //console.log("Could not find " + $location);
-          $location.path('/wxlogin');
+          $location.path('/login');
     });
 
   }
@@ -3703,6 +3703,104 @@ var app = angular.module('BaiduMapDirective', []);
 }());
 
 (function() {
+    "use strict";
+    angular.module('MapCtrl', [])
+        .controller('MapCtrl', function($scope, $state, $stateParams,Constants, StateService, $ionicModal, $window,BaiduService) {
+            'ngInject';
+            var vm = this;
+            vm.activated = false;
+            $scope.$on('$ionicView.afterEnter', activate);
+            $scope.mapOpts = {
+                apiKey: 'IGp7UfrinXNxV6IwrQTC0PWoDCQlf0TR',
+                //center: {longitude:113.271,latitude:23.1353},
+                keywords: ['托管'],
+                zoom: 16,
+                onMapLoadFailded: function () {
+                    //ionicToast.show('地图加载失败!', 'middle', false, 3000)
+                    console.log('地图加载失败');
+                }
+            };
+            vm.type = $stateParams.type;
+            vm.nav = $stateParams.nav;
+            console.log("vm.type = "+vm.type+" vm.nav = "+vm.nav);
+            if(vm.type==1)$scope.mapOpts.mode = 2;
+
+            function activate() {
+                vm.activated = true;
+                vm.version = Constants.buildID;
+            }
+
+            vm.goTo = function(addr){
+                console.log(addr);
+                StateService.go(addr);
+            };
+
+            vm.back=function(){
+                StateService.back();
+            };
+        });
+}());
+
+(function() {
+  'use strict';
+
+  angular.module('MapRouter', [])
+    .config(MapRouter);
+
+
+  function MapRouter($stateProvider,$urlRouterProvider) {
+    'ngInject';
+    $stateProvider
+    .state('tabs.map', {
+      url: "/map",
+      views: {
+        'tab-map': {
+          templateUrl: 'map/map.html',
+          controller: 'MapCtrl',
+          controllerAs: 'vm'
+        }
+      }
+    })
+    .state('orgmap', {
+      url: "/orgmap?:type&:nav",
+      templateUrl: 'map/map.html',
+      params:{
+        type:0,
+        nav:false
+      },
+      controller: 'MapCtrl',
+      controllerAs: 'vm'
+    });
+  }
+}());
+
+(function() {
+  'use strict';
+
+  angular.module('MapService', [])
+    .factory('MapService', mapService);
+
+  function mapService( $q, $http) {
+    'ngInject';
+    var service = {
+    };
+    return service;
+
+
+  }
+
+}());
+
+(function() {
+    "use strict";
+    angular.module('MapModule', [
+        'MapCtrl',
+        'MapRouter',
+        'MapService'
+    ])
+}());
+
+(function() {
   "use strict";
   angular.module('estimateModule', [
     'estimateCtrl',
@@ -3833,23 +3931,28 @@ var app = angular.module('BaiduMapDirective', []);
 
             vm.exit=function(){
                 vm.text='正在退出...';
-                exitService.exit(AuthService.getLoginID()).then(function(data) {
-                    if (data.errno == 0) {
-                        console.log(data.data);
-                        vm.text='退出';
-                        //需清楚缓存
-                        Session.destroy();
-                        StateService.clearAllAndGo("register");
-                        //StateService.clearAllAndGo(AuthService.getNextPath());
-                    }else{
-                        console.log(data.error);
-                        vm.text='未能退出';
-                        MessageToaster.error('退出失败');
-                    }
-                },function(error){
-                    console.log(error);
-                    vm.text='退出失败';
-                });
+                if(AuthService.getLoginID().substring(0,1)=='2'){
+                  Session.destroy();
+                  StateService.clearAllAndGo("login");
+                }else{
+                  exitService.exit(AuthService.getLoginID()).then(function(data) {
+                      if (data.errno == 0) {
+                          console.log(data.data);
+                          vm.text='退出';
+                          //需清楚缓存
+                          Session.destroy();
+                          StateService.clearAllAndGo("register");
+                          //StateService.clearAllAndGo(AuthService.getNextPath());
+                      }else{
+                          console.log(data.error);
+                          vm.text='未能退出';
+                          MessageToaster.error('退出失败');
+                      }
+                  },function(error){
+                      console.log(error);
+                      vm.text='退出失败';
+                  });
+               }
             };
 
             vm.back=function(){
@@ -3991,99 +4094,6 @@ var app = angular.module('BaiduMapDirective', []);
           controllerAs: 'vm'
         })
   }
-}());
-
-(function() {
-    "use strict";
-    angular.module('MapCtrl', [])
-        .controller('MapCtrl', function($scope, $state, $stateParams,Constants, StateService, $ionicModal, $window,BaiduService) {
-            'ngInject';
-            var vm = this;
-            vm.activated = false;
-            $scope.$on('$ionicView.afterEnter', activate);
-            $scope.mapOpts = {
-                apiKey: 'IGp7UfrinXNxV6IwrQTC0PWoDCQlf0TR',
-                //center: {longitude:113.271,latitude:23.1353},
-                keywords: ['托管'],
-                zoom: 16,
-                onMapLoadFailded: function () {
-                    //ionicToast.show('地图加载失败!', 'middle', false, 3000)
-                    console.log('地图加载失败');
-                }
-            };
-            vm.type = $stateParams.type;
-            console.log("vm.type = "+vm.type);
-            if(vm.type==1)$scope.mapOpts.mode = 2;
-
-            function activate() {
-                vm.activated = true;
-                vm.version = Constants.buildID;
-            }
-
-            vm.goTo = function(addr){
-                console.log(addr);
-                StateService.go(addr);
-            };
-
-        });
-}());
-
-(function() {
-  'use strict';
-
-  angular.module('MapRouter', [])
-    .config(MapRouter);
-
-
-  function MapRouter($stateProvider,$urlRouterProvider) {
-    'ngInject';
-    $stateProvider
-    .state('tabs.map', {
-      url: "/map",
-      views: {
-        'tab-map': {
-          templateUrl: 'map/map.html',
-          controller: 'MapCtrl',
-          controllerAs: 'vm'
-        }
-      }
-    })
-    .state('orgmap', {
-      url: "/orgmap?:type",
-      templateUrl: 'map/map.html',
-      params:{
-        type:0
-      },
-      controller: 'MapCtrl',
-      controllerAs: 'vm'
-    });
-  }
-}());
-
-(function() {
-  'use strict';
-
-  angular.module('MapService', [])
-    .factory('MapService', mapService);
-
-  function mapService( $q, $http) {
-    'ngInject';
-    var service = {
-    };
-    return service;
-
-
-  }
-
-}());
-
-(function() {
-    "use strict";
-    angular.module('MapModule', [
-        'MapCtrl',
-        'MapRouter',
-        'MapService'
-    ])
 }());
 
 (function() {
@@ -6292,7 +6302,7 @@ var app = angular.module('BaiduMapDirective', []);
 (function() {
     "use strict";
     angular.module('settingsCtrl', [])
-        .controller('settingsCtrl', function($scope, Constants, StateService, $ionicPopup) {
+        .controller('settingsCtrl', function($scope, Constants, StateService, $ionicPopup, MessageToaster) {
             'ngInject';
             var vm = this;
             vm.activated = false;
@@ -6323,8 +6333,10 @@ var app = angular.module('BaiduMapDirective', []);
                       //delete(id);
                       window.CacheClear(function(data){
                         console.log(data);
+                        MessageToaster.info('清除缓存成功'+JSON.stringify(data));
                       }, function(errordata){
                         console.log(errordata);
+                        MessageToaster.error('清除缓存失败'+JSON.stringify(errordata));
                       });
                   } else {
                       console.log('cancel delete');

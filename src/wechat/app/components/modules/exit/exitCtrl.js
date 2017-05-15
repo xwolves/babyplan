@@ -15,23 +15,28 @@
 
             vm.exit=function(){
                 vm.text='正在退出...';
-                exitService.exit(AuthService.getLoginID()).then(function(data) {
-                    if (data.errno == 0) {
-                        console.log(data.data);
-                        vm.text='退出';
-                        //需清楚缓存
-                        Session.destroy();
-                        StateService.clearAllAndGo("register");
-                        //StateService.clearAllAndGo(AuthService.getNextPath());
-                    }else{
-                        console.log(data.error);
-                        vm.text='未能退出';
-                        MessageToaster.error('退出失败');
-                    }
-                },function(error){
-                    console.log(error);
-                    vm.text='退出失败';
-                });
+                if(AuthService.getLoginID().substring(0,1)=='2'){
+                  Session.destroy();
+                  StateService.clearAllAndGo("login");
+                }else{
+                  exitService.exit(AuthService.getLoginID()).then(function(data) {
+                      if (data.errno == 0) {
+                          console.log(data.data);
+                          vm.text='退出';
+                          //需清楚缓存
+                          Session.destroy();
+                          StateService.clearAllAndGo("register");
+                          //StateService.clearAllAndGo(AuthService.getNextPath());
+                      }else{
+                          console.log(data.error);
+                          vm.text='未能退出';
+                          MessageToaster.error('退出失败');
+                      }
+                  },function(error){
+                      console.log(error);
+                      vm.text='退出失败';
+                  });
+               }
             };
 
             vm.back=function(){

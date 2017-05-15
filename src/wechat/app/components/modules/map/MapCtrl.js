@@ -17,7 +17,8 @@
                 }
             };
             vm.type = $stateParams.type;
-            console.log("vm.type = "+vm.type);
+            vm.nav = $stateParams.nav;
+            console.log("vm.type = "+vm.type+" vm.nav = "+vm.nav);
             if(vm.type==1)$scope.mapOpts.mode = 2;
 
             function activate() {
@@ -30,5 +31,8 @@
                 StateService.go(addr);
             };
 
+            vm.back=function(){
+                StateService.back();
+            };
         });
 }());

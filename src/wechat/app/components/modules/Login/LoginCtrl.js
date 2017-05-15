@@ -10,7 +10,7 @@
             $scope.$on('$ionicView.beforeEnter', validate);
             vm.user={userId:18603070911,password:"82267049"}
             function validate() {
-                if (Session.getData('userId') && Session.getData('token')) {
+                if (Session.getData('userId') && Session.getData('token') && Session.getData('userId')!='-1') {
                     //AuthService.setSession(response.data.uid, response.data.token, response.data.eshop, response.data.type);
                     $http.defaults.headers.common.token = Session.getData('token');
                     StateService.clearAllAndGo(AuthService.getNextPath());

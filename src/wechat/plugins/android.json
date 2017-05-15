@@ -13,9 +13,34 @@
             "IOS_LOCATION_DESC": "请点击'好'以允许访问。",
             "PACKAGE_NAME": "com.trusteeship"
         },
+        "cordova-plugin-cache-clear": {
+            "PACKAGE_NAME": "com.trusteeship"
+        },
         "cordova-plugin-whitelist": {
+            "PACKAGE_NAME": "com.trusteeship"
+        },
+        "cordova-plugin-splashscreen": {
+            "PACKAGE_NAME": "com.trusteeship"
+        },
+        "cordova-plugin-console": {
+            "PACKAGE_NAME": "com.trusteeship"
+        },
+        "cordova-plugin-camera": {
+            "PACKAGE_NAME": "com.trusteeship"
+        },
+        "cordova-plugin-device": {
+            "PACKAGE_NAME": "com.trusteeship"
+        },
+        "cordova-plugin-media-capture": {
             "PACKAGE_NAME": "com.trusteeship"
         }
     },
-    "dependent_plugins": {}
+    "dependent_plugins": {
+        "cordova-plugin-compat": {
+            "PACKAGE_NAME": "com.trusteeship"
+        },
+        "cordova-plugin-file": {
+            "PACKAGE_NAME": "com.trusteeship"
+        }
+    }
 }

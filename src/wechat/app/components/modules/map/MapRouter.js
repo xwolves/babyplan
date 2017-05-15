@@ -19,10 +19,11 @@
       }
     })
     .state('orgmap', {
-      url: "/orgmap?:type",
+      url: "/orgmap?:type&:nav",
       templateUrl: 'map/map.html',
       params:{
-        type:0
+        type:0,
+        nav:false
       },
       controller: 'MapCtrl',
       controllerAs: 'vm'

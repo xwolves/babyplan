@@ -15,7 +15,37 @@
         },
         "cordova-plugin-whitelist": {
             "PACKAGE_NAME": "com.trusteeship"
+        },
+        "cordova-plugin-cache-clear": {
+            "PACKAGE_NAME": "com.trusteeship"
+        },
+        "cordova-plugin-camera": {
+            "CAMERA_USAGE_DESCRIPTION": " ",
+            "PHOTOLIBRARY_USAGE_DESCRIPTION": " ",
+            "PACKAGE_NAME": "com.trusteeship"
+        },
+        "cordova-plugin-console": {
+            "PACKAGE_NAME": "com.trusteeship"
+        },
+        "cordova-plugin-device": {
+            "PACKAGE_NAME": "com.trusteeship"
+        },
+        "cordova-plugin-media-capture": {
+            "CAMERA_USAGE_DESCRIPTION": " ",
+            "MICROPHONE_USAGE_DESCRIPTION": " ",
+            "PHOTOLIBRARY_USAGE_DESCRIPTION": " ",
+            "PACKAGE_NAME": "com.trusteeship"
+        },
+        "cordova-plugin-splashscreen": {
+            "PACKAGE_NAME": "com.trusteeship"
         }
     },
-    "dependent_plugins": {}
+    "dependent_plugins": {
+        "cordova-plugin-compat": {
+            "PACKAGE_NAME": "com.trusteeship"
+        },
+        "cordova-plugin-file": {
+            "PACKAGE_NAME": "com.trusteeship"
+        }
+    }
 }

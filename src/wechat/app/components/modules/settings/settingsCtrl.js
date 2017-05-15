@@ -1,7 +1,7 @@
 (function() {
     "use strict";
     angular.module('settingsCtrl', [])
-        .controller('settingsCtrl', function($scope, Constants, StateService, $ionicPopup) {
+        .controller('settingsCtrl', function($scope, Constants, StateService, $ionicPopup, MessageToaster) {
             'ngInject';
             var vm = this;
             vm.activated = false;
@@ -32,8 +32,10 @@
                       //delete(id);
                       window.CacheClear(function(data){
                         console.log(data);
+                        MessageToaster.info('清除缓存成功'+JSON.stringify(data));
                       }, function(errordata){
                         console.log(errordata);
+                        MessageToaster.error('清除缓存失败'+JSON.stringify(errordata));
                       });
                   } else {
                       console.log('cancel delete');

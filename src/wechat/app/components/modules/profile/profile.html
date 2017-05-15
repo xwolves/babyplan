@@ -1,4 +1,4 @@
-<ion-view view-title="设置">
+<ion-view view-title="个人中心">
     <ion-content>
         <div style="width:100%;margin-top:30px;" class='center'>
             <img ng-src='{{vm.parent.avatarlink|ImageMin}}'>
@@ -7,13 +7,13 @@
             <hr>
             <div class="row button-icon-top" >
               <div class="col col-25">
-                  <button class="button button-icon" ng-click="vm.goTo('orgmap')">
+                  <button class="button button-icon" ng-click="vm.goTo('orgmap',{type:0,nav:true})">
                     <i class="icon ion-map"></i>
                     附近机构
                   </button>
               </div>
               <div class="col col-25">
-                  <button class="button button-icon" ng-click="vm.goTo('orgmap',{type:1})">
+                  <button class="button button-icon" ng-click="vm.goTo('orgmap',{type:1,nav:true})">
                     <i class="icon ion-ios-color-filter-outline"></i>
                     机构排名
                   </button>

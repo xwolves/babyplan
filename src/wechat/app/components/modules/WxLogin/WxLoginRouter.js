@@ -22,7 +22,7 @@
     //$urlRouterProvider.otherwise('/wxlogin');
     $urlRouterProvider.otherwise(function($injector, $location) {
           //console.log("Could not find " + $location);
-          $location.path('/wxlogin');
+          $location.path('/login');
     });
 
   }
