@@ -825,11 +825,11 @@ $app->get(
         if(empty($params) || !array_key_exists("offset", $params) || !array_key_exists("limitcount", $params)){
                 $response->setBody(rspData(FAILED, "请指定分页信息"));
                 return;
-            }
+        }
         $limitcount = $params['limitcount'];
         $offset = $params['offset'];
         $info = new Info($sql_db);
-        $ret = $info->getDailyWithDepositID($id，$offset, $limitcount);
+        $ret = $info->getDailyWithDepositID($id,$offset, $limitcount);
         if(gettype($ret) != "array"){
             $response->setBody(rspData($ret));
         }else{
