@@ -820,8 +820,16 @@ $app->get(
             $response->setBody(rspData(10005));
             return;
         }
+        $params = $app->request->params();
+        $params = array_change_key_case($params, CASE_LOWER);
+        if(empty($params) || !array_key_exists("offset", $params) || !array_key_exists("limitcount", $params)){
+                $response->setBody(rspData(FAILED, "请指定分页信息"));
+                return;
+            }
+        $limitcount = $params['limitcount'];
+        $offset = $params['offset'];
         $info = new Info($sql_db);
-        $ret = $info->getDailyWithDepositID($id);
+        $ret = $info->getDailyWithDepositID($id，$offset, $limitcount);
         if(gettype($ret) != "array"){
             $response->setBody(rspData($ret));
         }else{
