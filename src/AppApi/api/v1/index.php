@@ -1627,4 +1627,22 @@ $app->post(
     }
 );
 
+$app->post(
+    'account/delTeacher/:teacher_accnt_id',
+    function ($teacher_accnt_id) use ($app, $sql_db, $redis) {
+        $response = $app->response;
+        $request = $app->request->getBody();
+        $token = $app->request->headers('token');
+        $depositInfo = $redis->get($token);
+        if(!$depositInfo){
+            $response->setBody(rspData(10005));
+            return;
+        }
+
+        $account = new Account($sql_db);
+        $ret = $account->deleteTeacher($teacher_accnt_id);
+        $response->setBody(rspData($ret));
+    }
+);
+
 $app->run();

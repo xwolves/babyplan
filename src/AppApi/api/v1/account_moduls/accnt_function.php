@@ -694,6 +694,20 @@ class Account{
 
     }
 
+    public function deleteTeacher($teacherId){
+        try{
+            $info = array();
+            $sql_str = "DELETE FROM tb_deposit_teacher a WHERE a.accountid=:teacherid";
+            $stmt = $this->DB->prepare($sql_str);
+            $stmt->bindParam(":teacherid", intval($teacherId), PDO::PARAM_INT);
+            if (!$stmt->execute())
+                return 10001;
+            return 0;
+        }catch (PDOException $e) {
+            $errs = $e->getMessage();
+            return 10000;
+        }
+    }
     private $DB;
 }
 ?>

@@ -8,6 +8,7 @@
     'ngInject';
     var service = {
       queryParent:queryParent,
+      updateParent:updateParent,
       queryChildren:queryChildren
     };
 
