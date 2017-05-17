@@ -294,6 +294,41 @@ class Account{
         }
     }
 
+    public function updateParent($params){
+        try{
+            $accountid = $params['accountid'];
+            $column = array("name", "sex", "mobile", "nick", "avatarLink", "remark", "password");
+
+            $ar_params = array();
+            foreach($params as $key => $val){
+                if(in_array($key, $column))
+                    $ar_params[$key] = $val;
+            }
+
+            $str_tail = "";
+            foreach($ar_params as $key => $val){
+                if(empty($str_tail))
+                    $str_tail = " set $key=:$key";
+                else
+                    $str_tail .= ", $key=:$key";
+            }
+
+            if(!empty($str_tail)){
+                $sql_str = "update tb_accnt_parent $str_tail , modifytime = now() where accountid = $accountid";
+                $stmt = $this->DB->prepare($sql_str);
+                if (!$stmt->execute($ar_params))
+                    return 10001;
+                if($stmt->rowCount() <= 0)
+                    return 10002;
+            }
+
+            return $accountid;
+        }catch (PDOException $e) {
+            $errs = $e->getMessage();
+            return 10000;
+        }
+    }
+
     public function updateTeacher($params){
         try{
             $accountid = $params['accountid'];

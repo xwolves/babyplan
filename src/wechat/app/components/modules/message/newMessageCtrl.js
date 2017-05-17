@@ -75,6 +75,14 @@
                 StateService.back();
             };
 
+            vm.capture=function(){
+            
+            };
+
+            vm.upload=function(){
+
+            };
+
             $scope.fileSelect=function(event){
                 //console.log(event);
                 var files = event.target.files;

@@ -1600,4 +1600,31 @@ $app->get(
     }
 );
 
+$app->post(
+    '/account/parent/:accnt_id',
+    function ($accnt_id) use ($app, $sql_db, $redis) {
+        $rsp_data = array();
+        $response = $app->response;
+        $request = $app->request->getBody();
+        $token = $app->request->headers('token');
+        $depositInfo = $redis->get($token);
+        if(!$depositInfo){
+            $response->setBody(rspData(10005));
+            return;
+        }
+
+        $a_request = json_decode($request, true);
+        if(empty($a_request)){
+            $response->setBody(rspData(12001));
+            return;
+        }
+        $a_request['accountid'] = $accnt_id;
+        $a_request = array_change_key_case($a_request, CASE_LOWER);
+        $account = new Account($sql_db);
+        $ret = $account->updateParent($a_request);
+        $rsp_data['uid'] = $ret;
+        $response->setBody(rspData($ret, $rsp_data));
+    }
+);
+
 $app->run();

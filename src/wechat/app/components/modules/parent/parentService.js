@@ -32,6 +32,17 @@
       return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
     };
 
+    function updateParent(parent) {
+      var url = Constants.serverUrl + 'account/parent/update/'+parent.AccountID;
+      return $http({
+        method: 'post',
+        url: url,
+        data: data
+      }).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
+      };
+
+    };
+
     //GET /api/v1/account/query/parentChildren/{parent_accnt_id}
     //return
     //{
