@@ -1627,7 +1627,7 @@ $app->post(
     }
 );
 
-$app->post(
+$app->get(
     'account/delTeacher/:teacher_accnt_id',
     function ($teacher_accnt_id) use ($app, $sql_db, $redis) {
         $response = $app->response;
