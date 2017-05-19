@@ -545,7 +545,7 @@ class Account{
     public function queryTeacherInfo($depositid){
         try{
             $info = array();
-            $sql_str = "SELECT c.accountid, c.name, c.sex, c.mobile, c.teachage, c.age, c.photolink, c.remark FROM
+            $sql_str = "SELECT b.teacherid as accountid, c.name, c.sex, c.mobile, c.teachage, c.age, c.photolink, c.remark FROM
                 (SELECT * FROM tb_deposit_teacher a WHERE a.depositid=:depositid) b LEFT JOIN tb_accnt_teacher c ON c.accountid=b.teacherid";
             $stmt = $this->DB->prepare($sql_str);
             $stmt->bindParam(":depositid", intval($depositid), PDO::PARAM_INT);
