@@ -697,8 +697,9 @@ class Account{
     public function deleteTeacher($teacherId){
         try{
             $info = array();
-            $sql_str = "DELETE FROM tb_accnt_teacher a WHERE a.accountid=:teacherid";
-            $sql_str2 = "DELETE FROM tb_deposit_teacher a WHERE a.teacherid=:teacherid";
+            $this->DB->beginTransaction();
+            $sql_str = "DELETE FROM tb_accnt_teacher WHERE AccountID=:teacherid";
+            $sql_str2 = "DELETE FROM tb_deposit_teacher WHERE TeacherID=:teacherid";
             $stmt = $this->DB->prepare($sql_str2);
             $stmt->bindParam(":teacherid", intval($teacherId), PDO::PARAM_INT);
             if (!$stmt->execute())
@@ -707,7 +708,7 @@ class Account{
             $stmt->bindParam(":teacherid", intval($teacherId), PDO::PARAM_INT);
             if (!$stmt->execute())
                 return 10001;
-
+            $this->DB->commit();
             return 0;
         }catch (PDOException $e) {
             $errs = $e->getMessage();
