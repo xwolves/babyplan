@@ -42,7 +42,7 @@
       }).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
       };
 
-    };
+
 
     //GET /api/v1/account/query/parentChildren/{parent_accnt_id}
     //return
@@ -68,7 +68,5 @@
 
     return service;
 
-
-  }
-
+  };
 }());

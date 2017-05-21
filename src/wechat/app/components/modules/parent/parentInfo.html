@@ -1,15 +1,62 @@
 <ion-view view-title="家长信息">
-  <ion-nav-buttons side="left">
-      <a class="button button-icon icon ion-ios-arrow-back" ng-click="vm.back()"></a>
-  </ion-nav-buttons>
+    <ion-nav-buttons side="left">
+        <a class="button button-icon icon ion-ios-arrow-back" ng-click="vm.back()"></a>
+    </ion-nav-buttons>
     <ion-content>
-        <ul class="list">
-            <li class="item" ng-click="vm.goTo('parent')">
-                <i class="icon ion-ios-contact"></i>&nbsp;&nbsp;我的信息</i>
-            </li>
-            <li class="item" ng-click="vm.goTo('childrenSetting')">
-                <i class="icon ion-ios-people"></i>&nbsp;&nbsp;孩子信息</i>
-            </li>
-        </ul>
+
+        <ion-list>
+
+            <div class="item item-divider">
+            </div>
+
+            <a class="item item-avatar" href="javascript:void(0)" ng-click="vm.goTo('parentEdit')">
+                <img src="img/login.png">
+                <h2>{{vm.parentInfo.name}}</h2>
+                <p>{{vm.parentInfo.nickName}}</p>
+            </a>
+
+            <a class="item" href="javascript:void(0)" ng-click="vm.goTo('parentEdit')">
+                性别
+                <span class="item-note">
+                    {{vm.parentInfo.sex|gendarChange}}
+                </span>
+            </a>
+
+            <a class="item" href="javascript:void(0)" ng-click="vm.goTo('parentEdit')">
+                手机
+                <span class="item-note">
+                    {{vm.parentInfo.mobile}}
+                </span>
+            </a>
+   </ion-list>
+
+
+        <ion-list show-delete="vm.shouldShowDelete"
+                  show-reorder="vm.shouldShowReorder"
+                  can-swipe="vm.listCanSwipe">
+
+            <div class="item item-divider item-divider-custom item-button-right">
+                孩子信息
+                <button class="button  button-icon">
+                    <i class="icon ion-plus-circled"></i>
+                </button>
+            </div>
+
+            <ion-item ng-repeat="child in vm.parentInfo.childrens"
+                      class="item">
+                {{child.name}}
+                <span class="item-note">
+                    {{child.sex|gendarChange}}
+                </span>
+
+                <ion-delete-button class="ion-minus-circled"
+                                   ng-click="vm.parentInfo.childrens.splice($index, 1)">
+                </ion-delete-button>
+                <ion-reorder-button class="ion-navicon"
+                                    on-reorder="">
+                </ion-reorder-button>
+            </ion-item>
+
+        </ion-list>
     </ion-content>
 </ion-view>
