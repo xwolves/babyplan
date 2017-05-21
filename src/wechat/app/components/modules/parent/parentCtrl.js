@@ -6,7 +6,23 @@
             var vm = this;
             vm.activated = false;
             $scope.$on('$ionicView.afterEnter', activate);
+            vm.parentInfo = {
+                name: "刘德华",
+                nickName: "流的花",
+                sex: 1,
+                mobile: '1342222235',
+                childrens: [
+                    {
+                        name: '刘能',
+                        sex: 1
+                    },
+                    {
+                        name: '刘星',
+                        sex: 1
+                    }
+                ]
 
+            };
             function activate() {
                 vm.activated = true;
                 vm.version = Constants.buildID;

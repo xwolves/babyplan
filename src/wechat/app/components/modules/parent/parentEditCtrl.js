@@ -1,10 +1,16 @@
-(function() {
+﻿(function() {
     "use strict";
     angular.module('parentEditCtrl', [])
-        .controller('parentEditCtrl', function($scope, Constants,AuthService,parentService) {
+        .controller('parentEditCtrl', function ($scope, Constants, AuthService, parentService, StateService) {
             'ngInject';
             var vm = this;
             vm.activated = false;
+            vm.parentInfo = {
+                name: "刘德华",
+                nickName: "流的花",
+                sex: 1,
+                mobile: '1342222235'
+            };
             $scope.$on('$ionicView.afterEnter', activate);
 
             function activate() {
@@ -23,5 +29,9 @@
                 });
             };
 
+
+            vm.back = function () {
+                StateService.back();
+            };
         });
 }());
