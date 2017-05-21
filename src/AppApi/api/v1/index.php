@@ -204,6 +204,27 @@ $app->get(
     }
 );
 
+$app->get(
+    '/account/children/delete/:childid',
+    function ($childid) use ($app, $sql_db, $redis){
+        $response = $app->response;
+        $token = $app->request->headers('token');
+        $depositInfo = $redis->get($token);
+        if(!$depositInfo){
+            $response->setBody(rspData(10005));
+            return;
+        }
+
+        $account = new Account($sql_db);
+        $ret = $account->deleteChildrenInfo($childid);
+        if($ret!=0){
+            $response->setBody(rspData($ret));
+        }else{
+            $response->setBody(rspData(0, $ret));
+        }
+    }
+);
+
 $app->post(
     '/deposit/:deposit_accnt_id/addteacher',
     function ($deposit_accnt_id) use ($app, $sql_db) {

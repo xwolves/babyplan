@@ -542,6 +542,28 @@ class Account{
         }
     }
 
+    public function deleteChildrenInfo($childid){
+      try{
+          $info = array();
+          $this->DB->beginTransaction();
+          $sql_str = "DELETE FROM tb_accnt_children WHERE AccountID=:cid";
+          $sql_str2 = "DELETE FROM tb_parent_children WHERE ChildrenID=:cid";
+          $stmt = $this->DB->prepare($sql_str2);
+          $stmt->bindParam(":cid", intval($childid), PDO::PARAM_INT);
+          if (!$stmt->execute())
+              return 10001;
+          $stmt = $this->DB->prepare($sql_str);
+          $stmt->bindParam(":cid", intval($childid), PDO::PARAM_INT);
+          if (!$stmt->execute())
+              return 10001;
+          $this->DB->commit();
+          return 0;
+      }catch (PDOException $e) {
+          $errs = $e->getMessage();
+          return 10000;
+      }
+    }
+
     public function queryTeacherInfo($depositid){
         try{
             $info = array();
