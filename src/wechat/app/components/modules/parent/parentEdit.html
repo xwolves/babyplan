@@ -32,8 +32,8 @@
                 <input type="text" ng-model="vm.parentInfo.name">
             </label>
             <label class="item item-input item-input-right-align">
-                <span class="input-label">昵称</span>
-                <input type="text" ng-model="vm.parentInfo.nickName">
+                <span class="input-label">微信</span>
+                <input type="text" ng-model="vm.parentInfo.weixinno">
             </label>
 
             <label class="item item-input item-input-right-align">
@@ -41,19 +41,20 @@
                 <input type="tel" ng-model="vm.parentInfo.mobile">
             </label>
 
-            <div class="item item-toggle">
-                性别
-                <label class="toggle toggle-assertive">
-                    <input type="checkbox" ng-model="vm.parentInfo.sex">
-                    <div class="track">
-                        <div class="handle"></div>
-                    </div>
-                </label>
-            </div>
+
+            <label class="item item-input item-select">
+                <div class="input-label">
+                    性别
+                </div>
+                <select ng-model="vm.parentInfo.sex">
+                    <option selected value="0">女</option>
+                    <option value="1">男</option>
+                </select>
+            </label>
         </div>
 
         <div class="padding">
-            <button class="button button-block button-positive">
+            <button class="button button-block button-positive" ng-click="vm.save()">
                 保存
             </button>
         </div>

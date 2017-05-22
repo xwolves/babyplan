@@ -58,7 +58,7 @@
             <a class="item item-avatar" href="javascript:void(0)" ng-click="vm.goTo('parentEdit')">
                 <img src="img/login.png">
                 <h2>{{vm.parentInfo.name}}</h2>
-                <p>{{vm.parentInfo.nickName}}</p>
+                <p><b>微信:</b>{{vm.parentInfo.weixinno}}</p>
             </a>
 
             <a class="item" href="javascript:void(0)" ng-click="vm.goTo('parentEdit')">
@@ -87,7 +87,9 @@
                     <i class="icon ion-plus-circled"></i>
                 </button>
             </div>
-
+            <div class="no-data" ng-if="!vm.parentInfo.childrens || vm.parentInfo.childrens.length==0">
+                暂无孩子信息!
+            </div>
             <ion-item ng-repeat="child in vm.parentInfo.childrens"
                       class="item">
                 {{child.name}}
@@ -98,9 +100,6 @@
                 <ion-delete-button class="ion-minus-circled"
                                    ng-click="vm.parentInfo.childrens.splice($index, 1)">
                 </ion-delete-button>
-                <ion-reorder-button class="ion-navicon"
-                                    on-reorder="">
-                </ion-reorder-button>
             </ion-item>
 
         </ion-list>
