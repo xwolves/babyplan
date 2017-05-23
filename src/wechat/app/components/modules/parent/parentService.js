@@ -34,7 +34,7 @@
     };
 
     function updateParent(data) {
-        var url = Constants.serverUrl + 'account/parent/update/' + data.uid;
+        var url = Constants.serverUrl + 'account/parent/' + data.uid;
       return $http({
         method: 'post',
         url: url,

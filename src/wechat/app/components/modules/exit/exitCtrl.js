@@ -5,7 +5,7 @@
             'ngInject';
             var vm = this;
             vm.activated = false;
-            vm.text='确定要退出本微信用户绑定的业务';//'正在退出...';
+            vm.text='确定要退出';//'正在退出...';
             $scope.$on('$ionicView.afterEnter', activate);
 
             function activate() {

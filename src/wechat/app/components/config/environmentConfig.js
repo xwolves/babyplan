@@ -5,8 +5,8 @@
             'appTitle':'托管之家',
             'serverUrl': 'http://wx.zxing-tech.cn/api/v1/',
             'eshopApiUrl': 'http://api.mall.zxing-tech.cn/v2/',
-            'dfsUrl': '/',
-            'buildID': '20170428v1',
+            'dfsUrl': 'http://wx.zxing-tech.cn/',
+            'buildID': '20170520v1',
             'ENVIRONMENT':'release'
         });
 }());

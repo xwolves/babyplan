@@ -9,6 +9,7 @@
     var service = {
       queryChild:queryChild,
       updateChild:updateChild,
+      deleteChild:deleteChild,
       registerChild:registerChild
     };
 
@@ -102,6 +103,11 @@
     //http://172.18.1.166/api/v1/account/children/query/40000015    GET 获取孩子信息
     function queryChild(childId) {
       var url = Constants.serverUrl + 'account/children/query/'+childId;
+      return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
+    };
+
+    function deleteChild(childId) {
+      var url = Constants.serverUrl + 'account/children/delete/'+childId;
       return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
     };
 
