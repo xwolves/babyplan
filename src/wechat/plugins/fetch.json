@@ -29,7 +29,7 @@
     "cordova-plugin-splashscreen": {
         "source": {
             "type": "registry",
-            "id": "cordova-plugin-splashscreen@4.0.3"
+            "id": "cordova-plugin-splashscreen@^4.0.3"
         },
         "is_top_level": true,
         "variables": {}
@@ -37,7 +37,7 @@
     "cordova-plugin-console": {
         "source": {
             "type": "registry",
-            "id": "cordova-plugin-console"
+            "id": "cordova-plugin-console@^1.0.7"
         },
         "is_top_level": true,
         "variables": {}
@@ -45,7 +45,7 @@
     "cordova-plugin-camera": {
         "source": {
             "type": "registry",
-            "id": "cordova-plugin-camera"
+            "id": "cordova-plugin-camera@^2.4.1"
         },
         "is_top_level": true,
         "variables": {}
@@ -53,15 +53,15 @@
     "cordova-plugin-compat": {
         "source": {
             "type": "registry",
-            "id": "cordova-plugin-compat@^1.1.0"
+            "id": "cordova-plugin-compat"
         },
-        "is_top_level": false,
+        "is_top_level": true,
         "variables": {}
     },
     "cordova-plugin-device": {
         "source": {
             "type": "registry",
-            "id": "cordova-plugin-device"
+            "id": "cordova-plugin-device@^1.1.6"
         },
         "is_top_level": true,
         "variables": {}
@@ -69,7 +69,7 @@
     "cordova-plugin-media-capture": {
         "source": {
             "type": "registry",
-            "id": "cordova-plugin-media-capture"
+            "id": "cordova-plugin-media-capture@^1.4.3"
         },
         "is_top_level": true,
         "variables": {}
@@ -77,9 +77,25 @@
     "cordova-plugin-file": {
         "source": {
             "type": "registry",
-            "id": "cordova-plugin-file@^4.0.0"
+            "id": "cordova-plugin-file"
         },
         "is_top_level": false,
+        "variables": {}
+    },
+    "cordova-plugin-file-transfer": {
+        "source": {
+            "type": "registry",
+            "id": "cordova-plugin-file-transfer"
+        },
+        "is_top_level": true,
+        "variables": {}
+    },
+    "cordova-plugin-image-picker": {
+        "source": {
+            "type": "registry",
+            "id": "cordova-plugin-image-picker"
+        },
+        "is_top_level": true,
         "variables": {}
     }
 }

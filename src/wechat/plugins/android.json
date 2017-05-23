@@ -33,12 +33,18 @@
         },
         "cordova-plugin-media-capture": {
             "PACKAGE_NAME": "com.trusteeship"
+        },
+        "cordova-plugin-file-transfer": {
+            "PACKAGE_NAME": "com.trusteeship"
+        },
+        "cordova-plugin-image-picker": {
+            "PACKAGE_NAME": "com.trusteeship"
+        },
+        "cordova-plugin-compat": {
+            "PACKAGE_NAME": "com.trusteeship"
         }
     },
     "dependent_plugins": {
-        "cordova-plugin-compat": {
-            "PACKAGE_NAME": "com.trusteeship"
-        },
         "cordova-plugin-file": {
             "PACKAGE_NAME": "com.trusteeship"
         }

@@ -2,6 +2,7 @@
     "use strict";
     angular.module('vendor', [
             'ionic',
+             'ngCordova',
             'templates',
             'ngStorage',
             'toaster',

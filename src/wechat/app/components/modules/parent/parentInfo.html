@@ -5,14 +5,13 @@
     <ion-content>
 
         <ion-list>
-
             <div class="item item-divider">
             </div>
 
-            <a class="item item-avatar" href="javascript:void(0)" ng-click="vm.goTo('parentEdit')">
-                <img ng-src="{{vm.parentInfo.avatarlink || 'img/login.png'}}">
-                <h2>{{vm.parentInfo.name}}</h2>
-                <p><b>微信:</b>{{vm.parentInfo.weixinno}}</p>
+            <a class="item item-avatar" href="javascript:void(0)" >
+                <img ng-src="{{vm.parentInfo.avatarlink || 'img/login.png'}}" ng-click="vm.showImageUploadChoices()">
+                <h2 ng-click="vm.goTo('parentEdit')">{{vm.parentInfo.name}}</h2>
+                <p ng-click="vm.goTo('parentEdit')"><b>微信:</b>{{vm.parentInfo.weixinno}}</p>
             </a>
 
             <a class="item" href="javascript:void(0)" ng-click="vm.goTo('parentEdit')">
@@ -54,7 +53,6 @@
                                    ng-click="vm.parentInfo.childrens.splice($index, 1)">
                 </ion-delete-button>-->
             </a>
-
         </ion-list>
     </ion-content>
 </ion-view>

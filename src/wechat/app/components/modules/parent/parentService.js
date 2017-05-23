@@ -33,8 +33,8 @@
       return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
     };
 
-    function updateParent(parent) {
-      var url = Constants.serverUrl + 'account/parent/update/'+parent.AccountID;
+    function updateParent(data) {
+        var url = Constants.serverUrl + 'account/parent/update/' + data.uid;
       return $http({
         method: 'post',
         url: url,
