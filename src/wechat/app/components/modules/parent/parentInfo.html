@@ -9,9 +9,9 @@
             </div>
 
             <a class="item item-avatar" href="javascript:void(0)" >
-                <img ng-src="{{vm.parentInfo.avatarlink || 'img/login.png'}}" ng-click="vm.showImageUploadChoices()">
+                <img ng-src="{{vm.parentInfo.avatarlink || 'img/user.png'}}" ng-click="vm.showImageUploadChoices()">
                 <h2 ng-click="vm.goTo('parentEdit')">{{vm.parentInfo.name}}</h2>
-                <p ng-click="vm.goTo('parentEdit')"><b>微信:</b>{{vm.parentInfo.weixinno}}</p>
+                <p ng-click="vm.goTo('parentEdit')"><b>微信:</b>{{vm.parentInfo.weixinno || '无'}}</p>
             </a>
 
             <a class="item" href="javascript:void(0)" ng-click="vm.goTo('parentEdit')">

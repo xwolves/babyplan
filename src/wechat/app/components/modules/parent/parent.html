@@ -55,10 +55,10 @@
             <div class="item item-divider">
             </div>
 
-            <a class="item item-avatar" href="javascript:void(0)" ng-click="vm.goTo('parentEdit')">
-                <img src="img/login.png">
-                <h2>{{vm.parentInfo.name}}</h2>
-                <p><b>微信:</b>{{vm.parentInfo.weixinno}}</p>
+            <a class="item item-avatar" href="javascript:void(0)">
+                <img ng-src="{{vm.parentInfo.avatarlink || 'img/user.png'}}" ng-click="vm.showImageUploadChoices()">
+                <h2 ng-click="vm.goTo('parentEdit')">{{vm.parentInfo.name}}</h2>
+                <p ng-click="vm.goTo('parentEdit')"><b>微信:</b>{{vm.parentInfo.weixinno || '无'}}</p>
             </a>
 
             <a class="item" href="javascript:void(0)" ng-click="vm.goTo('parentEdit')">

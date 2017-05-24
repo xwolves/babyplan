@@ -116,8 +116,16 @@ var app = angular.module('BaiduMapDirective', []);
        * @param {*} clickCallback
        * @param {*} poInfo
        */
-      function addMapMarker(map, point, clickCallback, poInfo) {
-          var mk = new BMap.Marker(point);
+      function addMapMarker(map, point, clickCallback, poInfo, icon) {
+          var mk;
+
+          if (!!icon) {
+            
+              mk = new BMap.Marker(point, { icon: icon });  // 创建标注
+          } else {
+              mk = new BMap.Marker(point);
+          }
+
           map.addOverlay(mk);
           mk.babyPoi = poInfo;
 
@@ -372,7 +380,14 @@ var app = angular.module('BaiduMapDirective', []);
                */
               scope.locationCurrent = function () {
                   $timeout(function () {
-                      addMapMarker(scope.map, scope.currentPosition, openInfoWindow, null);
+
+                      // 指定Marker的icon属性为Symbol
+                      var symbol = new BMap.Symbol(BMap_Symbol_SHAPE_POINT, {
+                          scale: 1,//图标缩放大小
+                          fillColor: "orange",//填充颜色
+                          fillOpacity: 0.8//填充透明度
+                      });
+                      addMapMarker(scope.map, scope.currentPosition, openInfoWindow, null, symbol);
                       scope.currentPosition && scope.map.panTo(scope.currentPosition);
                   }, 20);
               };
@@ -543,7 +558,13 @@ var app = angular.module('BaiduMapDirective', []);
                           // 记录当前位置并标记
                           scope.currentPosition = p;
 
-                          var marker = addMapMarker(map, p, openInfoWindow, null);
+                          // 指定Marker的icon属性为Symbol
+                          var symbol = new BMap.Symbol(BMap_Symbol_SHAPE_POINT, {
+                              scale: 1,//图标缩放大小
+                              fillColor: "orange",//填充颜色
+                              fillOpacity: 0.8//填充透明度
+                          });
+                          var marker = addMapMarker(map, p, openInfoWindow, null, symbol);
                           // 设置为中心
                           map.centerAndZoom(p, 16);
 
