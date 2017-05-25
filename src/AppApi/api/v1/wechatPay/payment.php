@@ -21,7 +21,7 @@ class WechatPayment{
 
     function getOrder(){
         // get prepay id
-        $prepay_id = generatePrepayId($this->APP_ID, $this->MCH_ID);
+        $prepay_id = $this->generatePrepayId($this->APP_ID, $this->MCH_ID);
 
         // re-sign it
         $response = array(
@@ -29,10 +29,10 @@ class WechatPayment{
             'partnerid' => $this->MCH_ID,
             'prepayid'  => $prepay_id,
             'package'   => 'Sign=WXPay',
-            'noncestr'  => generateNonce(),
+            'noncestr'  => $this->generateNonce(),
             'timestamp' => time(),
         );
-        $response['sign'] = calculateSign($response, $this->APP_KEY );
+        $response['sign'] = $this->calculateSign($response, $this->APP_KEY );
 
         // send it to APP
         return json_encode($response);
@@ -98,7 +98,7 @@ class WechatPayment{
         $params = array(
             'appid'            => $app_id,
             'mch_id'           => $mch_id,
-            'nonce_str'        => generateNonce(),
+            'nonce_str'        => $this->generateNonce(),
             'body'             => 'app member order',
             'out_trade_no'     => time(),
             'total_fee'        => 1,
@@ -108,10 +108,10 @@ class WechatPayment{
         );
 
         // add sign
-        $params['sign'] = calculateSign($params, $this->APP_KEY );
+        $params['sign'] = $this->calculateSign($params, $this->APP_KEY );
 
         // create xml
-        $xml = getXMLFromArray($params);
+        $xml = $this->getXMLFromArray($params);
 
         // send request
         $ch = curl_init();
