@@ -61,6 +61,13 @@ $app->post(
       }
 );
 
+$app->post(
+      '/wechatPay/appOrder',
+      function () use ($app, $sql_db) {
+        createAppOrder($app, $sql_db);
+      }
+);
+
 //查询微信支付里的订单信息
 $app->get(
       '/wechatPay/order/:orderId',
