@@ -183,6 +183,14 @@ function queryOrder($app,$orderId,$sql_db){
     }
 }
 
+function orderCallback($app,$sql_db){
+  //$response = $app->response();
+  $request = $app->request->getBody();
+  //$j_request = json_decode($request, true);
+  $app->getLog()->debug("Wechat ".date('Y-m-d H:i:s')." callback : ".$request);
+  echo 'success';
+}
+
 function createAppOrder($app,$sql_db){
     $response = $app->response();
     $request = $app->request->getBody();
@@ -193,8 +201,12 @@ function createAppOrder($app,$sql_db){
     // }
     $payment = new WechatPayment(WxPayConfig::APPID,WxPayConfig::MCHID,WxPayConfig::KEY);
     $result = $payment->getOrder();
-    $app->getLog()->debug("Debug ".date('Y-m-d H:i:s')." : ".$result);
-    $response->setBody(rspData(0,  $result));
+    if($result==-1){
+      $response->setBody(rspData(16005,  "请求订单号失败"));
+    }else{
+      $app->getLog()->debug("Debug ".date('Y-m-d H:i:s')." : ".json_encode($result));
+      $response->setBody(rspData(0,  $result));
+    }
 }
 
 function createAppOrder2($app,$sql_db){

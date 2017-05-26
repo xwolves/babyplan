@@ -19,23 +19,25 @@ class WechatPayment{
     // 商户支付密钥 (https://pay.weixin.qq.com/index.php/account/api_cert)
     //define("APP_KEY", "ZXyFyT2qBWc8fv02qjXQmuikZHKdHrsN");
 
-    public function getOrder(){
+    public function getOrder($good,$fee){
         // get prepay id
-        $prepay_id = $this->generatePrepayId();
-
-        // re-sign it
-        $response = array(
-            'appid'     => $this->APP_ID,
-            'partnerid' => $this->MCH_ID,
-            'prepayid'  => $prepay_id,
-            'package'   => 'Sign=WXPay',
-            'noncestr'  => $this->generateNonce(),
-            'timestamp' => time(),
-        );
-        $response['sign'] = $this->calculateSign($response);
-
+        $prepay_id = $this->generatePrepayId($good,$fee);
+        if($prepay_id != null && $prepay_id != ""){
+            // re-sign it
+            $response = array(
+                'appid'     => $this->APP_ID,
+                'partnerid' => $this->MCH_ID,
+                'prepayid'  => $prepay_id,
+                'package'   => 'Sign=WXPay',
+                'noncestr'  => $this->generateNonce(),
+                'timestamp' => time(),
+            );
+            $response['sign'] = $this->calculateSign($response);
+        }else{
+          return -1;
+        }
         // send it to APP
-        return json_encode($response);
+        return $response;
     }
 
     /**
@@ -93,27 +95,27 @@ class WechatPayment{
      *
      * @link https://pay.weixin.qq.com/wiki/doc/api/app.php?chapter=9_1
      */
-    function generatePrepayId()
+    function generatePrepayId($good,$fee)
     {
-        echo 0;
+        //echo 0;
         $params = array(
             'appid'            => $this->APP_ID,
             'mch_id'           => $this->MCH_ID,
             'nonce_str'        => $this->generateNonce(),
-            'body'             => 'app member order',
+            'body'             => $good,
             'out_trade_no'     => time(),
-            'total_fee'        => 1,
-            'spbill_create_ip' => '8.8.8.8',
-            'notify_url'       => 'http://localhost',
+            'total_fee'        => $fee,
+            'spbill_create_ip' => '0.0.0.0',
+            'notify_url'       => 'http://wx.zxing-tech.cn/api/v1/wechatPay/callback',
             'trade_type'       => 'APP',
         );
 
         // add sign
         $params['sign'] = $this->calculateSign($params);
-        var_dump($params);
+        //var_dump($params);
         // create xml
         $xml = $this->getXMLFromArray($params);
-        echo $xml;
+        //echo $xml;
         // send request
         $ch = curl_init();
 
@@ -133,7 +135,7 @@ class WechatPayment{
 
         $result = curl_exec($ch);
         curl_close($ch);
-        echo $result;
+        //echo $result;
         // get the prepay id from response
         $xml = simplexml_load_string($result);
         return (string)$xml->prepay_id;

@@ -70,6 +70,13 @@ $app->post(
       }
 );
 
+$app->get(
+      '/wechatPay/callback',
+      function () use ($app, $sql_db) {
+        orderCallback($app, $sql_db);
+      }
+);
+
 //查询微信支付里的订单信息
 $app->get(
       '/wechatPay/order/:orderId',
