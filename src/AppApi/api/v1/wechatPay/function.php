@@ -201,7 +201,7 @@ function createAppOrder($app,$sql_db){
     //     return;
     // }
     $payment = new WechatPayment(WxPayConfig::APPID,WxPayConfig::MCHID,WxPayConfig::KEY);
-    $result = $payment->getOrder();
+    $result = $payment->getOrder('test book',1);
     if($result==-1){
       $response->setBody(rspData(16005,  "请求订单号失败"));
     }else{
@@ -284,10 +284,10 @@ function createAppOrder2($app,$sql_db){
   // $jsapi->SetPaySign($jsapi->MakeSign());
   //var_dump($jsapi);
 
-  if(!array_key_exists("error", $order)){
+  if(array_key_exists("error", $order)){
     $response->setBody(rspData(10000, "查询失败"));
     return;
-  }
+  }else{
   // 'appid' => $UnifiedOrderResult['appid'],
   // 'partnerid' => $UnifiedOrderResult['mch_id'],
   // 'prepayid' => $UnifiedOrderResult['prepay_id'],
@@ -326,6 +326,7 @@ function createAppOrder2($app,$sql_db){
 	     return;
     }
     $response->setBody(rspData(0,  $order));
+  }
   // }else{
   //     $response->setBody(rspData(10001,  $order['return_msg']));
   // }
