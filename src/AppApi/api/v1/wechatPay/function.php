@@ -1,6 +1,7 @@
 <?php
 require_once "lib/WxPay.Api.php";
 //require_once "payment.php";
+require_once 'WeixinPay.php';
 
 function createOrder($app,$sql_db){
   $response = $app->response();
@@ -218,7 +219,6 @@ function createAppOrder2($app,$sql_db){
       return;
   }
 
-  //$openId = $j_request['wxId'];
   $userId = $j_request['userId'];
   $goodsTag = $j_request['goodsId'];
   $goodsName="test";
@@ -245,6 +245,19 @@ function createAppOrder2($app,$sql_db){
     $response->setBody(rspData(10000, $err));
     return;
   }
+  $weixin = new WeixinPay();
+  $orderId = $userId.'-'.date("YmdHis");
+  $order_params = [
+      'body' => $goodsName,
+      'total_fee' => $goodsPrice,
+      'notify_url' => 'http://test.com/check',
+      'trade_type' => 'APP',
+      'out_trade_no' => $orderId
+  ];
+  $weixin->setOrderParams($order_params);
+  $order = $weixin->getAppParameters();
+  var_dump($order);
+/*
   $input = new WxPayUnifiedOrder();
   $input->SetBody($goodsName);//商品描述
   $input->SetAttach($goodsExt);//附加数据
@@ -260,7 +273,7 @@ function createAppOrder2($app,$sql_db){
   //var_dump($input);
   $order = WxPayApi::unifiedOrder($input);
   //var_dump($order);
-
+*/
   //get pay sign
   // $jsapi = new WxPayJsApiPay();
   // $jsapi->SetAppid($order['appid']);
@@ -271,17 +284,23 @@ function createAppOrder2($app,$sql_db){
   // $jsapi->SetPaySign($jsapi->MakeSign());
   //var_dump($jsapi);
 
-  if(!array_key_exists("return_code", $order)){
+  if(!array_key_exists("error", $order)){
     $response->setBody(rspData(10000, "查询失败"));
     return;
   }
-  if($order['return_code']=='SUCCESS'){
+  // 'appid' => $UnifiedOrderResult['appid'],
+  // 'partnerid' => $UnifiedOrderResult['mch_id'],
+  // 'prepayid' => $UnifiedOrderResult['prepay_id'],
+  // 'noncestr' => $NonceStr,
+  // 'timestamp' => $timeStamp,
+  // 'sign' => $sing
+  //if($order['return_code']=='SUCCESS'){
     $rsp_data = array();
     $rsp_data['appId'] = $order['appid'];
-    $rsp_data['timeStamp'] = $jsapi->GetTimeStamp();
-    $rsp_data['nonceStr'] = $jsapi->GetReturn_code();
-    $rsp_data['prepay_id'] = $order['prepay_id'];
-    $rsp_data['paySign'] = $jsapi->GetPaySign();
+    $rsp_data['timeStamp'] = $order['timestamp'];
+    $rsp_data['nonceStr'] = $order['noncestr'];
+    $rsp_data['prepay_id'] = $order['prepayid'];
+    $rsp_data['paySign'] = $order['sign'];
     $rsp_data['orderId'] = $orderId;
     //insert data orderType = 2 is for test, 1 is regular
     $sql="insert into tb_parent_order (OrderId,ParentID,OrderType,Amount,PayStatus,PayType,NumOfDays,BusinessID,CreateTime,ModifyTime) values (:orderId,:userId,2,:totalFee,0,0,:numOfDays,:goodsId,NOW(),NOW())";
@@ -307,7 +326,7 @@ function createAppOrder2($app,$sql_db){
 	     return;
     }
     $response->setBody(rspData(0,  $order));
-  }else{
-      $response->setBody(rspData(10001,  $order['return_msg']));
-  }
+  // }else{
+  //     $response->setBody(rspData(10001,  $order['return_msg']));
+  // }
 }

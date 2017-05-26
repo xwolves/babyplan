@@ -73,7 +73,7 @@ $app->post(
 $app->get(
       '/wechatPay/callback',
       function () use ($app, $sql_db) {
-        orderCallback($app, $sql_db);
+        orderCallback2($app, $sql_db);
       }
 );
 
