@@ -19,7 +19,7 @@ class WechatPayment{
     // 商户支付密钥 (https://pay.weixin.qq.com/index.php/account/api_cert)
     //define("APP_KEY", "ZXyFyT2qBWc8fv02qjXQmuikZHKdHrsN");
 
-    function getOrder(){
+    public function getOrder(){
         // get prepay id
         $prepay_id = $this->generatePrepayId();
 
@@ -95,6 +95,7 @@ class WechatPayment{
      */
     function generatePrepayId()
     {
+        echo 0;
         $params = array(
             'appid'            => $this->APP_ID,
             'mch_id'           => $this->MCH_ID,
@@ -109,24 +110,30 @@ class WechatPayment{
 
         // add sign
         $params['sign'] = $this->calculateSign($params);
-
+        var_dump($params);
         // create xml
         $xml = $this->getXMLFromArray($params);
-
+        echo $xml;
         // send request
         $ch = curl_init();
 
-        curl_setopt_array($ch, array(
+  	    curl_setopt_array($ch, array(
             CURLOPT_URL            => "https://api.mch.weixin.qq.com/pay/unifiedorder",
             CURLOPT_POST           => true,
             CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_SSL_VERIFYPEER => true,
+            CURLOPT_SSL_VERIFYHOST => 2,
+            CURLOPT_FOLLOWLOCATION => 1,
+            CURLOPT_AUTOREFERER    => 1,
+            CURLOPT_USERAGENT      => $_SERVER['HTTP_USER_AGENT'],
+            CURLOPT_TIMEOUT        => 30,
             CURLOPT_HTTPHEADER     => array('Content-Type: text/xml'),
             CURLOPT_POSTFIELDS     => $xml,
         ));
 
         $result = curl_exec($ch);
         curl_close($ch);
-
+        echo $result;
         // get the prepay id from response
         $xml = simplexml_load_string($result);
         return (string)$xml->prepay_id;

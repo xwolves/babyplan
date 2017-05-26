@@ -1,6 +1,6 @@
 <?php
 require_once "lib/WxPay.Api.php";
-require_once "payment.php";
+//require_once "payment.php";
 
 function createOrder($app,$sql_db){
   $response = $app->response();
