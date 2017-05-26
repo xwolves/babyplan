@@ -201,12 +201,12 @@ function createAppOrder2($app,$sql_db){
   $response = $app->response();
   $request = $app->request->getBody();
   $j_request = json_decode($request, true);
-  if(!array_key_exists("goodsId", $j_request) || !array_key_exists("userId", $j_request) || !array_key_exists("wxId", $j_request) ){
+  if(!array_key_exists("goodsId", $j_request) || !array_key_exists("userId", $j_request) ){
       $response->setBody(rspData(10000, "请求参数非法，请确认必填参数"));
       return;
   }
 
-  $openId = $j_request['wxId'];
+  //$openId = $j_request['wxId'];
   $userId = $j_request['userId'];
   $goodsTag = $j_request['goodsId'];
   $goodsName="test";
@@ -245,7 +245,6 @@ function createAppOrder2($app,$sql_db){
   $input->SetGoods_tag($goodsTag);//商品标记
   $input->SetNotify_url("http://wx.zxing-tech.cn");//通知地址
   $input->SetTrade_type("APP");//交易类型
-  $input->SetOpenid($openId);//用户标识
   //var_dump($input);
   $order = WxPayApi::unifiedOrder($input);
   //var_dump($order);
