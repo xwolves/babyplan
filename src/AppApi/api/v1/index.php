@@ -64,7 +64,7 @@ $app->post(
 $app->post(
       '/wechatPay/appOrder',
       function () use ($app, $sql_db) {
-        createAppOrder($app, $sql_db);
+        createAppOrder2($app, $sql_db);
       }
 );
 

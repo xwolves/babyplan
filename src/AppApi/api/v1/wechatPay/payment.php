@@ -21,7 +21,7 @@ class WechatPayment{
 
     function getOrder(){
         // get prepay id
-        $prepay_id = $this->generatePrepayId($this->APP_ID, $this->MCH_ID);
+        $prepay_id = $this->generatePrepayId();
 
         // re-sign it
         $response = array(
@@ -32,7 +32,7 @@ class WechatPayment{
             'noncestr'  => $this->generateNonce(),
             'timestamp' => time(),
         );
-        $response['sign'] = $this->calculateSign($response, $this->APP_KEY );
+        $response['sign'] = $this->calculateSign($response);
 
         // send it to APP
         return json_encode($response);
@@ -53,7 +53,7 @@ class WechatPayment{
      *
      * @link https://pay.weixin.qq.com/wiki/doc/api/app.php?chapter=4_3
      */
-    function calculateSign($arr, $key)
+    function calculateSign($arr)
     {
         ksort($arr);
 
@@ -66,7 +66,7 @@ class WechatPayment{
 
         $buff = trim($buff, "&");
 
-        return strtoupper(md5($buff . "&key=" . $key));
+        return strtoupper(md5($buff . "&key=" . $this->APP_KEY));
     }
 
     /**
@@ -93,11 +93,11 @@ class WechatPayment{
      *
      * @link https://pay.weixin.qq.com/wiki/doc/api/app.php?chapter=9_1
      */
-    function generatePrepayId($app_id, $mch_id)
+    function generatePrepayId()
     {
         $params = array(
-            'appid'            => $app_id,
-            'mch_id'           => $mch_id,
+            'appid'            => $this->APP_ID,
+            'mch_id'           => $this->MCH_ID,
             'nonce_str'        => $this->generateNonce(),
             'body'             => 'app member order',
             'out_trade_no'     => time(),
@@ -108,7 +108,7 @@ class WechatPayment{
         );
 
         // add sign
-        $params['sign'] = $this->calculateSign($params, $this->APP_KEY );
+        $params['sign'] = $this->calculateSign($params);
 
         // create xml
         $xml = $this->getXMLFromArray($params);

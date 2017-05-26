@@ -244,23 +244,23 @@ function createAppOrder2($app,$sql_db){
   $input->SetTime_expire(date("YmdHis", time() + 600));//交易结束时间
   $input->SetGoods_tag($goodsTag);//商品标记
   $input->SetNotify_url("http://wx.zxing-tech.cn");//通知地址
-  $input->SetTrade_type("JSAPI");//交易类型
+  $input->SetTrade_type("APP");//交易类型
   $input->SetOpenid($openId);//用户标识
   //var_dump($input);
   $order = WxPayApi::unifiedOrder($input);
   //var_dump($order);
 
   //get pay sign
-  $jsapi = new WxPayJsApiPay();
-  $jsapi->SetAppid($order['appid']);
-  $jsapi->SetTimeStamp(time());
-  $jsapi->SetNonceStr(WxPayApi::getNonceStr());
-  $jsapi->SetPackage("prepay_id=" . $order['prepay_id']);
-  $jsapi->SetSignType("MD5");
-  $jsapi->SetPaySign($jsapi->MakeSign());
+  // $jsapi = new WxPayJsApiPay();
+  // $jsapi->SetAppid($order['appid']);
+  // $jsapi->SetTimeStamp(time());
+  // $jsapi->SetNonceStr(WxPayApi::getNonceStr());
+  // $jsapi->SetPackage("prepay_id=" . $order['prepay_id']);
+  // $jsapi->SetSignType("MD5");
+  // $jsapi->SetPaySign($jsapi->MakeSign());
   //var_dump($jsapi);
 
-  if(!array_key_exists("return_code", $order) || !$jsapi->IsPaySignSet()){
+  if(!array_key_exists("return_code", $order)){
     $response->setBody(rspData(10000, "查询失败"));
     return;
   }
@@ -295,7 +295,7 @@ function createAppOrder2($app,$sql_db){
 	     $response->setBody(rspData(10000, "查询失败"));
 	     return;
     }
-    $response->setBody(rspData(0,  $rsp_data));
+    $response->setBody(rspData(0,  $order));
   }else{
       $response->setBody(rspData(10001,  $order['return_msg']));
   }
