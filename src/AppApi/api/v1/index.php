@@ -11,6 +11,8 @@ require_once 'config.php';
 require_once 'common.php';
 require_once '../../Slim/WeiChat/WXBizMsgCrypt.php';
 require_once './wechatPay/function.php';
+require_once './wechatPay/payment.php';
+
 \Slim\Slim::registerAutoloader();
 
 $log = new \Slim\LogWriter(fopen('../../Slim/Log/log', 'a'));
@@ -58,6 +60,20 @@ $app->post(
       '/wechatPay/order',
       function () use ($app, $sql_db) {
         createOrder($app, $sql_db);
+      }
+);
+
+$app->post(
+      '/wechatPay/appOrder',
+      function () use ($app, $sql_db) {
+        createAppOrder2($app, $sql_db);
+      }
+);
+
+$app->get(
+      '/wechatPay/callback',
+      function () use ($app, $sql_db) {
+        orderCallback($app, $sql_db);
       }
 );
 

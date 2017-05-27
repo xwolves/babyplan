@@ -6,7 +6,7 @@ app.filter('gendarChange', function () {
     return function (input) {
         if (input == "1")return "男";
         else if (input == "2")return "女";
-        else return "未知";
+        else return "";
     };
 });
 
@@ -15,7 +15,7 @@ app.filter('JSchange', function () {
         if (input == "1")return "托管机构";
         else if (input == "3")return "老师";
         else if (input == "2")return "家长";
-        else return "未知人员";
+        else return "游客";
     };
 });
 

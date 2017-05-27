@@ -1,11 +1,11 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="com.trusteeship" version="0.0.4" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget id="com.trusteeship" version="0.0.5" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>肯特育园</name>
     <description>
-        宝托安家长平台
+        肯特育园家长平台
     </description>
-    <author email="you@example.com" href="wx.zxing-tech.cn">
-      托管管理系统微信客户端
+    <author email="samcheungz@gmail.com" href="wx.zxing-tech.cn">
+      肯特育园--托管管理系统客户端
     </author>
     <content src="index.html" />
     <access origin="*" />
@@ -84,5 +84,4 @@
     <plugin name="cordova-plugin-media-capture" spec="^1.4.3" />
     <plugin name="cordova-plugin-splashscreen" spec="^4.0.3" />
     <plugin name="cordova-plugin-whitelist" spec="1" />
-    <plugin name="cordova-plugin-image-picker" spec="1.1.1" />
 </widget>

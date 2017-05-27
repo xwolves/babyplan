@@ -1,7 +1,7 @@
 (function() {
     "use strict";
     angular.module('childrenSettingCtrl', [])
-        .controller('childrenSettingCtrl', function($scope,Constants,StateService,$ionicListDelegate,$ionicPopup,AuthService,parentService,Session) {
+        .controller('childrenSettingCtrl', function($scope,Constants,StateService,$ionicListDelegate,$ionicPopup,AuthService,parentService,Session,childrenSettingService) {
             'ngInject';
             var vm = this;
             vm.activated = false;
@@ -65,8 +65,15 @@
                 });
                 confirmPopup.then(function(result) {
                     if(result) {
-                        console.log('confirm to del this child '+child.sid);
+                        console.log('confirm to del this child '+child.uid);
                         //delete(id);
+                        childrenSettingService.deleteChild(child.uid).then(function(data) {
+                            console.log(data);
+                            if (data.errno == 0) {
+                                console.log(data.data);
+                              
+                            }
+                        });
                     } else {
                         console.log('cancel delete');
                     }
