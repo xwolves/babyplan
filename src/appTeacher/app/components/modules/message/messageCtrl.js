@@ -5,7 +5,7 @@
             'ngInject';
             var vm = this;
             vm.activated = false;
-            vm.messages=[];
+
             vm.offset=0;
             vm.limit=30;
             vm.canLoadMore=true;
@@ -14,7 +14,7 @@
             function activate() {
                 vm.activated = true;
                 vm.version = Constants.buildID;
-
+                vm.messages=[];
                 vm.getDepositInfo();
             }
 
@@ -23,6 +23,8 @@
                   console.log(data);
                   if (data.errno == 0) {
                       vm.deposit=data.data[0];
+                      Session.setData('latitude',vm.deposit.latitude);
+                      Session.setData('longitude',vm.deposit.longitude);
                       vm.getMsg(vm.deposit.depositid,0,vm.limit);
                   };
                 });
@@ -85,35 +87,53 @@
                 StateService.go('newMessage');
             };
 
+            vm.getImg = function(type){
+                if(type == 1){
+                    return {name:"就餐",src:"img/dinner.png"};
+                }else if(type == 2){
+                    return {name:"培训",src:"img/traning.png"};
+                }else if(type == 3){
+                    return {name:"活动",src:"img/play.png"};
+                }else if(type == 4){
+                    return {name:"作业",src:"img/homework.png"};
+                }else if(type == 5){
+                    return {name:"接入",src:"img/login.png"};
+                }else if(type == 6){
+                    return {name:"送到",src:"img/logout.png"};
+                }else{
+                    return {name:"未知信息类型",src:"img/unknown.png"};
+                }
+            };
+
             vm.getImages=function(msg){
                 vm.imgCount=0;
-                if(msg.photolink1!=null && msg.photolink1!=""){
-                    var data={src:msg.photolink1,msg:''};
+                if(msg.PhotoLink1!=null && msg.PhotoLink1!=""){
+                    var data={src:msg.PhotoLink1,msg:''};
                     vm.images[vm.imgCount]=data;
                     vm.imgCount++;
                 }
-                if(msg.photolink2!=null && msg.photolink2!=""){
-                    var data={src:msg.photolink2,msg:''};
+                if(msg.PhotoLink2!=null && msg.PhotoLink2!=""){
+                    var data={src:msg.PhotoLink2,msg:''};
                     vm.images[vm.imgCount]=data;
                     vm.imgCount++;
                 }
-                if(msg.photolink3!=null && msg.photolink3!=""){
-                    var data={src:msg.photolink3,msg:''};
+                if(msg.PhotoLink3!=null && msg.PhotoLink3!=""){
+                    var data={src:msg.PhotoLink3,msg:''};
                     vm.images[vm.imgCount]=data;
                     vm.imgCount++;
                 }
-                if(msg.photolink4!=null && msg.photolink4!=""){
-                    var data={src:msg.photolink4,msg:''};
+                if(msg.PhotoLink4!=null && msg.PhotoLink4!=""){
+                    var data={src:msg.PhotoLink4,msg:''};
                     vm.images[vm.imgCount]=data;
                     vm.imgCount++;
                 }
-                if(msg.photolink5!=null && msg.photolink5!=""){
-                    var data={src:msg.photolink5,msg:''};
+                if(msg.PhotoLink5!=null && msg.PhotoLink5!=""){
+                    var data={src:msg.PhotoLink5,msg:''};
                     vm.images[vm.imgCount]=data;
                     vm.imgCount++;
                 }
-                if(msg.photolink6!=null && msg.photolink6!=""){
-                    var data={src:msg.photolink6,msg:''};
+                if(msg.PhotoLink6!=null && msg.PhotoLink6!=""){
+                    var data={src:msg.PhotoLink6,msg:''};
                     vm.images[vm.imgCount]=data;
                     vm.imgCount++;
                 }

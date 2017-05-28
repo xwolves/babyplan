@@ -17,9 +17,9 @@
                 StateService.back();
             };
 
-            vm.goTo=function(id,item){
+            vm.goTo=function(item){
                 //查看孩子的更多家长信息列表
-                StateService.go('teacherEdit',{cid:id,type:0});
+                StateService.go('childrenDetail',{cid:item.ChildrenID});
             };
 
             vm.queryChildren = function(){

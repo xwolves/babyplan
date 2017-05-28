@@ -5,7 +5,7 @@
             'appTitle':'宝托安',
             'serverUrl': 'http://wx.zxing-tech.cn/api/v1/',
             'eshopApiUrl': 'http://api.mall.zxing-tech.cn/v2/',
-            'dfsUrl': '/',
+            'dfsUrl': 'http://wx.zxing-tech.cn/',
             'buildID': '20170512v1',
             'ENVIRONMENT':'release'
         });

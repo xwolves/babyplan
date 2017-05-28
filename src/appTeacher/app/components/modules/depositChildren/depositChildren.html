@@ -7,7 +7,7 @@
     <ion-content>
         <ion-list>
             <!--ng-click="vm.goTo(item.childrenID)"-->
-            <ion-item class="item" collection-repeat="item in vm.children">
+            <ion-item class="item" collection-repeat="item in vm.children" ng-click="vm.goTo(item)">
                 <p>{{item.childName}}<span style="float: right">{{item.sex|gendarChange}}</span></p>
                 <p>亲人：{{item.parentName}}</p>
             </ion-item>

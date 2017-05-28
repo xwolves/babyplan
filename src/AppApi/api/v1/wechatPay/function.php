@@ -250,13 +250,13 @@ function createAppOrder2($app,$sql_db){
   $order_params = [
       'body' => $goodsName,
       'total_fee' => $goodsPrice,
-      'notify_url' => 'http://test.com/check',
+      'notify_url' => 'http://wx.zxing-tech.cn/api/v1/wechatPay/callback',
       'trade_type' => 'APP',
       'out_trade_no' => $orderId
   ];
   $weixin->setOrderParams($order_params);
   $order = $weixin->getAppParameters();
-  var_dump($order);
+  //var_dump($order);
 /*
   $input = new WxPayUnifiedOrder();
   $input->SetBody($goodsName);//商品描述
@@ -285,7 +285,7 @@ function createAppOrder2($app,$sql_db){
   //var_dump($jsapi);
 
   if(array_key_exists("error", $order)){
-    $response->setBody(rspData(10000, "查询失败"));
+    $response->setBody(rspData(10000, "未开通app支付"));
     return;
   }else{
   // 'appid' => $UnifiedOrderResult['appid'],

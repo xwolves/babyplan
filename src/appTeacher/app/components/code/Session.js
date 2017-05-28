@@ -10,10 +10,12 @@
             setData:setData,
             getData:getData,
             rmData:rmData,
+            checkTimeout:checkTimeout
         };
 
         function create(token, eshop, userId, roles, wechat) {
             $window.localStorage.setItem("token", token);
+            $window.localStorage.setItem("time", new Date().getTime());
             $window.localStorage.setItem("eshop_auth", JSON.stringify(eshop));
             $window.localStorage.setItem("userId", userId);
             $window.localStorage.setItem("userRole", roles);
@@ -34,8 +36,20 @@
             $window.localStorage.removeItem("userId");
             $window.localStorage.removeItem("userRole");
             $window.localStorage.removeItem("wechat");
-
         }
+
+        function checkTimeout() {
+            var time=$window.localStorage.getItem('time')
+            if(time!=null){
+              var past=parseInt(time);
+              var sub=new Date().getTime()-past;
+              console.log('sub = '+sub);
+              //session 有效期 1 小时
+              return sub > (3600*1000);
+            }else{
+              return false;
+            }
+        };
 
         function updateRoles(roles) {
             $window.localStorage.setItem("userRole", roles);

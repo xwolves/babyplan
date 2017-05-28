@@ -9,9 +9,9 @@
             vm.type = '3';
             $scope.$on('$ionicView.beforeEnter', validate);
             //vm.user={userId:18603070911,password:"82267049",roleType:"3"}
-            vm.user={userId:10000001, password:"111111111", roleType:"1"}
+            //vm.user={userId:10000001, password:"111111111", roleType:"1"}
             function validate() {
-                if (Session.getData('userId') && Session.getData('token') && Session.getData('userId')!='-1') {
+                if (Session.getData('userId') && Session.getData('token') && Session.getData('userId')!='-1' &&  !Session.checkTimeout()) {
                     //AuthService.setSession(response.data.uid, response.data.token, response.data.eshop, response.data.type);
                     $http.defaults.headers.common.token = Session.getData('token');
                     StateService.clearAllAndGo(AuthService.getNextPath());
@@ -34,11 +34,13 @@
                         AuthService.setSession(response.data.uid, response.data.token, response.data.eshop, response.data.type);
                         StateService.clearAllAndGo(AuthService.getNextPath());
                       }else{
-                        MessageToaster.error(response.error);
+                        //MessageToaster.error(response.error);
+                        MessageToaster.error("账号或密码错误");
                       }
                   },
                   function(error) {
-                    MessageToaster.error(error);
+                    //MessageToaster.error(error);
+                    MessageToaster.error("用户不存在或其他问题");
                   }).finally(function() {
                       //WeuiModalLoading.hide();
                   });

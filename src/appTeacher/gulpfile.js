@@ -2,6 +2,10 @@ var gulp = require('gulp');
 var runSequence = require('run-sequence');
 var paths = require('./gulp/path.js');
 
+gulp.task('serve:before', [
+    'default',
+    'watch'
+]);
 
 gulp.task('default', ['sass', 'scripts', 'environmentConfig', 'images', 'eshop', 'templateCache', 'indexHtml', 'bowerMerge']);
 
@@ -31,6 +35,7 @@ gulp.task('watch', function() {
         runSequence('bowerMerge');
     });
 });
+
 
 
 require('./gulp/gulptask.js');

@@ -9,6 +9,7 @@
     var service = {
       createTeacher:createTeacher,
       updateTeacher:updateTeacher,
+      deleteTeacher:deleteTeacher,
       queryTeacher:queryTeacher,
       queryTeacherDeposit:queryTeacherDeposit
     };
@@ -79,6 +80,15 @@
       return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
     };
 
+    function deleteTeacher(id) {
+      var url = Constants.serverUrl + 'account/delTeacher/'+id;
+      return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
+      // return $http({
+      //   method: 'post',
+      //   url: url,
+      //   data: {}
+      // }).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
+    };
 
     function queryTeacherDeposit(id) {
       var url = Constants.serverUrl + 'deposit/teacher/'+id;

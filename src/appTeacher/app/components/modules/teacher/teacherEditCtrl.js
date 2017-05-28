@@ -35,8 +35,23 @@
 
             vm.save=function(){
                 console.log(vm.item);
-                //create
-                teacherService.createTeacher(vm.item,AuthService.getLoginID()).then(function(data) {
+                if(vm.type=='2'){
+                  //update
+                  teacherService.updateTeacher(vm.item,vm.item.uid).then(function(data) {
+                    if (data.errno == 0) {
+                        //var userId = data.data.uid;
+                        //wxlogin(vm.user.wechat);
+                        StateService.back();
+                    }else{
+                        //MessageToaster.error(data.error);
+                        MessageToaster.error('无法更新');
+                    }
+                  },function(data){
+                      MessageToaster.error(data);
+                  });
+                }else{
+                  //create
+                  teacherService.createTeacher(vm.item,AuthService.getLoginID()).then(function(data) {
                     if (data.errno == 0) {
                         //var userId = data.data.uid;
                         //wxlogin(vm.user.wechat);
@@ -45,9 +60,10 @@
                         //MessageToaster.error(data.error);
                         MessageToaster.error('无法添加，请确认手机号码是否已经使用过');
                     }
-                },function(data){
-                    MessageToaster.error(data);
-                });
+                  },function(data){
+                      MessageToaster.error(data);
+                  });
+              }
             };
 
 

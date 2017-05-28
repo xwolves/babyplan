@@ -46,16 +46,17 @@
                                 -->
                             </ul>
                             <div class="weui_uploader_input_wrp" ng-hide="vm.imgshow.length==4">
-                                <input class="weui_uploader_input" type="file" id="fileinput" accept="image/*" onchange="angular.element(this).scope().fileSelect(event)"/>
+                                <!-- <input class="weui_uploader_input" type="file" id="fileinput" accept="image/*" onchange="angular.element(this).scope().fileSelect(event)" capture="camera"/> -->
+                                <button class="weui_uploader_input"  ng-click="vm.selectImageChooseMethod()" />
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <br>
-        <br>
 
+        <br>
+        <br>
         <div class="weui_cells_title">简单说明</div>
         <div class="weui_cells weui_cells_form">
             <div class="weui_cell">
@@ -69,7 +70,7 @@
     </ion-content>
 
     <div class="bar bar-footer">
-        <button class="weui_btn" ng-class="{ 'weui-btn_disabled':vm.isClicked,'weui_btn_primary': !vm.isClicked}" style="width: 100%;" ng-click="vm.save(0)">提交</button>
+        <button class="weui_btn" ng-class="{ 'weui-btn_disabled':vm.isClicked,'weui_btn_primary': !vm.isClicked}" style="width: 100%;" ng-click="vm.save2(0)">提交</button>
     </div>
 
 </ion-view>

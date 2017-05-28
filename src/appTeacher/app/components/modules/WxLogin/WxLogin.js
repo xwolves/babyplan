@@ -8,7 +8,10 @@
         $rootScope.$on('$stateChangeStart', function(event, next) {
           console.log("stateChangeStart");
           console.log(next);
-
+          if(Session.checkTimeout()){
+              console.log('Session timeout');
+              StateService.clearAllAndGo('login');
+          }
           if (next.url.indexOf('wxlogin')>0 ) {
               console.log("wxlogin");
               //alert($location.absUrl());
