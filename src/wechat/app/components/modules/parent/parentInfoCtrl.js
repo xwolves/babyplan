@@ -1,7 +1,7 @@
 ﻿(function() {
     "use strict";
     angular.module('parentInfoCtrl', [])
-        .controller('parentInfoCtrl', function ($scope, $q,$cordovaImagePicker, $ionicActionSheet, $ionicLoading, Constants, MessageToaster, AuthService, StateService, parentService) {
+        .controller('parentInfoCtrl', function ($scope, $q,$cordovaImagePicker, $ionicActionSheet,$ionicListDelegate, $ionicLoading,Session, Constants, MessageToaster, AuthService, StateService, parentService) {
             'ngInject';
             var vm = this;
             vm.activated = false;
@@ -167,6 +167,20 @@
                 console.log('go to path : '+addr);
                 StateService.go(addr);
             };
+
+            vm.editChild = function ( child) {
+                //查看孩子信息
+                $ionicListDelegate.closeOptionButtons();
+                Session.setData('temp', child);
+                StateService.go('childrenEdit', { cid: child.uid, type: 2 });
+            };
+
+            vm.addChild = function () {
+                //创建新的孩子信息,使用新局部编写界面
+                $ionicListDelegate.closeOptionButtons();
+                StateService.go('childrenAdd');
+            };
+
 
             vm.back=function(){
                 StateService.back();

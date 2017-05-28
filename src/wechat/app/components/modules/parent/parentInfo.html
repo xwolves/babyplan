@@ -11,47 +11,28 @@
             <a class="item item-avatar" href="javascript:void(0)" >
                 <img ng-src="{{vm.parentInfo.avatarlink || 'img/user.png'}}" ng-click="vm.showImageUploadChoices()">
                 <h2 ng-click="vm.goTo('parentEdit')">{{vm.parentInfo.name}}</h2>
-                <p ng-click="vm.goTo('parentEdit')"><b>微信:</b>{{vm.parentInfo.weixinno || '无'}}</p>
-            </a>
-
-            <a class="item" href="javascript:void(0)" ng-click="vm.goTo('parentEdit')">
-                性别
-                <span class="item-note">
-                    {{vm.parentInfo.sex|gendarChange}}
-                </span>
-            </a>
-
-            <a class="item" href="javascript:void(0)" ng-click="vm.goTo('parentEdit')">
-                手机
-                <span class="item-note">
-                    {{vm.parentInfo.mobile}}
-                </span>
+                <p ng-click="vm.goTo('parentEdit')"><b>手机:</b>{{vm.parentInfo.mobile || '无'}}</p>
             </a>
         </ion-list>
 
-
+        <div class="item-header item item-divider item-divider-custom item-button-right" ng-click="vm.addChild()">
+            孩子信息
+            <button class="button  button-icon">
+                <i class="icon ion-plus-circled"></i>
+            </button>
+        </div>
         <ion-list show-delete="vm.shouldShowDelete"
                   show-reorder="vm.shouldShowReorder"
-                  can-swipe="vm.listCanSwipe">
-
-            <div class="item item-divider item-divider-custom item-button-right">
-                孩子信息
-                <button class="button  button-icon">
-                    <i class="icon ion-plus-circled"></i>
-                </button>
-            </div>
+                  can-swipe="true">
+         
             <div class="no-data" ng-if="!vm.parentInfo.childrens || vm.parentInfo.childrens.length==0">
                 暂无孩子信息!
             </div>
-            <a class="item" href="javascript:void(0)" ng-repeat="child in vm.parentInfo.childrens">
+            <a class="item" href="javascript:void(0)" ng-repeat="child in vm.parentInfo.childrens" ng-click="vm.editChild(child)">
                 {{child.name}}
                 <span class="item-note">
                     {{child.sex|gendarChange}}
                 </span>
-
-                <!--<ion-delete-button class="ion-minus-circled"
-                                   ng-click="vm.parentInfo.childrens.splice($index, 1)">
-                </ion-delete-button>-->
             </a>
         </ion-list>
     </ion-content>
