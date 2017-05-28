@@ -3,17 +3,15 @@
         <a class="button button-icon icon ion-ios-arrow-back" ng-click="vm.back()"></a>
     </ion-nav-buttons>
     <ion-content>
-
-        <ion-list>
+        <div class="list" style="margin-bottom: 0px">
             <div class="item item-divider">
             </div>
-
-            <a class="item item-avatar" href="javascript:void(0)" >
+            <a class="item item-avatar" href="javascript:void(0)">
                 <img ng-src="{{vm.parentInfo.avatarlink || 'img/user.png'}}" ng-click="vm.showImageUploadChoices()">
                 <h2 ng-click="vm.goTo('parentEdit')">{{vm.parentInfo.name}}</h2>
                 <p ng-click="vm.goTo('parentEdit')"><b>手机:</b>{{vm.parentInfo.mobile || '无'}}</p>
             </a>
-        </ion-list>
+        </div>
 
         <div class="item-header item item-divider item-divider-custom item-button-right" ng-click="vm.addChild()">
             孩子信息
@@ -24,16 +22,15 @@
         <ion-list show-delete="vm.shouldShowDelete"
                   show-reorder="vm.shouldShowReorder"
                   can-swipe="true">
-         
             <div class="no-data" ng-if="!vm.parentInfo.childrens || vm.parentInfo.childrens.length==0">
                 暂无孩子信息!
             </div>
-            <a class="item" href="javascript:void(0)" ng-repeat="child in vm.parentInfo.childrens" ng-click="vm.editChild(child)">
-                {{child.name}}
-                <span class="item-note">
-                    {{child.sex|gendarChange}}
-                </span>
-            </a>
+            <ion-item class="item" ng-click="vm.goTo(item.uid,item)" collection-repeat="item in vm.parentInfo.childrens">
+                <p>{{item.name}}<span style="float: right">{{item.sex|gendarChange}}</span></p>
+                <!--暂时不支持编辑与删除-->
+                <ion-option-button class="button-positive ion-edit" ng-click="vm.editChild(item)">&nbsp;编辑</ion-option-button>
+                <ion-option-button class="button-assertive ion-trash-a" ng-click="vm.delChild(item)">&nbsp;删除</ion-option-button>
+            </ion-item>
         </ion-list>
     </ion-content>
 </ion-view>

@@ -11,14 +11,16 @@
                 //sex: 1,
                 //mobile: '1342222235'
             };
-            $scope.$on('$ionicView.afterEnter', activate);
 
+            //页面激活时处理逻辑
+            $scope.$on('$ionicView.afterEnter', activate);
             function activate() {
                 vm.activated = true;
                 vm.version = Constants.buildID;
                 init();
             }
 
+            //初始化逻辑
             function init() {
                 var pId = AuthService.getLoginID();
                 var queryParentPromise = parentService.queryParent(pId).then(function (res) {
@@ -28,13 +30,12 @@
                 });
             }
 
-
+            //保存家长信息
             vm.save = function () {
                 if (!vm.parentInfo.name) {
                     MessageToaster.error("请填写用户名!");
                     return;
                 }
-             
 
                 parentService.updateParent(vm.parentInfo).then(function (res) {
                     vm.back();
@@ -44,10 +45,9 @@
                 })
             };
 
+            //返回到上一页面
             vm.back = function () {
                 StateService.back();
             };
-
-           
         });
 }());

@@ -1,7 +1,7 @@
 (function() {
     "use strict";
     angular.module('childrenEditCtrl', [])
-        .controller('childrenEditCtrl', function($scope, $stateParams, Constants, StateService,childrenSettingService,AuthService,Session,MessageToaster) {
+        .controller('childrenEditCtrl', function($scope, $stateParams,$filter, Constants, StateService,childrenSettingService,AuthService,Session,MessageToaster) {
             'ngInject';
             var vm = this;
             vm.activated = false;
@@ -12,14 +12,17 @@
                 childrenSettingService.queryChild(id).then(function(data) {
                     if (data.errno == 0) {
                         console.log(data.data);
+
+                        //日期格式字符串转日期
+                        data.data.Birthday =data.data.Birthday && new Date(data.data.Birthday);
                         vm.child = data.data;
                     }
                 });
 
             };
 
-            $scope.$on('$ionicView.afterEnter', activate);
 
+            $scope.$on('$ionicView.afterEnter', activate);
             function activate() {
                 console.log($stateParams);
                 vm.cid = $stateParams.cid;
@@ -66,7 +69,11 @@
 
             vm.save=function(valid,dirty){
                 //console.log("valid = "+valid+" dirty = "+dirty);
-                if(valid && dirty) {
+                if (valid && dirty) {
+
+                    //日期转为日期格式字符串
+                    vm.child.Birthday = vm.child.Birthday && $filter('date')(vm.child.Birthday, "yyyy-MM-dd hh:mm");
+
                     //save
                     if (vm.type == '1') {
                         //create

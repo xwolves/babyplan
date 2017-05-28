@@ -1,14 +1,14 @@
 (function () {
     "use strict";
     angular.module('parentCtrl', [])
-        .controller('parentCtrl', function ($scope, $q, $cordovaImagePicker, $ionicActionSheet, $ionicLoading, Constants, MessageToaster, AuthService, StateService, parentService) {
+        .controller('parentCtrl', function ($scope, $q, $cordovaImagePicker, $ionicActionSheet, $ionicListDelegate,
+            $ionicPopup, $ionicLoading, Session, Constants, MessageToaster, AuthService, StateService, parentService, childrenSettingService) {
             'ngInject';
             var vm = this;
             vm.activated = false;
             vm.shouldShowDelete = false;
             vm.shouldShowReorder = false;
             vm.listCanSwipe = true
-
             vm.parentInfo = {
                 //name: "刘德华",
                 //nickName: "流的花",
@@ -26,16 +26,15 @@
                 //]
             };
 
-
-
+            //页面激活时处理逻辑
             $scope.$on('$ionicView.afterEnter', activate);
-
             function activate() {
                 vm.activated = true;
                 vm.version = Constants.buildID;
                 init();
             };
 
+            //初始化逻辑
             function init() {
                 var pId = AuthService.getLoginID();
                 var queryParentPromise = parentService.queryParent(pId);
@@ -47,8 +46,7 @@
                 }, function (err) {
                     MessageToaster.error("检索异常!");
                 });
-            }
-
+            };
 
 
             // 图片选择项
@@ -74,11 +72,9 @@
                         return true;
                     }
                 });
-
             };
 
-
-            // 读用户相册
+            //打开用户相册
             vm.readalbum = function (prop) {
                 if (!window.imagePicker) {
                     MessageToaster.error("目前您的环境不支持相册上传!");
@@ -160,14 +156,61 @@
                 }, function (error) {
                     $ionicLoading.hide();
                 }, options);
-            }
+            };
 
 
+            //创建新的孩子信息,使用新局部编写界面
+            vm.addChild = function () {
+                $ionicListDelegate.closeOptionButtons();
+                StateService.go('childrenAdd');
+            };
+
+            //查看孩子信息
+            vm.editChild = function (child) {
+                $ionicListDelegate.closeOptionButtons();
+                Session.setData('temp', child);
+                StateService.go('childrenEdit', { cid: child.uid, type: 2 });
+            };
+
+            //删除孩子信息
+            vm.delChild = function (child) {
+
+                $ionicListDelegate.closeOptionButtons();
+
+                var confirmPopup = $ionicPopup.confirm({
+                    title: '确定要删除此孩子:' + child.name,
+                    buttons: [
+                        { text: '取消', type: 'button-positive' },
+                        { text: '确定', type: 'button-assertive', onTap: function (e) { return true } }
+                    ]
+                });
+                confirmPopup.then(function (result) {
+                    if (result) {
+                        childrenSettingService.deleteChild(child.uid).then(function (data) {
+                            console.log(data);
+                            if (data.errno == 0) {
+
+                                console.log(data.data);
+
+                                var idx = vm.parentInfo.childrens.indexOf(child);
+                                vm.parentInfo.childrens.splice(idx, 1);
+
+                                MessageToaster.error("删除成功!");
+                            }
+                        });
+                    } else {
+                        console.log('cancel delete');
+                    }
+                });
+            };
+
+            //跳转到指定页面
             vm.goTo = function (addr) {
                 console.log('go to path : ' + addr);
                 StateService.go(addr);
             };
 
+            //返回到上一页面
             vm.back = function () {
                 StateService.back();
             };
