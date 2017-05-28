@@ -10459,3 +10459,12 @@ p.info {
     transition: opacity 300ms ease-in-out;
     background-color: #000;
     opacity: 0; } }
+
+.item-divider-custom {
+  height: 45px;
+  line-height: 30px;
+  font-size: 1em;
+  color: #aaa; }
+
+.item-input-right-align > input {
+  text-align: right; }

@@ -49,7 +49,6 @@
             };
 
 
-
             // 图片选择项
             vm.showImageUploadChoices = function (prop) {
                 var hideSheet = $ionicActionSheet.show({
