@@ -297,7 +297,7 @@ class Account{
     public function updateParent($params){
         try{
             $accountid = $params['accountid'];
-            $column = array("name", "sex", "mobile", "nick", "avatarLink", "remark", "password");
+            $column = array("name", "sex", "mobile", "nick", "avatarlink", "remark", "password");
 
             $ar_params = array();
             foreach($params as $key => $val){

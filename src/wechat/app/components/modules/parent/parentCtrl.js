@@ -10,23 +10,23 @@
             vm.shouldShowReorder = false;
             vm.listCanSwipe = true
             vm.parentInfo = {
-                //name: "ÁõµÂ»ª",
-                //nickName: "Á÷µÄ»¨",
-                //sex: 1,
-                //mobile: '1342222235',
-                //childrens: [
-                //    {
-                //        name: 'ÁõÄÜ',
-                //        sex:1
-                //    },
-                //    {
-                //        name: 'ÁõĞÇ',
-                //        sex: 1
-                //    }
-                //]
+              //name: "åˆ˜å¾·å",
+              //nickName: "æµçš„èŠ±",
+              //sex: 1,
+              //mobile: '1342222235',
+              //childrens: [
+              //    {
+              //        name: 'åˆ˜èƒ½',
+              //        sex:1
+              //    },
+              //    {
+              //        name: 'åˆ˜æ˜Ÿ',
+              //        sex: 1
+              //    }
+              //]
             };
 
-            //Ò³Ãæ¼¤»îÊ±´¦ÀíÂß¼­
+            //é¡µé¢æ¿€æ´»æ—¶å¤„ç†é€»è¾‘
             $scope.$on('$ionicView.afterEnter', activate);
             function activate() {
                 vm.activated = true;
@@ -34,7 +34,7 @@
                 init();
             };
 
-            //³õÊ¼»¯Âß¼­
+            //åˆå§‹åŒ–é€»è¾‘
             function init() {
                 var pId = AuthService.getLoginID();
                 var queryParentPromise = parentService.queryParent(pId);
@@ -44,29 +44,29 @@
                     vm.parentInfo = results[0].data || {},
                    vm.parentInfo.childrens = results[1].data || [];
                 }, function (err) {
-                    MessageToaster.error("¼ìË÷Òì³£!");
+                    MessageToaster.error("æ£€ç´¢å¼‚å¸¸!");
                 });
             };
 
 
-            // Í¼Æ¬Ñ¡ÔñÏî
+            // å›¾ç‰‡é€‰æ‹©é¡¹
             vm.showImageUploadChoices = function (prop) {
                 var hideSheet = $ionicActionSheet.show({
                     buttons: [{
-                        text: 'ÅÄÕÕÉÏ´«'
+                        text: 'æ‹ç…§ä¸Šä¼ '
                     }, {
-                        text: '´ÓÏà²áÖĞÑ¡'
+                        text: 'ä»ç›¸å†Œä¸­é€‰'
                     }],
-                    titleText: 'Í¼Æ¬ÉÏ´«',
-                    cancelText: 'È¡ Ïû',
+                    titleText: 'å›¾ç‰‡ä¸Šä¼ ',
+                    cancelText: 'å– æ¶ˆ',
                     cancel: function () {
                     },
                     buttonClicked: function (index) {
-                        // Ïà²áÎÄ¼şÑ¡ÔñÉÏ´«
+                        //ç›¸å†Œæ–‡ä»¶é€‰æ‹©ä¸Šä¼ 
                         if (index == 1) {
                             vm.readalbum(prop);
                         } else if (index == 0) {
-                            // ÅÄÕÕÉÏ´«
+                            //æ‹ç…§ä¸Šä¼ 
                             vn.takePicture(prop);
                         }
                         return true;
@@ -74,10 +74,10 @@
                 });
             };
 
-            //´ò¿ªÓÃ»§Ïà²á
+            //æ‰“å¼€ç”¨æˆ·ç›¸å†Œ
             vm.readalbum = function (prop) {
                 if (!window.imagePicker) {
-                    MessageToaster.error("Ä¿Ç°ÄúµÄ»·¾³²»Ö§³ÖÏà²áÉÏ´«!");
+                    MessageToaster.error("ç›®å‰æ‚¨çš„ç¯å¢ƒä¸æ”¯æŒç›¸å†Œä¸Šä¼ !");
                     return;
                 }
 
@@ -99,15 +99,15 @@
                     vm.uploadimage(uri, prop);
 
                 }, function (error) {
-                    MessageToaster.error("·ÃÎÊÏà²áÒì³£:Çë¼ì²éÊÇ·ñÓĞÈ¨ÏŞ!");
+                    MessageToaster.error("è®¿é—®ç›¸å†Œå¼‚å¸¸:è¯·æ£€æŸ¥æ˜¯å¦æœ‰æƒé™!");
                 });
             };
 
 
-            // ÅÄÕÕ
+            //æ‹ç…§
             vm.takePicture = function (prop) {
                 if (!navigator.camera) {
-                    MessageToaster.error("ÇëÔÚÕæ»ú»·¾³ÖĞÊ¹ÓÃÅÄÕÕÉÏ´«!");
+                    MessageToaster.error("è¯·åœ¨çœŸæœºç¯å¢ƒä¸­ä½¿ç”¨æ‹ç…§ä¸Šä¼ !");
                     return;
                 }
 
@@ -121,12 +121,12 @@
                 navigator.camera.getPicture(function (imageURI) {
                     vm.uploadimage(imageURI);
                 }, function (err) {
-                    MessageToaster.error("ÅÄÕÕÒì³£:Çë¼ì²éÊÇ·ñÓĞÈ¨ÏŞ!");
+                    MessageToaster.error("æ‹ç…§å¼‚å¸¸:è¯·æ£€æŸ¥æ˜¯å¦æœ‰æƒé™!");
                 }, options);
 
             }
 
-            // ÉÏ´«
+            //ä¸Šä¼ 
             vm.uploadimage = function (uri) {
                 var fileURL = uri;
 
@@ -138,18 +138,18 @@
 
                 var ft = new FileTransfer();
                 $ionicLoading.show({
-                    template: 'ÉÏ´«ÖĞ...'
+                    template: 'ä¸Šä¼ ä¸­...'
                 });
                 ft.upload(fileURL, "http://wx.zxing-tech.cn/upload", function (data) {
-                    // ÉèÖÃÍ¼Æ¬ĞÂµØÖ·
+                    //è®¾ç½®å›¾ç‰‡æ–°åœ°å€
                     var resp = JSON.parse(data.response);
                     vm.parentInfo.avatarlink = resp.data.fileurl;
 
                     parentService.updateParent(vm.parentInfo).then(function (res) {
-                        MessageToaster.error("¸üĞÂ³É¹¦!");
+                        MessageToaster.error("æ›´æ–°æˆåŠŸ!");
                         $ionicLoading.hide();
                     }, function (err) {
-                        MessageToaster.error("¸üĞÂÊ§°Ü!");
+                        MessageToaster.error("æ›´æ–°å¤±è´¥!");
                         $ionicLoading.hide();
                     })
 
@@ -159,29 +159,29 @@
             };
 
 
-            //´´½¨ĞÂµÄº¢×ÓĞÅÏ¢,Ê¹ÓÃĞÂ¾Ö²¿±àĞ´½çÃæ
+            //åˆ›å»ºæ–°çš„å­©å­ä¿¡æ¯,ä½¿ç”¨æ–°å±€éƒ¨ç¼–å†™ç•Œé¢
             vm.addChild = function () {
                 $ionicListDelegate.closeOptionButtons();
                 StateService.go('childrenAdd');
             };
 
-            //²é¿´º¢×ÓĞÅÏ¢
+            //æŸ¥çœ‹å­©å­ä¿¡æ¯
             vm.editChild = function (child) {
                 $ionicListDelegate.closeOptionButtons();
                 Session.setData('temp', child);
                 StateService.go('childrenEdit', { cid: child.uid, type: 2 });
             };
 
-            //É¾³ıº¢×ÓĞÅÏ¢
+            //åˆ é™¤å­©å­ä¿¡æ¯
             vm.delChild = function (child) {
 
                 $ionicListDelegate.closeOptionButtons();
 
                 var confirmPopup = $ionicPopup.confirm({
-                    title: 'È·¶¨ÒªÉ¾³ı´Ëº¢×Ó:' + child.name,
+                    title: 'ç¡®å®šè¦åˆ é™¤æ­¤å­©å­:' + child.name,
                     buttons: [
-                        { text: 'È¡Ïû', type: 'button-positive' },
-                        { text: 'È·¶¨', type: 'button-assertive', onTap: function (e) { return true } }
+                        { text: 'å–æ¶ˆ', type: 'button-positive' },
+                        { text: 'ç¡®å®š', type: 'button-assertive', onTap: function (e) { return true } }
                     ]
                 });
                 confirmPopup.then(function (result) {
@@ -195,7 +195,7 @@
                                 var idx = vm.parentInfo.childrens.indexOf(child);
                                 vm.parentInfo.childrens.splice(idx, 1);
 
-                                MessageToaster.error("É¾³ı³É¹¦!");
+                                MessageToaster.error("åˆ é™¤æˆåŠŸ!");
                             }
                         });
                     } else {
@@ -204,13 +204,13 @@
                 });
             };
 
-            //Ìø×ªµ½Ö¸¶¨Ò³Ãæ
+            //è·³è½¬åˆ°æŒ‡å®šé¡µé¢
             vm.goTo = function (addr) {
                 console.log('go to path : ' + addr);
                 StateService.go(addr);
             };
 
-            //·µ»Øµ½ÉÏÒ»Ò³Ãæ
+            //è¿”å›åˆ°ä¸Šä¸€é¡µé¢
             vm.back = function () {
                 StateService.back();
             };
