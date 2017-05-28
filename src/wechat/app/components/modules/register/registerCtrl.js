@@ -1,7 +1,7 @@
 (function() {
     "use strict";
     angular.module('registerCtrl', [])
-        .controller('registerCtrl', function($scope, Constants,StateService,Session,AuthService,registerService,LoginService,$stateParams) {
+        .controller('registerCtrl', function ($scope, Constants, StateService, Session, AuthService, registerService, LoginService, eshopService,$stateParams) {
             'ngInject';
             var vm = this;
             vm.activated = false;
@@ -101,8 +101,14 @@
                 LoginService.login(vm.user.mobile, vm.user.password).then(function (response) {
                     console.log(response);
                     if (response.errno == 0) {
-                        AuthService.setSession(response.data.uid, response.data.token, response.data.eshop, response.data.type);
-                        StateService.clearAllAndGo(AuthService.getNextPath());
+
+                        //登录ESHOP
+                        eshopService.signin(vm.user.mobile, vm.user.password).then(function (data) {
+                            AuthService.setSession(response.data.uid, response.data.token, data, response.data.type);
+                            StateService.clearAllAndGo(AuthService.getNextPath());
+                        }, function (ex) {
+                            MessageToaster.error(ex.error);
+                        })
                     } else {
                         MessageToaster.error(response.error);
                     }
@@ -192,11 +198,18 @@
                 //检测输入数值是否正确
                 if(!vm.check())return;
                 //先注册
-             
+                vm.user.weixinno ='';
+                vm.user.wechat =  '';
+                
                 registerService.registerParent(vm.user).then(function (data) {
                     console.log(data);
                     if (data.errno == 0) {
-                        login(vm.user.wechat, vm.roleType);
+                        eshopService.signup(vm.user.mobile, vm.user.password, vm.user.mobile + '@163.com').then(function (data) {
+                            login(vm.user.wechat, vm.roleType);
+                        }, function (ex) {
+                            MessageToaster.error(ex.error);
+                        })
+                     
                     } else {
                         vm.error = data.error;
                     }

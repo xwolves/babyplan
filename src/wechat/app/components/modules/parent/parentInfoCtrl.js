@@ -1,7 +1,7 @@
 ﻿(function() {
     "use strict";
     angular.module('parentInfoCtrl', [])
-        .controller('parentInfoCtrl', function ($scope, $q, $cordovaImagePicker, $ionicActionSheet, $ionicListDelegate,
+        .controller('parentInfoCtrl', function ($scope, $q,$window, $cordovaImagePicker, $ionicActionSheet, $ionicListDelegate,
             $ionicPopup, $ionicLoading, Session, Constants, MessageToaster, AuthService, StateService, parentService, childrenSettingService) {
             'ngInject';
             var vm = this;
@@ -67,7 +67,7 @@
                             vm.readalbum(prop);
                         } else if (index == 0) {
                             // 拍照上传
-                            vn.takePicture(prop);
+                            vm.takePicture(prop);
                         }
                         return true;
                     }
@@ -106,6 +106,7 @@
 
             // 拍照
             vm.takePicture = function (prop) {
+
                 if (!navigator.camera) {
                     MessageToaster.error("请在真机环境中使用拍照上传!");
                     return;
@@ -118,10 +119,11 @@
                     saveToPhotoAlbum: false
                 };
 
+
                 navigator.camera.getPicture(function (imageURI) {
                     vm.uploadimage(imageURI);
                 }, function (err) {
-                    MessageToaster.error("拍照异常:请检查是否有权限!");
+                  //  MessageToaster.error("拍照异常:请检查是否有权限!");
                 }, options);
 
             }
@@ -146,7 +148,7 @@
                     vm.parentInfo.avatarlink = resp.data.fileurl;
 
                     parentService.updateParent(vm.parentInfo).then(function (res) {
-                        MessageToaster.error("更新成功!");
+                        MessageToaster.info("更新成功!");
                         $ionicLoading.hide();
                     }, function (err) {
                         MessageToaster.error("更新失败!");
@@ -154,6 +156,7 @@
                     })
 
                 }, function (error) {
+                    MessageToaster.error("上传失败!");
                     $ionicLoading.hide();
                 }, options);
             };
@@ -195,7 +198,7 @@
                                 var idx = vm.parentInfo.childrens.indexOf(child);
                                 vm.parentInfo.childrens.splice(idx, 1);
 
-                                MessageToaster.error("删除成功!");
+                                MessageToaster.info("删除成功!");
                             }
                         });
                     } else {

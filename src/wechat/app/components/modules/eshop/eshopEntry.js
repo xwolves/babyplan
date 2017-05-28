@@ -2,7 +2,8 @@
   "use strict";
   angular.module('eshopEntryModule', [
     'eshopEntryRouter',
-    'eshopEntryCtrl'
+    'eshopEntryCtrl',
+    'eshopService'
   ]);
 
 }());

@@ -8,7 +8,7 @@
             $scope.$on('$ionicView.afterEnter', activate);
             $scope.mapOpts = {
                 apiKey: 'IGp7UfrinXNxV6IwrQTC0PWoDCQlf0TR',
-                center: {longitude:113.271,latitude:23.1353},
+              //  center: {longitude:113.271,latitude:23.1353},
                 keywords: ['托管'],
                 zoom: 16,
                 onMapLoadFailded: function () {

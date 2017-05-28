@@ -9,7 +9,19 @@
             <a class="item item-avatar" href="javascript:void(0)">
                 <img ng-src="{{vm.parentInfo.avatarlink || 'img/user.png'}}" ng-click="vm.showImageUploadChoices()">
                 <h2 ng-click="vm.goTo('parentEdit')">{{vm.parentInfo.name}}</h2>
-                <p ng-click="vm.goTo('parentEdit')"><b>手机:</b>{{vm.parentInfo.mobile || '无'}}</p>
+                <p ng-click="vm.goTo('parentEdit')"><b>账号:</b>{{vm.parentInfo.uid || '无'}}</p>
+            </a>
+            <a class="item" href="javascript:void(0)" ng-click="vm.goTo('parentEdit')">
+                性别
+                <span class="item-note">
+                    {{vm.parentInfo.sex|gendarChange}}
+                </span>
+            </a>
+            <a class="item" href="javascript:void(0)" ng-click="vm.goTo('parentEdit')">
+                手机
+                <span class="item-note">
+                    {{vm.parentInfo.mobile}}
+                </span>
             </a>
         </div>
 

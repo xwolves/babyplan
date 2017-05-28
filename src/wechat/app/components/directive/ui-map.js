@@ -116,12 +116,13 @@ var app = angular.module('BaiduMapDirective', []);
        * @param {*} clickCallback
        * @param {*} poInfo
        */
-      function addMapMarker(map, point, clickCallback, poInfo, icon) {
+      function addMapMarker(map, point, clickCallback, poInfo, icon,markText) {
           var mk;
 
           if (!!icon) {
-            
+              var label = new BMap.Label(markText, { offset: new BMap.Size(-15, 25) });
               mk = new BMap.Marker(point, { icon: icon });  // 创建标注
+              mk.setLabel(label)
           } else {
               mk = new BMap.Marker(point);
           }
@@ -387,7 +388,7 @@ var app = angular.module('BaiduMapDirective', []);
                           fillColor: "orange",//填充颜色
                           fillOpacity: 0.8//填充透明度
                       });
-                      addMapMarker(scope.map, scope.currentPosition, openInfoWindow, null, symbol);
+                      addMapMarker(scope.map, scope.currentPosition, openInfoWindow, null, symbol,'我的位置');
                       scope.currentPosition && scope.map.panTo(scope.currentPosition);
                   }, 20);
               };
@@ -564,7 +565,7 @@ var app = angular.module('BaiduMapDirective', []);
                               fillColor: "orange",//填充颜色
                               fillOpacity: 0.8//填充透明度
                           });
-                          var marker = addMapMarker(map, p, openInfoWindow, null, symbol);
+                          var marker = addMapMarker(map, p, openInfoWindow, null, symbol,'我的位置');
                           // 设置为中心
                           map.centerAndZoom(p, 16);
 
