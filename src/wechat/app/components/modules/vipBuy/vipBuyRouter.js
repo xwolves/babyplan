@@ -20,7 +20,7 @@
               index:0
           },
           templateUrl: 'vipBuy/buy.html',
-          controller: 'buyCtrl',
+          controller: 'buyAppCtrl',
           controllerAs: 'vm'
         });
   }

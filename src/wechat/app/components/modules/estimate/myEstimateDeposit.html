@@ -1,0 +1,41 @@
+<ion-view view-title="我的评价">
+    <!-- <ion-nav-buttons side="left">
+        <a class="button button-icon icon ion-ios-arrow-back" ng-click="vm.back()"></a>
+    </ion-nav-buttons> -->
+    <!-- <ion-nav-buttons side="right">
+        <a class="button button-icon icon ion-android-create" ng-click="vm.gotoEdit()"></a>
+    </ion-nav-buttons> -->
+    <ion-content>
+        <ion-list>
+            <ion-item class="item" collection-repeat="item in vm.list" ng-click="item.show=!item.show">
+                <h1 class="title">{{item.OrgName}}</h1>
+
+                <div class="item item-icon-right">
+                    <i class="button button-icon icon ion-android-create" ng-click="vm.gotoEdit(item.AccountID)"></i>
+                  <p><strong>地址:</strong>{{item.Address||''}} </p>
+                  <p><strong>电话:</strong>{{item.ContactPhone||''}} </p>
+                </div>
+                <a class="item item-icon-right item-comment-header" href="#">
+                  最新评论
+                <span class="icon ion-heart  mech-comment"><i>{{item.Score}}</i></span>
+                </a>
+                <div class="list comment-list">
+                  <div class="no-data" ng-if="!item.Comments || item.Comments.length==0">
+                    暂时无评论!
+                  </div>
+                  <a class="item item-note-right item-text-wrap" ng-repeat="c in item.Comments" href="#">
+                    <span class="item-note">
+                      {{c.create_date | formatTime}}
+                    </span>
+                    <h2>{{c.creator || '匿名'}}</h2>
+                    <p>{{c.comment || ''}}</p>
+                  </a>
+                </div>
+            </ion-item>
+
+            <div class="item" ng-if="vm.list !== undefined && !vm.list.length" class="no-results">
+                <p>无相关记录</p>
+            </div>
+        </ion-list>
+    </ion-content>
+</ion-view>

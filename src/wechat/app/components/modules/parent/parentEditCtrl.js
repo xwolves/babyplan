@@ -39,7 +39,7 @@
 
                 parentService.updateParent(vm.parentInfo).then(function (res) {
                     vm.back();
-                    MessageToaster.error("更新成功!");
+                    MessageToaster.info("更新成功!");
                 }, function (err) {
                     MessageToaster.error("更新失败!");
                 })

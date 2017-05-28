@@ -5,12 +5,12 @@
             'ngInject';
             var vm = this;
             vm.activated = false;
-            vm.list=[];
-            $scope.$on('$ionicView.afterEnter', activate);
 
+            $scope.$on('$ionicView.afterEnter', activate);
             function activate() {
                 vm.activated = true;
                 vm.version = Constants.buildID;
+                vm.list=[];
                 vm.getChildrenDeposit();
             };
 
@@ -38,6 +38,10 @@
 
             vm.back=function(){
                 StateService.back();
+            };
+
+            vm.gotoEdit=function(did){
+              StateService.go('depositComment', {id: did,type:1});
             };
         });
 }());

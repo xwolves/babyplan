@@ -38,6 +38,17 @@
         },
         "cordova-plugin-splashscreen": {
             "PACKAGE_NAME": "com.trusteeship"
+        },
+        "cordova-plugin-file-transfer": {
+            "PACKAGE_NAME": "com.trusteeship"
+        },
+        "cordova-plugin-image-picker": {
+            "PHOTO_LIBRARY_USAGE_DESCRIPTION": " ",
+            "PACKAGE_NAME": "com.trusteeship"
+        },
+        "cordova-plugin-wechat": {
+            "WECHATAPPID": "wx3814600bfd67bfe6",
+            "PACKAGE_NAME": "com.trusteeship"
         }
     },
     "dependent_plugins": {

@@ -85,7 +85,7 @@
     "cordova-plugin-file-transfer": {
         "source": {
             "type": "registry",
-            "id": "cordova-plugin-file-transfer"
+            "id": "cordova-plugin-file-transfer@^1.6.3"
         },
         "is_top_level": true,
         "variables": {}
@@ -97,5 +97,15 @@
         },
         "is_top_level": true,
         "variables": {}
+    },
+    "cordova-plugin-wechat": {
+        "source": {
+            "type": "registry",
+            "id": "cordova-plugin-wechat"
+        },
+        "is_top_level": true,
+        "variables": {
+            "WECHATAPPID": "wx3814600bfd67bfe6"
+        }
     }
 }

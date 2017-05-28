@@ -42,6 +42,10 @@
         },
         "cordova-plugin-compat": {
             "PACKAGE_NAME": "com.trusteeship"
+        },
+        "cordova-plugin-wechat": {
+            "WECHATAPPID": "wx3814600bfd67bfe6",
+            "PACKAGE_NAME": "com.trusteeship"
         }
     },
     "dependent_plugins": {

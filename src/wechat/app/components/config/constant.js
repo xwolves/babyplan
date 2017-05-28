@@ -5,7 +5,7 @@
             'ParentRolePath':'tabs.childrenSteam',
             'OrganizerRolePath':'tabs.organizer',
             'TeacherRolePath':'tabs.message',
-            'VisitorRolePath':'tabs.nearby'
+            'VisitorRolePath':'tabs.map'
         })
         .constant('Role',{
             'visitor':'-1',
