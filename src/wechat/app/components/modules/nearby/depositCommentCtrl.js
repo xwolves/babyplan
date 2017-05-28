@@ -20,6 +20,8 @@
             function activate() {
                 console.log($stateParams);
                 vm.cid = $stateParams.id;
+                vm.type = $stateParams.type;
+                if(vm.type==1)vm.edit();
                 //vm.cid='10000002';//test
                 console.log("deposit id = "+vm.cid);
                 vm.activated = true;

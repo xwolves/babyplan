@@ -39,6 +39,8 @@
                 vm.query(vm.index);
                 vm.wechatInit();
             }
+            
+            vm.wechatInit = function(){};
 
             vm.query = function(id){
                 console.log(" index = "+id);

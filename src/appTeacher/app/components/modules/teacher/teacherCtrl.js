@@ -1,7 +1,7 @@
 (function() {
     "use strict";
     angular.module('teacherCtrl', [])
-        .controller('teacherCtrl', function($scope,Constants,StateService,$ionicListDelegate,$ionicPopup,teacherService,AuthService,CacheData) {
+        .controller('teacherCtrl', function($scope,Constants,StateService,$ionicListDelegate,$ionicPopup,teacherService,AuthService,CacheData,MessageToaster) {
             'ngInject';
             var vm = this;
             vm.activated = false;
@@ -36,6 +36,18 @@
                 StateService.go('teacherEdit',{cid:id,type:2});
             };
 
+            vm.delete=function(id){
+              teacherService.deleteTeacher(id).then(function(data) {
+                  console.log(data);
+                  if (data.errno == 0) {
+                      vm.getOrganizerTeachers();
+                      MessageToaster.info("删除成功");
+                  }else{
+                      MessageToaster.error("查不到任何数据 "+response.error);
+                  }
+              });
+            };
+
             vm.del=function(item){
                 //删除老师信息
                 $ionicListDelegate.closeOptionButtons();
@@ -49,8 +61,9 @@
                 });
                 confirmPopup.then(function(result) {
                     if(result) {
-                        console.log('confirm to del this teacher '+item.sid);
+                        console.log('confirm to del this teacher '+item.uid);
                         //delete(id);
+                        vm.delete(item.uid);
                     } else {
                         console.log('cancel delete');
                     }

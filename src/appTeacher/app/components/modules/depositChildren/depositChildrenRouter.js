@@ -24,6 +24,15 @@
         controller: 'depositChildrenCtrl',
         controllerAs: 'vm'
       })
+      .state('childrenDetail', {
+        url: "/childrenDetail?:cid",
+        params: {
+          cid : null
+        },
+        templateUrl: 'depositChildren/childrenDetail.html',
+        controller: 'childrenDetailCtrl',
+        controllerAs: 'vm'
+      })
     ;
   }
 }());

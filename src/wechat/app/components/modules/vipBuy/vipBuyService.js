@@ -12,6 +12,7 @@
       getOrders:getOrders,
       checkOrder:checkOrder,
       createOrder:createOrder,
+      createOrder2:createOrder2,
       updatePayedOrder:updatePayedOrder
     };
 
@@ -37,6 +38,19 @@
         wxId:wxId
       };
       var url = Constants.serverUrl + 'wechatPay/order';
+      return $http({
+        method: 'post',
+        url: url,
+        data: data
+      }).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
+    };
+
+    function createOrder2(parentId,goodsId){
+      var data = {
+        goodsId:goodsId,
+        userId:parentId
+      };
+      var url = Constants.serverUrl + 'wechatPay/appOrder';
       return $http({
         method: 'post',
         url: url,

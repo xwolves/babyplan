@@ -10,7 +10,7 @@
       <div class="msg_flow" ng-repeat="item in vm.messages track by $index">
               <div class="row" style="margin-top: 0px;padding-top: 0px;margin-bottom: 0px;padding-bottom: 0px;">
                   <div class="col col-20" style="padding-top:18px;">
-                      <img ng-if="!item.teacherPhoto||item.teacherPhoto==null" src='/img/teacher.png' height="60px">
+                      <img ng-if="!item.teacherPhoto||item.teacherPhoto==null" src='./img/teacher.png' height="60px">
                       <img ng-if="item.teacherPhoto" ng-src="{{item.teacherPhoto|ImageMin}}" alt="老师图像">
                   </div>
                   <div class="col col-80">
@@ -19,7 +19,7 @@
                           <font color="blue">{{item.teacherName}}&nbsp;&nbsp;<span>{{item.CreateTime|dateChange}}</span></font>
                         </div>
                         <div class="col col-20">
-                            <img ng-src="{{vm.getImg(item.InfoType).src}}" height="20px" alt="指纹记录" >
+                            <img ng-src="{{vm.getImg(item.InfoType).src}}" height="20px" alt="类型图像" >
                         </div>
                     </div>
                     <div ng-if="item.Description">

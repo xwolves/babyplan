@@ -52,6 +52,18 @@
       }).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
     };
 
+    function putPhoto(url,name){
+      var mydata = {
+        "fileurl":url,
+        "filename":name
+      };
+      var url = Constants.dfsUrl + 'upload';
+      return $http({
+        method: 'put',
+        url: url,
+        data: mydata
+      }).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
+    };
 
     return service;
 

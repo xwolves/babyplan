@@ -40,7 +40,8 @@
       .state('depositComment', {
         url: "/depositComment?:id",
         params: {
-          id : null
+          id : null,
+          type : 0
         },
         templateUrl: 'nearby/depositComment.html',
         controller: 'depositCommentCtrl',

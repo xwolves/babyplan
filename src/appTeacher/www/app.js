@@ -81,7 +81,8 @@
             'ngStorage',
             'toaster',
             'ui.rCalendar.tpls',
-            'baiduMap',
+            'ngCordova',
+            'ngAnimate',
             'ionic-ratings'
         ]);
 }());
@@ -253,10 +254,12 @@
             setData:setData,
             getData:getData,
             rmData:rmData,
+            checkTimeout:checkTimeout
         };
 
         function create(token, eshop, userId, roles, wechat) {
             $window.localStorage.setItem("token", token);
+            $window.localStorage.setItem("time", new Date().getTime());
             $window.localStorage.setItem("eshop_auth", JSON.stringify(eshop));
             $window.localStorage.setItem("userId", userId);
             $window.localStorage.setItem("userRole", roles);
@@ -277,8 +280,20 @@
             $window.localStorage.removeItem("userId");
             $window.localStorage.removeItem("userRole");
             $window.localStorage.removeItem("wechat");
-
         }
+
+        function checkTimeout() {
+            var time=$window.localStorage.getItem('time')
+            if(time!=null){
+              var past=parseInt(time);
+              var sub=new Date().getTime()-past;
+              console.log('sub = '+sub);
+              //session 有效期 1 小时
+              return sub > (3600*1000);
+            }else{
+              return false;
+            }
+        };
 
         function updateRoles(roles) {
             $window.localStorage.setItem("userRole", roles);
@@ -544,7 +559,7 @@ app.filter('gendarChange', function () {
     return function (input) {
         if (input == "1")return "男";
         else if (input == "2")return "女";
-        else return "未知";
+        else return "";
     };
 });
 
@@ -553,7 +568,7 @@ app.filter('JSchange', function () {
         if (input == "1")return "托管机构";
         else if (input == "3")return "老师";
         else if (input == "2")return "家长";
-        else return "未知人员";
+        else return "游客";
     };
 });
 
@@ -769,7 +784,7 @@ app.filter('statusChange', function () {
             'appTitle':'宝托安',
             'serverUrl': 'http://wx.zxing-tech.cn/api/v1/',
             'eshopApiUrl': 'http://api.mall.zxing-tech.cn/v2/',
-            'dfsUrl': '/',
+            'dfsUrl': 'http://wx.zxing-tech.cn/',
             'buildID': '20170512v1',
             'ENVIRONMENT':'release'
         });
@@ -1519,9 +1534,9 @@ Date.prototype.Format = function(fmt) {
             vm.type = '3';
             $scope.$on('$ionicView.beforeEnter', validate);
             //vm.user={userId:18603070911,password:"82267049",roleType:"3"}
-            vm.user={userId:10000001, password:"111111111", roleType:"1"}
+            //vm.user={userId:10000001, password:"111111111", roleType:"1"}
             function validate() {
-                if (Session.getData('userId') && Session.getData('token') && Session.getData('userId')!='-1') {
+                if (Session.getData('userId') && Session.getData('token') && Session.getData('userId')!='-1' &&  !Session.checkTimeout()) {
                     //AuthService.setSession(response.data.uid, response.data.token, response.data.eshop, response.data.type);
                     $http.defaults.headers.common.token = Session.getData('token');
                     StateService.clearAllAndGo(AuthService.getNextPath());
@@ -1548,7 +1563,8 @@ Date.prototype.Format = function(fmt) {
                       }
                   },
                   function(error) {
-                    MessageToaster.error(error);
+                    //MessageToaster.error(error);
+                    MessageToaster.error("用户不存在或其他问题");
                   }).finally(function() {
                       //WeuiModalLoading.hide();
                   });
@@ -1630,6 +1646,68 @@ Date.prototype.Format = function(fmt) {
 }());
 
 (function() {
+  "use strict";
+  angular.module('cameraModule', [
+    'cameraRouter',
+    'cameraCtrl'
+  ]);
+
+}());
+
+(function() {
+    "use strict";
+    angular.module('cameraCtrl', [])
+        .controller('cameraCtrl', function($scope, Constants, StateService, Session, childrenSteamService, AuthService) {
+            'ngInject';
+
+            var vm = this;
+            vm.activated = false;
+            $scope.$on('$ionicView.afterEnter', activate);
+            function activate() {
+                vm.activated = true;
+                vm.version = Constants.buildID;
+                vm.getCamera();
+            }
+
+            vm.getCamera = function(){
+                childrenSteamService.getCamera(AuthService.getLoginID()).then(function(data) {
+                    console.log(data.data);
+                    vm.cameras=data.data;
+                });
+            };
+
+            vm.back=function(){
+                StateService.back();
+            };
+
+            vm.watchVideo = function(video,name){
+              video.deposit_name=name;
+              Session.setData('video',JSON.stringify(video));
+              StateService.go('video');
+            };
+        });
+}());
+
+(function() {
+  'use strict';
+
+  angular.module('cameraRouter', [])
+    .config(myRouter);
+
+
+  function myRouter($stateProvider, $urlRouterProvider) {
+    'ngInject';
+    $stateProvider
+      .state('camera', {
+        url: "/camera",
+        templateUrl: 'camera/camera.html',
+        controller: 'cameraCtrl',
+        controllerAs: 'vm'
+      });
+  }
+}());
+
+(function() {
     "use strict";
     angular.module('WxLoginModule', [
         'WxLoginCtrl',
@@ -1639,7 +1717,10 @@ Date.prototype.Format = function(fmt) {
         $rootScope.$on('$stateChangeStart', function(event, next) {
           console.log("stateChangeStart");
           console.log(next);
-
+          if(Session.checkTimeout()){
+              console.log('Session timeout');
+              StateService.clearAllAndGo('login');
+          }
           if (next.url.indexOf('wxlogin')>0 ) {
               console.log("wxlogin");
               //alert($location.absUrl());
@@ -1923,68 +2004,6 @@ Date.prototype.Format = function(fmt) {
 
     }
 
-}());
-
-(function() {
-  "use strict";
-  angular.module('cameraModule', [
-    'cameraRouter',
-    'cameraCtrl'
-  ]);
-
-}());
-
-(function() {
-    "use strict";
-    angular.module('cameraCtrl', [])
-        .controller('cameraCtrl', function($scope, Constants, StateService, Session, childrenSteamService, AuthService) {
-            'ngInject';
-
-            var vm = this;
-            vm.activated = false;
-            $scope.$on('$ionicView.afterEnter', activate);
-            function activate() {
-                vm.activated = true;
-                vm.version = Constants.buildID;
-                vm.getCamera();
-            }
-
-            vm.getCamera = function(){
-                childrenSteamService.getCamera(AuthService.getLoginID()).then(function(data) {
-                    console.log(data.data);
-                    vm.cameras=data.data;
-                });
-            };
-
-            vm.back=function(){
-                StateService.back();
-            };
-
-            vm.watchVideo = function(video,name){
-              video.deposit_name=name;
-              Session.setData('video',JSON.stringify(video));
-              StateService.go('video');
-            };
-        });
-}());
-
-(function() {
-  'use strict';
-
-  angular.module('cameraRouter', [])
-    .config(myRouter);
-
-
-  function myRouter($stateProvider, $urlRouterProvider) {
-    'ngInject';
-    $stateProvider
-      .state('camera', {
-        url: "/camera",
-        templateUrl: 'camera/camera.html',
-        controller: 'cameraCtrl',
-        controllerAs: 'vm'
-      });
-  }
 }());
 
 (function() {
@@ -2724,9 +2743,45 @@ Date.prototype.Format = function(fmt) {
 }());
 
 (function() {
+    "use strict";
+    angular.module('childrenDetailCtrl', [])
+        .controller('childrenDetailCtrl', function($scope, $stateParams, Constants, StateService,depositChildrenService) {
+            'ngInject';
+            var vm = this;
+            vm.activated = false;
+
+            vm.query = function(id){
+                console.log("child id = "+id);
+                depositChildrenService.queryChildren(id).then(function(data) {
+                    if (data.errno == 0) {
+                        console.log(data.data);
+                        vm.child = data.data;
+                    }
+                });
+            };
+
+            $scope.$on('$ionicView.afterEnter', activate);
+
+            function activate() {
+                console.log($stateParams);
+                vm.cid = $stateParams.cid;
+                vm.activated = true;
+                vm.version = Constants.buildID;
+                vm.query(vm.cid);
+            }
+
+            vm.back=function(){
+                StateService.back();
+            };
+
+        });
+}());
+
+(function() {
   "use strict";
   angular.module('depositChildrenModule', [
     'depositChildrenCtrl',
+    'childrenDetailCtrl',
     'teacherDepositChildrenCtrl',
     'depositChildrenRouter',
     'depositChildrenService'
@@ -2753,9 +2808,9 @@ Date.prototype.Format = function(fmt) {
                 StateService.back();
             };
 
-            vm.goTo=function(id,item){
+            vm.goTo=function(item){
                 //查看孩子的更多家长信息列表
-                StateService.go('teacherEdit',{cid:id,type:0});
+                StateService.go('childrenDetail',{cid:item.ChildrenID});
             };
 
             vm.queryChildren = function(){
@@ -2797,6 +2852,15 @@ Date.prototype.Format = function(fmt) {
         controller: 'depositChildrenCtrl',
         controllerAs: 'vm'
       })
+      .state('childrenDetail', {
+        url: "/childrenDetail?:cid",
+        params: {
+          cid : null
+        },
+        templateUrl: 'depositChildren/childrenDetail.html',
+        controller: 'childrenDetailCtrl',
+        controllerAs: 'vm'
+      })
     ;
   }
 }());
@@ -2810,7 +2874,8 @@ Date.prototype.Format = function(fmt) {
   function depositChildrenService( $q, $http, Constants, ResultHandler) {
     'ngInject';
     var service = {
-      queryDepositChildren:queryDepositChildren
+      queryDepositChildren:queryDepositChildren,
+      queryChildren:queryChildren
     };
 
     //'/deposit/children/:depositid',
@@ -2818,6 +2883,11 @@ Date.prototype.Format = function(fmt) {
       var url = Constants.serverUrl + 'deposit/children/'+id;
       return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
     };
+
+    function queryChildren(id){
+      var url = Constants.serverUrl + 'account/children/query/'+id;
+      return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
+    }
 
     return service;
 
@@ -2891,7 +2961,7 @@ Date.prototype.Format = function(fmt) {
             'ngInject';
             var vm = this;
             vm.activated = false;
-            vm.text='确定要退出本微信用户绑定的业务';//'正在退出...';
+            vm.text='确定要退出';//'正在退出...';
             $scope.$on('$ionicView.afterEnter', activate);
 
             function activate() {
@@ -3085,7 +3155,7 @@ Date.prototype.Format = function(fmt) {
             'ngInject';
             var vm = this;
             vm.activated = false;
-            vm.messages=[];
+
             vm.offset=0;
             vm.limit=30;
             vm.canLoadMore=true;
@@ -3094,7 +3164,7 @@ Date.prototype.Format = function(fmt) {
             function activate() {
                 vm.activated = true;
                 vm.version = Constants.buildID;
-
+                vm.messages=[];
                 vm.getDepositInfo();
             }
 
@@ -3103,6 +3173,8 @@ Date.prototype.Format = function(fmt) {
                   console.log(data);
                   if (data.errno == 0) {
                       vm.deposit=data.data[0];
+                      Session.setData('latitude',vm.deposit.latitude);
+                      Session.setData('longitude',vm.deposit.longitude);
                       vm.getMsg(vm.deposit.depositid,0,vm.limit);
                   };
                 });
@@ -3165,35 +3237,53 @@ Date.prototype.Format = function(fmt) {
                 StateService.go('newMessage');
             };
 
+            vm.getImg = function(type){
+                if(type == 1){
+                    return {name:"就餐",src:"img/dinner.png"};
+                }else if(type == 2){
+                    return {name:"培训",src:"img/traning.png"};
+                }else if(type == 3){
+                    return {name:"活动",src:"img/play.png"};
+                }else if(type == 4){
+                    return {name:"作业",src:"img/homework.png"};
+                }else if(type == 5){
+                    return {name:"接入",src:"img/login.png"};
+                }else if(type == 6){
+                    return {name:"送到",src:"img/logout.png"};
+                }else{
+                    return {name:"未知信息类型",src:"img/unknown.png"};
+                }
+            };
+
             vm.getImages=function(msg){
                 vm.imgCount=0;
-                if(msg.photolink1!=null && msg.photolink1!=""){
-                    var data={src:msg.photolink1,msg:''};
+                if(msg.PhotoLink1!=null && msg.PhotoLink1!=""){
+                    var data={src:msg.PhotoLink1,msg:''};
                     vm.images[vm.imgCount]=data;
                     vm.imgCount++;
                 }
-                if(msg.photolink2!=null && msg.photolink2!=""){
-                    var data={src:msg.photolink2,msg:''};
+                if(msg.PhotoLink2!=null && msg.PhotoLink2!=""){
+                    var data={src:msg.PhotoLink2,msg:''};
                     vm.images[vm.imgCount]=data;
                     vm.imgCount++;
                 }
-                if(msg.photolink3!=null && msg.photolink3!=""){
-                    var data={src:msg.photolink3,msg:''};
+                if(msg.PhotoLink3!=null && msg.PhotoLink3!=""){
+                    var data={src:msg.PhotoLink3,msg:''};
                     vm.images[vm.imgCount]=data;
                     vm.imgCount++;
                 }
-                if(msg.photolink4!=null && msg.photolink4!=""){
-                    var data={src:msg.photolink4,msg:''};
+                if(msg.PhotoLink4!=null && msg.PhotoLink4!=""){
+                    var data={src:msg.PhotoLink4,msg:''};
                     vm.images[vm.imgCount]=data;
                     vm.imgCount++;
                 }
-                if(msg.photolink5!=null && msg.photolink5!=""){
-                    var data={src:msg.photolink5,msg:''};
+                if(msg.PhotoLink5!=null && msg.PhotoLink5!=""){
+                    var data={src:msg.PhotoLink5,msg:''};
                     vm.images[vm.imgCount]=data;
                     vm.imgCount++;
                 }
-                if(msg.photolink6!=null && msg.photolink6!=""){
-                    var data={src:msg.photolink6,msg:''};
+                if(msg.PhotoLink6!=null && msg.PhotoLink6!=""){
+                    var data={src:msg.PhotoLink6,msg:''};
                     vm.images[vm.imgCount]=data;
                     vm.imgCount++;
                 }
@@ -3338,6 +3428,18 @@ Date.prototype.Format = function(fmt) {
       }).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
     };
 
+    function putPhoto(url,name){
+      var mydata = {
+        "fileurl":url,
+        "filename":name
+      };
+      var url = Constants.dfsUrl + 'upload';
+      return $http({
+        method: 'put',
+        url: url,
+        data: mydata
+      }).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
+    };
 
     return service;
 
@@ -3349,7 +3451,7 @@ Date.prototype.Format = function(fmt) {
 (function() {
     "use strict";
     angular.module('newMessageCtrl', [])
-        .controller('newMessageCtrl', function($scope, Constants, messageService, AuthService, StateService, teacherService, MessageToaster) {
+        .controller('newMessageCtrl', function($scope, Constants, messageService, AuthService, StateService, teacherService, MessageToaster, Session, $cordovaCamera, $cordovaImagePicker,$ionicActionSheet,$cordovaFileTransfer) {
             'ngInject';
             var vm = this;
             vm.activated = false;
@@ -3361,11 +3463,15 @@ Date.prototype.Format = function(fmt) {
             vm.imgCal=0;
             vm.imgs=[];
             vm.imgshow=[];
+
             vm.isClicked=false;
             vm.btnText='提交';
+
             function activate() {
                 vm.activated = true;
                 vm.version = Constants.buildID;
+                vm.lat=Session.getData('latitude');
+                vm.long=Session.getData('longitude');
                 teacherService.queryTeacherDeposit(vm.id).then(function(data) {
                     console.log(data);
                     if(data!=null && data.data !=null && data.data.length>0)vm.deposit=data.data[0];
@@ -3398,20 +3504,22 @@ Date.prototype.Format = function(fmt) {
 
             //infotype:信息类型（1：就餐；2：培训；3：活动；4：作业）
             vm.saveData=function(){
-                var data={
+                var json={
                     "depositid": Number(vm.deposit.depositid),
                     "publisherid": Number(vm.id),
-                    "infotype":Number(vm.dailyType),
-                    "latitude":0,
-                    "longitude":0,
-                    "description":vm.desc,
-                    "imgs":vm.imgs
+                    "infotype": Number(vm.dailyType),
+                    "latitude": vm.lat,
+                    "longitude": vm.long,
+                    "description": vm.desc,
+                    "imgs": vm.imgs
                 };
-                messageService.newMsg(data).then(function(data) {
-                    console.log(data);
+                //alert(JSON.stringify(json));
+                messageService.newMsg(json).then(function(data) {
+                    //alert(JSON.stringify(data));
                     vm.isClicked=false;
                     vm.btnText='提交';
                     if(data.errno==0){
+                        Session.setData('refresh',1);
                         StateService.back();
                     }else{
                         MessageToaster.error(data.error);
@@ -3424,7 +3532,7 @@ Date.prototype.Format = function(fmt) {
             };
 
             $scope.fileSelect=function(event){
-                //console.log(event);
+                console.log(event);
                 var files = event.target.files;
                 $scope.fileName=files[0].name;
                 var fileReader = new FileReader();
@@ -3435,129 +3543,136 @@ Date.prototype.Format = function(fmt) {
                 $scope.$apply();
                 fileReader.readAsDataURL(files[0]);
                 fileReader.onload = function(e) {
-                    //console.log(e);
+                    console.log(e);
                     vm.imgshow[vm.imgPosition] = this.result;
-                    //console.log(this.result);
+                    console.log(this.result);
                     vm.imgPosition++;
                     $scope.$apply();
                 };
             }
-        });
-}());
 
-(function() {
-  "use strict";
-  angular.module('photoModule', [
-    'photoCtrl',
-    'photoRouter'
-  ]);
-
-}());
-
-(function() {
-    "use strict";
-    angular.module('photoCtrl', [])
-        .controller('photoCtrl', function($scope, Constants,$stateParams,Session,StateService,$ionicSlideBoxDelegate,$timeout) {
-            'ngInject';
-            var vm = this;
-            vm.activated = false;
-            $scope.$on('$ionicView.afterEnter', activate);
-
-            function activate() {
-                vm.activated = true;
-                vm.version = Constants.buildID;
-                vm.msg=Session.getData('temp');
-                vm.images=[];
-                vm.imgCount=0;
-                if(vm.msg.photolink1!=null && vm.msg.photolink1!=""){
-                    vm.images[vm.imgCount]=vm.msg.photolink1;
-                    vm.imgCount++;
-                }
-                if(vm.msg.photolink2!=null && vm.msg.photolink2!=""){
-                    vm.images[vm.imgCount]=vm.msg.photolink2;
-                    vm.imgCount++;
-                }
-                if(vm.msg.photolink3!=null && vm.msg.photolink3!=""){
-                    vm.images[vm.imgCount]=vm.msg.photolink3;
-                    vm.imgCount++;
-                }
-                if(vm.msg.photolink4!=null && vm.msg.photolink4!=""){
-                    vm.images[vm.imgCount]=vm.msg.photolink4;
-                    vm.imgCount++;
-                }
-                if(vm.msg.photolink5!=null && vm.msg.photolink5!=""){
-                    vm.images[vm.imgCount]=vm.msg.photolink5;
-                    vm.imgCount++;
-                }
-                if(vm.msg.photolink6!=null && vm.msg.photolink6!=""){
-                    vm.images[vm.imgCount]=vm.msg.photolink6;
-                    vm.imgCount++;
-                }
-                console.log(vm.images);
-                vm.index=$stateParams.index;
-                console.log(vm.index);
-                //vm.image=vm.images[vm.index];
-                $timeout(function(){
-                    $scope.slider.slideTo(vm.index);
-                    $scope.slider.updateLoop();
-                    //$ionicSlideBoxDelegate.enableSlide(true);
-                    //$ionicSlideBoxDelegate.slide(vm.index);
-                    //console.log($ionicSlideBoxDelegate.currentIndex()+" - "+$ionicSlideBoxDelegate.slidesCount());
-                }, 300);
-
-            }
-            vm.back=function(){
-                StateService.back();
+            vm.selectImageChooseMethod = function(prop){
+              var hideSheet = $ionicActionSheet.show({
+                  buttons: [{
+                    text: '拍照上传'
+                  }, {
+                    text: '从相册中选择'
+                  }],
+                  cancelText: '取 消',
+                  cancel: function() {
+                    // add cancel code..
+                  },
+                  buttonClicked: function(index) {
+                    // 相册文件选择上传
+                    if (index == 1) {
+                      vm.readalbum(prop);
+                    } else if (index == 0) {
+                      // 拍照上传
+                      vm.taskPicture(prop);
+                    }
+                    return true;
+                  }
+                });
             };
 
-            $scope.options = {
-                loop: false
-            }
+            // 读用户相册
+          	vm.readalbum = function(prop) {
+          		if (!window.imagePicker) {
+          			alert('目前您的环境不支持相册上传。')
+          			return;
+          		}
 
-            $scope.$on("$ionicSlides.sliderInitialized", function(event, data){
-                // data.slider is the instance of Swiper
-                console.log(data);
-                $scope.slider = data.slider;
-            });
+          		var options = {
+          			maximumImagesCount: 1,
+          			width: 800,
+          			height: 800,
+          			quality: 80
+          		};
 
-            $scope.$on("$ionicSlides.slideChangeStart", function(event, data){
-                console.log('Slide change is beginning');
-                //console.log(event);
-                //console.log(data);
-            });
+          		$cordovaImagePicker.getPictures(options).then(function(results) {
+                for(var i=0;i<results.length;i++){
+              			var uri = results[i];
+              			var	name = uri;
+              			if (name.indexOf('/')) {
+              				var num = name.lastIndexOf('/');
+              				name = name.substring(num + 1);
+              			}
+                    vm.imgshow[vm.imgshow.length]=uri;
+              			//$scope.uploadimage(uri, prop);
+                }
+          		}, function(error) {
+          			alert(error);
+          		});
+          	};
 
-            $scope.$on("$ionicSlides.slideChangeEnd", function(event, data){
-                // note: the indexes are 0-based
-                //console.log(event);
-                console.log($scope.slider.activeIndex+" - "+$scope.slider.previousIndex);
-                //$scope.activeIndex = data.activeIndex;
-                //$scope.previousIndex = data.previousIndex;
-                //console.log('Slide from '+data.previousIndex +' to '+data.activeIndex);
-            });
+          	// 拍照
+          	vm.taskPicture = function(prop) {
+          		if (!navigator.camera) {
+          			alert('请在真机环境中使用拍照上传。');
+          			return;
+          		}
+
+          		var options = {
+          			quality: 75,
+          			targetWidth: 800,
+          			targetHeight: 800,
+          			saveToPhotoAlbum: false
+          		};
+          		$cordovaCamera.getPicture(options).then(function(imageURI) {
+          			//$scope.uploadimage(imageURI);
+          			var name = imageURI;
+          			if (name.indexOf('/')) {
+          				var i = name.lastIndexOf('/');
+          				name = name.substring(i + 1);
+          			}
+                //alert(imageURI);
+          		  //$scope.uploadimage(imageURI, prop);
+                vm.imgshow[vm.imgshow.length]=imageURI;
+          		}, function(err) {
+          			alert("照相机：" + err);
+          		});
+
+          	}
+
+          	// 上传到又拍云
+          	vm.uploadimage = function(uri) {
+              var options ={};
+          		$cordovaFileTransfer.upload("http://wx.zxing-tech.cn/upload", uri, options,true).then(function(data) {
+          			// 设置图片新地址
+          			//alert(data.response);
+          			var resp = JSON.parse(data.response);
+          			var link = resp.data.fileurl;
+          			$scope.image = link;
+                vm.imgs[vm.imgCal] = link;
+                vm.imgCal++;
+                if (vm.imgCal == vm.imgshow.length) {
+                    console.log(vm.imgshow);
+                    //alert('start saveData');
+                    vm.saveData();
+                } else {
+                    vm.save2(vm.imgCal);
+                }
+          		}, function(error) {
+          			alert(JSON.stringify(error));
+                MessageToaster.info('上传照片失败');
+          		}, function (progress) {
+                  // constant progress updates
+              });
+          	}
+
+            vm.save2=function(which){
+                if (vm.imgshow.length > 0) {
+                    vm.isClicked = true;
+                    vm.btnText='正在提交';
+                    MessageToaster.info('上传信息中，请稍等...');
+                    var data = vm.imgshow[which];
+                    if (data != null)vm.uploadimage(data);
+                } else {
+                    vm.saveData();
+                }
+            };
+
         });
-}());
-
-(function() {
-  'use strict';
-
-  angular.module('photoRouter', [])
-    .config(myRouter);
-
-
-  function myRouter($stateProvider, $urlRouterProvider) {
-    'ngInject';
-    $stateProvider
-        .state('photo', {
-          url: "/photo?:index",
-          params:{
-            index:0
-          },
-          templateUrl: 'photo/photo.html',
-          controller: 'photoCtrl',
-          controllerAs: 'vm'
-        })
-      ;
-  }
 }());
 
 (function() {
@@ -3820,6 +3935,121 @@ Date.prototype.Format = function(fmt) {
 
   }
 
+}());
+
+(function() {
+  "use strict";
+  angular.module('photoModule', [
+    'photoCtrl',
+    'photoRouter'
+  ]);
+
+}());
+
+(function() {
+    "use strict";
+    angular.module('photoCtrl', [])
+        .controller('photoCtrl', function($scope, Constants,$stateParams,Session,StateService,$ionicSlideBoxDelegate,$timeout) {
+            'ngInject';
+            var vm = this;
+            vm.activated = false;
+            $scope.$on('$ionicView.afterEnter', activate);
+
+            function activate() {
+                vm.activated = true;
+                vm.version = Constants.buildID;
+                vm.msg=Session.getData('temp');
+                vm.images=[];
+                vm.imgCount=0;
+                if(vm.msg.photolink1!=null && vm.msg.photolink1!=""){
+                    vm.images[vm.imgCount]=vm.msg.photolink1;
+                    vm.imgCount++;
+                }
+                if(vm.msg.photolink2!=null && vm.msg.photolink2!=""){
+                    vm.images[vm.imgCount]=vm.msg.photolink2;
+                    vm.imgCount++;
+                }
+                if(vm.msg.photolink3!=null && vm.msg.photolink3!=""){
+                    vm.images[vm.imgCount]=vm.msg.photolink3;
+                    vm.imgCount++;
+                }
+                if(vm.msg.photolink4!=null && vm.msg.photolink4!=""){
+                    vm.images[vm.imgCount]=vm.msg.photolink4;
+                    vm.imgCount++;
+                }
+                if(vm.msg.photolink5!=null && vm.msg.photolink5!=""){
+                    vm.images[vm.imgCount]=vm.msg.photolink5;
+                    vm.imgCount++;
+                }
+                if(vm.msg.photolink6!=null && vm.msg.photolink6!=""){
+                    vm.images[vm.imgCount]=vm.msg.photolink6;
+                    vm.imgCount++;
+                }
+                console.log(vm.images);
+                vm.index=$stateParams.index;
+                console.log(vm.index);
+                //vm.image=vm.images[vm.index];
+                $timeout(function(){
+                    $scope.slider.slideTo(vm.index);
+                    $scope.slider.updateLoop();
+                    //$ionicSlideBoxDelegate.enableSlide(true);
+                    //$ionicSlideBoxDelegate.slide(vm.index);
+                    //console.log($ionicSlideBoxDelegate.currentIndex()+" - "+$ionicSlideBoxDelegate.slidesCount());
+                }, 300);
+
+            }
+            vm.back=function(){
+                StateService.back();
+            };
+
+            $scope.options = {
+                loop: false
+            }
+
+            $scope.$on("$ionicSlides.sliderInitialized", function(event, data){
+                // data.slider is the instance of Swiper
+                console.log(data);
+                $scope.slider = data.slider;
+            });
+
+            $scope.$on("$ionicSlides.slideChangeStart", function(event, data){
+                console.log('Slide change is beginning');
+                //console.log(event);
+                //console.log(data);
+            });
+
+            $scope.$on("$ionicSlides.slideChangeEnd", function(event, data){
+                // note: the indexes are 0-based
+                //console.log(event);
+                console.log($scope.slider.activeIndex+" - "+$scope.slider.previousIndex);
+                //$scope.activeIndex = data.activeIndex;
+                //$scope.previousIndex = data.previousIndex;
+                //console.log('Slide from '+data.previousIndex +' to '+data.activeIndex);
+            });
+        });
+}());
+
+(function() {
+  'use strict';
+
+  angular.module('photoRouter', [])
+    .config(myRouter);
+
+
+  function myRouter($stateProvider, $urlRouterProvider) {
+    'ngInject';
+    $stateProvider
+        .state('photo', {
+          url: "/photo?:index",
+          params:{
+            index:0
+          },
+          templateUrl: 'photo/photo.html',
+          controller: 'photoCtrl',
+          controllerAs: 'vm'
+        })
+      ;
+  }
 }());
 
 (function() {
@@ -4460,7 +4690,7 @@ Date.prototype.Format = function(fmt) {
 (function() {
     "use strict";
     angular.module('teacherCtrl', [])
-        .controller('teacherCtrl', function($scope,Constants,StateService,$ionicListDelegate,$ionicPopup,teacherService,AuthService,CacheData) {
+        .controller('teacherCtrl', function($scope,Constants,StateService,$ionicListDelegate,$ionicPopup,teacherService,AuthService,CacheData,MessageToaster) {
             'ngInject';
             var vm = this;
             vm.activated = false;
@@ -4495,6 +4725,18 @@ Date.prototype.Format = function(fmt) {
                 StateService.go('teacherEdit',{cid:id,type:2});
             };
 
+            vm.delete=function(id){
+              teacherService.deleteTeacher(id).then(function(data) {
+                  console.log(data);
+                  if (data.errno == 0) {
+                      vm.getOrganizerTeachers();
+                      MessageToaster.info("删除成功");
+                  }else{
+                      MessageToaster.error("查不到任何数据 "+response.error);
+                  }
+              });
+            };
+
             vm.del=function(item){
                 //删除老师信息
                 $ionicListDelegate.closeOptionButtons();
@@ -4508,8 +4750,9 @@ Date.prototype.Format = function(fmt) {
                 });
                 confirmPopup.then(function(result) {
                     if(result) {
-                        console.log('confirm to del this teacher '+item.sid);
+                        console.log('confirm to del this teacher '+item.uid);
                         //delete(id);
+                        vm.delete(item.uid);
                     } else {
                         console.log('cancel delete');
                     }
@@ -4564,8 +4807,23 @@ Date.prototype.Format = function(fmt) {
 
             vm.save=function(){
                 console.log(vm.item);
-                //create
-                teacherService.createTeacher(vm.item,AuthService.getLoginID()).then(function(data) {
+                if(vm.type=='2'){
+                  //update
+                  teacherService.updateTeacher(vm.item,vm.item.uid).then(function(data) {
+                    if (data.errno == 0) {
+                        //var userId = data.data.uid;
+                        //wxlogin(vm.user.wechat);
+                        StateService.back();
+                    }else{
+                        //MessageToaster.error(data.error);
+                        MessageToaster.error('无法更新');
+                    }
+                  },function(data){
+                      MessageToaster.error(data);
+                  });
+                }else{
+                  //create
+                  teacherService.createTeacher(vm.item,AuthService.getLoginID()).then(function(data) {
                     if (data.errno == 0) {
                         //var userId = data.data.uid;
                         //wxlogin(vm.user.wechat);
@@ -4574,9 +4832,10 @@ Date.prototype.Format = function(fmt) {
                         //MessageToaster.error(data.error);
                         MessageToaster.error('无法添加，请确认手机号码是否已经使用过');
                     }
-                },function(data){
-                    MessageToaster.error(data);
-                });
+                  },function(data){
+                      MessageToaster.error(data);
+                  });
+              }
             };
 
 
@@ -4624,6 +4883,7 @@ Date.prototype.Format = function(fmt) {
     var service = {
       createTeacher:createTeacher,
       updateTeacher:updateTeacher,
+      deleteTeacher:deleteTeacher,
       queryTeacher:queryTeacher,
       queryTeacherDeposit:queryTeacherDeposit
     };
@@ -4694,6 +4954,15 @@ Date.prototype.Format = function(fmt) {
       return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
     };
 
+    function deleteTeacher(id) {
+      var url = Constants.serverUrl + 'account/delTeacher/'+id;
+      return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
+      // return $http({
+      //   method: 'post',
+      //   url: url,
+      //   data: {}
+      // }).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
+    };
 
     function queryTeacherDeposit(id) {
       var url = Constants.serverUrl + 'deposit/teacher/'+id;

@@ -14,6 +14,12 @@
           controller: 'estimateCtrl',
           controllerAs: 'vm'
         })
+        .state('myEstimate', {
+          url: "/myEstimate",
+          templateUrl: 'estimate/myEstimateDeposit.html',
+          controller: 'estimateDepositCtrl',
+          controllerAs: 'vm'
+        })
         .state('estimateDeposit', {
           url: "/estimateDeposit",
           templateUrl: 'estimate/estimateDeposit.html',
