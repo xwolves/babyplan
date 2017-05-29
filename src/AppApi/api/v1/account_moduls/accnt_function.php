@@ -118,7 +118,7 @@ class Account{
 
     }
 
-    public function createAccount($info, $type){
+    public function createAccount($app, $info, $type){
         try{
             $accountId = $this->createAccountId($type);
             if($accountId < 10000000)
@@ -199,7 +199,12 @@ class Account{
             return $accountId;
         }catch (PDOException $e) {
             $errs = $e->getMessage();
+            $code = $e->getCode();
+            $app->getLog()->debug("Debug ".$code." # ".date('Y-m-d H:i:s')." : ".$errs);
             //var_dump( $e);
+            if($code == 23000){
+              return 10008;
+            }
             return 10000;
         }
 
@@ -363,6 +368,45 @@ class Account{
             return 10000;
         }
     }
+
+    public function resetPsw($accountid){
+        try{
+            //random psw
+            $reset = substr($this->guid(), 0, 8);
+            //update psw
+            $sql_str = "update tb_accnt_teacher mobile = :reset , modifytime = now() where accountid = :accountid";
+            $stmt = $this->DB->prepare($sql_str);
+            $stmt->bindParam(":reset", $reset, PDO::PARAM_STR);
+            $stmt->bindParam(":accountid", $accountid, PDO::PARAM_STR);
+            if (!$stmt->execute($ar_params))
+                return 10001;
+            if($stmt->rowCount() <= 0)
+                return 10002;
+            //get email
+            $sql_str = "SELECT name, email FROM tb_accnt_parent WHERE accountid = :accountid";
+            $stmt = $this->DB->prepare($sql_str);
+            $stmt->bindParam(":accountid", $accountid, PDO::PARAM_STR);
+            if(!$stmt->execute())
+              return 10001;
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+            if($row){
+                $name = $row['name'];
+                $email = $row['email'];
+                //send email
+                $message = "你好，".$name."/r/n肯特育园密码已重置为 ".$reset." /r/n请登录后重新设置密码。";
+                if($email!=null){
+                  $result=mail($email, '肯特育园密码重置', $message);
+                  if($result)return 0;
+                  else return 10009;
+                }
+            }
+            return 10003;
+        }catch (PDOException $e) {
+            $errs = $e->getMessage();
+            return 10000;
+        }
+    }
+
 
     public function updateChildren($params){
         try{

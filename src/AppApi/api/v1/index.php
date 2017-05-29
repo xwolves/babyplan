@@ -139,7 +139,7 @@ $app->post(
             return;
         }
         $account = new Account($sql_db);
-        $ret = $account->createAccount($a_request, 2);
+        $ret = $account->createAccount($app, $a_request, 2);
         $rsp_data['uid'] = $ret;
         $response->setBody(rspData($ret, $rsp_data));
     }
@@ -1684,5 +1684,16 @@ $app->get(
 
 //update password use update parent :V
 //lost password use email reset password :x
-//check mobile exist already :x
+//check mobile exist already :xxx
+$app->post(
+    '/account/resetPsw/:parent_accnt_id',
+    function ($parent_accnt_id) use ($app, $sql_db, $redis){
+        $rsp_data = array();
+        $response = $app->response;
+        $info = new Account($sql_db);
+        $ret = $info->resetPsw($parent_accnt_id);
+        $response->setBody(rspData($ret));
+    }
+);
+
 $app->run();
