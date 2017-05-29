@@ -135,7 +135,7 @@ class Account{
                     "otherroomlink1", "otherroomlink2", "id2number", "id2photolink", "remark", "password", "weixinno", "longitude", "latitude");
             }else if(2 == intval($type)){
                 $tb_name = "tb_accnt_parent";
-                $column = array("accountid", "name", "sex", "mobile", "weixinno", "remark", "password", "nick");
+                $column = array("accountid", "name", "sex", "mobile", "weixinno", "remark", "password", "nick", "email");
 
             }else if(3 == intval($type)){
                 $tb_name = "tb_accnt_teacher";
@@ -148,9 +148,9 @@ class Account{
                     "course","opentime", "depositcardid", "deposittype", "benefit");
                 $sql_str = "insert into tb_parent_children (parentid, childrenid, createtime) values (:parentid, :childrenid, now())";
                 $stmt = $this->DB->prepare($sql_str);
-  $stmt->bindParam(":parentid", intval($info['p_uid']), PDO::PARAM_INT);
+                $stmt->bindParam(":parentid", intval($info['p_uid']), PDO::PARAM_INT);
                 $stmt->bindParam(":childrenid", intval($accountId), PDO::PARAM_INT);
-		if(!$stmt->execute())
+		            if(!$stmt->execute())
                     return 10001;
                 if($stmt->rowCount() <= 0)
                     return 10002;
@@ -199,7 +199,7 @@ class Account{
             return $accountId;
         }catch (PDOException $e) {
             $errs = $e->getMessage();
-//var_dump( $e);
+            //var_dump( $e);
             return 10000;
         }
 

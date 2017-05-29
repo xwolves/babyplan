@@ -1682,4 +1682,7 @@ $app->get(
     }
 );
 
+//update password use update parent :V
+//lost password use email reset password :x
+//check mobile exist already :x
 $app->run();
