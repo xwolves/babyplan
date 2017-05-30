@@ -389,7 +389,8 @@ class Account{
             if(!$stmt->execute())
               return 10001;
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
-            if($row){
+            $count = $stmt->rowCount();
+            if($count > 0){
                 $name = $row['name'];
                 $email = $row['email'];
                 //send email
@@ -398,6 +399,8 @@ class Account{
                   $result=mail($email, '肯特育园密码重置', $message);
                   if($result)return 0;
                   else return 10009;
+                }else{
+                  return 10010;
                 }
             }
             return 10003;

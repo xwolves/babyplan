@@ -10,6 +10,7 @@ static $errCode = array(
     10007 => 'Params error',
     10008 => 'Mobile already used',
     10009 => 'Fail to send email',
+    10010 => 'No email address',
 
     12001 => 'Account Parames Empty',
     12002 => 'Account Parames Required Defect',
