@@ -1694,7 +1694,7 @@ $app->post(
         $request = $app->request->getBody();
         //$params = $app->request->params();
         $a_request = json_decode($request, true);
-        $token=$a_request[eshopToken];
+        $token=$a_request['eshopToken'];
         $info = new Account($sql_db);
         $ret = $info->resetPsw($parent_accnt_id,$token);
         $response->setBody(rspData($ret));

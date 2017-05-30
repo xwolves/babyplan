@@ -61,7 +61,7 @@ function  httpPost($url,$jsonStr,$token){
 	    curl_setopt($curl, CURLOPT_POST, 1);
 	    curl_setopt($curl, CURLOPT_POSTFIELDS, $jsonStr);
 	    curl_setopt($curl, CURLOPT_TIMEOUT, 30);
-	    curl_setopt($curl, CURLOPT_HEADER, array('X-ECAPI-Authorization' => $token ));
+      curl_setopt ( $ch, CURLOPT_HTTPHEADER, array('X-ECAPI-Authorization' => $token ));
 	    curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
 	    $data = curl_exec($curl);
 	    if (curl_errno($curl)) {
