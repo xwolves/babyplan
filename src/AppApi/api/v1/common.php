@@ -79,7 +79,7 @@ function changePassword($id,$psw){
         global $SQL_PASSWORD;
         //new PDO('mysql:host=127.0.0.1;dbname=db_eshop', 'deposit', 'Deposit@00');
         $sql_db = new PDO($SQL_HOST.$SQL_DB_ESHOPNAME, $SQL_USER, $SQL_PASSWORD);
-        $stmt = $dbh->prepare("update ecs_users set password = :psw where user_name = :id");
+        $stmt = $sql_db->prepare("update ecs_users set password = :psw where user_name = :id");
         $stmt->bindParam(":psw", md5($psw), PDO::PARAM_STR);
         $stmt->bindParam(":id", $id, PDO::PARAM_STR);
         $stmt->execute();
