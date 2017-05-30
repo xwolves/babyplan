@@ -2,6 +2,7 @@
 
 $SQL_HOST = "mysql:host=127.0.0.1;";
 $SQL_DB_NAME = "dbname=db_deposit";
+$SQL_DB_ESHOPNAME = "dbname=db_eshop";
 $SQL_USER = "deposit";
 $SQL_PASSWORD= "Deposit@00";
 $APP_ID = "wx3814600bfd67bfe6";

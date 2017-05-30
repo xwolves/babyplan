@@ -394,6 +394,7 @@ class Account{
                 $name = $row['name'];
                 $email = $row['email'];
                 $password = $row['password'];
+                $id = $row['accountid'];
                 //send email
                 $message = "你好，".$name."\r\n肯特育园密码已重置为 ".$reset."\r\n请登录后重新设置密码。";
                 if($email!=null){
@@ -401,9 +402,10 @@ class Account{
                   $result=mailSending($email, '肯特育园密码重置', $message);
                   if($result){
                     //eshop change password
-                    $json=array('old_password' => $password, 'password' => $reset);
-                    $eshopData=httpPost("http://api.mall.zxing-tech.cn/v2/ecapi.user.password.update", json_encode($json), $token);
-                    var_dump($eshopData);
+                    changePassword($id,$reset);
+                    //$json=array('old_password' => $password, 'password' => $reset);
+                    //$eshopData=httpPost("http://api.mall.zxing-tech.cn/v2/ecapi.user.password.update", json_encode($json), $token);
+                    //var_dump($eshopData);
                     return 0;
                   }else return 10009;
                 }else{

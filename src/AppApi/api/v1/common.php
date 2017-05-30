@@ -71,6 +71,18 @@ function  httpPost($url,$jsonStr,$token){
         return $data;
 }
 
+function changePassword($id,$psw){
+  try {
+        $sql_db = new PDO($SQL_HOST.$SQL_DB_ESHOPNAME, $SQL_USER, $SQL_PASSWORD);
+        $stmt = $dbh->prepare("update ecs_users set password = :psw where user_name = :id");
+        $stmt->bindParam(":psw", md5($psw), PDO::PARAM_STR);
+        $stmt->bindParam(":id", $id, PDO::PARAM_STR);
+        $stmt->execute();
+        return $stmt->rowCount() > 0;
+    } catch (PDOException $e) {
+        return false;
+    }
+}
 
 function mailSending($mailAddr, $bt, $nr)
 {
