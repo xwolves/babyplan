@@ -374,16 +374,16 @@ class Account{
             //random psw
             $reset = substr($this->guid(), 0, 8);
             //update psw
-            $sql_str = "update tb_accnt_teacher mobile = :reset , modifytime = now() where  ( ContactPhone = :accountid or AccountID = :accountid )";
+            $sql_str = "update tb_accnt_parent set password = :reset , modifytime = now() where  ( mobile = :accountid or accountid = :accountid )";
             $stmt = $this->DB->prepare($sql_str);
             $stmt->bindParam(":reset", $reset, PDO::PARAM_STR);
             $stmt->bindParam(":accountid", $accountid, PDO::PARAM_STR);
-            if (!$stmt->execute($ar_params))
+            if (!$stmt->execute())
                 return 10001;
             if($stmt->rowCount() <= 0)
                 return 10002;
             //get email
-            $sql_str = "SELECT name, accountid, email FROM tb_accnt_parent WHERE ( ContactPhone = :accountid or AccountID = :accountid )";
+            $sql_str = "SELECT name, accountid, email FROM tb_accnt_parent WHERE ( mobile = :accountid or accountid = :accountid )";
             $stmt = $this->DB->prepare($sql_str);
             $stmt->bindParam(":accountid", $accountid, PDO::PARAM_STR);
             if(!$stmt->execute())
