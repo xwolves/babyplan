@@ -325,6 +325,10 @@ class Account{
                     return 10001;
                 if($stmt->rowCount() <= 0)
                     return 10002;
+                if(array_key_exists("password", $ar_params)){
+                  //update eshop password
+                  changePassword($accountid,$ar_params['password']);
+                }
             }
 
             return $accountid;
