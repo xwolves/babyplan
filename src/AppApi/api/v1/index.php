@@ -12,6 +12,8 @@ require_once 'common.php';
 require_once '../../Slim/WeiChat/WXBizMsgCrypt.php';
 require_once './wechatPay/function.php';
 require_once './wechatPay/payment.php';
+require_once 'class.phpmailer.php';
+require_once 'class.smtp.php';
 
 \Slim\Slim::registerAutoloader();
 

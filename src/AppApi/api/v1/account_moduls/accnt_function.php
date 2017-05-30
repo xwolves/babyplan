@@ -396,7 +396,8 @@ class Account{
                 //send email
                 $message = "你好，".$name."/r/n肯特育园密码已重置为 ".$reset." /r/n请登录后重新设置密码。";
                 if($email!=null){
-                  $result=mail($email, '肯特育园密码重置', $message);
+                  //$result=mail($email, '肯特育园密码重置', $message);
+                  $result=mailSending($email, '肯特育园密码重置', $message);
                   if($result)return 0;
                   else return 10009;
                 }else{

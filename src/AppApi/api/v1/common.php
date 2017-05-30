@@ -50,6 +50,31 @@ function rspData($ret, $data = ""){
     return json_encode($ar_ret);
 }
 
+function mailSending($mailAddr, $bt, $nr)
+{
+    global $MAIL_HOST;
+    global $MAIL_USERNAME;
+    global $MAIL_PASSWORD;
+    global $MAIL_FROM;
+    $mail = new PHPMailer();
+    $mail->IsSMTP(); // 设置使用smtp
+    $mail->CharSet = 'UTF-8';
+    $mail->SMTPAuth = true; // 开启认证
+    $mail->Host = $MAIL_HOST;
+    $mail->Username = $MAIL_USERNAME;
+    $mail->Password = $MAIL_PASSWORD;
+    $mail->From = $MAIL_FROM;
+    $mail->FromName = "管理员"; // 发件人称呼
+    $mail->AddAddress($mailAddr); // 接收邮箱
+    $mail->AddReplyTo("", "");
+    $mail->Subject = $bt; // 邮件标题
+    $mail->Body = $nr; // 邮件内容
+    if (! $mail->Send())
+        return false;
+
+    return true;
+}
+
 function redirectWechat($code, $app_id, $secret, $app, $redis)
 {
     $response = $app->response();
