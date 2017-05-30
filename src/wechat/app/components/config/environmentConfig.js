@@ -6,7 +6,7 @@
             'serverUrl': 'http://wx.zxing-tech.cn/api/v1/',
             'eshopApiUrl': 'http://api.mall.zxing-tech.cn/v2/',
             'dfsUrl': 'http://wx.zxing-tech.cn/',
-            'buildID': '20170520v1',
+            'buildID': '20170528v1',
             'ENVIRONMENT':'release'
         });
 }());

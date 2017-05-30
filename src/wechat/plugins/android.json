@@ -16,22 +16,16 @@
         "cordova-plugin-cache-clear": {
             "PACKAGE_NAME": "com.trusteeship"
         },
-        "cordova-plugin-whitelist": {
+        "cordova-plugin-camera": {
             "PACKAGE_NAME": "com.trusteeship"
         },
-        "cordova-plugin-splashscreen": {
+        "cordova-plugin-compat": {
             "PACKAGE_NAME": "com.trusteeship"
         },
         "cordova-plugin-console": {
             "PACKAGE_NAME": "com.trusteeship"
         },
-        "cordova-plugin-camera": {
-            "PACKAGE_NAME": "com.trusteeship"
-        },
         "cordova-plugin-device": {
-            "PACKAGE_NAME": "com.trusteeship"
-        },
-        "cordova-plugin-media-capture": {
             "PACKAGE_NAME": "com.trusteeship"
         },
         "cordova-plugin-file-transfer": {
@@ -40,11 +34,17 @@
         "cordova-plugin-image-picker": {
             "PACKAGE_NAME": "com.trusteeship"
         },
-        "cordova-plugin-compat": {
+        "cordova-plugin-media-capture": {
+            "PACKAGE_NAME": "com.trusteeship"
+        },
+        "cordova-plugin-splashscreen": {
             "PACKAGE_NAME": "com.trusteeship"
         },
         "cordova-plugin-wechat": {
             "WECHATAPPID": "wx3814600bfd67bfe6",
+            "PACKAGE_NAME": "com.trusteeship"
+        },
+        "cordova-plugin-whitelist": {
             "PACKAGE_NAME": "com.trusteeship"
         }
     },

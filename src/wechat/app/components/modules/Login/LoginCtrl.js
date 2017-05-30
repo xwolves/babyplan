@@ -8,7 +8,7 @@
             vm.isDev = Constants.ENVIRONMENT == 'dev' ? true : false;
             vm.type = '2';
             $scope.$on('$ionicView.beforeEnter', validate);
-            vm.user = { userId: 18603070911, password: "82267049" }
+            //vm.user = { userId: 18603070911, password: "82267049" }
             function validate() {
                 if (Session.getData('userId') && Session.getData('token') && Session.getData('userId') != '-1') {
                     //AuthService.setSession(response.data.uid, response.data.token, response.data.eshop, response.data.type);
@@ -34,14 +34,15 @@
                             //StateService.clearAllAndGo(AuthService.getNextPath());
 
                             //登录ESHOP
-                            eshopService.signin(user.userId, user.password).then(function (data) {
+                            eshopService.signin(response.data.uid, user.password).then(function (data) {
                                 AuthService.setSession(response.data.uid, response.data.token, data, response.data.type);
                                 StateService.clearAllAndGo(AuthService.getNextPath());
                             }, function (ex) {
                                 MessageToaster.error(ex.error);
                             });
                         } else {
-                            MessageToaster.error(response.error);
+                            //MessageToaster.error(response.error);
+                            MessageToaster.error("帐号或密码不正确");
                         }
                     },
                     function (error) {
@@ -52,6 +53,11 @@
                 } else {
                     MessageToaster.error("请输入正确账号密码");
                 }
+            }
+
+            vm.reset = function(){
+
+              StateService.go("resetPsw");
             }
 
             vm.visit = function () {

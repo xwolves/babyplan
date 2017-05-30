@@ -1,0 +1,16 @@
+<ion-view view-title="忘记密码">
+    <!-- <ion-nav-buttons side="left">
+        <a class="button button-icon icon ion-ios-arrow-back" ng-click="vm.back()"></a>
+    </ion-nav-buttons> -->
+    <ion-content>
+            <form id="loginForm" name="loginForm" >
+                <div class="list">
+                    <label class="item item-input">
+                        <span class="input-label">帐号</span>
+                        <input required type="number" ng-model="vm.id" placeholder="帐号／手机号码">
+                    </label>
+                </div>
+            </form>
+            <button class="button button-block button-positive" ng-click="vm.reset()">重置密码</button>
+    </ion-content>
+</ion-view>

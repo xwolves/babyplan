@@ -17,7 +17,7 @@
             vm.limit=30;
             vm.canLoadMore=[true,true,true];
             $scope.$on('$ionicView.afterEnter', activate);
-
+            vm.steam=1;
             function activate() {
                 vm.activated = true;
                 vm.version = Constants.buildID;
@@ -36,13 +36,13 @@
                 //vm.getChildrenInfo(AuthService.getLoginID(),vm.offset,vm.limit);
                 //vm.getChildren();
                 vm.getChildrenDeposit();
-                var steam=Session.getData('steam');
+                vm.steam=Session.getData('steam');
 
-                if(steam===null){
-                  steam=1;
-                  console.log('steam = '+steam);
+                if(vm.steam===null){
+                  vm.steam=1;
+                  console.log('steam = '+vm.steam);
                 }
-                vm.changeSteam(steam);
+                vm.changeSteam(vm.steam);
             };
 
             vm.changeSteam = function(index){

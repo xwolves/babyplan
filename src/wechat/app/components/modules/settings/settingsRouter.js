@@ -14,5 +14,11 @@
           controller: 'settingsCtrl',
           controllerAs: 'vm'
         })
+        .state('changePsw', {
+          url: "/changePsw",
+          templateUrl: 'settings/changePsw.html',
+          controller: 'changePswCtrl',
+          controllerAs: 'vm'
+        })
   }
 }());

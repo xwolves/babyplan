@@ -46,5 +46,9 @@
             vm.back=function(){
                 StateService.back();
             };
+
+            vm.changePsw=function(){
+                StateService.go('changePsw');
+            };
         });
 }());

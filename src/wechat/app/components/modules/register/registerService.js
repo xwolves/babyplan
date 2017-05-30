@@ -37,7 +37,8 @@
         "name": user.name,
         "sex": user.gendar,
         "mobile": user.mobile,
-        "password" : user.password
+        "password" : user.password,
+        "email":user.email
       };
       var url = Constants.serverUrl + 'account/register/parent';
       return $http({

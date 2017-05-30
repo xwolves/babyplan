@@ -39,6 +39,8 @@
           }else if(next.url.indexOf('register')>0){
               //未绑定用户者,进入注册绑定页面
               console.log("register");
+          }else if(next.url.indexOf('resetPsw')>0){
+              console.log("resetPsw");
           }else{
             if (Session.getData('userId') && Session.getData('token')) {
                 //login successed

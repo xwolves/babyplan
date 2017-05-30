@@ -1,0 +1,29 @@
+<ion-view view-title="修改密码">
+    <ion-content>
+
+        <div class="list">
+
+                <label class="item item-input item-input-right-align">
+                    <span class="input-label">原始密码</span>
+                    <!-- ng-minlength="8" -->
+                    <input type="password" ng-model="vm.originPsw" required>
+                </label>
+                <label class="item item-input item-input-right-align">
+                    <span class="input-label">新密码</span>
+                    <!-- ng-minlength="8" -->
+                    <input type="password" ng-model="vm.password" required>
+                </label>
+                <label class="item item-input item-input-right-align">
+                    <span class="input-label">密码确认</span>
+                    <input type="password" ng-model="vm.pswConfirm" required>
+                </label>
+
+                <div class="padding">
+                    <button class="button button-block button-positive" ng-click="vm.changePsw()">
+                        更&nbsp;&nbsp;&nbsp;&nbsp;新
+                    </button>
+                    <p style="color: red" ng-show="vm.error">{{vm.error}}</p>
+                </div>
+        </div>
+    </ion-content>
+</ion-view>

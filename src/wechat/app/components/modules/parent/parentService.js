@@ -4,12 +4,13 @@
   angular.module('parentService', [])
     .factory('parentService', parentService);
 
-  function parentService( $q, $http, Constants, ResultHandler) {
+  function parentService( $q, $http, Session, Constants, ResultHandler) {
     'ngInject';
     var service = {
       queryParent:queryParent,
       updateParent:updateParent,
-      queryChildren:queryChildren
+      queryChildren:queryChildren,
+      resetPsw:resetPsw
     };
 
     //-----HTTP Header => Authorization: Bearer-{$token}-----//
@@ -28,19 +29,19 @@
     //  }
     //}
     function queryParent(id) {
-      console.log($http.defaults.headers);
-      var url = Constants.serverUrl + 'account/query/parent/'+id;
-      return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
+        console.log($http.defaults.headers);
+        var url = Constants.serverUrl + 'account/query/parent/'+id;
+        return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
     };
 
     function updateParent(data) {
         var url = Constants.serverUrl + 'account/parent/' + data.uid;
-      return $http({
-        method: 'post',
-        url: url,
-        data: data
-      }).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
-      };
+        return $http({
+            method: 'post',
+            url: url,
+            data: data
+        }).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
+    };
 
 
 
@@ -64,6 +65,18 @@
     function queryChildren(id) {
       var url = Constants.serverUrl + 'account/query/parentChildren/'+id;
       return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
+    };
+
+    function resetPsw(id){
+      var authInfo = JSON.parse(Session.getData("eshop_auth"));
+      console.log(authInfo);
+      var data = {eshopToken:authInfo.token};
+      var url = Constants.serverUrl + 'account/resetPsw/'+id;
+      return $http({
+        method: 'post',
+        url: url,
+        data: data
+      }).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
     };
 
     return service;

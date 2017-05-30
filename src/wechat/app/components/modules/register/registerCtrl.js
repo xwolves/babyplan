@@ -1,7 +1,7 @@
 (function() {
     "use strict";
     angular.module('registerCtrl', [])
-        .controller('registerCtrl', function ($scope, Constants, StateService, Session, AuthService, registerService, LoginService, eshopService,$stateParams) {
+        .controller('registerCtrl', function ($scope, Constants, StateService, Session, AuthService, registerService, LoginService, eshopService,$stateParams,MessageToaster) {
             'ngInject';
             var vm = this;
             vm.activated = false;
@@ -9,7 +9,7 @@
             vm.isLock=false;
             vm.org={mobile:'', password:''};
             //微信uid的初始化
-            vm.user={ gendar:'1', name:'', mobile:'', password:'', pswConfirm:'', wechat:AuthService.getWechatId()};
+            vm.user={ gendar:'1', name:'', mobile:'', password:'', pswConfirm:'', wechat:AuthService.getWechatId(), email:''};
             vm.error=null;
             vm.isParent=false;
             $scope.$on('$ionicView.afterEnter', activate);
@@ -54,6 +54,17 @@
                     vm.error = '手机号码必须填写';
                 }
             });
+            $scope.$watch('vm.user.email', function(newValue, oldValue) {
+                if(vm.user.email!=undefined) {
+                    if (vm.user.email.search(/^\w+((-\w+)|(\.\w+))*\@[A-Za-z0-9]+((\.|-)[A-Za-z0-9]+)*\.[A-Za-z0-9]+$/) != -1) {
+                        vm.error = null;
+                    } else {
+                        vm.error = '电子邮箱格式不对';
+                    }
+                }else{
+                    vm.error = '电子邮箱必须填写，用于找回密码';
+                }
+            });
             $scope.$watch('vm.user.password', function(newValue, oldValue) {
                 if(vm.user.password!=undefined) {
                     if (vm.user.password.length < 6) {
@@ -85,6 +96,7 @@
                 else {
                     if(vm.user.password.length >= 6 && vm.user.pswConfirm.length >= 6
                         && vm.user.name.length > 0 && vm.user.mobile.length == 11
+                        && vm.user.email.length > 0 && vm.user.email.length > 3
                         && vm.user.password == vm.user.pswConfirm) return true;
                     else vm.error = '数据未填完哦!';
                 }
@@ -200,18 +212,22 @@
                 //先注册
                 vm.user.weixinno ='';
                 vm.user.wechat =  '';
-                
+
                 registerService.registerParent(vm.user).then(function (data) {
                     console.log(data);
                     if (data.errno == 0) {
-                        eshopService.signup(vm.user.mobile, vm.user.password, vm.user.mobile + '@163.com').then(function (data) {
+                        eshopService.signup(vm.user.mobile, vm.user.password, vm.user.email).then(function (data) {
                             login(vm.user.wechat, vm.roleType);
                         }, function (ex) {
                             MessageToaster.error(ex.error);
                         })
-                     
                     } else {
-                        vm.error = data.error;
+                        //vm.error = data.error;
+                        if (data.errno == 10008) {
+                          MessageToaster.error("手机号码已注册过");
+                        }else{
+                          MessageToaster.error("注册不成功");
+                        }
                     }
                 });
 
