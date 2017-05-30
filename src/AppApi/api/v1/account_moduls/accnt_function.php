@@ -369,7 +369,7 @@ class Account{
         }
     }
 
-    public function resetPsw($accountid){
+    public function resetPsw($accountid,$token){
         try{
             //random psw
             $reset = substr($this->guid(), 0, 8);
@@ -383,7 +383,7 @@ class Account{
             if($stmt->rowCount() <= 0)
                 return 10002;
             //get email
-            $sql_str = "SELECT name, accountid, email FROM tb_accnt_parent WHERE ( mobile = :accountid or accountid = :accountid )";
+            $sql_str = "SELECT name, accountid, email, password FROM tb_accnt_parent WHERE ( mobile = :accountid or accountid = :accountid )";
             $stmt = $this->DB->prepare($sql_str);
             $stmt->bindParam(":accountid", $accountid, PDO::PARAM_STR);
             if(!$stmt->execute())
@@ -393,13 +393,19 @@ class Account{
             if($count > 0){
                 $name = $row['name'];
                 $email = $row['email'];
+                $password = $row['password'];
                 //send email
-                $message = "你好，".$name."/r/n肯特育园密码已重置为 ".$reset." /r/n请登录后重新设置密码。";
+                $message = "你好，".$name."\r\n肯特育园密码已重置为 ".$reset."\r\n请登录后重新设置密码。";
                 if($email!=null){
                   //$result=mail($email, '肯特育园密码重置', $message);
                   $result=mailSending($email, '肯特育园密码重置', $message);
-                  if($result)return 0;
-                  else return 10009;
+                  if($result){
+                    //eshop change password
+                    $json=array('old_password' => $password, 'password' => $reset);
+                    $eshopData=httpPost("http://api.mall.zxing-tech.cn/v2/ecapi.user.password.update", json_encode($json), $token);
+                    var_dump($eshopData);
+                    return 0;
+                  }else return 10009;
                 }else{
                   return 10010;
                 }

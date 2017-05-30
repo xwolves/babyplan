@@ -50,6 +50,28 @@ function rspData($ret, $data = ""){
     return json_encode($ar_ret);
 }
 
+function  httpPost($url,$jsonStr,$token){
+      $curl = curl_init();
+	    curl_setopt($curl, CURLOPT_URL, $url);
+	    //curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 0);
+	    //curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 2);
+	    curl_setopt($curl, CURLOPT_USERAGENT, $_SERVER['HTTP_USER_AGENT']);
+	    curl_setopt($curl, CURLOPT_FOLLOWLOCATION, 1);
+	    curl_setopt($curl, CURLOPT_AUTOREFERER, 1);
+	    curl_setopt($curl, CURLOPT_POST, 1);
+	    curl_setopt($curl, CURLOPT_POSTFIELDS, $jsonStr);
+	    curl_setopt($curl, CURLOPT_TIMEOUT, 30);
+	    curl_setopt($curl, CURLOPT_HEADER, array('X-ECAPI-Authorization' => $token ));
+	    curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+	    $data = curl_exec($curl);
+	    if (curl_errno($curl)) {
+	        echo 'Errno'.curl_error($curl);
+	    }
+	    curl_close($curl);
+        return $data;
+}
+
+
 function mailSending($mailAddr, $bt, $nr)
 {
     global $MAIL_HOST;

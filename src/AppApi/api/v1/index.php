@@ -1690,10 +1690,13 @@ $app->get(
 $app->post(
     '/account/resetPsw/:parent_accnt_id',
     function ($parent_accnt_id) use ($app, $sql_db, $redis){
-        $rsp_data = array();
         $response = $app->response;
+        $request = $app->request->getBody();
+        //$params = $app->request->params();
+        $a_request = json_decode($request, true);
+        $token=$a_request[eshopToken];
         $info = new Account($sql_db);
-        $ret = $info->resetPsw($parent_accnt_id);
+        $ret = $info->resetPsw($parent_accnt_id,$token);
         $response->setBody(rspData($ret));
     }
 );
