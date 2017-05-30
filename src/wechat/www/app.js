@@ -771,7 +771,7 @@ app.filter('statusChange', function () {
             'serverUrl': 'http://wx.zxing-tech.cn/api/v1/',
             'eshopApiUrl': 'http://api.mall.zxing-tech.cn/v2/',
             'dfsUrl': 'http://wx.zxing-tech.cn/',
-            'buildID': '20170520v1',
+            'buildID': '20170528v1',
             'ENVIRONMENT':'release'
         });
 }());
@@ -932,12 +932,13 @@ var app = angular.module('BaiduMapDirective', []);
        * @param {*} clickCallback
        * @param {*} poInfo
        */
-      function addMapMarker(map, point, clickCallback, poInfo, icon) {
+      function addMapMarker(map, point, clickCallback, poInfo, icon,markText) {
           var mk;
 
           if (!!icon) {
-            
+              var label = new BMap.Label(markText, { offset: new BMap.Size(-15, 25) });
               mk = new BMap.Marker(point, { icon: icon });  // 创建标注
+              mk.setLabel(label)
           } else {
               mk = new BMap.Marker(point);
           }
@@ -1203,7 +1204,7 @@ var app = angular.module('BaiduMapDirective', []);
                           fillColor: "orange",//填充颜色
                           fillOpacity: 0.8//填充透明度
                       });
-                      addMapMarker(scope.map, scope.currentPosition, openInfoWindow, null, symbol);
+                      addMapMarker(scope.map, scope.currentPosition, openInfoWindow, null, symbol,'我的位置');
                       scope.currentPosition && scope.map.panTo(scope.currentPosition);
                   }, 20);
               };
@@ -1380,7 +1381,7 @@ var app = angular.module('BaiduMapDirective', []);
                               fillColor: "orange",//填充颜色
                               fillOpacity: 0.8//填充透明度
                           });
-                          var marker = addMapMarker(map, p, openInfoWindow, null, symbol);
+                          var marker = addMapMarker(map, p, openInfoWindow, null, symbol,'我的位置');
                           // 设置为中心
                           map.centerAndZoom(p, 16);
 
@@ -1450,6 +1451,40 @@ Date.prototype.Format = function(fmt) {
     return fmt;
 };
 (function() {
+    "use strict";
+    angular.module('modules', [
+        'LoginModule',
+        'WxLoginModule',
+        'childrenSteamModule',
+        'registerModule',
+        'tabsModule',
+        'childrenModule',
+        'nearbyModule',
+        'orderModule',
+        'profileModule',
+        'organizerModule',
+        'messageModule',
+        'parentModule',
+        'childrenSettingModule',
+        'teacherModule',
+        'teacherSettingModule',
+        'depositChildrenModule',
+        'vipBuyModule',
+        'vipRecordModule',
+        'vipTipsModule',
+        'commentModule',
+        'exitModule',
+        'photoModule',
+        'MapModule',
+        'eshopEntryModule',
+        'estimateModule',
+        'helpModule',
+        'settingsModule'
+    ]);
+
+}());
+
+(function() {
   "use strict";
   angular.module('tools', []).service('tools', tools);
     function tools() {
@@ -1499,102 +1534,82 @@ Date.prototype.Format = function(fmt) {
 
 (function() {
     "use strict";
-    angular.module('modules', [
-        'LoginModule',
-        'WxLoginModule',
-        'childrenSteamModule',
-        'registerModule',
-        'tabsModule',
-        'childrenModule',
-        'nearbyModule',
-        'orderModule',
-        'profileModule',
-        'organizerModule',
-        'messageModule',
-        'parentModule',
-        'childrenSettingModule',
-        'teacherModule',
-        'teacherSettingModule',
-        'depositChildrenModule',
-        'vipBuyModule',
-        'vipRecordModule',
-        'vipTipsModule',
-        'commentModule',
-        'exitModule',
-        'photoModule',
-        'MapModule',
-        'eshopEntryModule',
-        'estimateModule',
-        'helpModule',
-        'settingsModule'
-    ]);
-
-}());
-
-(function() {
-    "use strict";
     angular.module('LoginModule', [
         'LoginCtrl',
+        'resetPswCtrl',
         'LoginRouter',
         'LoginService'
     ])
 }());
 
-(function() {
+(function () {
     "use strict";
     angular.module('LoginCtrl', [])
-        .controller('LoginCtrl', function(Constants, AuthService, MessageToaster, LoginService, $timeout, $scope, Session, $stateParams, StateService, $ionicModal, Role,$http) {
+        .controller('LoginCtrl', function (Constants, AuthService, MessageToaster, LoginService, $timeout, $scope, Session, $stateParams, StateService, $ionicModal, Role, $http, eshopService) {
             'ngInject';
 
             var vm = this;
             vm.isDev = Constants.ENVIRONMENT == 'dev' ? true : false;
             vm.type = '2';
             $scope.$on('$ionicView.beforeEnter', validate);
-            vm.user={userId:18603070911,password:"82267049"}
+            //vm.user = { userId: 18603070911, password: "82267049" }
             function validate() {
-                if (Session.getData('userId') && Session.getData('token') && Session.getData('userId')!='-1') {
+                if (Session.getData('userId') && Session.getData('token') && Session.getData('userId') != '-1') {
                     //AuthService.setSession(response.data.uid, response.data.token, response.data.eshop, response.data.type);
                     $http.defaults.headers.common.token = Session.getData('token');
                     StateService.clearAllAndGo(AuthService.getNextPath());
-                }else{
+                } else {
                     console.log("normal login");
                 }
             }
 
             //WeuiModalLoading
-            vm.login=function(user){
+            vm.login = function (user) {
                 //test
                 //AuthService.setSession('1', '123', '1');
                 //StateService.go(AuthService.getNextPath());
                 //test
-                if(user){
-                  LoginService.login(user.userId, user.password).then(function(response) {
-                      console.log(response);
-                      if(response.errno==0){
-                        //MessageToaster.success(response.message);
-                        AuthService.setSession(response.data.uid, response.data.token, response.data.eshop, response.data.type);
-                        StateService.clearAllAndGo(AuthService.getNextPath());
-                      }else{
-                        MessageToaster.error(response.error);
-                      }
-                  },
-                  function(error) {
-                    MessageToaster.error(error);
-                  }).finally(function() {
-                      //WeuiModalLoading.hide();
-                  });
-                }else{
+                if (user) {
+                    LoginService.login(user.userId, user.password).then(function (response) {
+                        console.log(response);
+                        if (response.errno == 0) {
+                            //MessageToaster.success(response.message);
+                            //AuthService.setSession(response.data.uid, response.data.token, response.data.eshop, response.data.type);
+                            //StateService.clearAllAndGo(AuthService.getNextPath());
+
+                            //登录ESHOP
+                            eshopService.signin(response.data.uid, user.password).then(function (data) {
+                                AuthService.setSession(response.data.uid, response.data.token, data, response.data.type);
+                                StateService.clearAllAndGo(AuthService.getNextPath());
+                            }, function (ex) {
+                                MessageToaster.error(ex.error);
+                            });
+                        } else {
+                            MessageToaster.error(response.error);
+                        }
+                    },
+                    function (error) {
+                        MessageToaster.error(error);
+                    }).finally(function () {
+                        //WeuiModalLoading.hide();
+                    });
+                } else {
                     MessageToaster.error("请输入正确账号密码");
                 }
             }
 
-            vm.visit = function() {
-              AuthService.setSession( '-1', '-1', '-1', '-1' );
-              StateService.clearAllAndGo(AuthService.getNextPath());
+            vm.reset = function(){
+
+              StateService.go("resetPsw");
             }
 
-            vm.register=function(){
-              StateService.clearAllAndGo("register",{type:vm.type});
+            vm.visit = function () {
+                AuthService.setSession('-1', '-1', '-1', '-1');
+                StateService.clearAllAndGo(AuthService.getNextPath());
+            }
+
+            vm.register = function () {
+                StateService.clearAllAndGo("register", { type: vm.type });
             }
 
 
@@ -1616,7 +1631,14 @@ Date.prototype.Format = function(fmt) {
       templateUrl: 'Login/login.html',
       controller: 'LoginCtrl',
       controllerAs: 'vm'
+    })
+    .state('resetPsw', {
+      url: "/resetPsw",
+      templateUrl: 'Login/resetPsw.html',
+      controller: 'resetPswCtrl',
+      controllerAs: 'vm'
     });
+    ;
   }
 }());
 
@@ -1651,6 +1673,346 @@ Date.prototype.Format = function(fmt) {
                 data: data
             }).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
         }
+
+        return service;
+
+
+    }
+
+}());
+
+(function () {
+    "use strict";
+    angular.module('resetPswCtrl', [])
+        .controller('resetPswCtrl', function (Constants, AuthService, MessageToaster, LoginService, $timeout, $scope, Session, $stateParams, StateService, $ionicModal, Role, $http, parentService) {
+            'ngInject';
+
+            var vm = this;
+            $scope.$on('$ionicView.beforeEnter', validate);
+            function validate() {
+              vm.id="";
+            }
+
+            vm.back = function () {
+                StateService.back();
+            }
+
+            vm.reset = function () {
+              if(vm.id!=""){
+                parentService.resetPsw(vm.id).then(function(data) {
+                    console.log(data);
+                    if(data.errno==0){
+                        StateService.back();
+                        MessageToaster.info("请登录到你的邮箱查询你的新密码");
+                    }else{
+                        if(data.errno==10009){
+                          MessageToaster.error("电子邮件没法发出");
+                        }else if(data.errno==10010){
+                          MessageToaster.error("帐号未设置电子邮箱，无法重置密码");
+                        }else if(data.errno==10002){
+                          MessageToaster.error("无此帐号");
+                        }else{
+                          MessageToaster.error(data.error);
+                        }
+                    }
+                });
+              }else{
+                MessageToaster.error("帐号和密码不能为空");
+              }
+            }
+        });
+}());
+
+(function() {
+    "use strict";
+    angular.module('WxLoginModule', [
+        'WxLoginCtrl',
+        'WxLoginRouter',
+        'WxLoginService'
+    ]).run(function($rootScope, Session, StateService,$location,tools) {
+        $rootScope.$on('$stateChangeStart', function(event, next) {
+          console.log("stateChangeStart");
+          console.log(next);
+
+          if (next.url.indexOf('wxlogin')>0 ) {
+              console.log("wxlogin");
+              //alert($location.absUrl());
+              var url = $location.absUrl();
+              //获取ticket参数，因为angualr的路径不规范，会出现http://10.20.68.73:8080/casOauth/?ticket=ST-16-HzIjcAlxbKvlyJQAX2XI-cas01.sustc.edu.cn#/login，无法用公共方法获取
+              var start = url.indexOf('user=') + 5;
+              var end = url.indexOf('&type=');
+              if(!start<=5 && end <= 0){
+                StateService.clearAllAndGo('login');
+              }else{
+                //如果是http://10.20.68.73:8080/casOauth?ticket=ST-16-HzIjcAlxbKvlyJQAX2XI-cas01.sustc.edu.cn这种情况
+                //或者是是http://10.20.68.73:8080/casOauth/#/login?ticket=ST-16-HzIjcAlxbKvlyJQAX2XI-cas01.sustc.edu.cn这种情况
+                if (end == -1 || end < start) end = url.length;
+                console.log("wxlogin 1" + start + " - " + end);
+                var myUser = url.toString().substring(start, end);
+                console.log("get user = " + myUser);
+
+                var start = url.indexOf('&type=') + 6;
+                var end = url.indexOf('#/wxlogin');
+                if (end == -1 || end < start) end = url.length;
+                console.log("wxlogin 2" + start + " - " + end);
+                var myType = url.toString().substring(start, end);
+                console.log("get type = " + myType);
+                StateService.clearAllAndGo('wxlogin',{user:myUser,type:myType});
+              }
+          }else if(next.url.indexOf('login')>0){
+              console.log("login");
+          }else if(next.url.indexOf('register')>0){
+              //未绑定用户者,进入注册绑定页面
+              console.log("register");
+          }else if(next.url.indexOf('resetPsw')>0){
+              console.log("resetPsw");
+          }else{
+            if (Session.getData('userId') && Session.getData('token')) {
+                //login successed
+            } else {
+                console.log("user not login with ");
+                event.preventDefault();
+                if (tools.getAgent() != 'wx')
+                    StateService.clearAllAndGo('login');
+                else
+                    StateService.clearAllAndGo('wxlogin');
+            }
+          }
+        });
+
+    });
+
+}());
+
+(function() {
+    "use strict";
+    angular.module('WxLoginCtrl', [])
+        .controller('WxLoginCtrl', function(Constants, AuthService, MessageToaster, LoginService, $timeout, $scope, Session, $stateParams, StateService, $ionicModal, Role) {
+            'ngInject';
+
+            var vm = this;
+            vm.wxlogin = wxlogin;
+            vm.isDev = Constants.ENVIRONMENT == 'dev' ? true : false;
+            $scope.$on('$ionicView.beforeEnter', validate);
+
+            function validate() {
+                vm.user = $stateParams.user;
+                vm.type = $stateParams.type;
+                console.log("vm.type = "+vm.type+" with "+vm.user);
+            /////////////////////////////////////////////////////////
+            //    vm.user = "o_Nkcw4CsZh5dbE2v8XVLUxfd96A";//"oVyGDuNPkAbtljfJKusP4oaCrYG0";//test
+            //    vm.type = 2;//test
+            ////////////////////////////////////////////////////////
+                //MessageToaster.info('user = '+vm.user);
+                if (vm.user) {
+                    //login failed
+                    //MessageToaster.info('logining....');
+                    vm.info = "正在登录，请稍后...";
+                    vm.showLoginModal = showLoginModal;
+                    //vm.roleList = [{type:1,user:'1111'}];//test
+                    vm.showChooseModal = showChooseModal;
+                    vm.login = login;
+                    vm.select = selectChoose;
+                    //获取到微信uid后先尝试登陆对应的用户类型
+                    if(vm.type){
+                        vm.wxlogin(vm.user,vm.type);
+                    }else{
+                        vm.showChooseModal();
+                    }
+                }
+            }
+
+            function wxlogin(userid,type) {
+                console.log(userid+"  type = "+type);
+                //MessageToaster.info('准备登录');
+                LoginService.wxLogin(userid,type).then(function(response) {
+                    console.log(response);
+                    if(response.errno==0) {
+                        var result = response.data;
+                        if (result instanceof Array && result.length > 1) {
+                            //modal select type
+                            vm.roleList=result;
+                            //MessageToaster.info("have select "+result.length);
+                            vm.showChooseModal();
+                        }else{
+                            var u=result[0];
+                            if (u.uid != null && u.token != null && u.type != null) {
+                                AuthService.setSession(u.uid, u.token, u.eshop, u.type,userid);
+                                StateService.clearAllAndGo(AuthService.getNextPath());
+                            }
+                        }
+                    }else{
+                        if(response.errno==12004){
+                            //no data found
+                            AuthService.setSession(null, null, null, Role.unknown,userid);
+
+                            StateService.clearAllAndGo("register",{type:vm.type});
+                        }
+                        //MessageToaster.error(response.error);
+                    }
+                });
+            };
+
+            //WeuiModalLoading
+            function login(user) {
+                //WeuiModalLoading.show();
+                //test
+                AuthService.setSession('1', '123', '1');
+                StateService.go(AuthService.getNextPath());
+                //test
+
+                LoginService.login(user.userId, user.password).then(function(response) {
+                    if (vm.modal)
+                        vm.closeDetailsModal();
+                    MessageToaster.success(response.message);
+                    AuthService.setSession(response.data.uid, response.data.token,response.data.eshop,response.data.type);
+                    StateService.clearAllAndGo(AuthService.getNextPath());
+                }).finally(function() {
+                    //WeuiModalLoading.hide();
+                });
+            }
+
+            function showLoginModal() {
+                $ionicModal.fromTemplateUrl('Login/LoginModal.html', {
+                    scope: $scope,
+                    animation: 'slide-in-up'
+                }).then(function(modal) {
+                    vm.modal = modal;
+                    vm.modal.show();
+                });
+
+                vm.closeDetailsModal = function() {
+                    vm.modal.remove();
+                };
+                $scope.$on('$ionicView.leave', function() {
+                    vm.modal.remove();
+                });
+            }
+
+            function showChooseModal() {
+                $ionicModal.fromTemplateUrl('Login/ChooseModal.html', {
+                    scope: $scope,
+                    animation: 'slide-in-up'
+                }).then(function(modal) {
+                    vm.cmodal = modal;
+                    vm.cmodal.show();
+                });
+
+                vm.closeChooseModal = function() {
+                    vm.cmodal.remove();
+                };
+                $scope.$on('$ionicView.leave', function() {
+                    vm.cmodal.remove();
+                });
+            }
+
+            function selectChoose(){
+                if(vm.choose!=null){
+                    //know user choose then login agin with type
+                    wxlogin(vm.user, vm.choose);
+                }
+            }
+        });
+}());
+
+(function() {
+  'use strict';
+
+  angular.module('WxLoginRouter', [])
+    .config(wxLoginRouter);
+
+
+  function wxLoginRouter($stateProvider,$urlRouterProvider) {
+    'ngInject';
+    $stateProvider
+    .state('wxlogin', {
+      url: "/wxlogin?:user&:type",
+      params:{
+        user:null,
+        type:0
+      },
+      templateUrl: 'WxLogin/wxlogin.html',
+      controller: 'WxLoginCtrl',
+      controllerAs: 'vm'
+    });
+    // $urlRouterProvider.when('', '/wxlogin');
+    //$urlRouterProvider.otherwise('/wxlogin');
+    $urlRouterProvider.otherwise(function($injector, $location) {
+          //console.log("Could not find " + $location);
+          $location.path('/login');
+    });
+
+  }
+}());
+
+(function() {
+    'use strict';
+
+    angular.module('WxLoginService', [])
+        .factory('WxLoginService', wxLoginService);
+
+    function wxLoginService($q, $http, ResultHandler, Constants) {
+        'ngInject';
+        var service = {
+            login: login,
+            logout: logout,
+            wxLogin: wxLogin
+        };
+
+        function logout() {
+
+        }
+
+        function login(userId, password) {
+            var data = {
+                id: md5(userId),
+                psw: md5(password)
+            };
+            var url = Constants.serverUrl + 'login';
+            return $http({
+                method: 'post',
+                url: url,
+                data: data
+            }).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
+        }
+
+        //POST /api/v1/login
+        //Request Body:
+        //{
+        //    "weixinno": "xxxxxx"
+        //}
+        //Response Body:
+        //{
+        //    "errno":0,
+        //    "error":"",
+        //    "data":{
+        //        "token":"fdddsdsdddsssssdfff",
+        //        "uid":"用户id",
+        //        "type":"用户类型"   uid的第一位数
+        //    }
+        //}
+        function wxLogin(wxId,type) {
+            var data = {
+                weixinno: wxId
+            };
+            var end="";
+            if(type!=null){
+                //console.log("include type "+type);
+                data.type=type;
+                end="?type="+type;
+            }
+            var url = Constants.serverUrl + 'login'+end;
+            return $http({
+                method: 'post',
+                url: url,
+                data: data
+            }).then(function (response) {
+                return response.data;
+            }, function (error) {
+                return $q.reject(error);
+            });
+        }
+
 
         return service;
 
@@ -2068,302 +2430,6 @@ Date.prototype.Format = function(fmt) {
 
   }
 
-
-}());
-
-(function() {
-    "use strict";
-    angular.module('WxLoginModule', [
-        'WxLoginCtrl',
-        'WxLoginRouter',
-        'WxLoginService'
-    ]).run(function($rootScope, Session, StateService,$location,tools) {
-        $rootScope.$on('$stateChangeStart', function(event, next) {
-          console.log("stateChangeStart");
-          console.log(next);
-
-          if (next.url.indexOf('wxlogin')>0 ) {
-              console.log("wxlogin");
-              //alert($location.absUrl());
-              var url = $location.absUrl();
-              //获取ticket参数，因为angualr的路径不规范，会出现http://10.20.68.73:8080/casOauth/?ticket=ST-16-HzIjcAlxbKvlyJQAX2XI-cas01.sustc.edu.cn#/login，无法用公共方法获取
-              var start = url.indexOf('user=') + 5;
-              var end = url.indexOf('&type=');
-              if(!start<=5 && end <= 0){
-                StateService.clearAllAndGo('login');
-              }else{
-                //如果是http://10.20.68.73:8080/casOauth?ticket=ST-16-HzIjcAlxbKvlyJQAX2XI-cas01.sustc.edu.cn这种情况
-                //或者是是http://10.20.68.73:8080/casOauth/#/login?ticket=ST-16-HzIjcAlxbKvlyJQAX2XI-cas01.sustc.edu.cn这种情况
-                if (end == -1 || end < start) end = url.length;
-                console.log("wxlogin 1" + start + " - " + end);
-                var myUser = url.toString().substring(start, end);
-                console.log("get user = " + myUser);
-
-                var start = url.indexOf('&type=') + 6;
-                var end = url.indexOf('#/wxlogin');
-                if (end == -1 || end < start) end = url.length;
-                console.log("wxlogin 2" + start + " - " + end);
-                var myType = url.toString().substring(start, end);
-                console.log("get type = " + myType);
-                StateService.clearAllAndGo('wxlogin',{user:myUser,type:myType});
-              }
-          }else if(next.url.indexOf('login')>0){
-              console.log("login");
-          }else if(next.url.indexOf('register')>0){
-              //未绑定用户者,进入注册绑定页面
-              console.log("register");
-          }else{
-            if (Session.getData('userId') && Session.getData('token')) {
-                //login successed
-            } else {
-                console.log("user not login with ");
-                event.preventDefault();
-                if (tools.getAgent() != 'wx')
-                    StateService.clearAllAndGo('login');
-                else
-                    StateService.clearAllAndGo('wxlogin');
-            }
-          }
-        });
-
-    });
-
-}());
-
-(function() {
-    "use strict";
-    angular.module('WxLoginCtrl', [])
-        .controller('WxLoginCtrl', function(Constants, AuthService, MessageToaster, LoginService, $timeout, $scope, Session, $stateParams, StateService, $ionicModal, Role) {
-            'ngInject';
-
-            var vm = this;
-            vm.wxlogin = wxlogin;
-            vm.isDev = Constants.ENVIRONMENT == 'dev' ? true : false;
-            $scope.$on('$ionicView.beforeEnter', validate);
-
-            function validate() {
-                vm.user = $stateParams.user;
-                vm.type = $stateParams.type;
-                console.log("vm.type = "+vm.type+" with "+vm.user);
-            /////////////////////////////////////////////////////////
-            //    vm.user = "o_Nkcw4CsZh5dbE2v8XVLUxfd96A";//"oVyGDuNPkAbtljfJKusP4oaCrYG0";//test
-            //    vm.type = 2;//test
-            ////////////////////////////////////////////////////////
-                //MessageToaster.info('user = '+vm.user);
-                if (vm.user) {
-                    //login failed
-                    //MessageToaster.info('logining....');
-                    vm.info = "正在登录，请稍后...";
-                    vm.showLoginModal = showLoginModal;
-                    //vm.roleList = [{type:1,user:'1111'}];//test
-                    vm.showChooseModal = showChooseModal;
-                    vm.login = login;
-                    vm.select = selectChoose;
-                    //获取到微信uid后先尝试登陆对应的用户类型
-                    if(vm.type){
-                        vm.wxlogin(vm.user,vm.type);
-                    }else{
-                        vm.showChooseModal();
-                    }
-                }
-            }
-
-            function wxlogin(userid,type) {
-                console.log(userid+"  type = "+type);
-                //MessageToaster.info('准备登录');
-                LoginService.wxLogin(userid,type).then(function(response) {
-                    console.log(response);
-                    if(response.errno==0) {
-                        var result = response.data;
-                        if (result instanceof Array && result.length > 1) {
-                            //modal select type
-                            vm.roleList=result;
-                            //MessageToaster.info("have select "+result.length);
-                            vm.showChooseModal();
-                        }else{
-                            var u=result[0];
-                            if (u.uid != null && u.token != null && u.type != null) {
-                                AuthService.setSession(u.uid, u.token, u.eshop, u.type,userid);
-                                StateService.clearAllAndGo(AuthService.getNextPath());
-                            }
-                        }
-                    }else{
-                        if(response.errno==12004){
-                            //no data found
-                            AuthService.setSession(null, null, null, Role.unknown,userid);
-
-                            StateService.clearAllAndGo("register",{type:vm.type});
-                        }
-                        //MessageToaster.error(response.error);
-                    }
-                });
-            };
-
-            //WeuiModalLoading
-            function login(user) {
-                //WeuiModalLoading.show();
-                //test
-                AuthService.setSession('1', '123', '1');
-                StateService.go(AuthService.getNextPath());
-                //test
-
-                LoginService.login(user.userId, user.password).then(function(response) {
-                    if (vm.modal)
-                        vm.closeDetailsModal();
-                    MessageToaster.success(response.message);
-                    AuthService.setSession(response.data.uid, response.data.token,response.data.eshop,response.data.type);
-                    StateService.clearAllAndGo(AuthService.getNextPath());
-                }).finally(function() {
-                    //WeuiModalLoading.hide();
-                });
-            }
-
-            function showLoginModal() {
-                $ionicModal.fromTemplateUrl('Login/LoginModal.html', {
-                    scope: $scope,
-                    animation: 'slide-in-up'
-                }).then(function(modal) {
-                    vm.modal = modal;
-                    vm.modal.show();
-                });
-
-                vm.closeDetailsModal = function() {
-                    vm.modal.remove();
-                };
-                $scope.$on('$ionicView.leave', function() {
-                    vm.modal.remove();
-                });
-            }
-
-            function showChooseModal() {
-                $ionicModal.fromTemplateUrl('Login/ChooseModal.html', {
-                    scope: $scope,
-                    animation: 'slide-in-up'
-                }).then(function(modal) {
-                    vm.cmodal = modal;
-                    vm.cmodal.show();
-                });
-
-                vm.closeChooseModal = function() {
-                    vm.cmodal.remove();
-                };
-                $scope.$on('$ionicView.leave', function() {
-                    vm.cmodal.remove();
-                });
-            }
-
-            function selectChoose(){
-                if(vm.choose!=null){
-                    //know user choose then login agin with type
-                    wxlogin(vm.user, vm.choose);
-                }
-            }
-        });
-}());
-
-(function() {
-  'use strict';
-
-  angular.module('WxLoginRouter', [])
-    .config(wxLoginRouter);
-
-
-  function wxLoginRouter($stateProvider,$urlRouterProvider) {
-    'ngInject';
-    $stateProvider
-    .state('wxlogin', {
-      url: "/wxlogin?:user&:type",
-      params:{
-        user:null,
-        type:0
-      },
-      templateUrl: 'WxLogin/wxlogin.html',
-      controller: 'WxLoginCtrl',
-      controllerAs: 'vm'
-    });
-    // $urlRouterProvider.when('', '/wxlogin');
-    //$urlRouterProvider.otherwise('/wxlogin');
-    $urlRouterProvider.otherwise(function($injector, $location) {
-          //console.log("Could not find " + $location);
-          $location.path('/login');
-    });
-
-  }
-}());
-
-(function() {
-    'use strict';
-
-    angular.module('WxLoginService', [])
-        .factory('WxLoginService', wxLoginService);
-
-    function wxLoginService($q, $http, ResultHandler, Constants) {
-        'ngInject';
-        var service = {
-            login: login,
-            logout: logout,
-            wxLogin: wxLogin
-        };
-
-        function logout() {
-
-        }
-
-        function login(userId, password) {
-            var data = {
-                id: md5(userId),
-                psw: md5(password)
-            };
-            var url = Constants.serverUrl + 'login';
-            return $http({
-                method: 'post',
-                url: url,
-                data: data
-            }).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
-        }
-
-        //POST /api/v1/login
-        //Request Body:
-        //{
-        //    "weixinno": "xxxxxx"
-        //}
-        //Response Body:
-        //{
-        //    "errno":0,
-        //    "error":"",
-        //    "data":{
-        //        "token":"fdddsdsdddsssssdfff",
-        //        "uid":"用户id",
-        //        "type":"用户类型"   uid的第一位数
-        //    }
-        //}
-        function wxLogin(wxId,type) {
-            var data = {
-                weixinno: wxId
-            };
-            var end="";
-            if(type!=null){
-                //console.log("include type "+type);
-                data.type=type;
-                end="?type="+type;
-            }
-            var url = Constants.serverUrl + 'login'+end;
-            return $http({
-                method: 'post',
-                url: url,
-                data: data
-            }).then(function (response) {
-                return response.data;
-            }, function (error) {
-                return $q.reject(error);
-            });
-        }
-
-
-        return service;
-
-
-    }
 
 }());
 
@@ -2835,7 +2901,7 @@ Date.prototype.Format = function(fmt) {
             vm.limit=30;
             vm.canLoadMore=[true,true,true];
             $scope.$on('$ionicView.afterEnter', activate);
-
+            vm.steam=1;
             function activate() {
                 vm.activated = true;
                 vm.version = Constants.buildID;
@@ -2854,13 +2920,13 @@ Date.prototype.Format = function(fmt) {
                 //vm.getChildrenInfo(AuthService.getLoginID(),vm.offset,vm.limit);
                 //vm.getChildren();
                 vm.getChildrenDeposit();
-                var steam=Session.getData('steam');
+                vm.steam=Session.getData('steam');
 
-                if(steam===null){
-                  steam=1;
-                  console.log('steam = '+steam);
+                if(vm.steam===null){
+                  vm.steam=1;
+                  console.log('steam = '+vm.steam);
                 }
-                vm.changeSteam(steam);
+                vm.changeSteam(vm.steam);
             };
 
             vm.changeSteam = function(index){
@@ -3696,7 +3762,8 @@ Date.prototype.Format = function(fmt) {
   "use strict";
   angular.module('eshopEntryModule', [
     'eshopEntryRouter',
-    'eshopEntryCtrl'
+    'eshopEntryCtrl',
+    'eshopService'
   ]);
 
 }());
@@ -3743,6 +3810,139 @@ Date.prototype.Format = function(fmt) {
       });
   }
 }());
+
+/**
+ * 商城API服务
+ */
+
+angular.module('eshopService', [])
+  .service('eshopService', function ($q, $http, $window, Constants) {
+
+      /**
+        * 注册
+        * @param {*} userName 账号 
+        * @param {*} password 密码 
+        * @param {*} email    邮箱 
+        */
+      function _signup(userName, password, email) {
+          var defer = $q.defer(),
+           apiUrl = Constants.eshopApiUrl + 'ecapi.auth.default.signup';
+
+          var singUpInfo = {
+              username: userName,
+              password: password,
+              email: email
+          };
+
+          $http({
+              method: 'POST',
+              url: apiUrl,
+              params: null,
+              data: singUpInfo
+          }).success(function (data) {
+              if (!!data["error_code"] && data["error_code"] > 0) {
+                  defer.reject(data["error_desc"]);
+              } else {
+                  $window.localStorage.setItem("eshop_auth", JSON.stringify(data));
+                  defer.resolve(data);
+              }
+          }).error(function (err) {
+              defer.reject(err);
+          });
+
+          return defer.promise;
+      }
+
+      /**
+        * 登录
+        * @param {*} userName 账号 
+        * @param {*} password 密码 
+        */
+      function _signin(userName, password) {
+          var defer = $q.defer(),
+           apiUrl = Constants.eshopApiUrl + 'ecapi.auth.signin';
+
+          var singInInfo = {
+              username: userName,
+              password: password,
+          };
+
+          $http({
+              method: 'POST',
+              url: apiUrl,
+              params: null,
+              data: singInInfo
+          }).success(function (data) {
+              if (!!data["error_code"] && data["error_code"] > 0) {
+                  defer.reject(data["error_desc"]);
+              } else {
+                  $window.localStorage.setItem("eshop_auth", JSON.stringify(data));
+                  defer.resolve(data);
+              }
+          }).error(function (err) {
+              defer.reject(err);
+          });
+
+          return defer.promise;
+      }
+
+
+
+      /**
+        * 更改密码
+        * @param {*} oldPassword 账号 
+        * @param {*} password 密码 
+        */
+      function _changePassword(oldPassword, password) {
+          var defer = $q.defer(),
+           apiUrl = Constants.eshopApiUrl + 'ecapi.user.password.update';
+
+          var changePwdInfo = {
+              old_password: oldPassword,
+              password: password,
+          };
+
+          var header=null,
+              authInfo = $window.localStorage.getItem("eshop_auth");
+          if (!!authInfo) {
+              authInfo = JSON.parse(authInfo);
+              header={"X-ECAPI-Authorization":authInfo.token};
+          }
+
+          $http({
+              method: 'POST',
+              url: apiUrl,
+              params: null,
+              data: changePwdInfo,
+              headers: header
+          })
+          .success(function (data) {
+              if (!!data["error_code"] && data["error_code"] > 0) {
+                  defer.reject(data["error_desc"]);
+              } else {
+                  defer.resolve();
+              }
+          }).error(function (err) {
+              defer.reject(err);
+          });
+
+          return defer.promise;
+      }
+
+      /**
+       * 注销
+       */
+      function _signout() {
+          $window.localStorage.removeItem("eshop_auth");
+      }
+
+      return {
+          signup: _signup,
+          signin: _signin,
+          changePassword: _changePassword,
+          signout: _signout
+      };
+  });
 
 (function() {
   "use strict";
@@ -4060,7 +4260,7 @@ Date.prototype.Format = function(fmt) {
             $scope.$on('$ionicView.afterEnter', activate);
             $scope.mapOpts = {
                 apiKey: 'IGp7UfrinXNxV6IwrQTC0PWoDCQlf0TR',
-                center: {longitude:113.271,latitude:23.1353},
+              //  center: {longitude:113.271,latitude:23.1353},
                 keywords: ['托管'],
                 zoom: 16,
                 onMapLoadFailded: function () {
@@ -5584,23 +5784,23 @@ Date.prototype.Format = function(fmt) {
             vm.shouldShowReorder = false;
             vm.listCanSwipe = true
             vm.parentInfo = {
-                //name: "���»�",
-                //nickName: "���Ļ�",
-                //sex: 1,
-                //mobile: '1342222235',
-                //childrens: [
-                //    {
-                //        name: '����',
-                //        sex:1
-                //    },
-                //    {
-                //        name: '����',
-                //        sex: 1
-                //    }
-                //]
+              //name: "刘德华",
+              //nickName: "流的花",
+              //sex: 1,
+              //mobile: '1342222235',
+              //childrens: [
+              //    {
+              //        name: '刘能',
+              //        sex:1
+              //    },
+              //    {
+              //        name: '刘星',
+              //        sex: 1
+              //    }
+              //]
             };
 
-            //ҳ�漤��ʱ�����߼�
+            //页面激活时处理逻辑
             $scope.$on('$ionicView.afterEnter', activate);
             function activate() {
                 vm.activated = true;
@@ -5608,7 +5808,7 @@ Date.prototype.Format = function(fmt) {
                 init();
             };
 
-            //��ʼ���߼�
+            //初始化逻辑
             function init() {
                 var pId = AuthService.getLoginID();
                 var queryParentPromise = parentService.queryParent(pId);
@@ -5618,29 +5818,29 @@ Date.prototype.Format = function(fmt) {
                     vm.parentInfo = results[0].data || {},
                    vm.parentInfo.childrens = results[1].data || [];
                 }, function (err) {
-                    MessageToaster.error("�����쳣!");
+                    MessageToaster.error("检索异常!");
                 });
             };
 
 
-            // ͼƬѡ����
+            // 图片选择项
             vm.showImageUploadChoices = function (prop) {
                 var hideSheet = $ionicActionSheet.show({
                     buttons: [{
-                        text: '�����ϴ�'
+                        text: '拍照上传'
                     }, {
-                        text: '�������ѡ'
+                        text: '从相册中选'
                     }],
-                    titleText: 'ͼƬ�ϴ�',
-                    cancelText: 'ȡ ��',
+                    titleText: '图片上传',
+                    cancelText: '取 消',
                     cancel: function () {
                     },
                     buttonClicked: function (index) {
-                        // ����ļ�ѡ���ϴ�
+                        //相册文件选择上传
                         if (index == 1) {
                             vm.readalbum(prop);
                         } else if (index == 0) {
-                            // �����ϴ�
+                            //拍照上传
                             vn.takePicture(prop);
                         }
                         return true;
@@ -5648,10 +5848,10 @@ Date.prototype.Format = function(fmt) {
                 });
             };
 
-            //���û����
+            //打开用户相册
             vm.readalbum = function (prop) {
                 if (!window.imagePicker) {
-                    MessageToaster.error("Ŀǰ���Ļ�����֧������ϴ�!");
+                    MessageToaster.error("目前您的环境不支持相册上传!");
                     return;
                 }
 
@@ -5673,15 +5873,15 @@ Date.prototype.Format = function(fmt) {
                     vm.uploadimage(uri, prop);
 
                 }, function (error) {
-                    MessageToaster.error("��������쳣:�����Ƿ���Ȩ��!");
+                    MessageToaster.error("访问相册异常:请检查是否有权限!");
                 });
             };
 
 
-            // ����
+            //拍照
             vm.takePicture = function (prop) {
                 if (!navigator.camera) {
-                    MessageToaster.error("�������������ʹ�������ϴ�!");
+                    MessageToaster.error("请在真机环境中使用拍照上传!");
                     return;
                 }
 
@@ -5695,12 +5895,12 @@ Date.prototype.Format = function(fmt) {
                 navigator.camera.getPicture(function (imageURI) {
                     vm.uploadimage(imageURI);
                 }, function (err) {
-                    MessageToaster.error("�����쳣:�����Ƿ���Ȩ��!");
+                    MessageToaster.error("拍照异常:请检查是否有权限!");
                 }, options);
 
             }
 
-            // �ϴ�
+            //上传
             vm.uploadimage = function (uri) {
                 var fileURL = uri;
 
@@ -5712,18 +5912,18 @@ Date.prototype.Format = function(fmt) {
 
                 var ft = new FileTransfer();
                 $ionicLoading.show({
-                    template: '�ϴ���...'
+                    template: '上传中...'
                 });
                 ft.upload(fileURL, "http://wx.zxing-tech.cn/upload", function (data) {
-                    // ����ͼƬ�µ�ַ
+                    //设置图片新地址
                     var resp = JSON.parse(data.response);
                     vm.parentInfo.avatarlink = resp.data.fileurl;
 
                     parentService.updateParent(vm.parentInfo).then(function (res) {
-                        MessageToaster.error("���³ɹ�!");
+                        MessageToaster.error("更新成功!");
                         $ionicLoading.hide();
                     }, function (err) {
-                        MessageToaster.error("����ʧ��!");
+                        MessageToaster.error("更新失败!");
                         $ionicLoading.hide();
                     })
 
@@ -5733,29 +5933,29 @@ Date.prototype.Format = function(fmt) {
             };
 
 
-            //�����µĺ�����Ϣ,ʹ���¾ֲ���д����
+            //创建新的孩子信息,使用新局部编写界面
             vm.addChild = function () {
                 $ionicListDelegate.closeOptionButtons();
                 StateService.go('childrenAdd');
             };
 
-            //�鿴������Ϣ
+            //查看孩子信息
             vm.editChild = function (child) {
                 $ionicListDelegate.closeOptionButtons();
                 Session.setData('temp', child);
                 StateService.go('childrenEdit', { cid: child.uid, type: 2 });
             };
 
-            //ɾ��������Ϣ
+            //删除孩子信息
             vm.delChild = function (child) {
 
                 $ionicListDelegate.closeOptionButtons();
 
                 var confirmPopup = $ionicPopup.confirm({
-                    title: 'ȷ��Ҫɾ���˺���:' + child.name,
+                    title: '确定要删除此孩子:' + child.name,
                     buttons: [
-                        { text: 'ȡ��', type: 'button-positive' },
-                        { text: 'ȷ��', type: 'button-assertive', onTap: function (e) { return true } }
+                        { text: '取消', type: 'button-positive' },
+                        { text: '确定', type: 'button-assertive', onTap: function (e) { return true } }
                     ]
                 });
                 confirmPopup.then(function (result) {
@@ -5769,7 +5969,7 @@ Date.prototype.Format = function(fmt) {
                                 var idx = vm.parentInfo.childrens.indexOf(child);
                                 vm.parentInfo.childrens.splice(idx, 1);
 
-                                MessageToaster.error("ɾ���ɹ�!");
+                                MessageToaster.error("删除成功!");
                             }
                         });
                     } else {
@@ -5778,13 +5978,13 @@ Date.prototype.Format = function(fmt) {
                 });
             };
 
-            //��ת��ָ��ҳ��
+            //跳转到指定页面
             vm.goTo = function (addr) {
                 console.log('go to path : ' + addr);
                 StateService.go(addr);
             };
 
-            //���ص���һҳ��
+            //返回到上一页面
             vm.back = function () {
                 StateService.back();
             };
@@ -5832,7 +6032,7 @@ Date.prototype.Format = function(fmt) {
 
                 parentService.updateParent(vm.parentInfo).then(function (res) {
                     vm.back();
-                    MessageToaster.error("更新成功!");
+                    MessageToaster.info("更新成功!");
                 }, function (err) {
                     MessageToaster.error("更新失败!");
                 })
@@ -5848,7 +6048,7 @@ Date.prototype.Format = function(fmt) {
 (function() {
     "use strict";
     angular.module('parentInfoCtrl', [])
-        .controller('parentInfoCtrl', function ($scope, $q, $cordovaImagePicker, $ionicActionSheet, $ionicListDelegate,
+        .controller('parentInfoCtrl', function ($scope, $q,$window, $cordovaImagePicker, $ionicActionSheet, $ionicListDelegate,
             $ionicPopup, $ionicLoading, Session, Constants, MessageToaster, AuthService, StateService, parentService, childrenSettingService) {
             'ngInject';
             var vm = this;
@@ -5914,7 +6114,7 @@ Date.prototype.Format = function(fmt) {
                             vm.readalbum(prop);
                         } else if (index == 0) {
                             // 拍照上传
-                            vn.takePicture(prop);
+                            vm.takePicture(prop);
                         }
                         return true;
                     }
@@ -5953,6 +6153,7 @@ Date.prototype.Format = function(fmt) {
 
             // 拍照
             vm.takePicture = function (prop) {
+
                 if (!navigator.camera) {
                     MessageToaster.error("请在真机环境中使用拍照上传!");
                     return;
@@ -5965,10 +6166,11 @@ Date.prototype.Format = function(fmt) {
                     saveToPhotoAlbum: false
                 };
 
+
                 navigator.camera.getPicture(function (imageURI) {
                     vm.uploadimage(imageURI);
                 }, function (err) {
-                    MessageToaster.error("拍照异常:请检查是否有权限!");
+                  //  MessageToaster.error("拍照异常:请检查是否有权限!");
                 }, options);
 
             }
@@ -5993,7 +6195,7 @@ Date.prototype.Format = function(fmt) {
                     vm.parentInfo.avatarlink = resp.data.fileurl;
 
                     parentService.updateParent(vm.parentInfo).then(function (res) {
-                        MessageToaster.error("更新成功!");
+                        MessageToaster.info("更新成功!");
                         $ionicLoading.hide();
                     }, function (err) {
                         MessageToaster.error("更新失败!");
@@ -6001,6 +6203,7 @@ Date.prototype.Format = function(fmt) {
                     })
 
                 }, function (error) {
+                    MessageToaster.error("上传失败!");
                     $ionicLoading.hide();
                 }, options);
             };
@@ -6042,7 +6245,7 @@ Date.prototype.Format = function(fmt) {
                                 var idx = vm.parentInfo.childrens.indexOf(child);
                                 vm.parentInfo.childrens.splice(idx, 1);
 
-                                MessageToaster.error("删除成功!");
+                                MessageToaster.info("删除成功!");
                             }
                         });
                     } else {
@@ -6102,12 +6305,13 @@ Date.prototype.Format = function(fmt) {
   angular.module('parentService', [])
     .factory('parentService', parentService);
 
-  function parentService( $q, $http, Constants, ResultHandler) {
+  function parentService( $q, $http, Session, Constants, ResultHandler) {
     'ngInject';
     var service = {
       queryParent:queryParent,
       updateParent:updateParent,
-      queryChildren:queryChildren
+      queryChildren:queryChildren,
+      resetPsw:resetPsw
     };
 
     //-----HTTP Header => Authorization: Bearer-{$token}-----//
@@ -6126,19 +6330,19 @@ Date.prototype.Format = function(fmt) {
     //  }
     //}
     function queryParent(id) {
-      console.log($http.defaults.headers);
-      var url = Constants.serverUrl + 'account/query/parent/'+id;
-      return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
+        console.log($http.defaults.headers);
+        var url = Constants.serverUrl + 'account/query/parent/'+id;
+        return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
     };
 
     function updateParent(data) {
         var url = Constants.serverUrl + 'account/parent/' + data.uid;
-      return $http({
-        method: 'post',
-        url: url,
-        data: data
-      }).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
-      };
+        return $http({
+            method: 'post',
+            url: url,
+            data: data
+        }).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
+    };
 
 
 
@@ -6162,6 +6366,18 @@ Date.prototype.Format = function(fmt) {
     function queryChildren(id) {
       var url = Constants.serverUrl + 'account/query/parentChildren/'+id;
       return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
+    };
+
+    function resetPsw(id){
+      var authInfo = JSON.parse(Session.getData("eshop_auth"));
+      console.log(authInfo);
+      var data = {eshopToken:authInfo.token};
+      var url = Constants.serverUrl + 'account/resetPsw/'+id;
+      return $http({
+        method: 'post',
+        url: url,
+        data: data
+      }).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
     };
 
     return service;
@@ -6399,7 +6615,7 @@ Date.prototype.Format = function(fmt) {
 (function() {
     "use strict";
     angular.module('registerCtrl', [])
-        .controller('registerCtrl', function($scope, Constants,StateService,Session,AuthService,registerService,LoginService,$stateParams) {
+        .controller('registerCtrl', function ($scope, Constants, StateService, Session, AuthService, registerService, LoginService, eshopService,$stateParams,MessageToaster) {
             'ngInject';
             var vm = this;
             vm.activated = false;
@@ -6407,7 +6623,7 @@ Date.prototype.Format = function(fmt) {
             vm.isLock=false;
             vm.org={mobile:'', password:''};
             //微信uid的初始化
-            vm.user={ gendar:'1', name:'', mobile:'', password:'', pswConfirm:'', wechat:AuthService.getWechatId()};
+            vm.user={ gendar:'1', name:'', mobile:'', password:'', pswConfirm:'', wechat:AuthService.getWechatId(), email:''};
             vm.error=null;
             vm.isParent=false;
             $scope.$on('$ionicView.afterEnter', activate);
@@ -6452,6 +6668,17 @@ Date.prototype.Format = function(fmt) {
                     vm.error = '手机号码必须填写';
                 }
             });
+            $scope.$watch('vm.user.email', function(newValue, oldValue) {
+                if(vm.user.email!=undefined) {
+                    if (vm.user.email.search(/^\w+((-\w+)|(\.\w+))*\@[A-Za-z0-9]+((\.|-)[A-Za-z0-9]+)*\.[A-Za-z0-9]+$/) != -1) {
+                        vm.error = null;
+                    } else {
+                        vm.error = '电子邮箱格式不对';
+                    }
+                }else{
+                    vm.error = '电子邮箱必须填写，用于找回密码';
+                }
+            });
             $scope.$watch('vm.user.password', function(newValue, oldValue) {
                 if(vm.user.password!=undefined) {
                     if (vm.user.password.length < 6) {
@@ -6483,6 +6710,7 @@ Date.prototype.Format = function(fmt) {
                 else {
                     if(vm.user.password.length >= 6 && vm.user.pswConfirm.length >= 6
                         && vm.user.name.length > 0 && vm.user.mobile.length == 11
+                        && vm.user.email.length > 0 && vm.user.email.length > 3
                         && vm.user.password == vm.user.pswConfirm) return true;
                     else vm.error = '数据未填完哦!';
                 }
@@ -6499,8 +6727,14 @@ Date.prototype.Format = function(fmt) {
                 LoginService.login(vm.user.mobile, vm.user.password).then(function (response) {
                     console.log(response);
                     if (response.errno == 0) {
-                        AuthService.setSession(response.data.uid, response.data.token, response.data.eshop, response.data.type);
-                        StateService.clearAllAndGo(AuthService.getNextPath());
+
+                        //登录ESHOP
+                        eshopService.signin(vm.user.mobile, vm.user.password).then(function (data) {
+                            AuthService.setSession(response.data.uid, response.data.token, data, response.data.type);
+                            StateService.clearAllAndGo(AuthService.getNextPath());
+                        }, function (ex) {
+                            MessageToaster.error(ex.error);
+                        })
                     } else {
                         MessageToaster.error(response.error);
                     }
@@ -6590,13 +6824,24 @@ Date.prototype.Format = function(fmt) {
                 //检测输入数值是否正确
                 if(!vm.check())return;
                 //先注册
-             
+                vm.user.weixinno ='';
+                vm.user.wechat =  '';
+
                 registerService.registerParent(vm.user).then(function (data) {
                     console.log(data);
                     if (data.errno == 0) {
-                        login(vm.user.wechat, vm.roleType);
+                        eshopService.signup(vm.user.mobile, vm.user.password, vm.user.email).then(function (data) {
+                            login(vm.user.wechat, vm.roleType);
+                        }, function (ex) {
+                            MessageToaster.error(ex.error);
+                        })
                     } else {
-                        vm.error = data.error;
+                        //vm.error = data.error;
+                        if (data.errno == 10008) {
+                          MessageToaster.error("手机号码已注册过");
+                        }else{
+                          MessageToaster.error("注册不成功");
+                        }
                     }
                 });
 
@@ -6682,7 +6927,8 @@ Date.prototype.Format = function(fmt) {
         "name": user.name,
         "sex": user.gendar,
         "mobile": user.mobile,
-        "password" : user.password
+        "password" : user.password,
+        "email":user.email
       };
       var url = Constants.serverUrl + 'account/register/parent';
       return $http({
@@ -6762,9 +7008,98 @@ Date.prototype.Format = function(fmt) {
 }());
 
 (function() {
+    "use strict";
+    angular.module('changePswCtrl', [])
+        .controller('changePswCtrl', function($scope, Constants, Session,StateService, MessageToaster, parentService, AuthService ) {
+            'ngInject';
+            var vm = this;
+            vm.activated = false;
+            $scope.$on('$ionicView.afterEnter', activate);
+
+            function activate() {
+                vm.activated = true;
+                vm.version = Constants.buildID;
+            }
+
+            vm.goTo = function(addr){
+                console.log('go to path : '+addr);
+                StateService.go(addr);
+            };
+
+            vm.back=function(){
+                StateService.back();
+            };
+
+            $scope.$watch('vm.originPsw', function(newValue, oldValue) {
+              if(vm.originPsw!=undefined) {
+                  if (vm.originPsw.length < 6) {
+                      vm.error = '密码长度必须不小于6位';
+                  } else {
+                      vm.error = null;
+                  }
+              }else{
+                  vm.error = '密码必须填写';
+              }
+            });
+            $scope.$watch('vm.password', function(newValue, oldValue) {
+                if(vm.password!=undefined) {
+                    if (vm.password.length < 6) {
+                        vm.error = '密码长度必须不小于6位';
+                    } else {
+                        vm.error = null;
+                    }
+                }else{
+                    vm.error = '密码必须填写';
+                }
+            });
+            $scope.$watch('vm.pswConfirm', function(newValue, oldValue) {
+                if(vm.pswConfirm!=undefined) {
+                    if (vm.password != '' && vm.password.length >= 6  && vm.pswConfirm != vm.password) {
+                        vm.error = '密码不一致';
+                    } else {
+                        vm.error = null;
+                    }
+                }else{
+                    vm.error = '';
+                }
+            });
+
+            vm.check = function(){
+                if(vm.error!=null){
+                    vm.error = '数据未完善哦!';
+                    return false;
+                }
+                else {
+                    if(vm.password.length >= 6 && vm.pswConfirm.length >= 6 && vm.originPsw.length > 6 && vm.password == vm.pswConfirm)
+                      return true;
+                    else vm.error = '数据未填完哦!';
+                }
+            };
+
+            vm.changePsw = function() {
+                if(!vm.check())return;
+                var json={
+                  uid:AuthService.getLoginID(),
+                  password:vm.pswConfirm
+                };
+                parentService.updateParent(json).then(function (res) {
+                    //vm.back();
+                    Session.destroy();
+                    StateService.clearAllAndGo("login");
+                    MessageToaster.info("密码修改成功!");
+                }, function (err) {
+                    MessageToaster.error("密码修改失败!");
+                })
+            };
+
+        });
+}());
+
+(function() {
   "use strict";
   angular.module('settingsModule', [
     'settingsCtrl',
+    'changePswCtrl',
     'settingsRouter'
   ]);
 
@@ -6818,6 +7153,10 @@ Date.prototype.Format = function(fmt) {
             vm.back=function(){
                 StateService.back();
             };
+
+            vm.changePsw=function(){
+                StateService.go('changePsw');
+            };
         });
 }());
 
@@ -6835,6 +7174,12 @@ Date.prototype.Format = function(fmt) {
           url: "/settings",
           templateUrl: 'settings/settings.html',
           controller: 'settingsCtrl',
+          controllerAs: 'vm'
+        })
+        .state('changePsw', {
+          url: "/changePsw",
+          templateUrl: 'settings/changePsw.html',
+          controller: 'changePswCtrl',
           controllerAs: 'vm'
         })
   }

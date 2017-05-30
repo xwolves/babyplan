@@ -1559,7 +1559,8 @@ Date.prototype.Format = function(fmt) {
                         AuthService.setSession(response.data.uid, response.data.token, response.data.eshop, response.data.type);
                         StateService.clearAllAndGo(AuthService.getNextPath());
                       }else{
-                        MessageToaster.error(response.error);
+                        //MessageToaster.error(response.error);
+                        MessageToaster.error("账号或密码错误");
                       }
                   },
                   function(error) {
@@ -1643,68 +1644,6 @@ Date.prototype.Format = function(fmt) {
 
     }
 
-}());
-
-(function() {
-  "use strict";
-  angular.module('cameraModule', [
-    'cameraRouter',
-    'cameraCtrl'
-  ]);
-
-}());
-
-(function() {
-    "use strict";
-    angular.module('cameraCtrl', [])
-        .controller('cameraCtrl', function($scope, Constants, StateService, Session, childrenSteamService, AuthService) {
-            'ngInject';
-
-            var vm = this;
-            vm.activated = false;
-            $scope.$on('$ionicView.afterEnter', activate);
-            function activate() {
-                vm.activated = true;
-                vm.version = Constants.buildID;
-                vm.getCamera();
-            }
-
-            vm.getCamera = function(){
-                childrenSteamService.getCamera(AuthService.getLoginID()).then(function(data) {
-                    console.log(data.data);
-                    vm.cameras=data.data;
-                });
-            };
-
-            vm.back=function(){
-                StateService.back();
-            };
-
-            vm.watchVideo = function(video,name){
-              video.deposit_name=name;
-              Session.setData('video',JSON.stringify(video));
-              StateService.go('video');
-            };
-        });
-}());
-
-(function() {
-  'use strict';
-
-  angular.module('cameraRouter', [])
-    .config(myRouter);
-
-
-  function myRouter($stateProvider, $urlRouterProvider) {
-    'ngInject';
-    $stateProvider
-      .state('camera', {
-        url: "/camera",
-        templateUrl: 'camera/camera.html',
-        controller: 'cameraCtrl',
-        controllerAs: 'vm'
-      });
-  }
 }());
 
 (function() {
@@ -2004,6 +1943,68 @@ Date.prototype.Format = function(fmt) {
 
     }
 
+}());
+
+(function() {
+  "use strict";
+  angular.module('cameraModule', [
+    'cameraRouter',
+    'cameraCtrl'
+  ]);
+
+}());
+
+(function() {
+    "use strict";
+    angular.module('cameraCtrl', [])
+        .controller('cameraCtrl', function($scope, Constants, StateService, Session, childrenSteamService, AuthService) {
+            'ngInject';
+
+            var vm = this;
+            vm.activated = false;
+            $scope.$on('$ionicView.afterEnter', activate);
+            function activate() {
+                vm.activated = true;
+                vm.version = Constants.buildID;
+                vm.getCamera();
+            }
+
+            vm.getCamera = function(){
+                childrenSteamService.getCamera(AuthService.getLoginID()).then(function(data) {
+                    console.log(data.data);
+                    vm.cameras=data.data;
+                });
+            };
+
+            vm.back=function(){
+                StateService.back();
+            };
+
+            vm.watchVideo = function(video,name){
+              video.deposit_name=name;
+              Session.setData('video',JSON.stringify(video));
+              StateService.go('video');
+            };
+        });
+}());
+
+(function() {
+  'use strict';
+
+  angular.module('cameraRouter', [])
+    .config(myRouter);
+
+
+  function myRouter($stateProvider, $urlRouterProvider) {
+    'ngInject';
+    $stateProvider
+      .state('camera', {
+        url: "/camera",
+        templateUrl: 'camera/camera.html',
+        controller: 'cameraCtrl',
+        controllerAs: 'vm'
+      });
+  }
 }());
 
 (function() {
