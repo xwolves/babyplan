@@ -119,7 +119,7 @@
                             AuthService.setSession(response.data.uid, response.data.token, data, response.data.type);
                             StateService.clearAllAndGo(AuthService.getNextPath());
                         }, function (ex) {
-                            MessageToaster.error(ex.error);
+                            MessageToaster.error(ex);
                         })
                     } else {
                         MessageToaster.error(response.error);
@@ -219,7 +219,7 @@
                         eshopService.signup(vm.user.mobile, vm.user.password, vm.user.email).then(function (data) {
                             login(vm.user.wechat, vm.roleType);
                         }, function (ex) {
-                            MessageToaster.error(ex.error);
+                            MessageToaster.error(ex);
                         })
                     } else {
                         //vm.error = data.error;
