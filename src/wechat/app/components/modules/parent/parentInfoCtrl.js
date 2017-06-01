@@ -87,20 +87,17 @@
                     height: 800,
                     quality: 80
                 };
+                try{
+                    $cordovaImagePicker.getPictures(options).then(function (results) {
+                        var uri = results[0];
+                        vm.uploadimage(uri, prop);
 
-                $cordovaImagePicker.getPictures(options).then(function (results) {
-                    var uri = results[0],
-                        name = uri;
-                    if (name.indexOf('/')) {
-                        var i = name.lastIndexOf('/');
-                        name = name.substring(i + 1);
-                    }
-
-                    vm.uploadimage(uri, prop);
-
-                }, function (error) {
-                    MessageToaster.error("访问相册异常:请检查是否有权限!");
-                });
+                    }, function (error) {
+                        MessageToaster.error("访问相册异常:请检查是否有权限!");
+                    });
+                } catch (ex) {
+                    MessageToaster.error("访问相册异常:请检查是否开启[存储]访问权限!");
+                }
             };
 
 

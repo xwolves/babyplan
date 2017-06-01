@@ -29,17 +29,10 @@
                     LoginService.login(user.userId, user.password).then(function (response) {
                         console.log(response);
                         if (response.errno == 0) {
-                            //MessageToaster.success(response.message);
-                            //AuthService.setSession(response.data.uid, response.data.token, response.data.eshop, response.data.type);
-                            //StateService.clearAllAndGo(AuthService.getNextPath());
 
-                            //登录ESHOP
-                            eshopService.signin(response.data.uid, user.password).then(function (data) {
-                                AuthService.setSession(response.data.uid, response.data.token, data, response.data.type);
-                                StateService.clearAllAndGo(AuthService.getNextPath());
-                            }, function (ex) {
-                                MessageToaster.error(ex.error);
-                            });
+                            AuthService.setSession(response.data.uid, response.data.token, response.data.eshop, response.data.type);
+                            StateService.clearAllAndGo(AuthService.getNextPath());
+
                         } else {
                             //MessageToaster.error(response.error);
                             MessageToaster.error("帐号或密码不正确");
@@ -56,7 +49,6 @@
             }
 
             vm.reset = function(){
-
               StateService.go("resetPsw");
             }
 

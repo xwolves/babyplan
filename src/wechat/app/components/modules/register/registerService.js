@@ -40,7 +40,7 @@
         "password" : user.password,
         "email":user.email
       };
-      var url = Constants.serverUrl + 'account/register/parent';
+      var url = Constants.serverUrl + 'account/parentRegister';
       return $http({
         method: 'post',
         url: url,

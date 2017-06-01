@@ -14,20 +14,20 @@ var app = angular.module('BaiduMapDirective', []);
       function loadMap(apiKey) {
 
           // 判断是否执行过加载过程
-          if (window.loadBaiduPromise) {
-              return window.loadBaiduPromise;
+          if ($window.loadBaiduPromise) {
+              return $window.loadBaiduPromise;
           }
 
           var deferred = $q.defer(),
             resolve = function () {
-                deferred.resolve(window.BMap ? window.BMap : false);
+                deferred.resolve($window.BMap ? $window.BMap : false);
             },
             callbackName = 'loadBaiduMaps_' + (new Date().getTime()),
             params = {
                 'ak': apiKey
             };
 
-          if (window.BMap) {
+          if ($window.BMap) {
               resolve();
           } else {
               angular.extend(params, {
@@ -36,14 +36,14 @@ var app = angular.module('BaiduMapDirective', []);
               });
 
               // 百度地图加载成功后回调用方法
-              window[callbackName] = function () {
+              $window[callbackName] = function () {
                   // 标识异步任务完成
                   resolve();
 
                   // 成功后删除全局回调方法
                   $timeout(function () {
                       try {
-                          delete window[callbackName];
+                          delete $window[callbackName];
                       } catch (e) { }
                   }, 20);
               }
@@ -55,10 +55,10 @@ var app = angular.module('BaiduMapDirective', []);
               bdscript.src = 'http://api.map.baidu.com/api?v=' + params.v + '&ak=' + params.ak + '&callback=' + params.callback;
               head.appendChild(bdscript);
           }
-          window.loadBaiduPromise = deferred.promise;
+          $window.loadBaiduPromise = deferred.promise;
 
           // 返回异步任务对象
-          return window.loadBaiduPromise;
+          return $window.loadBaiduPromise;
       }
 
       /**
@@ -157,21 +157,37 @@ var app = angular.module('BaiduMapDirective', []);
       function getCurrentPosition(map, options) {
           var deferred = $q.defer();
 
-          if (!!options.center) {
-              var point = new BMap.Point(options.center.longitude, options.center.latitude); // 定义一个中心点坐标
-              deferred.resolve(point);
-          } else {
+          if (baidumap_location) {
               if (typeof baidumap_location !== 'undefined') {
+
                   // 获取GPS当前位置
                   baidumap_location.getCurrentPosition(function (result) {
-                      var point = new BMap.Point(result.lontitude, result.latitude);
+                      var point;
+                      if (result.locType == 505) {
+                          var curPos = $window.localStorage.getItem("current_pos");
+                          curPos = JSON.parse(curPos);
+
+                          point = new BMap.Point(curPos.lontitude, curPos.latitude);
+                      } else {
+                          point = new BMap.Point(result.lontitude, result.latitude);
+                          $window.localStorage.setItem("current_pos", JSON.stringify(result));
+                      }
+
                       deferred.resolve(point);
                   }, function (error) {
                       deferred.reject(error);
                   });
               } else {
-                  deferred.reject();
+                  var curPos = $window.localStorage.getItem("current_pos");
+                  curPos = JSON.parse(curPos);
+                  var point = new BMap.Point(curPos.lontitude, curPos.latitude);
+                  deferred.resolve(point);
               }
+          } else {
+              var point = new BMap.Point(options.center.longitude, options.center.latitude); // 定义一个中心点坐标
+              deferred.resolve(point);
+
+             
           }
           return deferred.promise;
       }
@@ -537,6 +553,8 @@ var app = angular.module('BaiduMapDirective', []);
                * 地图组件销毁时处理逻辑
                */
               scope.$on('$destroy', function () {
+                  $window.BMap = null;
+                  document.getElementById('map').remove();
                   scope.modal && scope.modal.remove();
               });
 
@@ -594,6 +612,9 @@ var app = angular.module('BaiduMapDirective', []);
                               //ionicToast.show('获取位置信息失败!', 'middle', false, 3000);
                               MessageToaster.error("获取位置信息失败!");
                           })
+                      }, function (err) {
+                          //ionicToast.show('获取位置信息失败!', 'middle', false, 3000);
+                          MessageToaster.error("获取位置信息失败!");
                       })
                   } catch (err) {
                       alert("error" + err.message);
