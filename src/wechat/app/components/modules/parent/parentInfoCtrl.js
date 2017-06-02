@@ -76,28 +76,24 @@
 
             //打开用户相册
             vm.readalbum = function (prop) {
-                if (!window.imagePicker) {
+                if (!navigator.camera) {
                     MessageToaster.error("目前您的环境不支持相册上传!");
                     return;
                 }
 
                 var options = {
                     maximumImagesCount: 1,
-                    width: 800,
-                    height: 800,
+                    sourceType: 2,
+                    targetWidth: 80,
+                    targetHeight: 80,
+                    allowEdit: true,
                     quality: 80
                 };
-                try{
-                    $cordovaImagePicker.getPictures(options).then(function (results) {
-                        var uri = results[0];
-                        vm.uploadimage(uri, prop);
-
-                    }, function (error) {
-                        MessageToaster.error("访问相册异常:请检查是否有权限!");
-                    });
-                } catch (ex) {
-                    MessageToaster.error("访问相册异常:请检查是否开启[存储]访问权限!");
-                }
+                navigator.camera.getPicture(function (imageURI) {
+                    vm.uploadImage(imageURI);
+                }, function (error) {
+                    // MessageToaster.error("访问相册异常:请检查是否有权限!");
+                }, options);
             };
 
 
@@ -110,23 +106,23 @@
                 }
 
                 var options = {
-                    quality: 75,
-                    targetWidth: 800,
-                    targetHeight: 800,
-                    saveToPhotoAlbum: false
+                    quality: 100,
+                    targetWidth: 80,
+                    targetHeight: 80,
+                    allowEdit: true,
+                    saveToPhotoAlbum: true
                 };
 
 
                 navigator.camera.getPicture(function (imageURI) {
-                    vm.uploadimage(imageURI);
+                    vm.uploadImage(imageURI);
                 }, function (err) {
-                  //  MessageToaster.error("拍照异常:请检查是否有权限!");
+                  // MessageToaster.error("拍照异常:请检查是否有权限!");
                 }, options);
-
             }
 
             // 上传
-            vm.uploadimage = function (uri) {
+            vm.uploadImage = function (uri) {
                 var fileURL = uri;
 
                 var options = new FileUploadOptions();

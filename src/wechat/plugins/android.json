@@ -16,9 +16,6 @@
         "cordova-plugin-cache-clear": {
             "PACKAGE_NAME": "com.trusteeship"
         },
-        "cordova-plugin-camera": {
-            "PACKAGE_NAME": "com.trusteeship"
-        },
         "cordova-plugin-compat": {
             "PACKAGE_NAME": "com.trusteeship"
         },
@@ -45,6 +42,9 @@
             "PACKAGE_NAME": "com.trusteeship"
         },
         "cordova-plugin-whitelist": {
+            "PACKAGE_NAME": "com.trusteeship"
+        },
+        "cordova-plugin-camera": {
             "PACKAGE_NAME": "com.trusteeship"
         }
     },
