@@ -7,11 +7,11 @@
             vm.activated = false;
             vm.item = {
                 "scores":{
-                    "kitchen":0,
-                    "food":0,
-                    "roadsafety":0,
-                    "edufiresafety":0,
-                    "teacherresp":0
+                    "kitchen":8,
+                    "food":8,
+                    "roadsafety":8,
+                    "edufiresafety":8,
+                    "teacherresp":8
                 },
                 "commenttext":""
             };

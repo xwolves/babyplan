@@ -67,15 +67,14 @@
       return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
     };
 
-    function resetPsw(id){
-      var authInfo = JSON.parse(Session.getData("eshop_auth"));
-      console.log(authInfo);
-      var data = {eshopToken:authInfo.token};
-      var url = Constants.serverUrl + 'account/resetPsw/'+id;
+    function resetPsw(mobile){
+     // var authInfo = JSON.parse(Session.getData("eshop_auth"));
+     // console.log(authInfo);
+     // var data = {eshopToken:authInfo.token};
+        var url = Constants.serverUrl + 'account/resetPsw/' + mobile;
       return $http({
         method: 'post',
-        url: url,
-        data: data
+        url: url
       }).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
     };
 

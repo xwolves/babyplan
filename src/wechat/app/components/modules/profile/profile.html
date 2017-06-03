@@ -1,10 +1,21 @@
 <ion-view view-title="个人中心">
     <ion-content>
-        <div style="width:100%;margin-top:30px;" class='center'>
-            <img ng-src='{{vm.parent.avatarlink|ImageMin}}' style="height:80px;width:80px">
+        <div style="width:100%;margin-top:30px;"  class='center'>
+
+            <img ng-src='{{vm.parent.avatarlink|ImageMin}}' style="height:80px;width:80px;border-radius: 50%;">
             <h4>{{vm.parent.name}}</h4>
-            <p>孩子姓名：{{vm.childrenName}}</p>
-            <hr>
+            <p ng-click="vm.goTo('parentEdit')" style="font-size:0.9em;color:#a2a6ad"><b>账号:</b>{{vm.parent.uid || '无'}}</p>
+
+            <!--<div class="list" style="margin-bottom: 0px">
+                <div class="item item-divider">
+                </div>
+                <a class="item item-avatar" href="javascript:void(0)">
+                    <img ng-src="{{vm.parent.avatarlink|ImageMin}}" ng-click="vm.showImageUploadChoices()">
+                    <h2 ng-click="vm.goTo('parentEdit')">{{vm.parent.name}}</h2>
+                    <p ng-click="vm.goTo('parentEdit')"><b>账号:</b>{{vm.parent.uid || '无'}}</p>
+                </a>
+               </div>-->
+            <!--<hr>-->
             <div class="row button-icon-top" >
               <div class="col col-25">
                   <button class="button button-icon" ng-click="vm.goTo('orgmap',{type:0,nav:true})">

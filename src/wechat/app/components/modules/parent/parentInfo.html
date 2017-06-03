@@ -37,8 +37,8 @@
             <div class="no-data" ng-if="!vm.parentInfo.childrens || vm.parentInfo.childrens.length==0">
                 暂无孩子信息!
             </div>
-            <ion-item class="item" ng-click="vm.goTo(item.uid,item)" collection-repeat="item in vm.parentInfo.childrens">
-                <p>{{item.name}}<span style="float: right">{{item.sex|gendarChange}}</span></p>
+            <ion-item class="item" ng-click="vm.editChild(item)" collection-repeat="item in vm.parentInfo.childrens">
+                <p>{{item.name}}({{item.uid}})<span style="float: right">{{item.sex|gendarChange}}</span></p>
                 <!--暂时不支持编辑与删除-->
                 <ion-option-button class="button-positive ion-edit" ng-click="vm.editChild(item)">&nbsp;编辑</ion-option-button>
                 <ion-option-button class="button-assertive ion-trash-a" ng-click="vm.delChild(item)">&nbsp;删除</ion-option-button>

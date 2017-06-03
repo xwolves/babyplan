@@ -130,8 +130,7 @@
 }
 
 .mech-map-info .item .mech-comment>i {
-    font-size: 0.8em;
-    color: #cbcbc1
+    font-size: 1.0em;
 }
 
 .mech-map-info .item.item-note-right>h2 {
@@ -140,6 +139,10 @@
 
 .mech-map-info .item-comment-header {
     border-bottom: 2px solid #f5f5f5;
+}
+
+.deposit-comment.mech-map-info .comment-list .item {
+    border-color: #ddd;
 }
 
 .mech-map-info .comment-list .item {

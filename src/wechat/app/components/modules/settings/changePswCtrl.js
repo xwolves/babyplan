@@ -61,8 +61,10 @@
                     return false;
                 }
                 else {
-                    if(vm.password.length >= 6 && vm.pswConfirm.length >= 6 && vm.originPsw.length > 6 && vm.password == vm.pswConfirm)
-                      return true;
+                    if(vm.password.length >= 6 && vm.pswConfirm.length >= 6 && vm.originPsw.length >= 6 && vm.password == vm.pswConfirm){
+                        vm.error = '';
+                        return true;
+                    }
                     else vm.error = '数据未填完哦!';
                 }
             };
