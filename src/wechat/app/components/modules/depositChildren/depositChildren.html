@@ -5,6 +5,9 @@
     </ion-nav-buttons>
 
     <ion-content>
+        <div class="item" ng-if="vm.list !== undefined && !vm.list.length" class="no-results">
+            <p>无相关记录</p>
+        </div>
         <ion-list>
             <!--ng-click="vm.goTo(item.childrenID)"-->
             <ion-item class="item" collection-repeat="item in vm.children">

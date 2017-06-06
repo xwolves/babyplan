@@ -7,7 +7,8 @@
             var vm = this;
             vm.activated = false;
             vm.parent={};
-            vm.deposits={};
+            vm.deposits = [];
+            vm.unPaid=false,
             vm.fingerprintLogs=[];
             vm.messages=[];
             vm.cameras=[];
@@ -76,7 +77,11 @@
               childrenSteamService.getChildrenDeposit(AuthService.getLoginID()).then(function(data) {
                   if (data.errno == 0) {
                       console.log(data.data);
-                      vm.deposits=data.data;
+                      vm.deposits = data.data;
+
+                      vm.getCamera();
+                  } else if (data.errno === 16005) {
+                      vm.unPaid = true;
                   }
               });
             };
@@ -162,12 +167,13 @@
               });
             };
 
-            vm.doRefresh = function(type,offset){
-                if(type===0){
+            vm.doRefresh = function (type, offset) {
+
+                if(vm.showCamera){
                   vm.getCamera();
-                }else if(type===1){
+                }else if(vm.showFingerPrint){
                   vm.getFingerPrint(offset,vm.limit);
-                }else if(type===2){
+                }else if(vm.showNotificatin){
                   vm.getMessage(offset,vm.limit);
                 }
             };

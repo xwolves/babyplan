@@ -16,6 +16,7 @@
             vm.simpleFilter = '';
             vm.offset = [0, 0, 0];
             vm.limit = 30;
+            vm.error = '';
             vm.canLoadMore = [true, true, true];
             $scope.$on('$ionicView.afterEnter', activate);
             vm.steam = 1;
@@ -79,15 +80,20 @@
                     if (data.errno == 0) {
                         console.log(data.data);
                         vm.deposits = data.data;
-                    } else if (data.errno === 16005) {
+                    }else {
                         vm.unPaid = true;
+                        vm.error = data.error;
                     }
                 });
             };
 
             vm.getCamera = function () {
+
+                var count = 1,
+                    depositsCount = vm.deposits.length;
+
                 //获取摄像头信息
-                for (var i = 0; i < vm.deposits.length; i++) {
+                for (var i = 0; i < depositsCount; i++) {
                     var id = vm.deposits[i].DepositID;
                     //get camera
                     if (id != null) {
@@ -95,9 +101,24 @@
                         //vm.cameraSrc = $sce.trustAsResourceUrl('http://v.zxing-tech.cn/?v='+id);
                         childrenSteamService.getCamera(id).then(function (data) {
                             vm.cameras[vm.cameras.length] = data.data;
+
+                            if (data.errno === 16005) {
+                                vm.unPaid = true;
+                            }
+
+                            count += 1;
+                            if (count === depositsCount) {
+                                $scope.$broadcast('scroll.refreshComplete');
+                                $scope.$broadcast('scroll.infiniteScrollComplete');
+                            }
+
+                        }, function (e) {
+                            count += 1;
+                            if (count === depositsCount) {
+                                $scope.$broadcast('scroll.refreshComplete');
+                                $scope.$broadcast('scroll.infiniteScrollComplete');
+                            }
                         });
-                    } else if (data.errno === 16005) {
-                        vm.unPaid = true;
                     }
                 }
             };
@@ -123,11 +144,15 @@
                         console.log(data);
                     }
 
-                }).finally(function () {
                     //始终隐藏加载更多面板
                     $scope.$broadcast('scroll.refreshComplete');
                     $scope.$broadcast('scroll.infiniteScrollComplete');
-                });
+
+                }, function () {
+                    //始终隐藏加载更多面板
+                    $scope.$broadcast('scroll.refreshComplete');
+                    $scope.$broadcast('scroll.infiniteScrollComplete');
+                })
             };
 
             vm.getMessage = function (offset, limit) {
@@ -168,7 +193,12 @@
                     } else {
                         console.log(data);
                     }
-                }).finally(function () {
+
+                    //始终隐藏加载更多面板
+                    $scope.$broadcast('scroll.refreshComplete');
+                    $scope.$broadcast('scroll.infiniteScrollComplete');
+
+                }, function () {
                     //始终隐藏加载更多面板
                     $scope.$broadcast('scroll.refreshComplete');
                     $scope.$broadcast('scroll.infiniteScrollComplete');

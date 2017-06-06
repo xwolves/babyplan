@@ -1,16 +1,18 @@
-<ion-modal-view hide-nav-bar="false" class="deposit-comment mech-map-info">
-    <ion-header-bar>
-        <button class="button button-icon icon ion-ios-arrow-back" ng-click="vm.back()"></button>
-        <h1 class="title">{{item.OrgName}}</h1>
-        <button class="button button-icon icon ion-android-create" ng-click="vm.gotoEdit(item.AccountID)"></button>
-    </ion-header-bar>
-    <ion-content class="padding">
-        <div class="item-divider-small">
-        </div>
+    <ion-view view-title="我的评价">
+        <ion-nav-buttons side="left">
+            <a class="button button-icon icon ion-ios-arrow-back" ng-click="vm.back()"></a>
+        </ion-nav-buttons>
+        <ion-content class="padding">
+            <div class="item-divider-small">
+            </div>
+
+            <div class="no-data" ng-if="!vm.list || vm.list.length==0">
+                未绑定机构!
+            </div>
             <div ng-repeat="item in vm.list" ng-click="item.show=!item.show">
 
                 <div class="list">
-                  
+
                     <div class="item item-icon-right" style="margin:1px;">
                         <i class="button button-icon icon ion-android-create" ng-click="vm.gotoEdit(item.AccountID)"></i>
                         <h2><strong></strong>{{item.Address||''}} </h2>
@@ -33,19 +35,19 @@
                         <div class="no-data" ng-if="!item.Comments || item.Comments.length==0">
                             暂无评论!
                         </div>
-                        <a class="item item-note-right item-text-wrap" ng-repeat="c in item.Comments" href="javascript:void(0)" >
+                        <a class="item item-note-right item-text-wrap" ng-repeat="c in item.Comments" href="javascript:void(0)">
                             <span class="item-note">
                                 {{c.create_date | formatTime}}
                             </span>
                             <h2>{{c.creator || '匿名'}}</h2>
                             <p>{{c.comment || ''}}</p>
                         </a>
-                        
+
                     </div>
                 </div>
 
                 <div class="item-divider-small">
                 </div>
             </div>
-    </ion-content>
-</ion-modal-view>
+        </ion-content>
+</ion-view>

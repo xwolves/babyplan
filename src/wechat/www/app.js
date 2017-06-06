@@ -156,7 +156,7 @@ angular.module('BaiduService',[])
       }
 
     /**
-     * 根据经纬度获取附近机构列表
+     * 根据经纬度获取附近机构列�?
      * @param {*} longitude
      * @param {*} latitude
      */
@@ -208,7 +208,7 @@ angular.module('BaiduService',[])
       }
 
       /**
-       * 获取机构详情并带有评论信息
+       * 获取机构详情并带有评论信�?
        * @param {*} depositId
        */
       function _getDepositInfoWithComments (depositId) {
@@ -224,7 +224,7 @@ angular.module('BaiduService',[])
             depositInfo.Score = commentsData.scores || 0;
             depositInfo.Comments = [];
 
-            //转换所有图片为数组，以用于轮播图片源
+            //转换所有图片为数组，以用于轮播图片�?
             depositInfo.Images = [];
             depositInfo.FrontDeskLink && depositInfo.Images.push(_convertThumbUrl(depositInfo.FrontDeskLink));
             depositInfo.PublicZoneLink && depositInfo.Images.push(_convertThumbUrl(depositInfo.PublicZoneLink));
@@ -320,8 +320,8 @@ angular.module('BaiduService',[])
 var app = angular.module('CustomFilter', []);
 app.filter('gendarChange', function () {
     return function (input) {
-        if (input == "1")return "男";
-        else if (input == "2")return "女";
+        if (input == "1")return "�?;
+        else if (input == "2")return "�?;
         else return "";
     };
 });
@@ -337,15 +337,15 @@ app.filter('JSchange', function () {
 
 app.filter('PayStatus', function () {
     return function (input) {
-        if (input == "1")return "已付款";
-        else if (input == "0")return "未付款";
+        if (input == "1")return "已付�?;
+        else if (input == "0")return "未付�?;
         else return "未知";
     };
 });
 
 app.filter('PayType', function () {
     return function (input) {
-        if (input == "1")return "支付宝支付";
+        if (input == "1")return "支付宝支�?;
         else if (input == "0")return "微信支付";
         else if (input == "2")return "其它";
         else return "未知";
@@ -368,15 +368,15 @@ app.filter('dateChange', function () {
         var now = new Date();
         var time=now.getTime()- d.getTime();
         if(time>24*60*60*1000){
-            return d.Format('MM月dd日');
+            return d.Format('MM月dd�?);
         }else if(time>60*60*1000){
-            //return d.Format('hh')+"小时前";
+            //return d.Format('hh')+"小时�?;
             var hour=parseInt(time/(60*60*1000));
-            return hour+"小时前";
+            return hour+"小时�?;
         }else{
-            //return d.Format('mm')+"分钟前";
+            //return d.Format('mm')+"分钟�?;
             var min=parseInt(time/(60*1000));
-            return min+"分钟前";
+            return min+"分钟�?;
         }
     };
 });
@@ -413,7 +413,7 @@ app.filter('changeSize', function () {
 
 app.filter('statusChange', function () {
     return function (input,rule) {
-        //var rule=[{dm:"0",mc:"未办结"},{dm:"1",mc:"已办结"}];
+        //var rule=[{dm:"0",mc:"未办�?},{dm:"1",mc:"已办�?}];
         if(rule!=null&&rule.length>0) {
             for (var i = 0; i < rule.length; i++) {
                 if(rule[i].dm==input)return rule[i].mc;
@@ -452,8 +452,8 @@ app.filter('statusChange', function () {
          if (years > 0) return years + '年前';
          if (months > 0) return months + '月前';
          if (days > 0) return days + '天前';
-         if (hours > 0) return hours + '小时前';
-         if (minutes > 0) return minutes + '分钟前';
+         if (hours > 0) return hours + '小时�?;
+         if (minutes > 0) return minutes + '分钟�?;
          return '';
      };
    });
@@ -475,7 +475,7 @@ app.filter('statusChange', function () {
             for (var i = 0; i < ionViewArr.length; i++) {
                 if (angular.element(ionViewArr[i]).attr('nav-view') == 'active') {
                     activeNavView = angular.element(ionViewArr[i]);
-                    activeNavView.append("<loading><div class=\"loading-alert-container\"><div class=\"loading-body\"><div class=\"loading-text\">加载中...<div><div></div></loading>");
+                    activeNavView.append("<loading><div class=\"loading-alert-container\"><div class=\"loading-body\"><div class=\"loading-text\">加载�?..<div><div></div></loading>");
                 }
             }
         }
@@ -754,8 +754,8 @@ app.filter('statusChange', function () {
             notAuthorized: 'auth-not-authorized'
         })
         .constant('ErrorMessage', {
-            ACCESS_FAIL: '通讯异常，请稍后再试！',
-            TOKEN_INVALID: '连接超时，请重新登录！'
+            ACCESS_FAIL: '通讯异常，请稍后再试�?,
+            TOKEN_INVALID: '连接超时，请重新登录�?
         })
         .constant('SuccessMessage', {
             SUBMIT_SUCESS: '提交成功',
@@ -825,11 +825,11 @@ var app = angular.module('BaiduMapDirective', []);
        * 加载百度地图
        * @param {object}  $q angular $q
        * @param {string} apiKey 百度apiKey
-       * @param {string} version 版本号
+       * @param {string} version 版本�?
        */
       function loadMap(apiKey) {
 
-          // 判断是否执行过加载过程
+          // 判断是否执行过加载过�?
           if ($window.loadBaiduPromise) {
               return $window.loadBaiduPromise;
           }
@@ -926,7 +926,7 @@ var app = angular.module('BaiduMapDirective', []);
       }
 
       /**
-       * 根据位置做标记
+       * 根据位置做标�?
        * @param {*} map
        * @param {*} point
        * @param {*} clickCallback
@@ -1009,7 +1009,7 @@ var app = angular.module('BaiduMapDirective', []);
       }
 
       /**
-       * 添加搜索框自动完成功能
+       * 添加搜索框自动完成功�?
        * @param {*} map
        * @param {*} scope
        */
@@ -1020,8 +1020,8 @@ var app = angular.module('BaiduMapDirective', []);
               baiDuLocalSearchAndMark(map, keywrod).then(function (results) {
                   scope.baiDuSearchResults = results;
               }, function (err) {
-                  //ionicToast.show('检索异常!', 'middle', false, 3000);
-                  MessageToaster.error("检索异常!");
+                  //ionicToast.show('检索异�?', 'middle', false, 3000);
+                  MessageToaster.error("检索异�?");
               });
           }
           var ac = new BMap.Autocomplete({
@@ -1085,7 +1085,7 @@ var app = angular.module('BaiduMapDirective', []);
       }
 
       /**
-       * 根据关键字搜索百度数据并打标记
+       * 根据关键字搜索百度数据并打标�?
        * @param {*} map
        * @param {*} keyword
        */
@@ -1110,7 +1110,7 @@ var app = angular.module('BaiduMapDirective', []);
       }
 
       /**
-       * 根据位置搜索本地系统维护的后台数据
+       * 根据位置搜索本地系统维护的后台数�?
        * @param {*} point
        */
       function babyPlanLocalSearch(point) {
@@ -1118,7 +1118,7 @@ var app = angular.module('BaiduMapDirective', []);
       }
 
       /**
-       * 打开当前位置标记的详情页面
+       * 打开当前位置标记的详情页�?
        * @param {*} e
        */
       function openInfoWindow(e) {
@@ -1136,7 +1136,7 @@ var app = angular.module('BaiduMapDirective', []);
                   width: 250, // 信息窗口宽度
                   height: 80, // 信息窗口高度
                   title: p.babyPoi.OrgName,
-                  enableMessage: true // 设置允许信息窗发送短息
+                  enableMessage: true // 设置允许信息窗发送短�?
               },
                 content = p.babyPoi.Address;
               var point = new BMap.Point(p.babyPoi.Longitude, p.babyPoi.Latitude);
@@ -1173,15 +1173,15 @@ var app = angular.module('BaiduMapDirective', []);
               scope.keyword2 = '';
               scope.depositInfo = {};
               // scope.depositInfo = {
-              //   OrgName: '南科大',
-              //   Address: '学苑大道1088号',
+              //   OrgName: '南科�?,
+              //   Address: '学苑大道1088�?,
               //   FrontDeskLink1: 'http://120.76.226.47/group1/M00/00/03/Ci5ek1jxwpWAD29ZAC84O4JhWyE096.jpg',
               //   LicenseType: null,
               //   ContactPhone: '1311111111',
               //   Score: 50,
-              //   Remark: '宝宝的托管机构，宝宝的安全托管机构',
+              //   Remark: '宝宝的托管机构，宝宝的安全托管机�?,
               //   Images: ['http://120.76.226.47/group1/M00/00/03/Ci5ek1jxwpWAD29ZAC84O4JhWyE096.jpg', null],
-              //   Comments: [{comment: '对于缩略图视图，您可以在文件夹上放一个图片来提醒您它的内容。',create_date: '2017-4-23 12:00:00',creator: 'X*'}, {comment: '机构不错',create_date: '2017-4-21 12:00:00',creator: 'X*'}]
+              //   Comments: [{comment: '对于缩略图视图，您可以在文件夹上放一个图片来提醒您它的内容�?,create_date: '2017-4-23 12:00:00',creator: 'X*'}, {comment: '机构不错',create_date: '2017-4-21 12:00:00',creator: 'X*'}]
               // }
 
               /**
@@ -1195,10 +1195,10 @@ var app = angular.module('BaiduMapDirective', []);
                * 定位
                */
               scope.location = function (poi) {
-                  // 切换到地图模式
+                  // 切换到地图模�?
                   scope.currMode = MAP_MODES.MAP_SHOW;
 
-                  // 清除所有标记，并添加当前位置标记
+                  // 清除所有标记，并添加当前位置标�?
                   scope.map.clearOverlays();
                   var point = new BMap.Point(poi.Longitude, poi.Latitude);
                   addMapMarker(scope.map, point, openInfoWindow, poi);
@@ -1209,7 +1209,7 @@ var app = angular.module('BaiduMapDirective', []);
               };
 
               /**
-               * 定位到当前位置
+               * 定位到当前位�?
                */
               scope.locationCurrent = function () {
                   $timeout(function () {
@@ -1218,7 +1218,7 @@ var app = angular.module('BaiduMapDirective', []);
                       var symbol = new BMap.Symbol(BMap_Symbol_SHAPE_POINT, {
                           scale: 1,//图标缩放大小
                           fillColor: "orange",//填充颜色
-                          fillOpacity: 0.8//填充透明度
+                          fillOpacity: 0.8//填充透明�?
                       });
                       addMapMarker(scope.map, scope.currentPosition, openInfoWindow, null, symbol,'我的位置');
                       scope.currentPosition && scope.map.panTo(scope.currentPosition);
@@ -1226,13 +1226,13 @@ var app = angular.module('BaiduMapDirective', []);
               };
 
               /**
-               * 定位标记所有位置
+               * 定位标记所有位�?
                */
               scope.locationAll = function () {
-                  // 切换到地图模式
+                  // 切换到地图模�?
                   scope.currMode = MAP_MODES.MAP_SHOW;
 
-                  // 清除所有标记，并添加当前位置标记
+                  // 清除所有标记，并添加当前位置标�?
                   scope.map.clearOverlays();
 
                   var poi, point;
@@ -1268,7 +1268,7 @@ var app = angular.module('BaiduMapDirective', []);
               scope.openDepositInfoForm = function (deposit) {
                   if (!deposit || deposit.AccountID == 0) return;
 
-                  // 根据ID获取机构详情和评论信息
+                  // 根据ID获取机构详情和评论信�?
                   BaiduService.getDepositInfoWithComments(deposit.AccountID).then(function (depositInfo) {
                       scope.depositInfo = depositInfo;
 
@@ -1291,7 +1291,7 @@ var app = angular.module('BaiduMapDirective', []);
               };
 
               /**
-               * 回退到地图模式
+               * 回退到地图模�?
                */
               scope.backToMapView = function () {
                   scope.currMode = MAP_MODES.MAP_SHOW;
@@ -1304,7 +1304,7 @@ var app = angular.module('BaiduMapDirective', []);
                   //
                   if (scope.currMode === mode) return;
 
-                  // 如果切换的目标模式为空，根据当前模式修正为正确目标模式
+                  // 如果切换的目标模式为空，根据当前模式修正为正确目标模�?
                   if (!mode) {
                       switch (scope.currMode) {
                           case MAP_MODES.MAP_SEARCH:
@@ -1323,7 +1323,7 @@ var app = angular.module('BaiduMapDirective', []);
                       }
                   }
 
-                  // 切换关键字
+                  // 切换关键�?
                   // if (scope.currMode <= MAP_MODES.MAP_SEARCH && mode > MAP_MODES.MAP_SEARCH) {
                   //   scope.keyword2 = scope.keyword1
                   // } else if (scope.currMode > MAP_MODES.MAP_SEARCH && mode <= MAP_MODES.MAP_SEARCH) {
@@ -1331,7 +1331,7 @@ var app = angular.module('BaiduMapDirective', []);
                   // }
                   //
 
-                  // 根据当前模式不同触发不同的行为
+                  // 根据当前模式不同触发不同的行�?
                   switch (scope.currMode) {
                       case MAP_MODES.MAP_SEARCH:
                           // if (!scope.keyword1) {
@@ -1382,28 +1382,28 @@ var app = angular.module('BaiduMapDirective', []);
                       var map = scope.map = buildMap(document.getElementById('map'), opts);
                       map.scope = scope;
 
-                      // 添加导航栏
+                      // 添加导航�?
                       addMapNavigation(map, BMAP_ANCHOR_BOTTOM_RIGHT);
 
-                      // 添加地图搜索框自动完成功能
+                      // 添加地图搜索框自动完成功�?
                       addMapAutoComplete(map, scope);
 
-                      // 设置地图可视区中心位置
+                      // 设置地图可视区中心位�?
                       getCurrentPosition(map, opts).then(function (p) {
-                          // 记录当前位置并标记
+                          // 记录当前位置并标�?
                           scope.currentPosition = p;
 
                           // 指定Marker的icon属性为Symbol
                           var symbol = new BMap.Symbol(BMap_Symbol_SHAPE_POINT, {
                               scale: 1,//图标缩放大小
                               fillColor: "orange",//填充颜色
-                              fillOpacity: 0.8//填充透明度
+                              fillOpacity: 0.8//填充透明�?
                           });
                           var marker = addMapMarker(map, p, openInfoWindow, null, symbol,'我的位置');
-                          // 设置为中心
+                          // 设置为中�?
                           map.centerAndZoom(p, 16);
 
-                          // 根据关键字检索百度相关位置数据和根据当前位置检索后台维护附近数据
+                          // 根据关键字检索百度相关位置数据和根据当前位置检索后台维护附近数�?
                           var bpSearchDeferred = babyPlanLocalSearch(p);
                           var bdSearchDeferred = baiDuLocalSearch(map, opts.keywords);
                           $q.all([bpSearchDeferred, bdSearchDeferred]).then(function (results) {
@@ -1412,7 +1412,7 @@ var app = angular.module('BaiduMapDirective', []);
                               scope.baiDuSearchResults = results[1];
                               scope.babyPlanSearchResults = results[0];
 
-                              // 对满足条件的位置进行标记，
+                              // 对满足条件的位置进行标记�?
                               var point;
                               for (var j = 0; j < results.length; j++) {
                                   var result = results[j];
@@ -1454,23 +1454,6 @@ var app = angular.module('BaiduMapDirective', []);
   });
 }());
 
-Date.prototype.Format = function(fmt) {
-    var o = {
-        "M+": this.getMonth() + 1, //月份
-        "d+": this.getDate(), //日
-        "h+": this.getHours(), //小时
-        "m+": this.getMinutes(), //分
-        "s+": this.getSeconds(), //秒
-        "q+": Math.floor((this.getMonth() + 3) / 3), //季度
-        "S": this.getMilliseconds() //毫秒
-    };
-    if (/(y+)/.test(fmt))
-        fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
-    for (var k in o)
-        if (new RegExp("(" + k + ")").test(fmt))
-            fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
-    return fmt;
-};
 (function() {
     "use strict";
     angular.module('modules', [
@@ -1505,6 +1488,20 @@ Date.prototype.Format = function(fmt) {
 
 }());
 
+Date.prototype.Format = function(fmt) {
+    var o = {
+        "M+": this.getMonth() + 1, //月份
+        "d+": this.getDate(), //�?        "h+": this.getHours(), //小时
+        "m+": this.getMinutes(), //�?        "s+": this.getSeconds(), //�?        "q+": Math.floor((this.getMonth() + 3) / 3), //季度
+        "S": this.getMilliseconds() //毫秒
+    };
+    if (/(y+)/.test(fmt))
+        fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+    for (var k in o)
+        if (new RegExp("(" + k + ")").test(fmt))
+            fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+    return fmt;
+};
 (function() {
   "use strict";
   angular.module('tools', []).service('tools', tools);
@@ -1520,16 +1517,11 @@ Date.prototype.Format = function(fmt) {
                versions: function () {
                    var u = navigator.userAgent,
                        app = navigator.appVersion;
-                   return { //移动终端浏览器版本信息
-                       trident: u.indexOf('Trident') > -1, //IE内核
+                   return { //移动终端浏览器版本信�?                       trident: u.indexOf('Trident') > -1, //IE内核
                        presto: u.indexOf('Presto') > -1, //opera内核
-                       webKit: u.indexOf('AppleWebKit') > -1, //苹果、谷歌内核
-                       gecko: u.indexOf('Gecko') > -1 && u.indexOf('KHTML') == -1, //火狐内核
-                       mobile: !!u.match(/AppleWebKit.*Mobile.*/), //是否为移动终端
-                       ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
-                       android: u.indexOf('Android') > -1 || u.indexOf('Linux') > -1, //android终端或uc浏览器
-                       iPhone: u.indexOf('iPhone') > -1, //是否为iPhone或者QQHD浏览器
-                       iPad: u.indexOf('iPad') > -1, //是否iPad
+                       webKit: u.indexOf('AppleWebKit') > -1, //苹果、谷歌内�?                       gecko: u.indexOf('Gecko') > -1 && u.indexOf('KHTML') == -1, //火狐内核
+                       mobile: !!u.match(/AppleWebKit.*Mobile.*/), //是否为移动终�?                       ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
+                       android: u.indexOf('Android') > -1 || u.indexOf('Linux') > -1, //android终端或uc浏览�?                       iPhone: u.indexOf('iPhone') > -1, //是否为iPhone或者QQHD浏览�?                       iPad: u.indexOf('iPad') > -1, //是否iPad
                        webApp: u.indexOf('Safari') == -1 //是否web应该程序，没有头部与底部
                    };
                }(),
@@ -1675,7 +1667,7 @@ Date.prototype.Format = function(fmt) {
                         vm.childs = data.data;
                         for(var i=0;i<vm.childs.length;i++){
                             if(i==vm.childs.length-1)
-                                title+=(vm.childs[i].name+"的家长");
+                                title+=(vm.childs[i].name+"的家�?);
                             else
                                 title+=(vm.childs[i].name+",");
                             //vm.getMsg(vm.childs[i].uid);
@@ -1849,22 +1841,10 @@ Date.prototype.Format = function(fmt) {
       getChildrenAllInfo:getChildrenAllInfo
     };
 
-    //字段名	类型	备注
-    //InfoID 	int64 	信息编号，自增即可
-    //PublisherID 	int64 	发布老师的账号
-    //DepositID 	int64 	托管机构账号
-    //Longitude 	float 	信息发布的位置经度
-    //Latitude 	float 	信息发布的位置纬度
-    //ClickCount 	int64 	总浏览次数
-    //InfoType 	int32 	信息类型（1：就餐；2：培训；3：活动；4：作业）
-    //Description 	varchar2 	老师的描述，不超出1000字
-    //PhotoLink1 	varchar2 	照片/视频1的信息
-    //PhotoLink2 	varchar2 	照片/视频2的信息
-    //PhotoLink3 	varchar2 	照片/视频3的信息
-    //PhotoLink4 	varchar2 	照片/视频4的信息
-    //PhotoLink5 	varchar2 	照片/视频5的信息
-    //PhotoLink6 	varchar2 	照片/视频6的信息
-    //Status	int	1:正常发布，2:撤回,
+    //字段�?类型	备注
+    //InfoID 	int64 	信息编号，自增即�?    //PublisherID 	int64 	发布老师的账�?    //DepositID 	int64 	托管机构账号
+    //Longitude 	float 	信息发布的位置经�?    //Latitude 	float 	信息发布的位置纬�?    //ClickCount 	int64 	总浏览次�?    //InfoType 	int32 	信息类型�?：就餐；2：培训；3：活动；4：作业）
+    //Description 	varchar2 	老师的描述，不超�?000�?    //PhotoLink1 	varchar2 	照片/视频1的信�?    //PhotoLink2 	varchar2 	照片/视频2的信�?    //PhotoLink3 	varchar2 	照片/视频3的信�?    //PhotoLink4 	varchar2 	照片/视频4的信�?    //PhotoLink5 	varchar2 	照片/视频5的信�?    //PhotoLink6 	varchar2 	照片/视频6的信�?    //Status	int	1:正常发布�?:撤回,
     //CreateTime 	datetime 	创建时间
 
 
@@ -2015,7 +1995,7 @@ Date.prototype.Format = function(fmt) {
             vm.next=function(){
                 if(vm.page==5){
                     //save data
-                    //alert('尚未开放');
+                    //alert('尚未开�?);
                     console.log(vm.child.birthday);
                     var date=new Date();
                     console.log(vm.child.birthday.getTime());
@@ -2116,8 +2096,7 @@ Date.prototype.Format = function(fmt) {
                 //console.log("valid = "+valid+" dirty = "+dirty);
                 if (valid && dirty) {
 
-                    //日期转为日期格式字符串
-                    vm.child.Birthday = vm.child.Birthday && $filter('date')(vm.child.Birthday, "yyyy-MM-dd hh:mm");
+                    //日期转为日期格式字符�?                    vm.child.Birthday = vm.child.Birthday && $filter('date')(vm.child.Birthday, "yyyy-MM-dd hh:mm");
 
                     //save
                     if (vm.type == '1') {
@@ -2140,7 +2119,7 @@ Date.prototype.Format = function(fmt) {
                     }
                 }else{
                     if(!valid){
-                        MessageToaster.info("内容不全，无法更新");
+                        MessageToaster.info("内容不全，无法更�?);
                     }else if(!dirty) {
                         MessageToaster.info("无内容修改，无需更新");
                     }
@@ -2205,8 +2184,7 @@ Date.prototype.Format = function(fmt) {
             };
 
             vm.newChild2=function(){
-                //创建新的孩子信息,使用新局部编写界面
-                $ionicListDelegate.closeOptionButtons();
+                //创建新的孩子信息,使用新局部编写界�?                $ionicListDelegate.closeOptionButtons();
                 StateService.go('childrenAdd');
             };
 
@@ -2414,26 +2392,28 @@ Date.prototype.Format = function(fmt) {
 
 }());
 
-(function() {
+(function () {
     "use strict";
     angular.module('childrenSteamCtrl', [])
-        .controller('childrenSteamCtrl', function($scope,$ionicPopup,$sce,Constants,childrenService,childrenSteamService,AuthService,Session, StateService,$ionicModal, $ionicSlideBoxDelegate) {
+        .controller('childrenSteamCtrl', function ($scope, $ionicPopup, $sce, Constants, childrenService, childrenSteamService, AuthService, Session, StateService, $ionicModal, $ionicSlideBoxDelegate) {
             'ngInject';
             console.log("childrenSteamCtrl");
             var vm = this;
             vm.activated = false;
-            vm.parent={};
-            vm.deposits={};
-            vm.fingerprintLogs=[];
-            vm.messages=[];
-            vm.cameras=[];
+            vm.parent = {};
+            vm.deposits = {};
+            vm.fingerprintLogs = [];
+            vm.messages = [];
+            vm.cameras = [];
+            vm.unPaid = false,
             vm.myComment;
-            vm.simpleFilter='';
-            vm.offset=[0,0,0];
-            vm.limit=30;
-            vm.canLoadMore=[true,true,true];
+            vm.simpleFilter = '';
+            vm.offset = [0, 0, 0];
+            vm.limit = 30;
+            vm.error = '';
+            vm.canLoadMore = [true, true, true];
             $scope.$on('$ionicView.afterEnter', activate);
-            vm.steam=1;
+            vm.steam = 1;
             function activate() {
                 vm.activated = true;
                 vm.version = Constants.buildID;
@@ -2452,170 +2432,210 @@ Date.prototype.Format = function(fmt) {
                 //vm.getChildrenInfo(AuthService.getLoginID(),vm.offset,vm.limit);
                 //vm.getChildren();
                 vm.getChildrenDeposit();
-                vm.steam=Session.getData('steam');
+                vm.steam = Session.getData('steam');
 
-                if(vm.steam===null){
-                  vm.steam=1;
-                  console.log('steam = '+vm.steam);
+                if (vm.steam === null) {
+                    vm.steam = 1;
+                    console.log('steam = ' + vm.steam);
                 }
                 vm.changeSteam(vm.steam);
             };
 
-            vm.changeSteam = function(index){
-              Session.setData('steam',index);
-              if(index===0){
-                vm.showCamera=true;
-                vm.showFingerPrint=false;
-                vm.showNotificatin=false;
-                if(vm.cameras.length===0)vm.getCamera();
-              }else if(index===1){
-                vm.showCamera=false;
-                vm.showFingerPrint=true;
-                vm.showNotificatin=false;
-                console.log('fingerprintLogs = '+vm.fingerprintLogs);
-                if(vm.fingerprintLogs.length===0)vm.getFingerPrint(0,vm.limit);
-              }else if(index===2){
-                vm.showCamera=false;
-                vm.showFingerPrint=false;
-                vm.showNotificatin=true;
-                if(vm.messages.length===0)vm.getMessage(0,vm.limit);
-              }
-            };
-
-            vm.watchVideo = function(video,name){
-              video.deposit_name=name;
-              Session.setData('video',JSON.stringify(video));
-              StateService.go('video');
-            };
-
-            vm.getChildrenDeposit = function(){
-              childrenSteamService.getChildrenDeposit(AuthService.getLoginID()).then(function(data) {
-                  if (data.errno == 0) {
-                      console.log(data.data);
-                      vm.deposits=data.data;
-                  }
-              });
-            };
-
-            vm.getCamera = function(){
-              //获取摄像头信息
-              for(var i=0;i<vm.deposits.length;i++){
-                var id=vm.deposits[i].DepositID;
-                //get camera
-                if(id!=null){
-                  //console.log('http://v.zxing-tech.cn/?v='+id);
-                  //vm.cameraSrc = $sce.trustAsResourceUrl('http://v.zxing-tech.cn/?v='+id);
-                  childrenSteamService.getCamera(id).then(function(data) {
-                      vm.cameras[vm.cameras.length]=data.data;
-                  });
+            vm.changeSteam = function (index) {
+                vm.steam = index;
+                Session.setData('steam', index);
+                if (index === 0) {
+                    vm.showCamera = true;
+                    vm.showFingerPrint = false;
+                    vm.showNotificatin = false;
+                    if (vm.cameras.length === 0) vm.getCamera();
+                } else if (index === 1) {
+                    vm.showCamera = false;
+                    vm.showFingerPrint = true;
+                    vm.showNotificatin = false;
+                    console.log('fingerprintLogs = ' + vm.fingerprintLogs);
+                    if (vm.fingerprintLogs.length === 0) vm.getFingerPrint(0, vm.limit);
+                } else if (index === 2) {
+                    vm.showCamera = false;
+                    vm.showFingerPrint = false;
+                    vm.showNotificatin = true;
+                    if (vm.messages.length === 0) vm.getMessage(0, vm.limit);
                 }
-              }
             };
 
-            vm.getFingerPrint = function(offset,limit){
-              console.log("getFingerPrint");
-              childrenSteamService.getAllChildrenSignIn(AuthService.getLoginID(),offset,limit).then(function(data) {
-                  if (data.errno == 0) {
-                      console.log(data.data);
-                      if(vm.fingerprintLogs.length == 0)
-                          vm.fingerprintLogs=data.data;
-                      else
-                          vm.fingerprintLogs=vm.fingerprintLogs.concat(data.data);
-                      console.log(vm.fingerprintLogs);
-                      vm.offset[1]+=data.data.length;
-                      if(data.data.length < vm.limit){
-                          console.log("it is the last data");
-                          vm.canLoadMore[1] = false;
-                      }else{
-                          vm.canLoadMore[1] = true;
-                      }
-                      $scope.$broadcast('scroll.refreshComplete');
-                      $scope.$broadcast('scroll.infiniteScrollComplete');
-                  }else{
-                      console.log(data);
-                  }
-              });
+            vm.watchVideo = function (video, name) {
+                video.deposit_name = name;
+                Session.setData('video', JSON.stringify(video));
+                StateService.go('video');
             };
 
-            vm.getMessage = function(offset,limit){
-              console.log("getMessage");
-              childrenSteamService.getAllChildrenMsg(AuthService.getLoginID(),offset,limit).then(function(data) {
-                  if (data.errno == 0) {
-                      console.log(data.data);
-                      var start=0;
-                      if(vm.messages.length == 0)
-                          vm.messages=data.data;
-                      else{
-                          start=vm.messages.length;
-                          vm.messages=vm.messages.concat(data.data);
-                        }
-                      console.log(vm.messages);
-                      //update comment
-                      for(var i=0;i<data.data.length;i++){
-                        //vm.messages[start+i]
-                        childrenSteamService.getDailyComment(vm.messages[start+i].InfoID,start+i).then(function(sdata) {
-                            if (data.errno == 0) {
-                                console.log("getDailyComment: ");
-                                console.log(sdata.data);
-                                var index=sdata.data.index;
-                                vm.messages[index].comments = sdata.data.comments;
-                                vm.messages[index].likes = sdata.data.likes;
+            vm.getChildrenDeposit = function () {
+                childrenSteamService.getChildrenDeposit(AuthService.getLoginID()).then(function (data) {
+                    if (data.errno == 0) {
+                        console.log(data.data);
+                        vm.deposits = data.data;
+                    }else {
+                        vm.unPaid = true;
+                        vm.error = data.error;
+                    }
+                });
+            };
+
+            vm.getCamera = function () {
+
+                var count = 1,
+                    depositsCount = vm.deposits.length;
+
+                //获取摄像头信�?                for (var i = 0; i < depositsCount; i++) {
+                    var id = vm.deposits[i].DepositID;
+                    //get camera
+                    if (id != null) {
+                        //console.log('http://v.zxing-tech.cn/?v='+id);
+                        //vm.cameraSrc = $sce.trustAsResourceUrl('http://v.zxing-tech.cn/?v='+id);
+                        childrenSteamService.getCamera(id).then(function (data) {
+                            vm.cameras[vm.cameras.length] = data.data;
+
+                            if (data.errno === 16005) {
+                                vm.unPaid = true;
+                            }
+
+                            count += 1;
+                            if (count === depositsCount) {
+                                $scope.$broadcast('scroll.refreshComplete');
+                                $scope.$broadcast('scroll.infiniteScrollComplete');
+                            }
+
+                        }, function (e) {
+                            count += 1;
+                            if (count === depositsCount) {
+                                $scope.$broadcast('scroll.refreshComplete');
+                                $scope.$broadcast('scroll.infiniteScrollComplete');
                             }
                         });
-                      }
-                      vm.offset[2]+=data.data.length;
-                      if(data.data.length < vm.limit){
-                          console.log("it is the last data");
-                          vm.canLoadMore[2] = false;
-                      }else{
-                          vm.canLoadMore[2] = true;
-                      }
-                      $scope.$broadcast('scroll.refreshComplete');
-                      $scope.$broadcast('scroll.infiniteScrollComplete');
-                  }else{
-                      console.log(data);
-                  }
-              });
-            };
-
-            vm.doRefresh = function(type,offset){
-                if(index===0){
-                  vm.getCamera();
-                }else if(index===1){
-                  vm.getFingerPrint(offset,vm.limit);
-                }else if(index===2){
-                  vm.getMessage(offset,vm.limit);
+                    }
                 }
             };
 
-            vm.getChildrenInfo = function(pId,offset,limit){
-                childrenService.getChildrenAllInfo(pId,offset,limit).then(function(data) {
+            vm.getFingerPrint = function (offset, limit) {
+                console.log("getFingerPrint");
+                childrenSteamService.getAllChildrenSignIn(AuthService.getLoginID(), offset, limit).then(function (data) {
+                    if (data.errno == 0) {
+                        console.log(data.data);
+                        if (vm.fingerprintLogs.length == 0)
+                            vm.fingerprintLogs = data.data;
+                        else
+                            vm.fingerprintLogs = vm.fingerprintLogs.concat(data.data);
+                        console.log(vm.fingerprintLogs);
+                        vm.offset[1] += data.data.length;
+                        if (data.data.length < vm.limit) {
+                            console.log("it is the last data");
+                            vm.canLoadMore[1] = false;
+                        } else {
+                            vm.canLoadMore[1] = true;
+                        }
+                    } else {
+                        console.log(data);
+                    }
+
+                    //始终隐藏加载更多面板
+                    $scope.$broadcast('scroll.refreshComplete');
+                    $scope.$broadcast('scroll.infiniteScrollComplete');
+
+                }, function () {
+                    //始终隐藏加载更多面板
+                    $scope.$broadcast('scroll.refreshComplete');
+                    $scope.$broadcast('scroll.infiniteScrollComplete');
+                })
+            };
+
+            vm.getMessage = function (offset, limit) {
+                console.log("getMessage");
+                childrenSteamService.getAllChildrenMsg(AuthService.getLoginID(), offset, limit).then(function (data) {
+                    if (data.errno == 0) {
+                        console.log(data.data);
+                        var start = 0;
+                        if (vm.messages.length == 0)
+                            vm.messages = data.data;
+                        else {
+                            start = vm.messages.length;
+                            vm.messages = vm.messages.concat(data.data);
+                        }
+                        console.log(vm.messages);
+                        //update comment
+                        for (var i = 0; i < data.data.length; i++) {
+                            //vm.messages[start+i]
+                            childrenSteamService.getDailyComment(vm.messages[start + i].InfoID, start + i).then(function (sdata) {
+                                if (data.errno == 0) {
+                                    console.log("getDailyComment: ");
+                                    console.log(sdata.data);
+                                    var index = sdata.data.index;
+                                    vm.messages[index].comments = sdata.data.comments;
+                                    vm.messages[index].likes = sdata.data.likes;
+                                }
+                            });
+                        }
+                        vm.offset[2] += data.data.length;
+                        if (data.data.length < vm.limit) {
+                            console.log("it is the last data");
+                            vm.canLoadMore[2] = false;
+                        } else {
+                            vm.canLoadMore[2] = true;
+                        }
+                        //$scope.$broadcast('scroll.refreshComplete');
+                        //$scope.$broadcast('scroll.infiniteScrollComplete');
+                    } else {
+                        console.log(data);
+                    }
+
+                    //始终隐藏加载更多面板
+                    $scope.$broadcast('scroll.refreshComplete');
+                    $scope.$broadcast('scroll.infiniteScrollComplete');
+
+                }, function () {
+                    //始终隐藏加载更多面板
+                    $scope.$broadcast('scroll.refreshComplete');
+                    $scope.$broadcast('scroll.infiniteScrollComplete');
+                });
+            };
+
+            vm.doRefresh = function (type, offset) {
+                if (vm.steam === '0') {
+                    vm.getCamera();
+                } else if (vm.steam === '1') {
+                    vm.getFingerPrint(offset, vm.limit);
+                } else if (vm.steam === '2') {
+                    vm.getMessage(offset, vm.limit);
+                }
+            };
+
+            vm.getChildrenInfo = function (pId, offset, limit) {
+                childrenService.getChildrenAllInfo(pId, offset, limit).then(function (data) {
                     if (data.errno == 0) {
                         console.log("getChildrenAllInfo: ");
                         console.log(data.data);
-                        if(vm.messages.length == 0)
-                            vm.messages=data.data;
+                        if (vm.messages.length == 0)
+                            vm.messages = data.data;
                         else
-                            vm.messages=vm.messages.concat(data.data);
+                            vm.messages = vm.messages.concat(data.data);
                         console.log(vm.messages);
-                        vm.offset+=data.data.length;
-                        if(data.data.length < vm.limit){
+                        vm.offset += data.data.length;
+                        if (data.data.length < vm.limit) {
                             console.log("it is the last data");
                             vm.canLoadMore = false;
-                        }else{
+                        } else {
                             vm.canLoadMore = true;
                         }
                         $scope.$broadcast('scroll.refreshComplete');
                         $scope.$broadcast('scroll.infiniteScrollComplete');
-                    }else{
+                    } else {
                         console.log(data);
                     }
                 });
             };
 
-            vm.getWechatInfo = function(wId){
-                console.log("wechat id : "+wId);
-                childrenService.getWechatInfo(wId).then(function(data) {
+            vm.getWechatInfo = function (wId) {
+                console.log("wechat id : " + wId);
+                childrenService.getWechatInfo(wId).then(function (data) {
                     if (data.errno == 0) {
                         console.log("wechat info: ");
                         console.log(data.data);
@@ -2624,195 +2644,195 @@ Date.prototype.Format = function(fmt) {
                 });
             };
 
-            vm.getImg = function(type){
-                if(type == 1){
-                    return {name:"就餐",src:"img/dinner.png"};
-                }else if(type == 2){
-                    return {name:"培训",src:"img/traning.png"};
-                }else if(type == 3){
-                    return {name:"活动",src:"img/play.png"};
-                }else if(type == 4){
-                    return {name:"作业",src:"img/homework.png"};
-                }else if(type == 5){
-                    return {name:"接入",src:"img/login.png"};
-                }else if(type == 6){
-                    return {name:"送到",src:"img/logout.png"};
-                }else{
-                    return {name:"未知信息类型",src:"img/unknown.png"};
+            vm.getImg = function (type) {
+                if (type == 1) {
+                    return { name: "就餐", src: "img/dinner.png" };
+                } else if (type == 2) {
+                    return { name: "培训", src: "img/traning.png" };
+                } else if (type == 3) {
+                    return { name: "活动", src: "img/play.png" };
+                } else if (type == 4) {
+                    return { name: "作业", src: "img/homework.png" };
+                } else if (type == 5) {
+                    return { name: "接入", src: "img/login.png" };
+                } else if (type == 6) {
+                    return { name: "送到", src: "img/logout.png" };
+                } else {
+                    return { name: "未知信息类型", src: "img/unknown.png" };
                 }
             };
 
-            vm.goPhoto=function(msgIndex,index){
-                Session.setData('temp',vm.msg[msgIndex]);
-                StateService.go("photo",{index:index});
+            vm.goPhoto = function (msgIndex, index) {
+                Session.setData('temp', vm.msg[msgIndex]);
+                StateService.go("photo", { index: index });
             };
 
-            vm.star = function(){
+            vm.star = function () {
                 console.log("add star");
             };
 
-            vm.getDailyComments = function(infoid,index){
-              console.log("getDailyComments index = "+index);
-              childrenSteamService.getDailyComment(infoid,index).then(function(sdata) {
-                  if (sdata.errno == 0) {
-                      console.log("getDailyComment: ");
-                      console.log(sdata.data);
-                      var sindex=sdata.data.index;
-                      vm.messages[sindex].comments = sdata.data.comments;
-                      vm.messages[sindex].likes = sdata.data.likes;
-                  }
-              });
-            };
-
-            vm.like = function(info,index){
-              //如果已经like，去like
-              //没有like，加like
-              console.log(info+" and index="+index);
-              var needAdd = true;
-              for (var i=0;i<info.likes.length;i++){
-                if(info.likes[i].CommentBy==vm.user){
-                  //remove
-                  needAdd=false;
-                  childrenSteamService.delDailyComment(info.likes[i].CommentID).then(function(data) {
-                      console.log('rmComment likes');
-                      console.log(data);
-                      vm.getDailyComments(info.InfoID,index);
-                      return;
-                  });
-                }
-              }
-              //add
-              if(needAdd){
-                var comment = {infoid:info.InfoID,commentby:vm.user,commentdata:null};
-                childrenSteamService.createDailyComment(comment).then(function(data) {
-                    console.log('addComment likes');
-                    console.log(data);
-                    vm.getDailyComments(info.InfoID,index);
-                    return;
-                });
-              }
-            };
-
-            vm.comment = function(info,index){
-                console.log(info+" and index="+index);
-                vm.showPopup(info,index);
-            };
-
-            vm.rmComment = function(comment,index){
-              childrenSteamService.delDailyComment(comment.CommentID).then(function(data) {
-                  console.log('rmComment');
-                  console.log(data);
-                  vm.getDailyComments(comment.InfoID,index);
-              });
-            };
-
-            vm.showPopup = function(info,index) {
-                var myPopup = $ionicPopup.show({
-                  template: '<input type="edittext" ng-model="vm.myComment">',
-                  title: '请输入评论内容',
-                  scope: $scope,
-                  buttons: [
-                    { text: '取消' },
-                    {
-                      text: '<b>提交</b>',
-                      type: 'button-positive',
-                      onTap: function(e) {
-                        if (!vm.myComment) {
-                          e.preventDefault();
-                        } else {
-                          return vm.myComment;
-                        }
-                      }
+            vm.getDailyComments = function (infoid, index) {
+                console.log("getDailyComments index = " + index);
+                childrenSteamService.getDailyComment(infoid, index).then(function (sdata) {
+                    if (sdata.errno == 0) {
+                        console.log("getDailyComment: ");
+                        console.log(sdata.data);
+                        var sindex = sdata.data.index;
+                        vm.messages[sindex].comments = sdata.data.comments;
+                        vm.messages[sindex].likes = sdata.data.likes;
                     }
-                  ]
-                  });
+                });
+            };
 
-                  myPopup.then(function(res) {
+            vm.like = function (info, index) {
+                //如果已经like，去like
+                //没有like，加like
+                console.log(info + " and index=" + index);
+                var needAdd = true;
+                for (var i = 0; i < info.likes.length; i++) {
+                    if (info.likes[i].CommentBy == vm.user) {
+                        //remove
+                        needAdd = false;
+                        childrenSteamService.delDailyComment(info.likes[i].CommentID).then(function (data) {
+                            console.log('rmComment likes');
+                            console.log(data);
+                            vm.getDailyComments(info.InfoID, index);
+                            return;
+                        });
+                    }
+                }
+                //add
+                if (needAdd) {
+                    var comment = { infoid: info.InfoID, commentby: vm.user, commentdata: null };
+                    childrenSteamService.createDailyComment(comment).then(function (data) {
+                        console.log('addComment likes');
+                        console.log(data);
+                        vm.getDailyComments(info.InfoID, index);
+                        return;
+                    });
+                }
+            };
+
+            vm.comment = function (info, index) {
+                console.log(info + " and index=" + index);
+                vm.showPopup(info, index);
+            };
+
+            vm.rmComment = function (comment, index) {
+                childrenSteamService.delDailyComment(comment.CommentID).then(function (data) {
+                    console.log('rmComment');
+                    console.log(data);
+                    vm.getDailyComments(comment.InfoID, index);
+                });
+            };
+
+            vm.showPopup = function (info, index) {
+                var myPopup = $ionicPopup.show({
+                    template: '<input type="edittext" ng-model="vm.myComment">',
+                    title: '请输入评论内�?,
+                    scope: $scope,
+                    buttons: [
+                      { text: '取消' },
+                      {
+                          text: '<b>提交</b>',
+                          type: 'button-positive',
+                          onTap: function (e) {
+                              if (!vm.myComment) {
+                                  e.preventDefault();
+                              } else {
+                                  return vm.myComment;
+                              }
+                          }
+                      }
+                    ]
+                });
+
+                myPopup.then(function (res) {
                     console.log('Tapped!', res);
                     //add comment
-                    if(res.length>0){
-                      var comment = {infoid:info.InfoID,commentby:vm.user,commentdata:res};
-                      childrenSteamService.createDailyComment(comment).then(function(data) {
-                          console.log('addComment comments');
-                          console.log(data);
-                          vm.myComment = null;
-                          vm.getDailyComments(info.InfoID,index);
-                          return;
-                      });
+                    if (res.length > 0) {
+                        var comment = { infoid: info.InfoID, commentby: vm.user, commentdata: res };
+                        childrenSteamService.createDailyComment(comment).then(function (data) {
+                            console.log('addComment comments');
+                            console.log(data);
+                            vm.myComment = null;
+                            vm.getDailyComments(info.InfoID, index);
+                            return;
+                        });
                     }
-                  });
+                });
             };
 
-            vm.getChildren = function(){
-                childrenService.getChildren(AuthService.getLoginID()).then(function(data) {
-                    var title="";
+            vm.getChildren = function () {
+                childrenService.getChildren(AuthService.getLoginID()).then(function (data) {
+                    var title = "";
                     if (data.errno == 0) {
                         console.log(data.data);
                         vm.childs = data.data;
-                        for(var i=0;i<vm.childs.length;i++){
-                            if(i==vm.childs.length-1)
-                                title+=(vm.childs[i].name+"的家长");
+                        for (var i = 0; i < vm.childs.length; i++) {
+                            if (i == vm.childs.length - 1)
+                                title += (vm.childs[i].name + "的家�?);
                             else
-                                title+=(vm.childs[i].name+",");
+                                title += (vm.childs[i].name + ",");
                             //vm.getMsg(vm.childs[i].uid);
                             //vm.getChildSignIn(vm.childs[i].uid,vm.childs[i].name);
                         }
-                        vm.parent.title=title;
+                        vm.parent.title = title;
                     }
                     //vm.fingerprintLogs.sort(function(a,b){return a.log-b.log});
                 });
             };
 
-            vm.change = function(){
-                if(vm.simpleFilterSelect==='-1'){
-                    vm.simpleFilter="";
-                }else if(vm.simpleFilterSelect==='0'){
-                    vm.simpleFilter={datatype:'2'};
-                }else if(vm.simpleFilterSelect==='1'){
-                    vm.simpleFilter={datatype:'1',InfoType:'1'};
-                }else if(vm.simpleFilterSelect==='2'){
-                    vm.simpleFilter={datatype:'1',InfoType:'2'};
-                }else if(vm.simpleFilterSelect==='3'){
-                    vm.simpleFilter={datatype:'1',InfoType:'3'};
-                }else if(vm.simpleFilterSelect==='4'){
-                    vm.simpleFilter={datatype:'1',InfoType:'4'};
-                }else if(vm.simpleFilterSelect==='5'){
-                    vm.simpleFilter={datatype:'1',InfoType:'5'};
-                }else if(vm.simpleFilterSelect==='6'){
-                    vm.simpleFilter={datatype:'1',InfoType:'6'};
+            vm.change = function () {
+                if (vm.simpleFilterSelect === '-1') {
+                    vm.simpleFilter = "";
+                } else if (vm.simpleFilterSelect === '0') {
+                    vm.simpleFilter = { datatype: '2' };
+                } else if (vm.simpleFilterSelect === '1') {
+                    vm.simpleFilter = { datatype: '1', InfoType: '1' };
+                } else if (vm.simpleFilterSelect === '2') {
+                    vm.simpleFilter = { datatype: '1', InfoType: '2' };
+                } else if (vm.simpleFilterSelect === '3') {
+                    vm.simpleFilter = { datatype: '1', InfoType: '3' };
+                } else if (vm.simpleFilterSelect === '4') {
+                    vm.simpleFilter = { datatype: '1', InfoType: '4' };
+                } else if (vm.simpleFilterSelect === '5') {
+                    vm.simpleFilter = { datatype: '1', InfoType: '5' };
+                } else if (vm.simpleFilterSelect === '6') {
+                    vm.simpleFilter = { datatype: '1', InfoType: '6' };
                 }
             };
 
-            vm.getImages=function(msg){
-                vm.imgCount=0;
-                if(msg.PhotoLink1!=null && msg.PhotoLink1!=""){
-                    var data={src:msg.PhotoLink1,msg:''};
-                    vm.images[vm.imgCount]=data;
+            vm.getImages = function (msg) {
+                vm.imgCount = 0;
+                if (msg.PhotoLink1 != null && msg.PhotoLink1 != "") {
+                    var data = { src: msg.PhotoLink1, msg: '' };
+                    vm.images[vm.imgCount] = data;
                     vm.imgCount++;
                 }
-                if(msg.PhotoLink2!=null && msg.PhotoLink2!=""){
-                    var data={src:msg.PhotoLink2,msg:''};
-                    vm.images[vm.imgCount]=data;
+                if (msg.PhotoLink2 != null && msg.PhotoLink2 != "") {
+                    var data = { src: msg.PhotoLink2, msg: '' };
+                    vm.images[vm.imgCount] = data;
                     vm.imgCount++;
                 }
-                if(msg.PhotoLink3!=null && msg.PhotoLink3!=""){
-                    var data={src:msg.PhotoLink3,msg:''};
-                    vm.images[vm.imgCount]=data;
+                if (msg.PhotoLink3 != null && msg.PhotoLink3 != "") {
+                    var data = { src: msg.PhotoLink3, msg: '' };
+                    vm.images[vm.imgCount] = data;
                     vm.imgCount++;
                 }
-                if(msg.PhotoLink4!=null && msg.PhotoLink4!=""){
-                    var data={src:msg.PhotoLink4,msg:''};
-                    vm.images[vm.imgCount]=data;
+                if (msg.PhotoLink4 != null && msg.PhotoLink4 != "") {
+                    var data = { src: msg.PhotoLink4, msg: '' };
+                    vm.images[vm.imgCount] = data;
                     vm.imgCount++;
                 }
-                if(msg.PhotoLink5!=null && msg.PhotoLink5!=""){
-                    var data={src:msg.PhotoLink5,msg:''};
-                    vm.images[vm.imgCount]=data;
+                if (msg.PhotoLink5 != null && msg.PhotoLink5 != "") {
+                    var data = { src: msg.PhotoLink5, msg: '' };
+                    vm.images[vm.imgCount] = data;
                     vm.imgCount++;
                 }
-                if(msg.PhotoLink6!=null && msg.PhotoLink6!=""){
-                    var data={src:msg.PhotoLink6,msg:''};
-                    vm.images[vm.imgCount]=data;
+                if (msg.PhotoLink6 != null && msg.PhotoLink6 != "") {
+                    var data = { src: msg.PhotoLink6, msg: '' };
+                    vm.images[vm.imgCount] = data;
                     vm.imgCount++;
                 }
                 console.log(vm.images);
@@ -2821,53 +2841,53 @@ Date.prototype.Format = function(fmt) {
             $ionicModal.fromTemplateUrl('message/image-modal.html', {
                 scope: $scope,
                 animation: 'slide-in-up'
-            }).then(function(modal) {
+            }).then(function (modal) {
                 $scope.modal = modal;
             });
 
-            $scope.openModal = function() {
+            $scope.openModal = function () {
                 $ionicSlideBoxDelegate.slide(0);
                 $scope.modal.show();
             };
 
-            $scope.closeModal = function() {
+            $scope.closeModal = function () {
                 $scope.modal.hide();
             };
 
             // Cleanup the modal when we're done with it!
-            $scope.$on('$destroy', function() {
+            $scope.$on('$destroy', function () {
                 $scope.modal.remove();
             });
             // Execute action on hide modal
-            $scope.$on('modal.hide', function() {
+            $scope.$on('modal.hide', function () {
                 // Execute action
             });
             // Execute action on remove modal
-            $scope.$on('modal.removed', function() {
+            $scope.$on('modal.removed', function () {
                 // Execute action
             });
-            $scope.$on('modal.shown', function() {
+            $scope.$on('modal.shown', function () {
                 console.log('Modal is shown!');
             });
 
             // Call this functions if you need to manually control the slides
-            $scope.next = function() {
+            $scope.next = function () {
                 $ionicSlideBoxDelegate.next();
             };
 
-            $scope.previous = function() {
+            $scope.previous = function () {
                 $ionicSlideBoxDelegate.previous();
             };
 
-            $scope.goToSlide = function(index,msg) {
-                vm.images=[];
+            $scope.goToSlide = function (index, msg) {
+                vm.images = [];
                 vm.getImages(msg);
                 $scope.modal.show();
                 $ionicSlideBoxDelegate.slide(index);
             };
 
             // Called each time the slide changes
-            $scope.slideChanged = function(index) {
+            $scope.slideChanged = function (index) {
                 $scope.slideIndex = index;
             };
 
@@ -2928,22 +2948,10 @@ Date.prototype.Format = function(fmt) {
       getCamera:getCamera
     };
 
-    //字段名	类型	备注
-    //InfoID 	int64 	信息编号，自增即可
-    //PublisherID 	int64 	发布老师的账号
-    //DepositID 	int64 	托管机构账号
-    //Longitude 	float 	信息发布的位置经度
-    //Latitude 	float 	信息发布的位置纬度
-    //ClickCount 	int64 	总浏览次数
-    //InfoType 	int32 	信息类型（1：就餐；2：培训；3：活动；4：作业）
-    //Description 	varchar2 	老师的描述，不超出1000字
-    //PhotoLink1 	varchar2 	照片/视频1的信息
-    //PhotoLink2 	varchar2 	照片/视频2的信息
-    //PhotoLink3 	varchar2 	照片/视频3的信息
-    //PhotoLink4 	varchar2 	照片/视频4的信息
-    //PhotoLink5 	varchar2 	照片/视频5的信息
-    //PhotoLink6 	varchar2 	照片/视频6的信息
-    //Status	int	1:正常发布，2:撤回,
+    //字段�?类型	备注
+    //InfoID 	int64 	信息编号，自增即�?    //PublisherID 	int64 	发布老师的账�?    //DepositID 	int64 	托管机构账号
+    //Longitude 	float 	信息发布的位置经�?    //Latitude 	float 	信息发布的位置纬�?    //ClickCount 	int64 	总浏览次�?    //InfoType 	int32 	信息类型�?：就餐；2：培训；3：活动；4：作业）
+    //Description 	varchar2 	老师的描述，不超�?000�?    //PhotoLink1 	varchar2 	照片/视频1的信�?    //PhotoLink2 	varchar2 	照片/视频2的信�?    //PhotoLink3 	varchar2 	照片/视频3的信�?    //PhotoLink4 	varchar2 	照片/视频4的信�?    //PhotoLink5 	varchar2 	照片/视频5的信�?    //PhotoLink6 	varchar2 	照片/视频6的信�?    //Status	int	1:正常发布�?:撤回,
     //CreateTime 	datetime 	创建时间
 
 
@@ -3110,37 +3118,6 @@ Date.prototype.Format = function(fmt) {
 
 (function() {
   "use strict";
-  angular.module('commentModule', [
-    'commentService'
-  ]);
-
-}());
-
-(function() {
-  'use strict';
-
-  angular.module('commentService', [])
-    .factory('commentService', commentService);
-
-  function commentService($q, $http, Constants, ResultHandler) {
-    'ngInject';
-    var service = {
-        queryDepositComment:queryDepositComment
-    };
-
-    //http://172.18.1.166/api/v1/comment/deposit/fetch/:depositid
-    function queryDepositComment(id) {
-        var url = Constants.serverUrl + 'comment/deposit/fetch/'+id;
-        return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
-    };
-
-    return service;
-  }
-
-}());
-
-(function() {
-  "use strict";
   angular.module('depositChildrenModule', [
     'depositChildrenCtrl',
     'teacherDepositChildrenCtrl',
@@ -3170,8 +3147,7 @@ Date.prototype.Format = function(fmt) {
             };
 
             vm.goTo=function(id,item){
-                //查看孩子的更多家长信息列表
-                StateService.go('teacherEdit',{cid:id,type:0});
+                //查看孩子的更多家长信息列�?                StateService.go('teacherEdit',{cid:id,type:0});
             };
 
             vm.queryChildren = function(){
@@ -3180,7 +3156,7 @@ Date.prototype.Format = function(fmt) {
                         console.log(data.data);
                         vm.children = data.data;
                     }else{
-                        MessageToaster.error("查不到任何数据 "+response.error);
+                        MessageToaster.error("查不到任何数�?"+response.error);
                     }
                 });
             };
@@ -3262,7 +3238,7 @@ Date.prototype.Format = function(fmt) {
                             vm.queryChildren(vm.teacher.depositid);
                         }
                     } else {
-                        MessageToaster.error("查不到任何数据 " + data.error);
+                        MessageToaster.error("查不到任何数�?" + data.error);
                     }
                 });
 
@@ -3273,8 +3249,7 @@ Date.prototype.Format = function(fmt) {
             };
 
             vm.goTo=function(id,item){
-                //查看孩子的更多家长信息列表
-                StateService.go('teacherEdit',{cid:id,type:0});
+                //查看孩子的更多家长信息列�?                StateService.go('teacherEdit',{cid:id,type:0});
             };
 
             vm.queryChildren = function(id){
@@ -3283,11 +3258,42 @@ Date.prototype.Format = function(fmt) {
                         console.log(data.data);
                         vm.children = data.data;
                     }else{
-                        MessageToaster.error("查不到任何数据 "+response.error);
+                        MessageToaster.error("查不到任何数�?"+response.error);
                     }
                 });
             };
         });
+}());
+
+(function() {
+  "use strict";
+  angular.module('commentModule', [
+    'commentService'
+  ]);
+
+}());
+
+(function() {
+  'use strict';
+
+  angular.module('commentService', [])
+    .factory('commentService', commentService);
+
+  function commentService($q, $http, Constants, ResultHandler) {
+    'ngInject';
+    var service = {
+        queryDepositComment:queryDepositComment
+    };
+
+    //http://172.18.1.166/api/v1/comment/deposit/fetch/:depositid
+    function queryDepositComment(id) {
+        var url = Constants.serverUrl + 'comment/deposit/fetch/'+id;
+        return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
+    };
+
+    return service;
+  }
+
 }());
 
 (function() {
@@ -3607,7 +3613,7 @@ angular.module('eshopService', [])
             'ngInject';
             var vm = this;
             vm.activated = false;
-            vm.text='确定要退出';//'正在退出...';
+            vm.text='确定要退�?;//'正在退�?..';
             $scope.$on('$ionicView.afterEnter', activate);
 
             function activate() {
@@ -3616,7 +3622,7 @@ angular.module('eshopService', [])
             }
 
             vm.exit=function(){
-                vm.text='正在退出...';
+                vm.text='正在退�?..';
                 if(AuthService.getLoginID().substring(0,1)=='2'){
                   Session.destroy();
                   StateService.clearAllAndGo("login");
@@ -3624,19 +3630,19 @@ angular.module('eshopService', [])
                   exitService.exit(AuthService.getLoginID()).then(function(data) {
                       if (data.errno == 0) {
                           console.log(data.data);
-                          vm.text='退出';
+                          vm.text='退�?;
                           //需清楚缓存
                           Session.destroy();
                           StateService.clearAllAndGo("register");
                           //StateService.clearAllAndGo(AuthService.getNextPath());
                       }else{
                           console.log(data.error);
-                          vm.text='未能退出';
-                          MessageToaster.error('退出失败');
+                          vm.text='未能退�?;
+                          MessageToaster.error('退出失�?);
                       }
                   },function(error){
                       console.log(error);
-                      vm.text='退出失败';
+                      vm.text='退出失�?;
                   });
                }
             };
@@ -3823,20 +3829,10 @@ angular.module('eshopService', [])
                     LoginService.login(user.userId, user.password).then(function (response) {
                         console.log(response);
                         if (response.errno == 0) {
-                            //MessageToaster.success(response.message);
-                            //AuthService.setSession(response.data.uid, response.data.token, response.data.eshop, response.data.type);
-                            //StateService.clearAllAndGo(AuthService.getNextPath());
 
                             AuthService.setSession(response.data.uid, response.data.token, response.data.eshop, response.data.type);
                             StateService.clearAllAndGo(AuthService.getNextPath());
 
-                            //登录ESHOP
-                            //eshopService.signin(user.userId, user.password).then(function (data) {
-                            //    AuthService.setSession(response.data.uid, response.data.token, data, response.data.type);
-                            //    StateService.clearAllAndGo(AuthService.getNextPath());
-                            //}, function (ex) {
-                            //    MessageToaster.error(ex);
-                            //});
                         } else {
                             //MessageToaster.error(response.error);
                             MessageToaster.error("帐号或密码不正确");
@@ -3848,12 +3844,11 @@ angular.module('eshopService', [])
                         //WeuiModalLoading.hide();
                     });
                 } else {
-                    MessageToaster.error("请输入正确账号密码");
+                    MessageToaster.error("请输入正确账号密�?);
                 }
             }
 
             vm.reset = function(){
-
               StateService.go("resetPsw");
             }
 
@@ -3944,7 +3939,7 @@ angular.module('eshopService', [])
             var vm = this;
             $scope.$on('$ionicView.beforeEnter', validate);
             function validate() {
-              vm.id="";
+                vm.mobile = "";
             }
 
             vm.back = function () {
@@ -3952,26 +3947,26 @@ angular.module('eshopService', [])
             }
 
             vm.reset = function () {
-              if(vm.id!=""){
-                parentService.resetPsw(vm.id).then(function(data) {
+                if (vm.mobile != "") {
+                parentService.resetPsw(vm.mobile).then(function(data) {
                     console.log(data);
                     if(data.errno==0){
                         StateService.back();
-                        MessageToaster.info("请登录到你的邮箱查询你的新密码");
+                        MessageToaster.info("请登录到你的邮箱查询你的新密码！");
                     }else{
                         if(data.errno==10009){
-                          MessageToaster.error("电子邮件没法发出");
+                            MessageToaster.error("该账号邮箱格式错误，请联系管理员�?);
                         }else if(data.errno==10010){
-                          MessageToaster.error("帐号未设置电子邮箱，无法重置密码");
+                          MessageToaster.error("帐号未设置电子邮箱，无法重置密码�?);
                         }else if(data.errno==10002){
-                          MessageToaster.error("无此帐号");
+                          MessageToaster.error("手机号未绑定任何账号�?);
                         }else{
                           MessageToaster.error(data.error);
                         }
                     }
                 });
               }else{
-                MessageToaster.error("帐号和密码不能为空");
+                MessageToaster.error("必须填写正确的手机号");
               }
             }
         });
@@ -4318,7 +4313,7 @@ angular.module('eshopService', [])
                 teacherService.queryTeacherDeposit(vm.id).then(function(data) {
                     console.log(data);
                     if(data!=null && data.data !=null && data.data.length>0)vm.deposit=data.data[0];
-                    else MessageToaster.error('找不到老师的机构信息');
+                    else MessageToaster.error('找不到老师的机构信�?);
                 });
             }
 
@@ -4326,7 +4321,7 @@ angular.module('eshopService', [])
                 if (vm.imgs.length > 0) {
                     vm.isClicked = true;
                     vm.btnText='正在提交';
-                    MessageToaster.info('上传信息中，请稍等...');
+                    MessageToaster.info('上传信息中，请稍�?..');
                     var data = vm.imgs[which];
                     if (data != null)messageService.postPhoto(data).then(function (e) {
                         console.log(e);
@@ -4345,7 +4340,7 @@ angular.module('eshopService', [])
                 }
             };
 
-            //infotype:信息类型（1：就餐；2：培训；3：活动；4：作业）
+            //infotype:信息类型�?：就餐；2：培训；3：活动；4：作业）
             vm.saveData=function(){
                 var data={
                     "depositid": Number(vm.deposit.depositid),
@@ -4403,11 +4398,11 @@ angular.module('eshopService', [])
             vm.activated = false;
             vm.item = {
                 "scores":{
-                    "kitchen":0,
-                    "food":0,
-                    "roadsafety":0,
-                    "edufiresafety":0,
-                    "teacherresp":0
+                    "kitchen":8,
+                    "food":8,
+                    "roadsafety":8,
+                    "edufiresafety":8,
+                    "teacherresp":8
                 },
                 "commenttext":""
             };
@@ -4515,7 +4510,7 @@ angular.module('eshopService', [])
         //        "edu_fire_safety":8,
         //        "teacher_responsibility":8
         //      },
-        //    "comments_text":"老师责任心很好"
+        //    "comments_text":"老师责任心很�?
         //}
         function saveDepositComment(data) {
             var url = Constants.serverUrl + 'comments/parent/deposit';
@@ -4541,7 +4536,7 @@ angular.module('eshopService', [])
         //            "edu_fire_safety":8,
         //            "teacher_responsibility":8
         //        },
-        //    "comments_text":"老师责任心很好"
+        //    "comments_text":"老师责任心很�?
         //    }
         //}
         function getDepositComment(pid,did) {
@@ -4549,8 +4544,7 @@ angular.module('eshopService', [])
             return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
         };
 
-        //3.获取总评分
-        //总评分计算公式： 总评分 = 公司评分 * 40% + 所有家长的各项评分的总平均分 * 60%
+        //3.获取总评�?        //总评分计算公式： 总评�?= 公司评分 * 40% + 所有家长的各项评分的总平均分 * 60%
         //GET
         //URL: /api/v1/comments/deposit/?depositid=10000001
         //Response Body:
@@ -4660,8 +4654,7 @@ angular.module('eshopService', [])
                             "border":"0"});
                         marker.setLabel(label);
                         marker.setTitle(newValue[1][i].title);
-                        vm.map.addOverlay(marker);              // 将标注添加到地图中
-                        vm.addClickHandler(content,marker);
+                        vm.map.addOverlay(marker);              // 将标注添加到地图�?                        vm.addClickHandler(content,marker);
                     }
                     console.log(vm.list);
                     //清空tmp
@@ -4669,8 +4662,7 @@ angular.module('eshopService', [])
                     //vm.show=true;
                     //显示在列表，
 
-                    //显示在图片
-                }else if(newValue[0]!=null){
+                    //显示在图�?                }else if(newValue[0]!=null){
                     console.log('get babyplan data');
                 }else if(newValue[1]!=null){
                     console.log('get baidu map data');
@@ -4687,8 +4679,7 @@ angular.module('eshopService', [])
                 var p = e.target;
                 var point = new BMap.Point(p.getPosition().lng, p.getPosition().lat);
                 var infoWindow = new BMap.InfoWindow(content,{enableCloseOnClick:true});  // 创建信息窗口对象
-                vm.map.openInfoWindow(infoWindow,point); //开启信息窗口
-            };
+                vm.map.openInfoWindow(infoWindow,point); //开启信息窗�?            };
 
             vm.getOrgContent = function(org){
                 var sContent =
@@ -4729,7 +4720,7 @@ angular.module('eshopService', [])
                         }
                     });
                 }else{
-                    MessageToaster.error("定位不成功");
+                    MessageToaster.error("定位不成�?);
                 }
             };
 
@@ -4738,8 +4729,7 @@ angular.module('eshopService', [])
                 var myPoint=null;
                 if(data!=null) {
                     var myGeo = new BMap.Geocoder();
-                    // 将地址解析结果显示在地图上,并调整地图视野
-                    console.log(data);
+                    // 将地址解析结果显示在地图上,并调整地图视�?                    console.log(data);
                     myGeo.getPoint(data, function (point) {
                         if (point) {
                             console.log("change address point");
@@ -4756,7 +4746,7 @@ angular.module('eshopService', [])
                             });
                             local.searchNearby('托管',myPoint, vm.distance);
                         } else {
-                            alert("您选择地址没有解析到结果!");
+                            alert("您选择地址没有解析到结�?");
                         }
                     }, vm.city);
                 }else{
@@ -4809,7 +4799,7 @@ angular.module('eshopService', [])
                         vm.city = r.address.city;
                         vm.map.setCurrentCity(vm.city);
                         vm.point = r.point;
-                        vm.map.centerAndZoom(vm.point , 15);  // 初始化地图,设置中心点坐标和地图级别
+                        vm.map.centerAndZoom(vm.point , 15);  // 初始化地�?设置中心点坐标和地图级别
                         var myIcon = new BMap.Icon("http://api.map.baidu.com/img/markers.png", new BMap.Size(23, 25), {
                             offset: new BMap.Size(10, 25), // 指定定位位置
                             imageOffset: new BMap.Size(0, 0 - 10 * 25) // 设置图片偏移
@@ -4825,7 +4815,7 @@ angular.module('eshopService', [])
 
             vm.goto=function(item){
                 if(item.AccountID.length!=8){
-                    MessageToaster.error("暂不提供此信息");
+                    MessageToaster.error("暂不提供此信�?);
                 }else {
                     CacheData.putObject(item.AccountID, item);
                     StateService.go('nearbyDepositInfo', {id: item.AccountID});
@@ -5055,13 +5045,273 @@ angular.module('eshopService', [])
       findNearbyDeposit:findNearbyDeposit
     };
 
-    //http://172.18.1.166/api/v1/nearbyDepositList/113.271/23.1353     附近的机构列表
-    function findNearbyDeposit(x,y) {
+    //http://172.18.1.166/api/v1/nearbyDepositList/113.271/23.1353     附近的机构列�?    function findNearbyDeposit(x,y) {
       var url = Constants.serverUrl + 'nearbyDepositList/'+x+"/"+y;
       return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
     };
 
     return service;
+
+
+  }
+
+}());
+
+(function() {
+  "use strict";
+  angular.module('organizerModule', [
+    'organizerCtrl',
+    'organizerInfoCtrl',
+    'organizerEditCtrl',
+    'organizerRouter',
+    'organizerService'
+  ]);
+
+}());
+
+(function() {
+    "use strict";
+    angular.module('organizerCtrl', [])
+        .controller('organizerCtrl', function($scope, Constants, StateService,organizerService,AuthService) {
+            'ngInject';
+            var vm = this;
+            vm.activated = false;
+            $scope.$on('$ionicView.afterEnter', activate);
+
+            function activate() {
+                vm.activated = true;
+                vm.version = Constants.buildID;
+            }
+
+            vm.goTo = function(addr){
+                StateService.go(addr);
+            };
+
+            vm.getOrganizer = function(){
+                organizerService.queryOrganizer(AuthService.getLoginID()).then(function(data) {
+                    if (data.errno == 0) {
+                        vm.organizer = data.data;
+                    }
+                });
+            };
+
+            vm.getChildren = function(){
+                organizerService.queryTeacher(AuthService.getLoginID()).then(function(data) {
+                    if (data.errno == 0) {
+                        vm.teacher = data.data;
+                    }
+                });
+            };
+        });
+}());
+
+(function() {
+    "use strict";
+    angular.module('organizerEditCtrl', [])
+        .controller('organizerEditCtrl', function($scope, $stateParams, Constants, MessageToaster, AuthService, StateService, organizerService) {
+            'ngInject';
+            var vm = this;
+            vm.activated = false;
+
+            $scope.$on('$ionicView.afterEnter', activate);
+
+            function activate() {
+                vm.activated = true;
+                vm.version = Constants.buildID;
+
+                vm.getOrganizer();
+            }
+
+            vm.back=function(){
+                StateService.back();
+            };
+
+            vm.save=function(){
+                var data={
+                    contactphone: vm.organizer.ContactPhone,
+                    address:vm.organizer.Address,
+                    contactname:vm.organizer.ContactName,
+                    remark:"备注描述"
+                };
+                if(angular.isUndefined(vm.organizer.Address)||vm.organizer.Address==null||vm.organizer.Address.length==0){
+                    MessageToaster.error("机构地址不正�?);
+                    return ;
+                }
+                if(angular.isUndefined(vm.organizer.ContactName)||vm.organizer.ContactName==null||vm.organizer.ContactName.length==0){
+                    MessageToaster.error("联系人不正确");
+                    return ;
+                }
+                if(angular.isUndefined(vm.organizer.ContactPhone)||vm.organizer.ContactPhone==null||vm.organizer.ContactPhone.length==0
+                    ||vm.organizer.ContactPhone.length!=11){
+                    MessageToaster.error("联系人电话不正确");
+                    return ;
+                }
+                organizerService.updateOrganizer(AuthService.getLoginID(),data).then(function(response) {
+                    console.log(response);
+                    if(response.errno==0)
+                        MessageToaster.success("更新成功");
+                    else
+                        MessageToaster.error("更新失败");
+                    return ;
+                }).finally(function() {
+                    StateService.back();
+                });
+
+            };
+
+            vm.getOrganizer = function(){
+                organizerService.queryOrganizer(AuthService.getLoginID()).then(function(data) {
+                    if (data.errno == 0) {
+                        console.log(data.data);
+                        vm.organizer = data.data;
+                    }
+                });
+            };
+
+
+        });
+}());
+
+(function() {
+    "use strict";
+    angular.module('organizerInfoCtrl', [])
+        .controller('organizerInfoCtrl', function($scope,Constants,StateService,organizerService,AuthService) {
+            'ngInject';
+            var vm = this;
+            vm.activated = false;
+            $scope.$on('$ionicView.afterEnter', activate);
+
+            function activate() {
+                vm.activated = true;
+                vm.version = Constants.buildID;
+                //vm.organizer = {name:'abc 托管',contactName:"sam",contactPhone:"15986632761"};
+                vm.getOrganizer();
+            }
+
+            vm.back=function(){
+                StateService.back();
+            };
+
+            vm.edit=function(id){
+                //编辑机构信息
+                StateService.go('organizerEdit');
+            };
+
+            vm.getOrganizer = function(){
+                organizerService.queryOrganizer(AuthService.getLoginID()).then(function(data) {
+                    if (data.errno == 0) {
+                        console.log(data.data);
+                        vm.organizer = data.data;
+                    }
+                });
+            };
+        });
+}());
+
+(function() {
+  'use strict';
+
+  angular.module('organizerRouter', [])
+    .config(myRouter);
+
+
+  function myRouter($stateProvider, $urlRouterProvider) {
+    'ngInject';
+    $stateProvider
+      .state('tabs.organizer', {
+        url: "/organizer",
+          views: {
+            'tab-orgnize': {
+              templateUrl: 'organizer/organizer.html',
+              controller: 'organizerCtrl',
+              controllerAs: 'vm'
+            }
+          }
+      })
+      .state('organizerInfo', {
+        url: "/organizerInfo",
+        templateUrl: 'organizer/organizerInfo.html',
+        controller: 'organizerInfoCtrl',
+        controllerAs: 'vm'
+      })
+      .state('organizerEdit', {
+        url: "/organizerEdit",
+        templateUrl: 'organizer/organizerEdit.html',
+        controller: 'organizerEditCtrl',
+        controllerAs: 'vm'
+      })
+    ;
+  }
+}());
+
+(function() {
+  'use strict';
+
+  angular.module('organizerService', [])
+    .factory('organizerService', organizerService);
+
+  function organizerService($q, $http,Constants,ResultHandler) {
+      'ngInject';
+      var service = {
+        queryOrganizer:queryOrganizer,
+        queryDepositInfo:queryDepositInfo,
+        updateOrganizer:updateOrganizer
+      };
+
+
+      //GET /api/v1/account/query/deposit/{deposit_accnt_id}
+      //return
+      //{
+      //  "errno":0,
+      //  "error":"",
+      //  "data":{
+      //    "uid":10000001,
+      //     ………�?      //  }
+      //}
+      function queryOrganizer(id) {
+        var url = Constants.serverUrl + 'account/query/deposit/'+id;
+        return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
+      };
+
+
+      //post /api/v1/account/deposit/{deposit_accnt_id}/update
+      //  {
+      //    "orgname": "机构名称",
+      //    "contactphone": "13812345678",
+      //    "password":"abcd",
+      //    "weixinno":"微信�?,
+      //    "address":"托管机构地址",
+      //    "contactname":"托管机构联系人（管理者）",
+      //    "remark":"托管机构信息描述"
+      //  };
+      //return
+      //{
+      //  "errno":0,
+      //    "error":"",
+      //    "data":{
+      //      "uid":11000001
+      //    }
+      //}
+      function updateOrganizer(id,data) {
+          var url = Constants.serverUrl + 'account/deposit/'+id+'/update';
+          return $http({
+            method: 'post',
+            url: url,
+            data: data
+          }).then(function (response) {
+            return response.data;
+          }, function (error) {
+            return $q.reject(error);
+          });
+      };
+
+      function queryDepositInfo(id) {
+          //http://172.18.1.166/api/v1/depositInfo/fetch/:depositid
+          var url = Constants.serverUrl + 'depositInfo/fetch/'+id;
+          return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
+      };
+
+      return service;
 
 
   }
@@ -5227,268 +5477,6 @@ angular.module('eshopService', [])
 
 (function() {
   "use strict";
-  angular.module('organizerModule', [
-    'organizerCtrl',
-    'organizerInfoCtrl',
-    'organizerEditCtrl',
-    'organizerRouter',
-    'organizerService'
-  ]);
-
-}());
-
-(function() {
-    "use strict";
-    angular.module('organizerCtrl', [])
-        .controller('organizerCtrl', function($scope, Constants, StateService,organizerService,AuthService) {
-            'ngInject';
-            var vm = this;
-            vm.activated = false;
-            $scope.$on('$ionicView.afterEnter', activate);
-
-            function activate() {
-                vm.activated = true;
-                vm.version = Constants.buildID;
-            }
-
-            vm.goTo = function(addr){
-                StateService.go(addr);
-            };
-
-            vm.getOrganizer = function(){
-                organizerService.queryOrganizer(AuthService.getLoginID()).then(function(data) {
-                    if (data.errno == 0) {
-                        vm.organizer = data.data;
-                    }
-                });
-            };
-
-            vm.getChildren = function(){
-                organizerService.queryTeacher(AuthService.getLoginID()).then(function(data) {
-                    if (data.errno == 0) {
-                        vm.teacher = data.data;
-                    }
-                });
-            };
-        });
-}());
-
-(function() {
-    "use strict";
-    angular.module('organizerEditCtrl', [])
-        .controller('organizerEditCtrl', function($scope, $stateParams, Constants, MessageToaster, AuthService, StateService, organizerService) {
-            'ngInject';
-            var vm = this;
-            vm.activated = false;
-
-            $scope.$on('$ionicView.afterEnter', activate);
-
-            function activate() {
-                vm.activated = true;
-                vm.version = Constants.buildID;
-
-                vm.getOrganizer();
-            }
-
-            vm.back=function(){
-                StateService.back();
-            };
-
-            vm.save=function(){
-                var data={
-                    contactphone: vm.organizer.ContactPhone,
-                    address:vm.organizer.Address,
-                    contactname:vm.organizer.ContactName,
-                    remark:"备注描述"
-                };
-                if(angular.isUndefined(vm.organizer.Address)||vm.organizer.Address==null||vm.organizer.Address.length==0){
-                    MessageToaster.error("机构地址不正确");
-                    return ;
-                }
-                if(angular.isUndefined(vm.organizer.ContactName)||vm.organizer.ContactName==null||vm.organizer.ContactName.length==0){
-                    MessageToaster.error("联系人不正确");
-                    return ;
-                }
-                if(angular.isUndefined(vm.organizer.ContactPhone)||vm.organizer.ContactPhone==null||vm.organizer.ContactPhone.length==0
-                    ||vm.organizer.ContactPhone.length!=11){
-                    MessageToaster.error("联系人电话不正确");
-                    return ;
-                }
-                organizerService.updateOrganizer(AuthService.getLoginID(),data).then(function(response) {
-                    console.log(response);
-                    if(response.errno==0)
-                        MessageToaster.success("更新成功");
-                    else
-                        MessageToaster.error("更新失败");
-                    return ;
-                }).finally(function() {
-                    StateService.back();
-                });
-
-            };
-
-            vm.getOrganizer = function(){
-                organizerService.queryOrganizer(AuthService.getLoginID()).then(function(data) {
-                    if (data.errno == 0) {
-                        console.log(data.data);
-                        vm.organizer = data.data;
-                    }
-                });
-            };
-
-
-        });
-}());
-
-(function() {
-    "use strict";
-    angular.module('organizerInfoCtrl', [])
-        .controller('organizerInfoCtrl', function($scope,Constants,StateService,organizerService,AuthService) {
-            'ngInject';
-            var vm = this;
-            vm.activated = false;
-            $scope.$on('$ionicView.afterEnter', activate);
-
-            function activate() {
-                vm.activated = true;
-                vm.version = Constants.buildID;
-                //vm.organizer = {name:'abc 托管',contactName:"sam",contactPhone:"15986632761"};
-                vm.getOrganizer();
-            }
-
-            vm.back=function(){
-                StateService.back();
-            };
-
-            vm.edit=function(id){
-                //编辑机构信息
-                StateService.go('organizerEdit');
-            };
-
-            vm.getOrganizer = function(){
-                organizerService.queryOrganizer(AuthService.getLoginID()).then(function(data) {
-                    if (data.errno == 0) {
-                        console.log(data.data);
-                        vm.organizer = data.data;
-                    }
-                });
-            };
-        });
-}());
-
-(function() {
-  'use strict';
-
-  angular.module('organizerRouter', [])
-    .config(myRouter);
-
-
-  function myRouter($stateProvider, $urlRouterProvider) {
-    'ngInject';
-    $stateProvider
-      .state('tabs.organizer', {
-        url: "/organizer",
-          views: {
-            'tab-orgnize': {
-              templateUrl: 'organizer/organizer.html',
-              controller: 'organizerCtrl',
-              controllerAs: 'vm'
-            }
-          }
-      })
-      .state('organizerInfo', {
-        url: "/organizerInfo",
-        templateUrl: 'organizer/organizerInfo.html',
-        controller: 'organizerInfoCtrl',
-        controllerAs: 'vm'
-      })
-      .state('organizerEdit', {
-        url: "/organizerEdit",
-        templateUrl: 'organizer/organizerEdit.html',
-        controller: 'organizerEditCtrl',
-        controllerAs: 'vm'
-      })
-    ;
-  }
-}());
-
-(function() {
-  'use strict';
-
-  angular.module('organizerService', [])
-    .factory('organizerService', organizerService);
-
-  function organizerService($q, $http,Constants,ResultHandler) {
-      'ngInject';
-      var service = {
-        queryOrganizer:queryOrganizer,
-        queryDepositInfo:queryDepositInfo,
-        updateOrganizer:updateOrganizer
-      };
-
-
-      //GET /api/v1/account/query/deposit/{deposit_accnt_id}
-      //return
-      //{
-      //  "errno":0,
-      //  "error":"",
-      //  "data":{
-      //    "uid":10000001,
-      //     …………
-      //  }
-      //}
-      function queryOrganizer(id) {
-        var url = Constants.serverUrl + 'account/query/deposit/'+id;
-        return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
-      };
-
-
-      //post /api/v1/account/deposit/{deposit_accnt_id}/update
-      //  {
-      //    "orgname": "机构名称",
-      //    "contactphone": "13812345678",
-      //    "password":"abcd",
-      //    "weixinno":"微信号",
-      //    "address":"托管机构地址",
-      //    "contactname":"托管机构联系人（管理者）",
-      //    "remark":"托管机构信息描述"
-      //  };
-      //return
-      //{
-      //  "errno":0,
-      //    "error":"",
-      //    "data":{
-      //      "uid":11000001
-      //    }
-      //}
-      function updateOrganizer(id,data) {
-          var url = Constants.serverUrl + 'account/deposit/'+id+'/update';
-          return $http({
-            method: 'post',
-            url: url,
-            data: data
-          }).then(function (response) {
-            return response.data;
-          }, function (error) {
-            return $q.reject(error);
-          });
-      };
-
-      function queryDepositInfo(id) {
-          //http://172.18.1.166/api/v1/depositInfo/fetch/:depositid
-          var url = Constants.serverUrl + 'depositInfo/fetch/'+id;
-          return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
-      };
-
-      return service;
-
-
-  }
-
-}());
-
-(function() {
-  "use strict";
   angular.module('parentModule', [
     'parentCtrl',
     'parentEditCtrl',
@@ -5511,8 +5499,8 @@ angular.module('eshopService', [])
             vm.shouldShowReorder = false;
             vm.listCanSwipe = true
             vm.parentInfo = {
-              //name: "刘德华",
-              //nickName: "流的花",
+              //name: "刘德�?,
+              //nickName: "流的�?,
               //sex: 1,
               //mobile: '1342222235',
               //childrens: [
@@ -5545,21 +5533,21 @@ angular.module('eshopService', [])
                     vm.parentInfo = results[0].data || {},
                    vm.parentInfo.childrens = results[1].data || [];
                 }, function (err) {
-                    MessageToaster.error("检索异常!");
+                    MessageToaster.error("检索异�?");
                 });
             };
 
 
-            // 图片选择项
+            // 图片选择�?
             vm.showImageUploadChoices = function (prop) {
                 var hideSheet = $ionicActionSheet.show({
                     buttons: [{
                         text: '拍照上传'
                     }, {
-                        text: '从相册中选'
+                        text: '从相册中�?
                     }],
                     titleText: '图片上传',
-                    cancelText: '取 消',
+                    cancelText: '�?�?,
                     cancel: function () {
                     },
                     buttonClicked: function (index) {
@@ -5578,7 +5566,7 @@ angular.module('eshopService', [])
             //打开用户相册
             vm.readalbum = function (prop) {
                 if (!window.imagePicker) {
-                    MessageToaster.error("目前您的环境不支持相册上传!");
+                    MessageToaster.error("目前您的环境不支持相册上�?");
                     return;
                 }
 
@@ -5608,7 +5596,7 @@ angular.module('eshopService', [])
             //拍照
             vm.takePicture = function (prop) {
                 if (!navigator.camera) {
-                    MessageToaster.error("请在真机环境中使用拍照上传!");
+                    MessageToaster.error("请在真机环境中使用拍照上�?");
                     return;
                 }
 
@@ -5639,7 +5627,7 @@ angular.module('eshopService', [])
 
                 var ft = new FileTransfer();
                 $ionicLoading.show({
-                    template: '上传中...'
+                    template: '上传�?..'
                 });
                 ft.upload(fileURL, "http://wx.zxing-tech.cn/upload", function (data) {
                     //设置图片新地址
@@ -5660,7 +5648,7 @@ angular.module('eshopService', [])
             };
 
 
-            //创建新的孩子信息,使用新局部编写界面
+            //创建新的孩子信息,使用新局部编写界�?
             vm.addChild = function () {
                 $ionicListDelegate.closeOptionButtons();
                 StateService.go('childrenAdd');
@@ -5705,7 +5693,7 @@ angular.module('eshopService', [])
                 });
             };
 
-            //跳转到指定页面
+            //跳转到指定页�?
             vm.goTo = function (addr) {
                 console.log('go to path : ' + addr);
                 StateService.go(addr);
@@ -5726,8 +5714,8 @@ angular.module('eshopService', [])
             var vm = this;
             vm.activated = false;
             vm.parentInfo = {
-                //name: "刘德华",
-                //nickName: "流的花",
+                //name: "刘德�?,
+                //nickName: "流的�?,
                 //sex: 1,
                 //mobile: '1342222235'
             };
@@ -5746,7 +5734,7 @@ angular.module('eshopService', [])
                 var queryParentPromise = parentService.queryParent(pId).then(function (res) {
                     vm.parentInfo = res.data || {}
                 }, function (err) {
-                    MessageToaster.error("检索异常!");
+                    MessageToaster.error("检索异�?");
                 });
             }
 
@@ -5784,8 +5772,8 @@ angular.module('eshopService', [])
             vm.shouldShowReorder = false;
             vm.listCanSwipe = true
             vm.parentInfo = {
-                //name: "刘德华",
-                //nickName: "流的花",
+                //name: "刘德�?,
+                //nickName: "流的�?,
                 //sex: 1,
                 //mobile: '1342222235',
                 //childrens: [
@@ -5818,21 +5806,20 @@ angular.module('eshopService', [])
                     vm.parentInfo = results[0].data || {},
                    vm.parentInfo.childrens = results[1].data || [];
                 }, function (err) {
-                    MessageToaster.error("检索异常!");
+                    MessageToaster.error("检索异�?");
                 });
             };
 
 
-            // 图片选择项
-            vm.showImageUploadChoices = function (prop) {
+            // 图片选择�?            vm.showImageUploadChoices = function (prop) {
                 var hideSheet = $ionicActionSheet.show({
                     buttons: [{
                         text: '拍照上传'
                     }, {
-                        text: '从相册中选'
+                        text: '从相册中�?
                     }],
                     titleText: '图片上传',
-                    cancelText: '取 消',
+                    cancelText: '�?�?,
                     cancel: function () {
                     },
                     buttonClicked: function (index) {
@@ -5850,28 +5837,24 @@ angular.module('eshopService', [])
 
             //打开用户相册
             vm.readalbum = function (prop) {
-                if (!window.imagePicker) {
-                    MessageToaster.error("目前您的环境不支持相册上传!");
+                if (!navigator.camera) {
+                    MessageToaster.error("目前您的环境不支持相册上�?");
                     return;
                 }
 
                 var options = {
                     maximumImagesCount: 1,
-                    width: 800,
-                    height: 800,
+                    sourceType: 2,
+                    targetWidth: 80,
+                    targetHeight: 80,
+                    allowEdit: true,
                     quality: 80
                 };
-                try{
-                    $cordovaImagePicker.getPictures(options).then(function (results) {
-                        var uri = results[0];
-                        vm.uploadimage(uri, prop);
-
-                    }, function (error) {
-                        MessageToaster.error("访问相册异常:请检查是否有权限!");
-                    });
-                } catch (ex) {
-                    MessageToaster.error("访问相册异常:请检查是否开启[存储]访问权限!");
-                }
+                navigator.camera.getPicture(function (imageURI) {
+                    vm.uploadImage(imageURI);
+                }, function (error) {
+                    // MessageToaster.error("访问相册异常:请检查是否有权限!");
+                }, options);
             };
 
 
@@ -5879,28 +5862,28 @@ angular.module('eshopService', [])
             vm.takePicture = function (prop) {
 
                 if (!navigator.camera) {
-                    MessageToaster.error("请在真机环境中使用拍照上传!");
+                    MessageToaster.error("请在真机环境中使用拍照上�?");
                     return;
                 }
 
                 var options = {
-                    quality: 75,
-                    targetWidth: 800,
-                    targetHeight: 800,
-                    saveToPhotoAlbum: false
+                    quality: 100,
+                    targetWidth: 80,
+                    targetHeight: 80,
+                    allowEdit: true,
+                    saveToPhotoAlbum: true
                 };
 
 
                 navigator.camera.getPicture(function (imageURI) {
-                    vm.uploadimage(imageURI);
+                    vm.uploadImage(imageURI);
                 }, function (err) {
-                  //  MessageToaster.error("拍照异常:请检查是否有权限!");
+                  // MessageToaster.error("拍照异常:请检查是否有权限!");
                 }, options);
-
             }
 
             // 上传
-            vm.uploadimage = function (uri) {
+            vm.uploadImage = function (uri) {
                 var fileURL = uri;
 
                 var options = new FileUploadOptions();
@@ -5911,7 +5894,7 @@ angular.module('eshopService', [])
 
                 var ft = new FileTransfer();
                 $ionicLoading.show({
-                    template: '上传中...'
+                    template: '上传�?..'
                 });
                 ft.upload(fileURL, "http://wx.zxing-tech.cn/upload", function (data) {
                     // 设置图片新地址
@@ -5933,8 +5916,7 @@ angular.module('eshopService', [])
             };
 
 
-            //创建新的孩子信息,使用新局部编写界面
-            vm.addChild = function () {
+            //创建新的孩子信息,使用新局部编写界�?            vm.addChild = function () {
                 $ionicListDelegate.closeOptionButtons();
                 StateService.go('childrenAdd');
             };
@@ -5978,8 +5960,7 @@ angular.module('eshopService', [])
                 });
             };
 
-            //跳转到指定页面
-            vm.goTo = function (addr) {
+            //跳转到指定页�?            vm.goTo = function (addr) {
                 console.log('go to path : ' + addr);
                 StateService.go(addr);
             };
@@ -6047,7 +6028,7 @@ angular.module('eshopService', [])
     //  "error":"",
     //  "data":{
     //  "uid":10000001,
-    //      "name":"张粑粑",
+    //      "name":"张粑�?,
     //      "sex":1,
     //      "mobile":"18612345678",
     //      "nick":"sam"
@@ -6079,7 +6060,7 @@ angular.module('eshopService', [])
     //    {
     //      "uid":10000001,
     //      "relationship":1,
-    //      "name":"赵大萌",
+    //      "name":"赵大�?,
     //      "sex":1,
     //      "fingerfeature":"xxxxx",
     //      "remark":"xxxx"
@@ -6092,15 +6073,14 @@ angular.module('eshopService', [])
       return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
     };
 
-    function resetPsw(id){
-      var authInfo = JSON.parse(Session.getData("eshop_auth"));
-      console.log(authInfo);
-      var data = {eshopToken:authInfo.token};
-      var url = Constants.serverUrl + 'account/resetPsw/'+id;
+    function resetPsw(mobile){
+     // var authInfo = JSON.parse(Session.getData("eshop_auth"));
+     // console.log(authInfo);
+     // var data = {eshopToken:authInfo.token};
+        var url = Constants.serverUrl + 'account/resetPsw/' + mobile;
       return $http({
         method: 'post',
-        url: url,
-        data: data
+        url: url
       }).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
     };
 
@@ -6234,56 +6214,166 @@ angular.module('eshopService', [])
 
 }());
 
-(function() {
+(function () {
     "use strict";
     angular.module('profileCtrl', [])
-        .controller('profileCtrl', function($scope, $state, Constants, StateService, parentService, AuthService) {
-            'ngInject';
-            var vm = this;
-            vm.activated = false;
-            $scope.$on('$ionicView.afterEnter', activate);
+            .controller('profileCtrl', function ($scope, $q, $window, $cordovaImagePicker, $ionicActionSheet, $ionicListDelegate,
+           $ionicPopup, $ionicLoading, Session, Constants, MessageToaster, AuthService, StateService, parentService, childrenSettingService) {
 
-            function activate() {
-                vm.activated = true;
-                vm.version = Constants.buildID;
-                vm.getParent();
-                vm.getChildren();
-            };
+                'ngInject';
+                var vm = this;
+                vm.activated = false;
+                $scope.$on('$ionicView.afterEnter', activate);
 
-            vm.getParent = function(){
-              parentService.queryParent(AuthService.getLoginID()).then(function(data) {
-                  if (data.errno == 0) {
-                      console.log(data.data);
-                      vm.parent = data.data;
-                  }
-              });
-            };
+                function activate() {
+                    vm.activated = true;
+                    vm.version = Constants.buildID;
+                    vm.getParent();
+                    vm.getChildren();
+                };
 
-            vm.getChildren = function(){
-                parentService.queryChildren(AuthService.getLoginID()).then(function(data) {
-                    if (data.errno == 0) {
-                        console.log(data.data);
-                        vm.children = data.data;
-                        var children="";
-                        for(var i=0;i<vm.children.length;i++){
-                          if(children=="")
-                            children+=vm.children[i].name
-                          else {
-                            children+=","+vm.children[i].name
-                          }
+                vm.getParent = function () {
+                    parentService.queryParent(AuthService.getLoginID()).then(function (data) {
+                        if (data.errno == 0) {
+                            console.log(data.data);
+                            vm.parent = data.data;
                         }
-                        vm.childrenName=children;
+                    });
+                };
+
+                vm.getChildren = function () {
+                    parentService.queryChildren(AuthService.getLoginID()).then(function (data) {
+                        if (data.errno == 0) {
+                            console.log(data.data);
+                            vm.children = data.data;
+                            var children = "";
+                            for (var i = 0; i < vm.children.length; i++) {
+                                if (children == "")
+                                    children += vm.children[i].name
+                                else {
+                                    children += "," + vm.children[i].name
+                                }
+                            }
+                            vm.childrenName = children;
+                        }
+                    });
+                };
+
+                vm.goTo = function (addr, params) {
+                    console.log('go to path : ' + addr);
+                    if (params) console.log(params);
+                    StateService.go(addr, params);
+                };
+
+
+
+                // ͼƬѡ����
+                vm.showImageUploadChoices = function (prop) {
+                    var hideSheet = $ionicActionSheet.show({
+                        buttons: [{
+                            text: '�����ϴ�'
+                        }, {
+                            text: '�������ѡ'
+                        }],
+                        titleText: 'ͼƬ�ϴ�',
+                        cancelText: 'ȡ ��',
+                        cancel: function () {
+                        },
+                        buttonClicked: function (index) {
+                            // ����ļ�ѡ���ϴ�
+                            if (index == 1) {
+                                vm.readalbum(prop);
+                            } else if (index == 0) {
+                                // �����ϴ�
+                                vm.takePicture(prop);
+                            }
+                            return true;
+                        }
+                    });
+                };
+
+                //���û����
+                vm.readalbum = function (prop) {
+                    if (!navigator.camera) {
+                        MessageToaster.error("Ŀǰ���Ļ�����֧������ϴ�!");
+                        return;
                     }
-                });
-            };
 
-            vm.goTo = function(addr,params){
-                console.log('go to path : '+addr);
-                if(params)console.log(params);
-                StateService.go(addr,params);
-            };
+                    var options = {
+                        maximumImagesCount: 1,
+                        sourceType: 2,
+                        targetWidth: 80,
+                        targetHeight: 80,
+                        allowEdit: true,
+                        quality: 80
+                    };
+                    navigator.camera.getPicture(function (imageURI) {
+                        vm.uploadImage(imageURI);
+                    }, function (error) {
+                        // MessageToaster.error("��������쳣:�����Ƿ���Ȩ��!");
+                    }, options);
+                };
 
-        });
+
+                // ����
+                vm.takePicture = function (prop) {
+
+                    if (!navigator.camera) {
+                        MessageToaster.error("�������������ʹ�������ϴ�!");
+                        return;
+                    }
+
+                    var options = {
+                        quality: 100,
+                        targetWidth: 80,
+                        targetHeight: 80,
+                        allowEdit: true,
+                        saveToPhotoAlbum: true
+                    };
+
+
+                    navigator.camera.getPicture(function (imageURI) {
+                        vm.uploadImage(imageURI);
+                    }, function (err) {
+                        // MessageToaster.error("�����쳣:�����Ƿ���Ȩ��!");
+                    }, options);
+                }
+
+                // �ϴ�
+                vm.uploadImage = function (uri) {
+                    var fileURL = uri;
+
+                    var options = new FileUploadOptions();
+                    options.fileKey = "file";
+                    options.fileName = fileURL.substr(fileURL.lastIndexOf('/') + 1);
+                    options.mimeType = "image/jpeg";
+                    options.chunkedMode = true;
+
+                    var ft = new FileTransfer();
+                    $ionicLoading.show({
+                        template: '�ϴ���...'
+                    });
+                    ft.upload(fileURL, "http://wx.zxing-tech.cn/upload", function (data) {
+                        // ����ͼƬ�µ�ַ
+                        var resp = JSON.parse(data.response);
+                        vm.parentInfo.avatarlink = resp.data.fileurl;
+
+                        parentService.updateParent(vm.parentInfo).then(function (res) {
+                            MessageToaster.info("���³ɹ�!");
+                            $ionicLoading.hide();
+                        }, function (err) {
+                            MessageToaster.error("����ʧ��!");
+                            $ionicLoading.hide();
+                        })
+
+                    }, function (error) {
+                        MessageToaster.error("�ϴ�ʧ��!");
+                        $ionicLoading.hide();
+                    }, options);
+                };
+
+
+            });
 }());
 
 (function() {
@@ -6384,7 +6474,7 @@ angular.module('eshopService', [])
             $scope.$watch('vm.user.mobile', function (newValue, oldValue) {
                 if (vm.user.mobile != undefined) {
                     if (vm.user.mobile.length != 11) {
-                        vm.error = '手机长度必须为11位';
+                        vm.error = '手机长度必须�?1�?;
                     } else {
                         vm.error = null;
                     }
@@ -6400,13 +6490,13 @@ angular.module('eshopService', [])
                         vm.error = '电子邮箱格式不对';
                     }
                 } else {
-                    vm.error = '电子邮箱必须填写，用于找回密码';
+                    vm.error = '电子邮箱必须填写，用于找回密�?;
                 }
             });
             $scope.$watch('vm.user.password', function (newValue, oldValue) {
                 if (vm.user.password != undefined) {
                     if (vm.user.password.length < 6) {
-                        vm.error = '密码长度必须不小于6位';
+                        vm.error = '密码长度必须不小�?�?;
                     } else {
                         vm.error = null;
                     }
@@ -6417,7 +6507,7 @@ angular.module('eshopService', [])
             $scope.$watch('vm.user.pswConfirm', function (newValue, oldValue) {
                 if (vm.user.pswConfirm != undefined) {
                     if (vm.user.password != '' && vm.user.password.length >= 6 && vm.user.pswConfirm != vm.user.password) {
-                        vm.error = '密码不一致';
+                        vm.error = '密码不一�?;
                     } else {
                         vm.error = null;
                     }
@@ -6440,12 +6530,6 @@ angular.module('eshopService', [])
                 }
             };
 
-            //vm.simpleCheck = function(){
-            //    if(vm.org.password.length >= 6 && (vm.org.account.length == 11 || vm.org.account.length == 8 )){
-            //        vm.error = "";
-            //        return true;
-            //    } else vm.error = '数据未填完哦!';
-            //};
 
             function login(userid, pwd) {
                 LoginService.login(userid, pwd).then(function (response) {
@@ -6468,87 +6552,12 @@ angular.module('eshopService', [])
                }).finally(function () {
                    //WeuiModalLoading.hide();
                });
-
-
-                //console.log(userid+"..."+type);
-                //LoginService.login(userid,type).then(function (response) {
-                //    console.log(response);
-                //    if (response.errno == 0) {
-                //        var result = response.data;
-                //        //if(typeof(result.uid) == "undefined" ){
-                //        if (result instanceof Array && result.length > 1) {
-                //            //modal select type
-                //            vm.roleList = result;
-                //            //alert(JSON.stringify(result));
-                //            //MessageToaster.info("undefine have select  " + result.length);
-                //            //vm.showChooseModal();
-
-                //        } else {
-                //            console.log(result[0]);
-                //            if (result[0].uid != null && result[0].token != null && result[0].type != null) {
-                //                console.log("goto next");
-                //                AuthService.setSession(result[0].uid, result[0].token, result[0].eshop, result[0].type, userid);
-                //                StateService.clearAllAndGo(AuthService.getNextPath());
-                //            }
-                //        }
-                //        console.log(result);
-
-                //    } else {
-                //        if (response.errno == 12004) {
-                //            //no data found
-                //            console.log("找不到任何信息");
-                //        }
-                //        //MessageToaster.error(response.error);
-                //    }
-                //});
             };
 
-            //vm.bind = function(){
-            //    //检测输入数值是否正确
-            //    if(!vm.simpleCheck())return;
-            //    //再绑定
-            //    vm.count++;
-            //    if(vm.count>3){
-            //        vm.isLock=true;
-            //        vm.error="尝试过多,请稍后再试!";
-            //        return;
-            //    }
-            //    var wechatId=vm.user.wechat;
-            //    //alert(AuthService.getLoginID());
-            //    if(vm.roleType=='3'){
-            //        registerService.bindTeacher(vm.org,wechatId).then(function(data) {
-            //            if (data.errno == 0) {
-            //                var userId = data.data.uid;
-            //                console.log("bind teacher uid = "+userId);
-            //                //if(userId!=null){
-            //                //    login(userId,vm.roleType);
-            //                //}
-            //                login(wechatId,vm.roleType);
-            //            }else{
-            //                console.log("bindTeacher get error");
-            //            }
-            //        });
-            //    }else if(vm.roleType=='1'){
-            //        registerService.bindOrganizer(vm.org,wechatId).then(function(data) {
-            //            if (data.errno == 0) {
-            //                var userId = data.data.uid;
-            //                console.log("bind teacher uid = "+userId);
-            //                //if(userId!=null){
-            //                //    login(userId,vm.roleType);
-            //                //}
-            //                login(wechatId,vm.roleType);
-            //            }
-            //        });
-            //    }
-            //    vm.error="密码或手机号码有误,请重试";
-
-            //};
 
             vm.register = function () {
-                //检测输入数值是否正确
-                if (!vm.check()) return;
-                //先注册
-                vm.user.weixinno = '';
+                //检测输入数值是否正�?                if (!vm.check()) return;
+                //先注�?                vm.user.weixinno = '';
                 vm.user.wechat = '';
 
                 registerService.registerParent(vm.user).then(function (data) {
@@ -6570,12 +6579,12 @@ angular.module('eshopService', [])
                         if (data.errno == 10008) {
                             MessageToaster.error("手机号码已注册过");
                         } else {
-                            MessageToaster.error("注册不成功");
+                            MessageToaster.error("注册不成�?);
                         }
                     }
                 });
 
-                //注册成功后,使用账户去获取获取token,完成登录
+                //注册成功�?使用账户去获取获取token,完成登录
                 //Session.userId="70000103";
                 //Session.token='111';
                 //Session.userRole='2';
@@ -6636,7 +6645,7 @@ angular.module('eshopService', [])
     //POST URL: /api/v1/account/register/parent
     //{
     //  "weixinno": "xxxxxx",
-    //    "name": "李寻欢",
+    //    "name": "李寻�?,
     //    "sex":1,
     //    "mobile": "13812345678",
     //    "nick":"小李飞刀",
@@ -6763,7 +6772,7 @@ angular.module('eshopService', [])
             $scope.$watch('vm.originPsw', function(newValue, oldValue) {
               if(vm.originPsw!=undefined) {
                   if (vm.originPsw.length < 6) {
-                      vm.error = '密码长度必须不小于6位';
+                      vm.error = '密码长度必须不小�?�?;
                   } else {
                       vm.error = null;
                   }
@@ -6774,7 +6783,7 @@ angular.module('eshopService', [])
             $scope.$watch('vm.password', function(newValue, oldValue) {
                 if(vm.password!=undefined) {
                     if (vm.password.length < 6) {
-                        vm.error = '密码长度必须不小于6位';
+                        vm.error = '密码长度必须不小�?�?;
                     } else {
                         vm.error = null;
                     }
@@ -6785,7 +6794,7 @@ angular.module('eshopService', [])
             $scope.$watch('vm.pswConfirm', function(newValue, oldValue) {
                 if(vm.pswConfirm!=undefined) {
                     if (vm.password != '' && vm.password.length >= 6  && vm.pswConfirm != vm.password) {
-                        vm.error = '密码不一致';
+                        vm.error = '密码不一�?;
                     } else {
                         vm.error = null;
                     }
@@ -6800,8 +6809,10 @@ angular.module('eshopService', [])
                     return false;
                 }
                 else {
-                    if(vm.password.length >= 6 && vm.pswConfirm.length >= 6 && vm.originPsw.length > 6 && vm.password == vm.pswConfirm)
-                      return true;
+                    if(vm.password.length >= 6 && vm.pswConfirm.length >= 6 && vm.originPsw.length >= 6 && vm.password == vm.pswConfirm){
+                        vm.error = '';
+                        return true;
+                    }
                     else vm.error = '数据未填完哦!';
                 }
             };
@@ -6913,78 +6924,6 @@ angular.module('eshopService', [])
           controllerAs: 'vm'
         })
   }
-}());
-
-(function() {
-  "use strict";
-  angular.module('tabsModule', [
-    'tabsCtrl',
-    'tabsRouter',
-    'tabsService'
-  ]);
-
-}());
-
-(function() {
-  "use strict";
-  angular.module('tabsCtrl', [])
-    .controller('tabsCtrl', function($scope,tabsService,StateService,AuthService) {
-      'ngInject';
-      var vm = this;
-      vm.activated = false;
-
-      vm.who=AuthService.getUserRole();
-      //vm.slideBoxImgs = homeService.getSlideBoxImgs();
-      //vm.homeOptions = homeService.getHomeOptions();
-      vm.goState = StateService.go;
-      $scope.$on('$ionicView.afterEnter', activate);
-      function activate() {
-        vm.activated = true;
-      }
-      function goState(state){
-        StateService.go(state);
-      }
-    });
-}());
-
-(function() {
-  'use strict';
-
-  angular.module('tabsRouter', [])
-    .config(myRouter);
-
-
-  function myRouter($stateProvider, $urlRouterProvider) {
-    'ngInject';
-    $stateProvider
-      .state('tabs', {
-        url: '/tabs',
-        abstract: true,
-        templateUrl: 'tabs/tabs.html',
-        controller: 'tabsCtrl',
-        controllerAs: 'vm'
-      })
-  }
-
-}());
-
-(function() {
-    'use strict';
-
-    angular.module('tabsService', [])
-        .factory('tabsService', tabsService);
-
-    function tabsService($q, $http) {
-        'ngInject';
-        var service = {
-
-        };
-
-        return service;
-
-
-    }
-
 }());
 
 (function() {
@@ -7113,7 +7052,7 @@ angular.module('eshopService', [])
                         StateService.back();
                     }else{
                         //MessageToaster.error(data.error);
-                        MessageToaster.error('无法添加，请确认手机号码是否已经使用过');
+                        MessageToaster.error('无法添加，请确认手机号码是否已经使用�?);
                     }
                 },function(data){
                     MessageToaster.error(data);
@@ -7170,8 +7109,7 @@ angular.module('eshopService', [])
     };
 
 
-    //POST /api/v1/account/teacher/{$teacher_accnt_id}/update //老师账号信息更新，完善
-    //Request Body: { "name":"小强", "sex":1, "mobile":"13300001111", "teachage":5, "age":29, "photolink":"照片url", "password":"123456" }
+    //POST /api/v1/account/teacher/{$teacher_accnt_id}/update //老师账号信息更新，完�?    //Request Body: { "name":"小强", "sex":1, "mobile":"13300001111", "teachage":5, "age":29, "photolink":"照片url", "password":"123456" }
     //Response Body: { "errno":0, "error":"", "data":{ "uid":30000001 } }
     function updateTeacher(teacher, teacherId) {
       var data = {};
@@ -7219,7 +7157,7 @@ angular.module('eshopService', [])
     //  "data":[
     //    {
     //      "uid":10000001,
-    //      "name":"赵大萌",
+    //      "name":"赵大�?,
     //      "sex":1,
     //      "mobile":"15032145678",
     //      "teachage":10,
@@ -7227,8 +7165,7 @@ angular.module('eshopService', [])
     //      "photolink":"xxxxx"
     //      "remark":"xxxx"
     //    },
-    //    ……
-    //  ]
+    //    …�?    //  ]
     //}
     function queryTeacher(id) {
       var url = Constants.serverUrl + 'account/query/depositTeacher/'+id;
@@ -7245,6 +7182,78 @@ angular.module('eshopService', [])
 
 
   }
+
+}());
+
+(function() {
+  "use strict";
+  angular.module('tabsModule', [
+    'tabsCtrl',
+    'tabsRouter',
+    'tabsService'
+  ]);
+
+}());
+
+(function() {
+  "use strict";
+  angular.module('tabsCtrl', [])
+    .controller('tabsCtrl', function($scope,tabsService,StateService,AuthService) {
+      'ngInject';
+      var vm = this;
+      vm.activated = false;
+
+      vm.who=AuthService.getUserRole();
+      //vm.slideBoxImgs = homeService.getSlideBoxImgs();
+      //vm.homeOptions = homeService.getHomeOptions();
+      vm.goState = StateService.go;
+      $scope.$on('$ionicView.afterEnter', activate);
+      function activate() {
+        vm.activated = true;
+      }
+      function goState(state){
+        StateService.go(state);
+      }
+    });
+}());
+
+(function() {
+  'use strict';
+
+  angular.module('tabsRouter', [])
+    .config(myRouter);
+
+
+  function myRouter($stateProvider, $urlRouterProvider) {
+    'ngInject';
+    $stateProvider
+      .state('tabs', {
+        url: '/tabs',
+        abstract: true,
+        templateUrl: 'tabs/tabs.html',
+        controller: 'tabsCtrl',
+        controllerAs: 'vm'
+      })
+  }
+
+}());
+
+(function() {
+    'use strict';
+
+    angular.module('tabsService', [])
+        .factory('tabsService', tabsService);
+
+    function tabsService($q, $http) {
+        'ngInject';
+        var service = {
+
+        };
+
+        return service;
+
+
+    }
 
 }());
 
@@ -7313,6 +7322,83 @@ angular.module('eshopService', [])
     'ngInject';
     var service = {
     };
+    return service;
+
+
+  }
+
+}());
+
+(function() {
+  "use strict";
+  angular.module('vipTipsModule', [
+    'vipTipsCtrl',
+    'vipTipsRouter',
+    'vipTipsService'
+  ]);
+
+}());
+
+(function() {
+    "use strict";
+    angular.module('vipTipsCtrl', [])
+        .controller('vipTipsCtrl', function($scope, $state, Constants, StateService) {
+            'ngInject';
+            var vm = this;
+            vm.activated = false;
+            $scope.$on('$ionicView.afterEnter', activate);
+            vm.expend1=false;
+            function activate() {
+                vm.activated = true;
+                vm.version = Constants.buildID;
+            }
+
+            vm.back=function(){
+                StateService.back();
+            };
+
+            vm.test=function(){
+                console.log('test');
+            }
+        });
+}());
+
+(function() {
+  'use strict';
+
+  angular.module('vipTipsRouter', [])
+    .config(myRouter);
+
+
+  function myRouter($stateProvider, $urlRouterProvider) {
+    'ngInject';
+    $stateProvider
+        .state('vipTips', {
+          url: "/vipTips",
+          templateUrl: 'vipTips/vipTips.html',
+          controller: 'vipTipsCtrl',
+          controllerAs: 'vm'
+        })
+  }
+}());
+
+(function() {
+  'use strict';
+
+  angular.module('vipTipsService', [])
+    .factory('vipTipsService', eService);
+
+  function eService( $q, $http,Constants,ResultHandler) {
+    'ngInject';
+    var service = {
+      exit:exit
+    };
+
+    function exit(id) {
+      var url = Constants.serverUrl + 'account/exit/'+id;
+      return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
+    };
+
     return service;
 
 
@@ -7397,8 +7483,7 @@ angular.module('eshopService', [])
                             //     function(res){
                             //         var msg = res.err_msg;
                             //         if(msg == "get_brand_wcpay_request:ok" ) {
-                            //             //保存数据．跳转页面
-                            //             //check order make sure user had pay the order ready.
+                            //             //保存数据．跳转页�?                            //             //check order make sure user had pay the order ready.
                             //             vipBuyService.checkOrder(orderId).then(
                             //                 function(result) {
                             //                     if(result.errno == 0 ){
@@ -7411,7 +7496,7 @@ angular.module('eshopService', [])
                             //                 }
                             //             );
                             //         }else if(msg.endsWith("cancel")){
-                            //             MessageToaster.info("微信支付已取消");
+                            //             MessageToaster.info("微信支付已取�?);
                             //         }else if(msg.endsWith("fail")){
                             //             alert("付款失败");
                             //         }
@@ -7518,8 +7603,7 @@ angular.module('eshopService', [])
                                     //alert(msg);
 
                                     if(msg == "get_brand_wcpay_request:ok" ) {
-                                        //保存数据．跳转页面
-                                        //check order make sure user had pay the order ready.
+                                        //保存数据．跳转页�?                                        //check order make sure user had pay the order ready.
                                         vipBuyService.checkOrder(orderId).then(
                                             function(result) {
                                                 //{"errno":0,"error":"",
@@ -7535,8 +7619,7 @@ angular.module('eshopService', [])
                                                 var payTime=result.data.payTime;
                                                 var endDate=vm.getEndDate(payTime,vm.item.numofdays);
                                                 if(status === 'SUCCESS'){
-                                                    //保存数据．跳转页面
-                                                    vipBuyService.updatePayedOrder(parentId,orderId,payTime,endDate).then(
+                                                    //保存数据．跳转页�?                                                    vipBuyService.updatePayedOrder(parentId,orderId,payTime,endDate).then(
                                                         function(updateResult) {
                                                             //alert("updatePayedOrder sucess "+JSON.stringify(updateResult));
                                                             //vm.information += " udpate success ";
@@ -7561,7 +7644,7 @@ angular.module('eshopService', [])
                                     }else if(msg.endsWith("cancel")){
                                         //alert("用户取消");
                                         //vm.information="用户取消";
-                                        MessageToaster.info("微信支付已取消");
+                                        MessageToaster.info("微信支付已取�?);
                                     //}else if(msg == "get_brand_wcpay_request:fail"){
                                     }else if(msg.endsWith("fail")){
                                         alert("付款失败");
@@ -7716,8 +7799,7 @@ angular.module('eshopService', [])
     };
 
     function updatePayedOrder(parentId,orderId,payTime,endDate){
-        //  "cutofftime":endDate, //不确定是什么值
-        var data = {
+        //  "cutofftime":endDate, //不确定是什么�?        var data = {
         "paystatus":1,
         "paytime":payTime,
         "orderid":orderId
@@ -7873,83 +7955,6 @@ angular.module('eshopService', [])
 }());
 
 (function() {
-  "use strict";
-  angular.module('vipTipsModule', [
-    'vipTipsCtrl',
-    'vipTipsRouter',
-    'vipTipsService'
-  ]);
-
-}());
-
-(function() {
-    "use strict";
-    angular.module('vipTipsCtrl', [])
-        .controller('vipTipsCtrl', function($scope, $state, Constants, StateService) {
-            'ngInject';
-            var vm = this;
-            vm.activated = false;
-            $scope.$on('$ionicView.afterEnter', activate);
-            vm.expend1=false;
-            function activate() {
-                vm.activated = true;
-                vm.version = Constants.buildID;
-            }
-
-            vm.back=function(){
-                StateService.back();
-            };
-
-            vm.test=function(){
-                console.log('test');
-            }
-        });
-}());
-
-(function() {
-  'use strict';
-
-  angular.module('vipTipsRouter', [])
-    .config(myRouter);
-
-
-  function myRouter($stateProvider, $urlRouterProvider) {
-    'ngInject';
-    $stateProvider
-        .state('vipTips', {
-          url: "/vipTips",
-          templateUrl: 'vipTips/vipTips.html',
-          controller: 'vipTipsCtrl',
-          controllerAs: 'vm'
-        })
-  }
-}());
-
-(function() {
-  'use strict';
-
-  angular.module('vipTipsService', [])
-    .factory('vipTipsService', eService);
-
-  function eService( $q, $http,Constants,ResultHandler) {
-    'ngInject';
-    var service = {
-      exit:exit
-    };
-
-    function exit(id) {
-      var url = Constants.serverUrl + 'account/exit/'+id;
-      return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
-    };
-
-    return service;
-
-
-  }
-
-}());
-
-(function() {
     "use strict";
     angular.module('WxLoginModule', [
         'WxLoginCtrl',
@@ -7988,7 +7993,7 @@ angular.module('eshopService', [])
           }else if(next.url.indexOf('login')>0){
               console.log("login");
           }else if(next.url.indexOf('register')>0){
-              //未绑定用户者,进入注册绑定页面
+              //未绑定用户�?进入注册绑定页面
               console.log("register");
           }else if(next.url.indexOf('resetPsw')>0){
               console.log("resetPsw");
@@ -8039,8 +8044,7 @@ angular.module('eshopService', [])
                     vm.showChooseModal = showChooseModal;
                     vm.login = login;
                     vm.select = selectChoose;
-                    //获取到微信uid后先尝试登陆对应的用户类型
-                    if(vm.type){
+                    //获取到微信uid后先尝试登陆对应的用户类�?                    if(vm.type){
                         vm.wxlogin(vm.user,vm.type);
                     }else{
                         vm.showChooseModal();

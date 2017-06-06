@@ -9,7 +9,7 @@
 
         <ion-refresher pulling-text="刷新信息" on-refresh="vm.doRefresh(1,0)"></ion-refresher>
         <div class="no-data" ng-if="vm.unPaid">
-            未缴费，请充值!
+            {{vm.error}}
         </div>
         <!-- 监控 -->
 

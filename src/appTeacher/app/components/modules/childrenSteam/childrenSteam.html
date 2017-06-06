@@ -6,13 +6,16 @@
             <button class="button-icon" style="margin-left:30px;margin-right:10px;" ng-click="vm.changeSteam(2)"><img src="./img/steam_notifcation.PNG" width="32" height="32"><div>动态</div></button>
         </div>
         <hr>
-        <ion-refresher pulling-text="刷新信息" on-refresh="vm.doRefresh(1,0)"></ion-refresher>
+        <ion-refresher pulling-text="刷新信息" on-refresh="!vm.unPaid && vm.doRefresh(1, 0)"></ion-refresher>
 
+        <div class="no-data" ng-if="vm.unPaid">
+           {{vm.error}}
+        </div>
         <!-- 监控 -->
-
         <!-- {"deposit_id":"10000001","deposit_name":"鍗楃澶�","vedio_list":[{"rtmp_src":"rtmp://v.zxing-tech.cn/10000001/106","hls_src":"http://v.zxing-tech.cn/10000001/106.m3u8","room_name":null,"room_id":"106","poster":"http://v.zxing-tech.cn/10000001/106-poster-003.png"}]} -->
-        <div ng-show="vm.showCamera">
-            <!-- <iframe data-tap-disabled="true" style="height:100%;width:100%;" ng-src="{{vm.cameraSrc}}"></iframe> -->
+        <div ng-show="vm.showCamera && !vm.unPaid">
+            <!-- <iframe data-tap-disabled="true" style="height:100%;width:100%;" ng-src="{{vm.cameraSrc
+}}"></iframe> -->
             <div  ng-repeat="item in vm.cameras">
               <p>{{item.deposit_name}}</p>
               <div ng-repeat="c in item.vedio_list  track by $index" style="float:left;">
@@ -43,7 +46,7 @@
         </div>
 
         <!-- 指纹 -->
-        <div ng-show="vm.showFingerPrint">
+        <div ng-show="vm.showFingerPrint && !vm.unPaid">
 
           <div class="msg_flow" ng-repeat="item in vm.fingerprintLogs track by $index">
                   <div class="row" style="margin-top: 0px;padding-top: 0px;margin-bottom: 0px;padding-bottom: 0px;">
@@ -81,7 +84,7 @@
         </div>
 
         <!-- 动态 -->
-        <div ng-show="vm.showNotificatin">
+        <div ng-show="vm.showNotificatin && !vm.unPaid">
           <div class="msg_flow" ng-repeat="item in vm.messages track by $index">
                   <div class="row" style="margin-top: 0px;padding-top: 0px;margin-bottom: 0px;padding-bottom: 0px;">
                       <div class="col col-20" style="padding-top:18px;">
