@@ -164,6 +164,6 @@ func main() {
 
 	log.Printf("Start on server: [%v]", config.GetServAddr())
 	if err := http.ListenAndServe(config.GetServAddr(), nil); err != nil {
-		log.Fatal("ListenAndServe fail. %v", err)
+		log.Fatalf("ListenAndServe fail. %v", err)
 	}
 }
