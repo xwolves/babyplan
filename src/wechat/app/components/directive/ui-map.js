@@ -156,10 +156,8 @@ var app = angular.module('BaiduMapDirective', []);
        */
       function getCurrentPosition(map, options) {
           var deferred = $q.defer();
-
-          if (baidumap_location) {
-              if (typeof baidumap_location !== 'undefined') {
-
+          try{
+              if (baidumap_location) {
                   // 获取GPS当前位置
                   baidumap_location.getCurrentPosition(function (result) {
                       var point;
@@ -178,16 +176,12 @@ var app = angular.module('BaiduMapDirective', []);
                       deferred.reject(error);
                   });
               } else {
-                  var curPos = $window.localStorage.getItem("current_pos");
-                  curPos = JSON.parse(curPos);
-                  var point = new BMap.Point(curPos.lontitude, curPos.latitude);
+                  var point = new BMap.Point(options.center.longitude, options.center.latitude); // 定义一个中心点坐标
                   deferred.resolve(point);
               }
-          } else {
+          } catch (e) {
               var point = new BMap.Point(options.center.longitude, options.center.latitude); // 定义一个中心点坐标
               deferred.resolve(point);
-
-             
           }
           return deferred.promise;
       }
@@ -237,6 +231,8 @@ var app = angular.module('BaiduMapDirective', []);
                   }
                   for (var j = 0; j < results.length; j++) {
                       var result = results[j];
+                      if (!result.ur) continue;
+
                       for (let i = 0; i < result.ur.length; i++) {
                           var poi = result.getPoi(i),
                             tempPoi = {
