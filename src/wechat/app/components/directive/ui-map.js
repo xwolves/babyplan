@@ -231,9 +231,9 @@ var app = angular.module('BaiduMapDirective', []);
                   }
                   for (var j = 0; j < results.length; j++) {
                       var result = results[j];
-                      if (!result.ur) continue;
+                      if (!result.vr) continue;
 
-                      for (let i = 0; i < result.ur.length; i++) {
+                      for (let i = 0; i < result.vr.length; i++) {
                           var poi = result.getPoi(i),
                             tempPoi = {
                                 AccountID: 0,

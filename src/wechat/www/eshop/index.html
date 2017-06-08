@@ -60,8 +60,14 @@
            XBack.element;
 
            XBack.onPopState = function (event) {
-               event.state === XBack.STATE && XBack.fire();
-               XBack.record(XBack.STATE); //初始化事件时，push一下  
+               var hash=window.location.hash;
+               if (hash === "#/category"
+                   || hash === "#/cart"
+                   || hash === "#/home"
+                   || hash === "#/profile") {
+                   event.state === XBack.STATE && XBack.fire();
+                   XBack.record(XBack.STATE); //初始化事件时，push一下  
+               }
            };
 
            XBack.record = function (state) {
