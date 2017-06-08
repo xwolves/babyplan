@@ -17,7 +17,7 @@
             vm.offset = [0, 0, 0];
             vm.limit = 30;
             vm.error = '';
-            vm.canLoadMore = [true, true, true];
+            vm.canLoadMore = true;
             $scope.$on('$ionicView.afterEnter', activate);
             vm.steam = 1;
             function activate() {
@@ -50,6 +50,7 @@
             vm.changeSteam = function (index) {
                 vm.steam = index;
                 Session.setData('steam', index);
+                vm.canLoadMore = true;
                 if (index === 0) {
                     vm.showCamera = true;
                     vm.showFingerPrint = false;
@@ -88,10 +89,16 @@
             };
 
             vm.getCamera = function () {
-
+              console.log("getCamera "+ vm.steam);
                 var count = 1,
                     depositsCount = vm.deposits.length;
 
+                if(typeof(depositsCount) == "undefined"){
+                    console.log("Camera = "+ depositsCount);
+                    vm.canLoadMore = false;
+                    $scope.$broadcast('scroll.refreshComplete');
+                    $scope.$broadcast('scroll.infiniteScrollComplete');
+                }
                 //获取摄像头信息
                 for (var i = 0; i < depositsCount; i++) {
                     var id = vm.deposits[i].DepositID;
@@ -104,6 +111,7 @@
 
                             if (data.errno === 16005) {
                                 vm.unPaid = true;
+                                vm.canLoadMore = false;
                             }
 
                             count += 1;
@@ -136,12 +144,16 @@
                         vm.offset[1] += data.data.length;
                         if (data.data.length < vm.limit) {
                             console.log("it is the last data");
-                            vm.canLoadMore[1] = false;
+                            vm.canLoadMore = false;
                         } else {
-                            vm.canLoadMore[1] = true;
+                            vm.canLoadMore = true;
                         }
                     } else {
                         console.log(data);
+                        if (data.errno === 16005) {
+                            vm.unPaid = true;
+                        }
+                        vm.canLoadMore = false;
                     }
 
                     //始终隐藏加载更多面板
@@ -150,6 +162,7 @@
 
                 }, function () {
                     //始终隐藏加载更多面板
+                    vm.canLoadMore = false;
                     $scope.$broadcast('scroll.refreshComplete');
                     $scope.$broadcast('scroll.infiniteScrollComplete');
                 })
@@ -184,14 +197,18 @@
                         vm.offset[2] += data.data.length;
                         if (data.data.length < vm.limit) {
                             console.log("it is the last data");
-                            vm.canLoadMore[2] = false;
+                            vm.canLoadMore = false;
                         } else {
-                            vm.canLoadMore[2] = true;
+                            vm.canLoadMore = true;
                         }
                         //$scope.$broadcast('scroll.refreshComplete');
                         //$scope.$broadcast('scroll.infiniteScrollComplete');
                     } else {
                         console.log(data);
+                        if (data.errno == 16005) {
+                            vm.unPaid = true;
+                        }
+                        vm.canLoadMore = false;
                     }
 
                     //始终隐藏加载更多面板
@@ -206,11 +223,12 @@
             };
 
             vm.doRefresh = function (type, offset) {
-                if (vm.steam === '0') {
+              console.log(vm.steam +" - "+type+" = "+offset);
+                if (vm.steam === 0) {
                     vm.getCamera();
-                } else if (vm.steam === '1') {
+                } else if (vm.steam === 1) {
                     vm.getFingerPrint(offset, vm.limit);
-                } else if (vm.steam === '2') {
+                } else if (vm.steam === 2) {
                     vm.getMessage(offset, vm.limit);
                 }
             };
@@ -475,6 +493,14 @@
             });
             $scope.$on('modal.shown', function () {
                 console.log('Modal is shown!');
+            });
+
+            $scope.$on('scroll.refreshComplete', function () {
+                console.log('scroll.refreshComplete is call!');
+            });
+
+            $scope.$on('scroll.infiniteScrollComplete', function () {
+                console.log('scroll.infiniteScrollComplete is call!');
             });
 
             // Call this functions if you need to manually control the slides
