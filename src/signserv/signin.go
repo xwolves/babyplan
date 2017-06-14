@@ -157,6 +157,10 @@ func signIn(deviceId string, depositId, childId, mode int, photoLink string) err
 
 	log.Printf("replace into tb_deposit_children and insert into tb_children_signin ok. deviceId = %v, depositId = %v, childId = %v",
 		deviceId, depositId, childId)
+
+	// 极光推送
+	SigninPush(depositId, childId, mode)
+
 	return nil
 }
 

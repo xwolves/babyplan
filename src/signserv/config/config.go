@@ -6,17 +6,26 @@ import (
 	"os"
 )
 
-type Config struct {
-	ServAddr string   `json:"serv_addr"`
-	DbConfig DbConfig `json:"db_config"`
-}
-
 type DbConfig struct {
 	DnsDbHost string `json:"db_host"`
 	DnsDbPort int    `json:"db_port"`
 	DnsDbUser string `json:"db_user"`
 	DnsDbPass string `json:"db_pass"`
 	DnsDbName string `json:"db_name"`
+}
+
+type PushConfig struct {
+	MsgTmpl       string `json:"message_template"`
+	MsgType       string `json:"message_type"`
+	JgUrl         string `json:"jg_push_url"`
+	JgAuthSchema  string `json:"jg_push_auth_schema"`
+	JgPushTimeout int64  `json:"jg_push_timeout"`
+}
+
+type Config struct {
+	ServAddr string     `json:"serv_addr"`
+	DbConfig DbConfig   `json:"db_config"`
+	Push     PushConfig `json:"push_config"`
 }
 
 var g_config Config
@@ -52,4 +61,8 @@ func GetDbConfig() DbConfig {
 
 func GetServAddr() string {
 	return g_config.ServAddr
+}
+
+func GetPushConfig() PushConfig {
+	return g_config.Push
 }

@@ -6,5 +6,12 @@
         "db_user":"deposit",
         "db_pass":"Deposit@00",
         "db_name":"db_deposit"
+    },
+    "push_config":{
+        "message_template":"{{.ParentName}}，您的孩子【{{.ChildName}}】已经在{{.SigninTime}}安全{{.SigninMode}}{{.DepositName}}机构",
+        "message_type":"signin",
+        "jg_push_url":"https://api.jpush.cn/v3/push",
+        "jg_push_auth_schema":"b44d6a46b5e82e8d4fbf5947:d4580d53379056c8c4eff39c",
+        "jg_push_timeout":5
     }
 }
