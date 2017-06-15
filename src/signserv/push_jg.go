@@ -13,9 +13,9 @@ import (
 )
 
 type audience struct {
-	Tag    []string `json:"tag"`
-	Alias  []string `json:"alias"`
-	RegIds []string `json:"registration_id"`
+	//Tag    []string `json:"tag"`
+	Alias []string `json:"alias"`
+	//RegIds []string `json:"registration_id"`
 }
 
 type notification struct {
@@ -24,7 +24,7 @@ type notification struct {
 
 type jgdata struct {
 	Platform string       `json:"platform"`
-	Receiver audience     `json:"audience"`
+	Receiver interface{}  `json:"audience"`
 	Data     notification `json:"notification"`
 }
 
@@ -67,12 +67,12 @@ func doJgPost(reqbody []byte) ([]byte, error) {
 	}
 
 	if rsp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("bad status code %v", rsp.StatusCode)
+		return body, fmt.Errorf("bad status code %v, %v", rsp.StatusCode, string(body))
 	}
 	return body, nil
 }
 
-func JgPush(msg, phone string) {
+func JgPush(msg, phone string) []byte {
 	d := jgdata{
 		Platform: "all",
 		Receiver: audience{
@@ -82,18 +82,22 @@ func JgPush(msg, phone string) {
 			Alert: msg,
 		},
 	}
+	if len(phone) == 0 {
+		d.Receiver = string("all")
+	}
 
 	buf, err := json.Marshal(d)
 	if err != nil {
 		log.Printf("JgPush: json marshal fail. %v", err)
-		return
+		return nil
 	}
 
 	rsp, err := doJgPost(buf)
 
 	if err != nil {
 		log.Printf("JgPush: push fail. %v, data = %v", err, string(buf))
-		return
+		return rsp
 	}
 	log.Printf("JgPush: push ok. data = %v, rsp = %v", string(buf), string(rsp))
+	return rsp
 }

@@ -52,7 +52,7 @@ func getSigninMessage(depositId, childId, signinMode int) (string, string) {
 		msg.SigninMode = "离开"
 	}
 
-	msg.SigninTime = time.Now().Format("20060102 15:04:05")
+	msg.SigninTime = time.Now().Format("2006年01月02日15:04:05")
 
 	if tmpl, err = template.New("signin_push_temp").Parse(temp); err != nil {
 		log.Printf("push: parse template fail. %v, temp = %v", err, temp)

@@ -156,11 +156,34 @@ func child(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("http request child info can not get 'id' parameter. "))
 }
 
+func jgpush(w http.ResponseWriter, r *http.Request) {
+	var (
+		rsp   []byte
+		msg   string
+		phone string
+	)
+	r.ParseForm()
+	if len(r.Form["msg"]) > 0 {
+		msg = r.Form["msg"][0]
+	}
+	if len(r.Form["phone"]) > 0 {
+		phone = r.Form["phone"][0]
+	}
+	if len(msg) == 0 {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("msg field must be not empty"))
+		return
+	}
+	rsp = JgPush(msg, phone)
+	w.Write(rsp)
+}
+
 func main() {
 	http.HandleFunc("/signin/v1/bind", childBind)
 	http.HandleFunc("/signin/v1/signin", childSignIn)
 	http.HandleFunc("/signin/v1/deposit", deposit)
 	http.HandleFunc("/signin/v1/child", child)
+	http.HandleFunc("/signin/v1/jgpush", jgpush)
 
 	log.Printf("Start on server: [%v]", config.GetServAddr())
 	if err := http.ListenAndServe(config.GetServAddr(), nil); err != nil {
