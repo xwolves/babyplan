@@ -297,6 +297,7 @@ function createAppOrder2($app,$sql_db){
   //if($order['return_code']=='SUCCESS'){
     $rsp_data = array();
     $rsp_data['appId'] = $order['appid'];
+    //$rsp_data['partnerid'] = $order['partnerid'];
     $rsp_data['timeStamp'] = $order['timestamp'];
     $rsp_data['nonceStr'] = $order['noncestr'];
     $rsp_data['prepay_id'] = $order['prepayid'];

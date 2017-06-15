@@ -5,9 +5,13 @@ $SQL_DB_NAME = "dbname=db_deposit";
 $SQL_DB_ESHOPNAME = "dbname=db_eshop";
 $SQL_USER = "deposit";
 $SQL_PASSWORD= "Deposit@00";
+
 $APP_ID = "wx3814600bfd67bfe6";
 $SECRET = "720f14d91f8da9bd68247e1da02a6151";
 
+$PAY_MCHID = "1482330372";
+$PAY_APPID= "wx216b1a8a32606170";
+$PAY_SECRET = "i23d8iowl7duo8shz0wn2ke7dhow02ow";
 //test
 //$SQL_PASSWORD= "123456";
 //$APP_ID = "wxad65a9a69e3ae699";
