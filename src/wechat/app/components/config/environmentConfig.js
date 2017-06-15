@@ -2,11 +2,12 @@
     "use strict";
     angular.module('environmentConfig', [])
         .constant('Constants', {
-            'appTitle':'托管之家',
+            'appTitle':'肯特育园',
+            'company':'深圳知行信息技术开发有限公司',
             'serverUrl': 'http://wx.zxing-tech.cn/api/v1/',
             'eshopApiUrl': 'http://api.mall.zxing-tech.cn/v2/',
             'dfsUrl': 'http://wx.zxing-tech.cn/',
-            'buildID': '20170528v1',
+            'buildID': '20170614v1',
             'ENVIRONMENT':'release'
         });
 }());

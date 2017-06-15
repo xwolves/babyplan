@@ -1,6 +1,5 @@
 <ion-view view-title="确认加入VIP会员">
 
-
     <ion-content>
         <h4 style="text-align: center;">套餐详情</h4>
         <div class="list">
@@ -39,8 +38,12 @@
     </ion-content>
 
     <div class="bar bar-footer">
-        <div class="button-bar">
-            <a class="button button-positive" ng-click="vm.pay()">微信支付</a>
-        </div>
+      <div class="button-bar">
+          <a class="button button-light" ng-click="vm.pay()" style="font-size:150%;">
+              <img src="./img/wechatpaylogo.png" height="28px" style="padding-top:10px;">
+              微信支付
+          </a>
+      </div>
     </div>
+
 </ion-view>

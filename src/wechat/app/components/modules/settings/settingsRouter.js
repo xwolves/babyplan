@@ -14,6 +14,12 @@
           controller: 'settingsCtrl',
           controllerAs: 'vm'
         })
+        .state('about', {
+          url: "/about",
+          templateUrl: 'settings/about.html',
+          controller: 'aboutCtrl',
+          controllerAs: 'vm'
+        })
         .state('changePsw', {
           url: "/changePsw",
           templateUrl: 'settings/changePsw.html',

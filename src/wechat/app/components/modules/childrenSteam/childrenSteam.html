@@ -1,9 +1,9 @@
-<ion-view view-title="托管中心">
+<ion-view view-title="肯特育园">
     <ion-content>
         <div align="center">
-            <button class="button-icon" style="margin-left:10px;margin-right:30px;" ng-click="vm.changeSteam(0)"><img src="./img/steam_camera.PNG" width="32" height="32"><div>监控</div></button>
-            <button class="button-icon" style="margin-left:30px;margin-right:30px;" ng-click="vm.changeSteam(1)"><img src="./img/steam_fingerprint.PNG" width="32" height="32"><div>指纹</div></button>
             <button class="button-icon" style="margin-left:30px;margin-right:10px;" ng-click="vm.changeSteam(2)"><img src="./img/steam_notifcation.PNG" width="32" height="32"><div>动态</div></button>
+            <button class="button-icon" style="margin-left:30px;margin-right:30px;" ng-click="vm.changeSteam(1)"><img src="./img/steam_fingerprint.PNG" width="32" height="32"><div>指纹</div></button>
+            <button class="button-icon" style="margin-left:10px;margin-right:30px;" ng-click="vm.changeSteam(0)"><img src="./img/steam_camera.PNG" width="32" height="32"><div>监控</div></button>
         </div>
         <hr>
 
@@ -64,14 +64,17 @@
                                 </div>
                             </div>
                             <div ng-if="item.Mode!=2">
-                              你的孩子{{item.Name}}今天平安到达{{item.Deposit}}，打卡时间为{{item.SignInTime}},请放心。
+                              你的孩子{{item.Name}}已安全到达{{item.Deposit}}机构。
                               你也可以通过监控实时观看你孩子的动态喔！
                             </div>
                             <div ng-if="item.Mode==2">
-                              你的孩子{{item.Name}}今天已离开{{item.Deposit}}，打卡时间为{{item.SignInTime}}。
+                              你的孩子{{item.Name}}已离开{{item.Deposit}}机构。
                             </div>
                           <div ng-if="item.PhotoLink">
                               <img ng-src="{{item.PhotoLink|changeSize:'120x70'}}" alt="指纹记录" >
+                          </div>
+                          <div>
+                              <p>{{item.SignInTime|dateChange}}</p>
                           </div>
                         </div>
                   </div>

@@ -3,6 +3,7 @@
   angular.module('settingsModule', [
     'settingsCtrl',
     'changePswCtrl',
+    'aboutCtrl',
     'settingsRouter'
   ]);
 

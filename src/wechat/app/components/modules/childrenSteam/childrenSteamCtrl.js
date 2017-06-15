@@ -19,7 +19,7 @@
             vm.error = '';
             vm.canLoadMore = true;
             $scope.$on('$ionicView.afterEnter', activate);
-            vm.steam = 1;
+            vm.steam = 0;
             function activate() {
                 vm.activated = true;
                 vm.version = Constants.buildID;
@@ -92,7 +92,8 @@
               console.log("getCamera "+ vm.steam);
                 var count = 1,
                     depositsCount = vm.deposits.length;
-
+                vm.canLoadMore = false;
+                vm.cameras = [];
                 if(typeof(depositsCount) == "undefined"){
                     console.log("Camera = "+ depositsCount);
                     vm.canLoadMore = false;
@@ -107,11 +108,12 @@
                         //console.log('http://v.zxing-tech.cn/?v='+id);
                         //vm.cameraSrc = $sce.trustAsResourceUrl('http://v.zxing-tech.cn/?v='+id);
                         childrenSteamService.getCamera(id).then(function (data) {
+                            //if(data.data.length<vm.limit){vm.canLoadMore = false;}
                             vm.cameras[vm.cameras.length] = data.data;
 
                             if (data.errno === 16005) {
                                 vm.unPaid = true;
-                                vm.canLoadMore = false;
+
                             }
 
                             count += 1;
@@ -136,6 +138,7 @@
                 childrenSteamService.getAllChildrenSignIn(AuthService.getLoginID(), offset, limit).then(function (data) {
                     if (data.errno == 0) {
                         console.log(data.data);
+                        if(offset==0)vm.fingerprintLogs=[];
                         if (vm.fingerprintLogs.length == 0)
                             vm.fingerprintLogs = data.data;
                         else
@@ -173,6 +176,7 @@
                 childrenSteamService.getAllChildrenMsg(AuthService.getLoginID(), offset, limit).then(function (data) {
                     if (data.errno == 0) {
                         console.log(data.data);
+                        if(offset==0)vm.messages=[];
                         var start = 0;
                         if (vm.messages.length == 0)
                             vm.messages = data.data;
