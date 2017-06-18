@@ -27,6 +27,16 @@
       },
       controller: 'MapCtrl',
       controllerAs: 'vm'
+    }).state('nearbyorgmap', {
+        url: "/nearbyorgmap?:type&:nav",
+        templateUrl: 'map/map.html',
+        params: {
+            type: 0,
+            nav: false
+        },
+        controller: 'MapCtrl',
+        controllerAs: 'vm'
     });
+
   }
 }());

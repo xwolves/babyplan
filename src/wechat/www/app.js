@@ -1,4 +1,4 @@
-(function() {
+(function () {
     "use strict";
     angular.module('xhStarter', [
         'vendor',
@@ -9,58 +9,85 @@
         'modules'
     ])
 
-    .run(function($ionicPlatform) {
-        $ionicPlatform.ready(function() {
+    .run(function ($ionicPlatform, $state, AuthService, JPushService) {
+        $ionicPlatform.registerBackButtonAction(function (event) {
+           // alert("cur：" + JSON.stringify($state.current));
+            if ($state.current.name == AuthService.getNextPath()) {
+                event.preventDefault();
+                cordova.plugins.backgroundMode.moveToBackground();
+            }
+        }, 100);
+
+        $ionicPlatform.ready(function () {
             // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
             // for form inputs)
             if (window.cordova && window.cordova.plugins && window.cordova.plugins.Keyboard) {
                 cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
                 cordova.plugins.Keyboard.disableScroll(true);
-
             }
             if (window.StatusBar) {
                 // org.apache.cordova.statusbar required
                 StatusBar.styleDefault();
             }
+
+         
+            //应用可以进入后台运行
+            //cordova.plugins.backgroundMode.enable();
+            //cordova.plugins.backgroundMode.overrideBackButton();
+            //cordova.plugins.backgroundMode.on('activate', function () {
+            //     cordova.plugins.notification.badge.clear();
+            //});
+
+           
+
+            //推送初始化
+            var onOpenNotificationInAndroidCallback = function (data) {
+                $state.go(AuthService.getNextPath(), { index:1});
+            }
+            var config = {
+                openNotificationInAndroidCallback: onOpenNotificationInAndroidCallback
+            };
+            //启动极光推送服务
+            JPushService.init(config);
         });
     })
 
-    .config(function($ionicConfigProvider, $urlRouterProvider, $stateProvider, $httpProvider, $sceDelegateProvider) {
-            console.log("start app");
+    .config(function ($ionicConfigProvider, $urlRouterProvider, $stateProvider, $httpProvider, $sceDelegateProvider) {
+        console.log("start app");
 
-            if (!ionic.Platform.isIOS()) {
-                $ionicConfigProvider.scrolling.jsScrolling(false);
+        if (!ionic.Platform.isIOS()) {
+            $ionicConfigProvider.scrolling.jsScrolling(false);
+        }
+        $sceDelegateProvider.resourceUrlWhitelist(['**']);
+        $httpProvider.interceptors.push([
+            '$injector',
+            function ($injector) {
+                return $injector.get('AuthInterceptor');
             }
-            $sceDelegateProvider.resourceUrlWhitelist(['**']);
-            $httpProvider.interceptors.push([
-                '$injector',
-                function($injector) {
-                    return $injector.get('AuthInterceptor');
-                }
-            ]);
-            $ionicConfigProvider.platform.ios.tabs.style('standard');
-            $ionicConfigProvider.platform.ios.tabs.position('bottom');
-            $ionicConfigProvider.platform.android.tabs.style('standard');
-            $ionicConfigProvider.platform.android.tabs.position('bottom');
+        ]);
+        $ionicConfigProvider.platform.ios.tabs.style('standard');
+        $ionicConfigProvider.platform.ios.tabs.position('bottom');
+        $ionicConfigProvider.platform.android.tabs.style('standard');
+        $ionicConfigProvider.platform.android.tabs.position('bottom');
 
-            $ionicConfigProvider.platform.ios.navBar.alignTitle('center');
-            $ionicConfigProvider.platform.android.navBar.alignTitle('center');
+        $ionicConfigProvider.platform.ios.navBar.alignTitle('center');
+        $ionicConfigProvider.platform.android.navBar.alignTitle('center');
 
-            $ionicConfigProvider.platform.ios.backButton.previousTitleText('').icon('ion-ios-arrow-thin-left');
-            $ionicConfigProvider.platform.android.backButton.previousTitleText('').icon('ion-android-arrow-back');
+        $ionicConfigProvider.platform.ios.backButton.previousTitleText('').icon('ion-ios-arrow-thin-left');
+        $ionicConfigProvider.platform.android.backButton.previousTitleText('').icon('ion-android-arrow-back');
 
-            $ionicConfigProvider.platform.ios.views.transition('ios');
-            $ionicConfigProvider.platform.android.views.transition('android');
+        $ionicConfigProvider.platform.ios.views.transition('ios');
+        $ionicConfigProvider.platform.android.views.transition('android');
 
-            // $ionicConfigProvider.platform.android.tabs.position('bottom');
-            // $ionicConfigProvider.views.transition('none');
-            // $ionicConfigProvider.backButton.text('返回').icon('ion-ios-arrow-left');
-            // $ionicConfigProvider.tabs.style("standard");
-            // $ionicConfigProvider.navBar.alignTitle('center');
-        })
-        .factory('AuthInterceptor', function($rootScope, $q, AUTH_EVENTS) {
+        // $ionicConfigProvider.platform.android.tabs.position('bottom');
+        // $ionicConfigProvider.views.transition('none');
+        // $ionicConfigProvider.backButton.text('返回').icon('ion-ios-arrow-left');
+        // $ionicConfigProvider.tabs.style("standard");
+        // $ionicConfigProvider.navBar.alignTitle('center');
+    })
+        .factory('AuthInterceptor', function ($rootScope, $q, AUTH_EVENTS) {
             return {
-                responseError: function(response) {
+                responseError: function (response) {
                     $rootScope.$broadcast({
                         401: AUTH_EVENTS.notAuthenticated,
                         403: AUTH_EVENTS.notAuthorized,
@@ -309,7 +336,8 @@ angular.module('BaiduService',[])
     'ResultHandler',
     'MessageToaster',
     'CustomFilter',
-    'BaiduService'
+    'BaiduService',
+     'JPushService'
   ]);
 
 }());
@@ -459,6 +487,81 @@ app.filter('statusChange', function () {
    });
 }());
 
+(function () {
+    'use strict';
+
+    angular.module('JPushService', [])
+    .factory('JPushService', JPushService);
+
+    JPushService.$inject = ['$http', '$window', '$document'];
+
+    function JPushService($http, $window, $document) {
+        var jpushServiceFactory = {};
+
+        //var jpushapi=$window.plugins.jPushPlugin;
+
+        //������������
+        var _init = function (config) {
+
+            if(!$window.plugins) return;
+
+            $window.plugins.jPushPlugin.init();
+            //����tag��Alias�����¼�����
+            //document.addEventListener('jpush.setTagsWithAlias', config.stac, false);
+            //��������Ϣ�¼�����
+            $window.plugins.jPushPlugin.openNotificationInAndroidCallback = config.openNotificationInAndroidCallback;
+            $window.plugins.jPushPlugin.receiveMessageInAndroidCallback = config.receiveMessageInAndroidCallback;
+            $window.plugins.jPushPlugin.receiveNotificationInAndroidCallback = config.receiveNotificationInAndroidCallback;
+
+            document.addEventListener('jpush.receiveNotification', config.receiveNotificationInAndroidCallback, false);
+            document.addEventListener('jpush.receiveMessage', config.receiveMessageInAndroidCallback, false);
+            document.addEventListener('jpush.openNotification', config.openNotificationInAndroidCallback, false);
+            
+            $window.plugins.jPushPlugin.setDebugMode(true);
+        }
+        //��ȡ״̬
+        var _isPushStopped = function (fun) {
+            $window.plugins && $window.plugins.jPushPlugin.isPushStopped(fun)
+        }
+        //ֹͣ��������
+        var _stopPush = function () {
+            $window.plugins && $window.plugins.jPushPlugin.stopPush();
+        }
+
+        //������������
+        var _resumePush = function () {
+            $window.plugins && $window.plugins.jPushPlugin.resumePush();
+        }
+
+        //���ñ�ǩ�ͱ���
+        var _setTagsWithAlias = function (tags, alias) {
+            $window.plugins && $window.plugins.jPushPlugin.setTagsWithAlias(tags, alias);
+        }
+
+        //���ñ�ǩ
+        var _setTags = function (tags) {
+            $window.plugins && $window.plugins.jPushPlugin.setTags(tags);
+        }
+
+        //���ñ���
+        var _setAlias = function (alias) {
+            $window.plugins && $window.plugins.jPushPlugin.setAlias(alias);
+        }
+
+
+        jpushServiceFactory.init = _init;
+        jpushServiceFactory.isPushStopped = _isPushStopped;
+        jpushServiceFactory.stopPush = _stopPush;
+        jpushServiceFactory.resumePush = _resumePush;
+        jpushServiceFactory.setTagsWithAlias = _setTagsWithAlias;
+        jpushServiceFactory.setTags = _setTags;
+        jpushServiceFactory.setAlias = _setAlias;
+
+        return jpushServiceFactory;
+    }
+
+}());
+
 (function() {
     "use strict";
     angular.module('LoadingAlert', []).service('LoadingAlert', function($document, $rootScope) {
@@ -558,7 +661,7 @@ app.filter('statusChange', function () {
 }());
 (function() {
     "use strict";
-    angular.module('Session', []).service('Session', function($http,$window) {
+    angular.module('Session', []).service('Session', function ($http, $window, JPushService) {
         'ngInject';
 
         var session = {
@@ -581,6 +684,9 @@ app.filter('statusChange', function () {
                 //$http.defaults.headers.common.Authorization = "Bearer-"+token;
                 $http.defaults.headers.common.token = token;
             }
+
+            //�����û�ID��Ϊ֪ͨ����
+            JPushService.setAlias(userId);
 
             //    $httpProvider.defaults.headers.common["Authorization"] = "Bearer-"+token;
             console.log(session);
@@ -767,11 +873,12 @@ app.filter('statusChange', function () {
     "use strict";
     angular.module('environmentConfig', [])
         .constant('Constants', {
-            'appTitle':'托管之家',
+            'appTitle':'肯特育园',
+            'company':'深圳知行信息技术开发有限公司',
             'serverUrl': 'http://wx.zxing-tech.cn/api/v1/',
             'eshopApiUrl': 'http://api.mall.zxing-tech.cn/v2/',
             'dfsUrl': 'http://wx.zxing-tech.cn/',
-            'buildID': '20170528v1',
+            'buildID': '20170614v1',
             'ENVIRONMENT':'release'
         });
 }());
@@ -815,7 +922,85 @@ app.filter('statusChange', function () {
 }());
 
 (function() {
-'use strict';
+    'use strict';
+
+    function getCustomOverlay(BMap) {
+
+        function CustomOverlay(point, text, clickEvent) {
+            this._point = point;
+            this._text = text;
+            this._clickEvent = clickEvent;
+
+        }
+        CustomOverlay.prototype = new BMap.Overlay();
+        CustomOverlay.prototype.initialize = function (map) {
+            this.map = map;
+            var div = this._div = document.createElement("div");
+            div.style.position = "absolute";
+            div.style.zIndex = BMap.Overlay.getZIndex(this._point.lat);
+            div.style.backgroundColor = "#fba106";
+            div.style.border = "1px solid #fba106";
+            div.style.color = "white";
+            div.style.height = "24px";
+            div.style.padding = "0px";
+            div.style.lineHeight = "18px";
+            div.style.whiteSpace = "nowrap";
+            div.style.MozUserSelect = "none";
+            div.style.fontSize = "12px"
+
+            var header = document.createElement("span");
+            header.style.display = "inline-block";
+            header.style.textAlign = "center";
+            header.style.color = "#fff";
+            header.style.width = "40px";
+            header.style.borderRadius = "5px";
+            header.style.height = "100%";
+            header.style.backgroundColor = "#ff0000";
+            header.appendChild(document.createTextNode('22.3'));
+            div.appendChild(header);
+
+            var span = this._span = document.createElement("span");
+            span.style.color = "#000";
+            span.style.padding = "2px";
+            span.style.verticalAlign = "middle";
+            span.appendChild(document.createTextNode(this._text));
+            div.appendChild(span);
+           
+            var that = this;
+            div.addEventListener('ontouchend', function () {
+                that._clickEvent && that._clickEvent({ target: that });
+            });
+
+            //span.onclick = function () {
+            //    that._clickEvent && that._clickEvent({ target: that });
+            //}
+
+            var arrow = this._arrow = document.createElement("div");
+            arrow.style.background = "url(http://map.baidu.com/fwmap/upload/r/map/fwmap/static/house/images/label.png) no-repeat";
+           // arrow.style.backgroundPosition = "0px -10px";
+            arrow.style.position = "absolute";
+            arrow.style.width = "11px";
+            arrow.style.height = "10px";
+            arrow.style.top = "22px";
+            arrow.style.left = "10px";
+            arrow.style.overflow = "hidden";
+            div.appendChild(arrow);
+          
+
+            map.getPanes().labelPane.appendChild(div);
+
+            return div;
+        }
+        CustomOverlay.prototype.draw = function () {
+            var map = this.map;
+            var pixel = map.pointToOverlayPixel(this._point);
+            this._div.style.left = pixel.x - parseInt(this._arrow.style.left) + "px";
+            this._div.style.top = pixel.y - 30 + "px";
+        }
+
+        return CustomOverlay;
+    }
+
 
 var app = angular.module('BaiduMapDirective', []);
 
@@ -830,9 +1015,9 @@ var app = angular.module('BaiduMapDirective', []);
       function loadMap(apiKey) {
 
           // 判断是否执行过加载过程
-          if ($window.loadBaiduPromise) {
-              return $window.loadBaiduPromise;
-          }
+          //if ($window.loadBaiduPromise) {
+          //    return $window.loadBaiduPromise;
+          //}
 
           var deferred = $q.defer(),
             resolve = function () {
@@ -842,7 +1027,6 @@ var app = angular.module('BaiduMapDirective', []);
             params = {
                 'ak': apiKey
             };
-
           if ($window.BMap) {
               resolve();
           } else {
@@ -915,12 +1099,14 @@ var app = angular.module('BaiduMapDirective', []);
           }
 
           var map = new window.BMap.Map(container, {
-              enableMapClick: true
+              enableMapClick: false
           });
 
           if (options.enableScrollWheelZoom) {
               map.enableScrollWheelZoom();
           }
+
+          window.BMap.CustomOverlay = getCustomOverlay(window.BMap);
 
           return map;
       }
@@ -949,6 +1135,26 @@ var app = angular.module('BaiduMapDirective', []);
           if (clickCallback) {
               mk.addEventListener('click', clickCallback);
           }
+
+          return mk;
+      }
+
+      /**
+   * 根据位置做标记
+   * @param {*} map
+   * @param {*} point
+   * @param {*} clickCallback
+   * @param {*} poInfo
+   */
+      function addMapCustomMarker(map, point, clickCallback, poInfo, markText) {
+          var mk = new window.BMap.CustomOverlay(point, markText, clickCallback);
+
+          map.addOverlay(mk);
+          mk.babyPoi = poInfo;
+
+          //if (clickCallback) {
+          //    mk.addEventListener('click', clickCallback);
+          //}
 
           return mk;
       }
@@ -1061,9 +1267,13 @@ var app = angular.module('BaiduMapDirective', []);
                             };
 
                           if (!!map.scope.currentPosition) {
-                              tempPoi["Dist"] = map.getDistance(poi.point, map.scope.currentPosition).toFixed(2);
+                              tempPoi["Dist"] = map.getDistance(poi.point, map.scope.currentPosition);
                           }
-                          pois.push(tempPoi);
+
+                          //只看5公里内的数据
+                          if (tempPoi["Dist"] && tempPoi["Dist"] < 5000) {
+                              pois.push(tempPoi);
+                          }
                       }
                   }
 
@@ -1074,7 +1284,7 @@ var app = angular.module('BaiduMapDirective', []);
           }
           var local = new BMap.LocalSearch(map, {
               onSearchComplete: onSearchComplete,
-              pageCapacity: 10
+              pageCapacity: 30
           });
           local.search(keyword);
           return deferred.promise;
@@ -1156,12 +1366,17 @@ var app = angular.module('BaiduMapDirective', []);
                   MAP_SHOW: 0,
                   MAP_SEARCH: 1,
                   LIST_SHOW: 2,
-                  LIST_SEARCH: 3
+                  LIST_SEARCH: 3,
               };
               if(opts.mode){
                 scope.currMode = opts.mode;
               }else{
                 scope.currMode = MAP_MODES.MAP_SHOW;
+              }
+
+              scope.only_show_list = false;
+              if (!!opts.onlyShowList) {
+                  scope.only_show_list = opts.onlyShowList;
               }
               scope.baiDuSearchResults = [];
               scope.babyPlanSearchResults = [];
@@ -1241,7 +1456,7 @@ var app = angular.module('BaiduMapDirective', []);
                   for (var i = 0; i < scope.babyPlanSearchResults.length; i++) {
                       poi = scope.babyPlanSearchResults[i];
                       point = new BMap.Point(poi.Longitude, poi.Latitude);
-                      addMapMarker(scope.map, point, openInfoWindow, poi);
+                      addMapCustomMarker(scope.map, point, openInfoWindow, poi,poi.OrgName);
                   }
 
                   $timeout(function () {
@@ -1405,18 +1620,21 @@ var app = angular.module('BaiduMapDirective', []);
                           $q.all([bpSearchDeferred, bdSearchDeferred]).then(function (results) {
 
                               // 缓存结果
-                              scope.baiDuSearchResults = results[1];
-                              scope.babyPlanSearchResults = results[0];
+                              var baiDuSearchResults= scope.baiDuSearchResults = results[1].sort(function (a, b) { return parseFloat(a.Dist) - parseFloat(b.Dist); });
+                              var babyPlanSearchResults=  scope.babyPlanSearchResults = results[0];
 
                               // 对满足条件的位置进行标记，
                               var point;
-                              for (var j = 0; j < results.length; j++) {
-                                  var result = results[j];
-                                  for (var i = 0; i < result.length; i++) {
-                                      point = new BMap.Point(result[i].Longitude, result[i].Latitude);
-                                      addMapMarker(map, point, openInfoWindow, result[i]);
-                                  }
+                              for (var i = 0; i < baiDuSearchResults.length; i++) {
+                                  point = new BMap.Point(baiDuSearchResults[i].Longitude, baiDuSearchResults[i].Latitude);
+                                  addMapMarker(map, point, openInfoWindow, baiDuSearchResults[i]);
                               }
+
+                              for (var i = 0; i < babyPlanSearchResults.length; i++) {
+                                  point = new BMap.Point(babyPlanSearchResults[i].Longitude, babyPlanSearchResults[i].Latitude);
+                                  addMapCustomMarker(scope.map, point, openInfoWindow, babyPlanSearchResults[i], babyPlanSearchResults[i].OrgName);
+                              }
+
 
                               // 把最后一个位置移动到地图中心
                               // point && map.panTo(point)
@@ -1448,6 +1666,9 @@ var app = angular.module('BaiduMapDirective', []);
           }
       }
   });
+
+
+
 }());
 
 Date.prototype.Format = function(fmt) {
@@ -2413,7 +2634,7 @@ Date.prototype.Format = function(fmt) {
 (function () {
     "use strict";
     angular.module('childrenSteamCtrl', [])
-        .controller('childrenSteamCtrl', function ($scope, $ionicPopup, $sce, Constants, childrenService, childrenSteamService, AuthService, Session, StateService, $ionicModal, $ionicSlideBoxDelegate) {
+        .controller('childrenSteamCtrl', function ($scope, $ionicPopup, $sce,$stateParams, Constants, childrenService, childrenSteamService, AuthService, Session, StateService, $ionicModal, $ionicSlideBoxDelegate) {
             'ngInject';
             console.log("childrenSteamCtrl");
             var vm = this;
@@ -2431,7 +2652,7 @@ Date.prototype.Format = function(fmt) {
             vm.error = '';
             vm.canLoadMore = true;
             $scope.$on('$ionicView.afterEnter', activate);
-            vm.steam = 1;
+            vm.steam = 0;
             function activate() {
                 vm.activated = true;
                 vm.version = Constants.buildID;
@@ -2450,13 +2671,16 @@ Date.prototype.Format = function(fmt) {
                 //vm.getChildrenInfo(AuthService.getLoginID(),vm.offset,vm.limit);
                 //vm.getChildren();
                 vm.getChildrenDeposit();
-                vm.steam = Session.getData('steam');
+
+                //如果是通知消息进来，直接打开指纹界面
+                var index = $stateParams.index;;
+                vm.steam =index || Session.getData('steam');
 
                 if (vm.steam === null) {
                     vm.steam = 1;
                     console.log('steam = ' + vm.steam);
                 }
-                vm.changeSteam(vm.steam);
+                vm.changeSteam(parseInt(vm.steam));
             };
 
             vm.changeSteam = function (index) {
@@ -2504,7 +2728,8 @@ Date.prototype.Format = function(fmt) {
               console.log("getCamera "+ vm.steam);
                 var count = 1,
                     depositsCount = vm.deposits.length;
-
+                vm.canLoadMore = false;
+                vm.cameras = [];
                 if(typeof(depositsCount) == "undefined"){
                     console.log("Camera = "+ depositsCount);
                     vm.canLoadMore = false;
@@ -2519,11 +2744,12 @@ Date.prototype.Format = function(fmt) {
                         //console.log('http://v.zxing-tech.cn/?v='+id);
                         //vm.cameraSrc = $sce.trustAsResourceUrl('http://v.zxing-tech.cn/?v='+id);
                         childrenSteamService.getCamera(id).then(function (data) {
+                            //if(data.data.length<vm.limit){vm.canLoadMore = false;}
                             vm.cameras[vm.cameras.length] = data.data;
 
                             if (data.errno === 16005) {
                                 vm.unPaid = true;
-                                vm.canLoadMore = false;
+
                             }
 
                             count += 1;
@@ -2548,6 +2774,7 @@ Date.prototype.Format = function(fmt) {
                 childrenSteamService.getAllChildrenSignIn(AuthService.getLoginID(), offset, limit).then(function (data) {
                     if (data.errno == 0) {
                         console.log(data.data);
+                        if(offset==0)vm.fingerprintLogs=[];
                         if (vm.fingerprintLogs.length == 0)
                             vm.fingerprintLogs = data.data;
                         else
@@ -2585,6 +2812,7 @@ Date.prototype.Format = function(fmt) {
                 childrenSteamService.getAllChildrenMsg(AuthService.getLoginID(), offset, limit).then(function (data) {
                     if (data.errno == 0) {
                         console.log(data.data);
+                        if(offset==0)vm.messages=[];
                         var start = 0;
                         if (vm.messages.length == 0)
                             vm.messages = data.data;
@@ -2950,7 +3178,7 @@ Date.prototype.Format = function(fmt) {
     'ngInject';
     $stateProvider
       .state('tabs.childrenSteam', {
-        url: "/childrenSteam",
+          url: "/childrenSteam?:index",
           views: {
             'tab-childrenSteam': {
               templateUrl: 'childrenSteam/childrenSteam.html',
@@ -4051,8 +4279,9 @@ angular.module('eshopService', [])
             $scope.mapOpts = {
                 apiKey: 'IGp7UfrinXNxV6IwrQTC0PWoDCQlf0TR',
                 center: {longitude:113.271,latitude:23.1353},
-                keywords: ['托管'],
+                keywords: ['午托','晚托','托管'],
                 zoom: 16,
+                onlyShowList:false,
                 onMapLoadFailded: function () {
                     //ionicToast.show('地图加载失败!', 'middle', false, 3000)
                     console.log('地图加载失败');
@@ -4061,7 +4290,10 @@ angular.module('eshopService', [])
             vm.type = $stateParams.type;
             vm.nav = $stateParams.nav;
             console.log("vm.type = "+vm.type+" vm.nav = "+vm.nav);
-            if(vm.type==1)$scope.mapOpts.mode = 2;
+            if (vm.type == 1) {
+                $scope.mapOpts.mode = 2;
+                $scope.mapOpts.onlyShowList = true;
+            } 
 
             function activate() {
                 vm.activated = true;
@@ -4108,7 +4340,17 @@ angular.module('eshopService', [])
       },
       controller: 'MapCtrl',
       controllerAs: 'vm'
+    }).state('nearbyorgmap', {
+        url: "/nearbyorgmap?:type&:nav",
+        templateUrl: 'map/map.html',
+        params: {
+            type: 0,
+            nav: false
+        },
+        controller: 'MapCtrl',
+        controllerAs: 'vm'
     });
+
   }
 }());
 
@@ -5123,6 +5365,163 @@ angular.module('eshopService', [])
 }());
 
 (function() {
+    "use strict";
+    angular.module('depositListctrl', [])
+        .controller('depositListctrl', function($scope,Constants,StateService,$ionicListDelegate,$ionicPopup,AuthService,parentService,vipBuyService) {
+            'ngInject';
+            var vm = this;
+            vm.activated = false;
+            $scope.$on('$ionicView.afterEnter', activate);
+
+            function activate() {
+                vm.activated = true;
+                vm.version = Constants.buildID;
+                vm.getRecords();
+            };
+
+            vm.getDeposits = function(){
+                parentService.queryChildren(AuthService.getLoginID()).then(function(data) {
+                    if (data.errno == 0) {
+                        console.log(data.data);
+                        vm.deposits = [];
+                        var array=[];
+                        //获取deposits，取出唯一
+                        data.data.forEach(function(item){
+                            var obj={};
+                            obj.depositid=item.depositid;
+                            obj.orgname=item.orgname;
+                            //console.log(array);
+                            // console.log(item.depositid);
+                            if(!array.includes(item.depositid)&& item.depositid ){
+                                array[array.length]=item.depositid;
+                                vm.deposits[vm.deposits.length]=obj;
+                            }
+                            //获取机构信息，获取权限是否能查看编辑
+                        });
+                    }
+                });
+            };
+
+            vm.getRecords = function () {
+                vipBuyService.getOrders(AuthService.getLoginID()).then(function(data) {
+                    var isDO=false;
+                    if (data.errno == 0) {
+                        console.log(data.data);
+                        data.data.forEach(function(item){
+                            if(item.PayStatus==1){
+                                if(!isDO) {
+                                    vm.getDeposits();
+                                    isDO = true;
+                                }
+                            }
+
+                        });
+                        return false;
+                    }
+                });
+            };
+
+            vm.back=function(){
+                StateService.back();
+            };
+
+            vm.goToDepositComment=function(did){
+                StateService.go('depositComment', {id: did});
+            };
+
+        });
+}());
+
+(function() {
+  "use strict";
+  angular.module('orderModule', [
+    'orderCtrl',
+    'depositListctrl',
+    'orderRouter',
+    'orderService'
+  ]);
+
+}());
+
+(function() {
+    "use strict";
+    angular.module('orderCtrl', [])
+        .controller('orderCtrl', function($scope, Constants, StateService) {
+            'ngInject';
+            var vm = this;
+            vm.activated = false;
+            console.log("tabs come");
+            $scope.$on('$ionicView.afterEnter', activate);
+
+            function activate() {
+                vm.activated = true;
+                vm.version = Constants.buildID;
+            }
+
+            vm.goTo=function(where){
+                StateService.go(where);
+            };
+
+            vm.back=function(){
+                StateService.back();
+            };
+        });
+}());
+
+(function() {
+  'use strict';
+
+  angular.module('orderRouter', [])
+    .config(myRouter);
+
+
+  function myRouter($stateProvider, $urlRouterProvider) {
+    'ngInject';
+    $stateProvider
+      .state('tabs.order', {
+        url: "/order",
+          views: {
+            'tab-order': {
+              templateUrl: 'order/order.html',
+              controller: 'orderCtrl',
+              controllerAs: 'vm'
+            }
+          }
+      })
+      .state('orders', {
+        url: "/orders",
+        templateUrl: 'order/order.html',
+        controller: 'orderCtrl',
+        controllerAs: 'vm'
+      })
+      .state('vipOrg', {
+        url: "/vipOrg",
+        templateUrl: 'order/depositList.html',
+        controller: 'depositListctrl',
+        controllerAs: 'vm'
+      })
+    ;
+  }
+}());
+
+(function() {
+  'use strict';
+
+  angular.module('orderService', [])
+    .factory('orderService', orderService);
+
+  function orderService( $q, $http) {
+    'ngInject';
+    var service = {
+    };
+    return service;
+
+
+  }
+
+}());
+
+(function() {
   "use strict";
   angular.module('organizerModule', [
     'organizerCtrl',
@@ -5378,163 +5777,6 @@ angular.module('eshopService', [])
       };
 
       return service;
-
-
-  }
-
-}());
-
-(function() {
-    "use strict";
-    angular.module('depositListctrl', [])
-        .controller('depositListctrl', function($scope,Constants,StateService,$ionicListDelegate,$ionicPopup,AuthService,parentService,vipBuyService) {
-            'ngInject';
-            var vm = this;
-            vm.activated = false;
-            $scope.$on('$ionicView.afterEnter', activate);
-
-            function activate() {
-                vm.activated = true;
-                vm.version = Constants.buildID;
-                vm.getRecords();
-            };
-
-            vm.getDeposits = function(){
-                parentService.queryChildren(AuthService.getLoginID()).then(function(data) {
-                    if (data.errno == 0) {
-                        console.log(data.data);
-                        vm.deposits = [];
-                        var array=[];
-                        //获取deposits，取出唯一
-                        data.data.forEach(function(item){
-                            var obj={};
-                            obj.depositid=item.depositid;
-                            obj.orgname=item.orgname;
-                            //console.log(array);
-                            // console.log(item.depositid);
-                            if(!array.includes(item.depositid)&& item.depositid ){
-                                array[array.length]=item.depositid;
-                                vm.deposits[vm.deposits.length]=obj;
-                            }
-                            //获取机构信息，获取权限是否能查看编辑
-                        });
-                    }
-                });
-            };
-
-            vm.getRecords = function () {
-                vipBuyService.getOrders(AuthService.getLoginID()).then(function(data) {
-                    var isDO=false;
-                    if (data.errno == 0) {
-                        console.log(data.data);
-                        data.data.forEach(function(item){
-                            if(item.PayStatus==1){
-                                if(!isDO) {
-                                    vm.getDeposits();
-                                    isDO = true;
-                                }
-                            }
-
-                        });
-                        return false;
-                    }
-                });
-            };
-
-            vm.back=function(){
-                StateService.back();
-            };
-
-            vm.goToDepositComment=function(did){
-                StateService.go('depositComment', {id: did});
-            };
-
-        });
-}());
-
-(function() {
-  "use strict";
-  angular.module('orderModule', [
-    'orderCtrl',
-    'depositListctrl',
-    'orderRouter',
-    'orderService'
-  ]);
-
-}());
-
-(function() {
-    "use strict";
-    angular.module('orderCtrl', [])
-        .controller('orderCtrl', function($scope, Constants, StateService) {
-            'ngInject';
-            var vm = this;
-            vm.activated = false;
-            console.log("tabs come");
-            $scope.$on('$ionicView.afterEnter', activate);
-
-            function activate() {
-                vm.activated = true;
-                vm.version = Constants.buildID;
-            }
-
-            vm.goTo=function(where){
-                StateService.go(where);
-            };
-
-            vm.back=function(){
-                StateService.back();
-            };
-        });
-}());
-
-(function() {
-  'use strict';
-
-  angular.module('orderRouter', [])
-    .config(myRouter);
-
-
-  function myRouter($stateProvider, $urlRouterProvider) {
-    'ngInject';
-    $stateProvider
-      .state('tabs.order', {
-        url: "/order",
-          views: {
-            'tab-order': {
-              templateUrl: 'order/order.html',
-              controller: 'orderCtrl',
-              controllerAs: 'vm'
-            }
-          }
-      })
-      .state('orders', {
-        url: "/orders",
-        templateUrl: 'order/order.html',
-        controller: 'orderCtrl',
-        controllerAs: 'vm'
-      })
-      .state('vipOrg', {
-        url: "/vipOrg",
-        templateUrl: 'order/depositList.html',
-        controller: 'depositListctrl',
-        controllerAs: 'vm'
-      })
-    ;
-  }
-}());
-
-(function() {
-  'use strict';
-
-  angular.module('orderService', [])
-    .factory('orderService', orderService);
-
-  function orderService( $q, $http) {
-    'ngInject';
-    var service = {
-    };
-    return service;
 
 
   }
@@ -6819,6 +7061,35 @@ angular.module('eshopService', [])
 
 (function() {
     "use strict";
+    angular.module('aboutCtrl', [])
+        .controller('aboutCtrl', function($scope, Constants, Session,StateService, MessageToaster, parentService, AuthService ) {
+            'ngInject';
+            var vm = this;
+            vm.activated = false;
+            $scope.$on('$ionicView.afterEnter', activate);
+
+            function activate() {
+                vm.activated = true;
+                vm.version = Constants.buildID;
+                vm.name = Constants.appTitle;
+                vm.company = Constants.company;
+            }
+
+            vm.goTo = function(addr){
+                console.log('go to path : '+addr);
+                StateService.go(addr);
+            };
+
+            vm.back=function(){
+                StateService.back();
+            };
+
+
+        });
+}());
+
+(function() {
+    "use strict";
     angular.module('changePswCtrl', [])
         .controller('changePswCtrl', function($scope, Constants, Session,StateService, MessageToaster, parentService, AuthService ) {
             'ngInject';
@@ -6912,6 +7183,7 @@ angular.module('eshopService', [])
   angular.module('settingsModule', [
     'settingsCtrl',
     'changePswCtrl',
+    'aboutCtrl',
     'settingsRouter'
   ]);
 
@@ -6986,6 +7258,12 @@ angular.module('eshopService', [])
           url: "/settings",
           templateUrl: 'settings/settings.html',
           controller: 'settingsCtrl',
+          controllerAs: 'vm'
+        })
+        .state('about', {
+          url: "/about",
+          templateUrl: 'settings/about.html',
+          controller: 'aboutCtrl',
           controllerAs: 'vm'
         })
         .state('changePsw', {

@@ -9,8 +9,9 @@
             $scope.mapOpts = {
                 apiKey: 'IGp7UfrinXNxV6IwrQTC0PWoDCQlf0TR',
                 center: {longitude:113.271,latitude:23.1353},
-                keywords: ['托管'],
+                keywords: ['午托','晚托','托管'],
                 zoom: 16,
+                onlyShowList:false,
                 onMapLoadFailded: function () {
                     //ionicToast.show('地图加载失败!', 'middle', false, 3000)
                     console.log('地图加载失败');
@@ -19,7 +20,10 @@
             vm.type = $stateParams.type;
             vm.nav = $stateParams.nav;
             console.log("vm.type = "+vm.type+" vm.nav = "+vm.nav);
-            if(vm.type==1)$scope.mapOpts.mode = 2;
+            if (vm.type == 1) {
+                $scope.mapOpts.mode = 2;
+                $scope.mapOpts.onlyShowList = true;
+            } 
 
             function activate() {
                 vm.activated = true;

@@ -1,5 +1,83 @@
 (function() {
-'use strict';
+    'use strict';
+
+    function getCustomOverlay(BMap) {
+
+        function CustomOverlay(point, text, clickEvent) {
+            this._point = point;
+            this._text = text;
+            this._clickEvent = clickEvent;
+
+        }
+        CustomOverlay.prototype = new BMap.Overlay();
+        CustomOverlay.prototype.initialize = function (map) {
+            this.map = map;
+            var div = this._div = document.createElement("div");
+            div.style.position = "absolute";
+            div.style.zIndex = BMap.Overlay.getZIndex(this._point.lat);
+            div.style.backgroundColor = "#fba106";
+            div.style.border = "1px solid #fba106";
+            div.style.color = "white";
+            div.style.height = "24px";
+            div.style.padding = "0px";
+            div.style.lineHeight = "18px";
+            div.style.whiteSpace = "nowrap";
+            div.style.MozUserSelect = "none";
+            div.style.fontSize = "12px"
+
+            var header = document.createElement("span");
+            header.style.display = "inline-block";
+            header.style.textAlign = "center";
+            header.style.color = "#fff";
+            header.style.width = "40px";
+            header.style.borderRadius = "5px";
+            header.style.height = "100%";
+            header.style.backgroundColor = "#ff0000";
+            header.appendChild(document.createTextNode('22.3'));
+            div.appendChild(header);
+
+            var span = this._span = document.createElement("span");
+            span.style.color = "#000";
+            span.style.padding = "2px";
+            span.style.verticalAlign = "middle";
+            span.appendChild(document.createTextNode(this._text));
+            div.appendChild(span);
+           
+            var that = this;
+            div.addEventListener('ontouchend', function () {
+                that._clickEvent && that._clickEvent({ target: that });
+            });
+
+            //span.onclick = function () {
+            //    that._clickEvent && that._clickEvent({ target: that });
+            //}
+
+            var arrow = this._arrow = document.createElement("div");
+            arrow.style.background = "url(http://map.baidu.com/fwmap/upload/r/map/fwmap/static/house/images/label.png) no-repeat";
+           // arrow.style.backgroundPosition = "0px -10px";
+            arrow.style.position = "absolute";
+            arrow.style.width = "11px";
+            arrow.style.height = "10px";
+            arrow.style.top = "22px";
+            arrow.style.left = "10px";
+            arrow.style.overflow = "hidden";
+            div.appendChild(arrow);
+          
+
+            map.getPanes().labelPane.appendChild(div);
+
+            return div;
+        }
+        CustomOverlay.prototype.draw = function () {
+            var map = this.map;
+            var pixel = map.pointToOverlayPixel(this._point);
+            this._div.style.left = pixel.x - parseInt(this._arrow.style.left) + "px";
+            this._div.style.top = pixel.y - 30 + "px";
+        }
+
+        return CustomOverlay;
+    }
+
 
 var app = angular.module('BaiduMapDirective', []);
 
@@ -14,9 +92,9 @@ var app = angular.module('BaiduMapDirective', []);
       function loadMap(apiKey) {
 
           // 判断是否执行过加载过程
-          if ($window.loadBaiduPromise) {
-              return $window.loadBaiduPromise;
-          }
+          //if ($window.loadBaiduPromise) {
+          //    return $window.loadBaiduPromise;
+          //}
 
           var deferred = $q.defer(),
             resolve = function () {
@@ -26,7 +104,6 @@ var app = angular.module('BaiduMapDirective', []);
             params = {
                 'ak': apiKey
             };
-
           if ($window.BMap) {
               resolve();
           } else {
@@ -99,12 +176,14 @@ var app = angular.module('BaiduMapDirective', []);
           }
 
           var map = new window.BMap.Map(container, {
-              enableMapClick: true
+              enableMapClick: false
           });
 
           if (options.enableScrollWheelZoom) {
               map.enableScrollWheelZoom();
           }
+
+          window.BMap.CustomOverlay = getCustomOverlay(window.BMap);
 
           return map;
       }
@@ -133,6 +212,26 @@ var app = angular.module('BaiduMapDirective', []);
           if (clickCallback) {
               mk.addEventListener('click', clickCallback);
           }
+
+          return mk;
+      }
+
+      /**
+   * 根据位置做标记
+   * @param {*} map
+   * @param {*} point
+   * @param {*} clickCallback
+   * @param {*} poInfo
+   */
+      function addMapCustomMarker(map, point, clickCallback, poInfo, markText) {
+          var mk = new window.BMap.CustomOverlay(point, markText, clickCallback);
+
+          map.addOverlay(mk);
+          mk.babyPoi = poInfo;
+
+          //if (clickCallback) {
+          //    mk.addEventListener('click', clickCallback);
+          //}
 
           return mk;
       }
@@ -245,9 +344,13 @@ var app = angular.module('BaiduMapDirective', []);
                             };
 
                           if (!!map.scope.currentPosition) {
-                              tempPoi["Dist"] = map.getDistance(poi.point, map.scope.currentPosition).toFixed(2);
+                              tempPoi["Dist"] = map.getDistance(poi.point, map.scope.currentPosition);
                           }
-                          pois.push(tempPoi);
+
+                          //只看5公里内的数据
+                          if (tempPoi["Dist"] && tempPoi["Dist"] < 5000) {
+                              pois.push(tempPoi);
+                          }
                       }
                   }
 
@@ -258,7 +361,7 @@ var app = angular.module('BaiduMapDirective', []);
           }
           var local = new BMap.LocalSearch(map, {
               onSearchComplete: onSearchComplete,
-              pageCapacity: 10
+              pageCapacity: 30
           });
           local.search(keyword);
           return deferred.promise;
@@ -340,12 +443,17 @@ var app = angular.module('BaiduMapDirective', []);
                   MAP_SHOW: 0,
                   MAP_SEARCH: 1,
                   LIST_SHOW: 2,
-                  LIST_SEARCH: 3
+                  LIST_SEARCH: 3,
               };
               if(opts.mode){
                 scope.currMode = opts.mode;
               }else{
                 scope.currMode = MAP_MODES.MAP_SHOW;
+              }
+
+              scope.only_show_list = false;
+              if (!!opts.onlyShowList) {
+                  scope.only_show_list = opts.onlyShowList;
               }
               scope.baiDuSearchResults = [];
               scope.babyPlanSearchResults = [];
@@ -425,7 +533,7 @@ var app = angular.module('BaiduMapDirective', []);
                   for (var i = 0; i < scope.babyPlanSearchResults.length; i++) {
                       poi = scope.babyPlanSearchResults[i];
                       point = new BMap.Point(poi.Longitude, poi.Latitude);
-                      addMapMarker(scope.map, point, openInfoWindow, poi);
+                      addMapCustomMarker(scope.map, point, openInfoWindow, poi,poi.OrgName);
                   }
 
                   $timeout(function () {
@@ -589,18 +697,21 @@ var app = angular.module('BaiduMapDirective', []);
                           $q.all([bpSearchDeferred, bdSearchDeferred]).then(function (results) {
 
                               // 缓存结果
-                              scope.baiDuSearchResults = results[1];
-                              scope.babyPlanSearchResults = results[0];
+                              var baiDuSearchResults= scope.baiDuSearchResults = results[1].sort(function (a, b) { return parseFloat(a.Dist) - parseFloat(b.Dist); });
+                              var babyPlanSearchResults=  scope.babyPlanSearchResults = results[0];
 
                               // 对满足条件的位置进行标记，
                               var point;
-                              for (var j = 0; j < results.length; j++) {
-                                  var result = results[j];
-                                  for (var i = 0; i < result.length; i++) {
-                                      point = new BMap.Point(result[i].Longitude, result[i].Latitude);
-                                      addMapMarker(map, point, openInfoWindow, result[i]);
-                                  }
+                              for (var i = 0; i < baiDuSearchResults.length; i++) {
+                                  point = new BMap.Point(baiDuSearchResults[i].Longitude, baiDuSearchResults[i].Latitude);
+                                  addMapMarker(map, point, openInfoWindow, baiDuSearchResults[i]);
                               }
+
+                              for (var i = 0; i < babyPlanSearchResults.length; i++) {
+                                  point = new BMap.Point(babyPlanSearchResults[i].Longitude, babyPlanSearchResults[i].Latitude);
+                                  addMapCustomMarker(scope.map, point, openInfoWindow, babyPlanSearchResults[i], babyPlanSearchResults[i].OrgName);
+                              }
+
 
                               // 把最后一个位置移动到地图中心
                               // point && map.panTo(point)
@@ -632,4 +743,7 @@ var app = angular.module('BaiduMapDirective', []);
           }
       }
   });
+
+
+
 }());

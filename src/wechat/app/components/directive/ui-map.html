@@ -17,7 +17,7 @@
     <div class="mech-list" ng-show="currMode==MAP_MODES.LIST_SHOW || currMode==MAP_MODES.LIST_SEARCH ">
         <!--列表模式下搜索栏展示-->
         <div class="bar bar-header item-input-inset mech-list-searchbar">
-            <button class="button button-icon icon ion-ios-arrow-back" ng-click="backToMapView()"></button>
+            <button class="button button-icon icon ion-ios-arrow-back" ng-click="backToMapView()"  ng-show="!only_show_list"></button>
             <label class="item-input-wrapper">
                 <i class="icon ion-ios-search placeholder-icon"></i>
                 <input id="mech-list-searchbox" ng-model="keyword2" type="search" placeholder="搜索" ng-focus="switchMode(MAP_MODES.LIST_SEARCH)" ng-blur="switchMode(MAP_MODES.LIST_SHOW)">
