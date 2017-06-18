@@ -2,7 +2,7 @@
     <ion-content>
         <div style="width:100%;margin-top:30px;"  class='center'>
 
-            <img ng-src='{{vm.parent.avatarlink|ImageMin}}' style="height:80px;width:80px;border-radius: 50%;">
+            <img ng-src='{{vm.parent.avatarlink|ImageMin}}' style="height:80px;width:80px;border-radius: 50%;" ng-click="vm.showImageUploadChoices()">
             <h4>{{vm.parent.name}}</h4>
             <p ng-click="vm.goTo('parentEdit')" style="font-size:0.9em;color:#a2a6ad"><b>账号:</b>{{vm.parent.uid || '无'}}</p>
 
@@ -18,7 +18,7 @@
             <!--<hr>-->
             <div class="row button-icon-top" >
               <div class="col col-25">
-                  <button class="button button-icon" ng-click="vm.goTo('orgmap',{type:0,nav:true})">
+                  <button class="button button-icon" ng-click="vm.goTo('nearbyorgmap',{type:0,nav:true})">
                     <i class="icon ion-map"></i>
                     附近机构
                   </button>

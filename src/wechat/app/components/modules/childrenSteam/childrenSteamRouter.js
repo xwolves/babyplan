@@ -9,7 +9,7 @@
     'ngInject';
     $stateProvider
       .state('tabs.childrenSteam', {
-        url: "/childrenSteam",
+          url: "/childrenSteam?:index",
           views: {
             'tab-childrenSteam': {
               templateUrl: 'childrenSteam/childrenSteam.html',

@@ -1,6 +1,6 @@
 (function() {
     "use strict";
-    angular.module('Session', []).service('Session', function($http,$window) {
+    angular.module('Session', []).service('Session', function ($http, $window, JPushService) {
         'ngInject';
 
         var session = {
@@ -23,6 +23,9 @@
                 //$http.defaults.headers.common.Authorization = "Bearer-"+token;
                 $http.defaults.headers.common.token = token;
             }
+
+            //设置用户ID做为通知别名
+            JPushService.setAlias(userId);
 
             //    $httpProvider.defaults.headers.common["Authorization"] = "Bearer-"+token;
             console.log(session);

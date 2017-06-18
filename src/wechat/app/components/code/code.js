@@ -9,7 +9,8 @@
     'ResultHandler',
     'MessageToaster',
     'CustomFilter',
-    'BaiduService'
+    'BaiduService',
+     'JPushService'
   ]);
 
 }());

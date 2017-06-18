@@ -106,5 +106,49 @@
         },
         "is_top_level": true,
         "variables": {}
+    },
+    "jpush-phonegap-plugin": {
+        "source": {
+            "type": "git",
+            "url": "https://github.com/jpush/jpush-phonegap-plugin.git",
+            "subdir": "."
+        },
+        "is_top_level": true,
+        "variables": {
+            "APP_KEY": "db6eb3016636e4b8d5a6fd69"
+        }
+    },
+    "cordova-plugin-jcore": {
+        "source": {
+            "type": "registry",
+            "id": "cordova-plugin-jcore"
+        },
+        "is_top_level": false,
+        "variables": {}
+    },
+    "cordova-plugin-badge": {
+        "source": {
+            "type": "git",
+            "url": "https://github.com/katzer/cordova-plugin-badge.git",
+            "subdir": "."
+        },
+        "is_top_level": true,
+        "variables": {}
+    },
+    "cordova-plugin-background-mode": {
+        "source": {
+            "type": "registry",
+            "id": "cordova-plugin-background-mode"
+        },
+        "is_top_level": true,
+        "variables": {}
+    },
+    "cordova-plugin-appminimize": {
+        "source": {
+            "type": "registry",
+            "id": "cordova-plugin-appminimize"
+        },
+        "is_top_level": true,
+        "variables": {}
     }
 }

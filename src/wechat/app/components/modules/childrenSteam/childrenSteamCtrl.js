@@ -1,7 +1,7 @@
 (function () {
     "use strict";
     angular.module('childrenSteamCtrl', [])
-        .controller('childrenSteamCtrl', function ($scope, $ionicPopup, $sce, Constants, childrenService, childrenSteamService, AuthService, Session, StateService, $ionicModal, $ionicSlideBoxDelegate) {
+        .controller('childrenSteamCtrl', function ($scope, $ionicPopup, $sce,$stateParams, Constants, childrenService, childrenSteamService, AuthService, Session, StateService, $ionicModal, $ionicSlideBoxDelegate) {
             'ngInject';
             console.log("childrenSteamCtrl");
             var vm = this;
@@ -38,12 +38,19 @@
                 //vm.getChildrenInfo(AuthService.getLoginID(),vm.offset,vm.limit);
                 //vm.getChildren();
                 vm.getChildrenDeposit();
-                vm.steam = Session.getData('steam');
 
+                //如果是通知消息进来，直接根据通知消息参数打开指定页面
+                var index = $stateParams.index;;
+                vm.steam =index || Session.getData('steam');
                 if (vm.steam === null) {
                     vm.steam = 1;
                     console.log('steam = ' + vm.steam);
                 }
+
+                //转为数字
+                vm.steam = parseInt(vm.steam);
+
+
                 vm.changeSteam(vm.steam);
             };
 

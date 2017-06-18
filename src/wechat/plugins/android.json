@@ -46,10 +46,26 @@
         },
         "cordova-plugin-camera": {
             "PACKAGE_NAME": "com.trusteeship"
+        },
+        "jpush-phonegap-plugin": {
+            "APP_KEY": "db6eb3016636e4b8d5a6fd69",
+            "PACKAGE_NAME": "com.trusteeship"
+        },
+        "cordova-plugin-badge": {
+            "PACKAGE_NAME": "com.trusteeship"
+        },
+        "cordova-plugin-background-mode": {
+            "PACKAGE_NAME": "com.trusteeship"
+        },
+        "cordova-plugin-appminimize": {
+            "PACKAGE_NAME": "com.trusteeship"
         }
     },
     "dependent_plugins": {
         "cordova-plugin-file": {
+            "PACKAGE_NAME": "com.trusteeship"
+        },
+        "cordova-plugin-jcore": {
             "PACKAGE_NAME": "com.trusteeship"
         }
     }
