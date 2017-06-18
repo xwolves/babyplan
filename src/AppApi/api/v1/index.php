@@ -165,7 +165,7 @@ $app->post(
             return;
         }
         $account = new Account($sql_db);
-        $ret = $account->createAccount($a_request, 4);
+        $ret = $account->createAccount($app, $a_request, 4);
         $rsp_data['uid'] = $ret;
         $response->setBody(rspData($ret, $rsp_data));
     }
@@ -261,7 +261,7 @@ $app->post(
             return;
         }
         $account = new Account($sql_db);
-        $ret = $account->createAccount($a_request, 3);
+        $ret = $account->createAccount($app, $a_request, 3);
         $rsp_data['uid'] = $ret;
         $rsp_data['passwd'] = substr($a_request['mobile'], strlen($a_request['mobile']) - 6);
         $response->setBody(rspData($ret, $rsp_data));
@@ -1152,7 +1152,6 @@ $app->get(
 $app->get(
     '/nearbyDepositList/:longitude/:latitude',
     function ($longitude, $latitude) use($app, $sql_db, $redis){
-        $app->getLog()->debug("Debug ".date('Y-m-d H:i:s')." longitude : ".$longitude.", latitude" . $latitude);
         $response = $app->response;
         //$token = $app->request->headers('token');
         //$depositInfo = $redis->get($token);
@@ -1161,10 +1160,24 @@ $app->get(
         //    return;
         //}
         $info = new Info($sql_db);
-        $ret = $info->getNearbyDepositList($longitude, $latitude);
-        if(gettype($ret) != "array"){
-            $response->setBody(rspData($ret));
+        $deps = $info->getNearbyDepositList($longitude, $latitude);
+        if(gettype($deps) != "array"){
+            $app->getLog()->debug("Error ".date('Y-m-d H:i:s')." longitude : ".$longitude.", latitude" . $latitude." rsp = ".rspData($deps));
+            $response->setBody(rspData($deps));
         }else{
+            $comment = new Comment($sql_db);
+            $ret = array();
+            foreach($deps as $v0) {
+                $v = $v0;
+                $sc = 8.0;
+                $s = $comment->getDepositScores($v['AccountID']);
+                if(gettype($s) == "array" && isset($s['scores'])) {
+                    $sc = (float)$s['scores'];
+                }
+                $v['Scores'] = round($sc, 2);
+                $ret[] = $v;
+            }
+            $app->getLog()->debug("Debug ".date('Y-m-d H:i:s')." longitude : ".$longitude.", latitude" . $latitude." rsp = ".rspData(0,$ret));
             $response->setBody(rspData(0, $ret));
         }
     }
@@ -1600,7 +1613,7 @@ $app->post(
             return;
         }
         $account = new Account($sql_db);
-        $ret = $account->createAccount($a_request, 2);
+        $ret = $account->createAccount($app, $a_request, 2);
         //$rsp_data['uid'] = $ret;
         //$response->setBody(rspData($ret, $rsp_data));
         //create eshop account

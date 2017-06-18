@@ -135,7 +135,7 @@ class Info{
             //         ORDER BY publish.createtime DESC limit $offset, $limitcount ";
             $sql_str = "select dd.*, t.name as teacherName, t.photolink as teacherPhoto
                   from tb_deposit_daily dd left join  tb_accnt_teacher t on t.accountid = dd.publisherid
-                  where dd.DepositID in (select DISTINCT b.DepositID from tb_parent_children a left join tb_deposit_children b on b.childrenid = a.ChildrenID  where a.ParentID = :parentid )
+                  where dd.Status = 1 and dd.DepositID in (select DISTINCT b.DepositID from tb_parent_children a left join tb_deposit_children b on b.childrenid = a.ChildrenID  where a.ParentID = :parentid )
                   ORDER BY dd.createtime DESC limit $offset, $limitcount";
             $stmt = $this->DB->prepare($sql_str);
             $stmt->bindParam(":parentid", $parentid, PDO::PARAM_STR);
@@ -329,7 +329,7 @@ class Info{
                 (select ac.Name from tb_accnt_children ac WHERE ac.AccountID = dc.ChildrenID) as childName
                 from tb_deposit_children dc ) b
                 on b.DepositID = dd.DepositID
-                where b.parentID = :parentuid
+                where dd.Status = 1 and b.parentID = :parentuid
                 ORDER BY CreateTime DESC;";
             $stmt = $this->DB->prepare($sql_str);
             $stmt->bindParam(":parentuid", $parentuid, PDO::PARAM_STR);

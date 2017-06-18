@@ -115,9 +115,9 @@ class Comment extends Charge{
             $rsp_data = array();
             $sql_str = "select b.accountid as accountid, (IFNULL(b.score*0.4,0) + c.totalscore*0.6) as total_score from
                 (select score, AccountID from tb_accnt_deposit where AccountID = :accountid) b LEFT JOIN
-                (select a.kitchenscore+a.foodscore+a.roadsafetyscore+a.edufiresafetyscore+a.teacherrespscore as totalscore, DepositID from
-                (SELECT SUM(Kitchen) as kitchenscore, SUM(food) as foodscore, SUM(RoadSafety) as roadsafetyscore, SUM(edufiresafety) as edufiresafetyscore,
-                SUM(TeacherResp) as teacherrespscore, DepositID FROM tb_deposit_parent_comments where depositid=:depositid) a)c
+                (select (a.kitchenscore+a.foodscore+a.roadsafetyscore+a.edufiresafetyscore+a.teacherrespscore)/5 as totalscore, DepositID from
+                (SELECT AVG(Kitchen) as kitchenscore, AVG(food) as foodscore, AVG(RoadSafety) as roadsafetyscore, AVG(edufiresafety) as edufiresafetyscore,
+                AVG(TeacherResp) as teacherrespscore, DepositID FROM tb_deposit_parent_comments where depositid=:depositid) a)c
                 on c.depositid = b.accountid";
             $stmt = $this->DB->prepare($sql_str);
             $stmt->bindParam(":accountid", intval($depositid), PDO::PARAM_INT);
