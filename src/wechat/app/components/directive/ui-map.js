@@ -443,8 +443,9 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
                           fillColor: "orange",//填充颜色
                           fillOpacity: 0.8//填充透明度
                       });
-                      //addMapMarker(scope.map, scope.currentPosition, openInfoWindow, null, symbol,'我的位置');
-                      addMapMarker(scope.map, scope.currentPosition, { type: MARKER_TYPES.CURRENT, icon: icon });
+
+                      scope.map.clearOverlays();
+                      addMapMarker(scope.map, scope.currentPosition, { type: MARKER_TYPES.CURRENT, icon: icon, text: '我的位置' });
                       scope.currentPosition && scope.map.panTo(scope.currentPosition);
                   }, 20);
               };

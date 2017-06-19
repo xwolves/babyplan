@@ -10244,6 +10244,41 @@ video {
 .mech-map {
   height: 100%; }
 
+.mech-map .custom-marker {
+  padding-left: 35px;
+  color: #0082CB;
+  border: 1px solid #ef473a;
+  background-color: #ffc900;
+  width: 180px; }
+
+.mech-map .custom-marker > .header {
+  height: 25px;
+  line-height: 25px;
+  background-color: red;
+  width: 30px;
+  position: absolute;
+  left: 1px;
+  color: white;
+  top: 1px;
+  text-align: center; }
+
+.mech-map .custom-marker > .header::after {
+  border: solid transparent;
+  content: ' ';
+  left: -1px;
+  bottom: -29px;
+  position: absolute;
+  border-width: 15px;
+  border-top-color: red; }
+
+.mech-map .custom-marker > .content {
+  height: 25px;
+  line-height: 25px;
+  color: #444;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap; }
+
 .mech-map > .mech-map-searchbar {
   position: fixed;
   top: 5px;
