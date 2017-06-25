@@ -16,6 +16,12 @@
                 vm.activated = true;
                 vm.version = Constants.buildID;
                 vm.query(vm.index);
+                Wechat.isInstalled(function (installed) {
+                    console.log("Wechat installed: " + (installed ? "Yes" : "No"));
+                }, function (reason) {
+                    console.log('未装微信插件无法支付:Wechat.isInstalled is fail '+reason);
+                    alert("未装微信插件无法支付" + reason);
+                });
             }
 
 
@@ -42,6 +48,7 @@
 
             vm.pay=function(){
                 var parentId=AuthService.getLoginID();
+                //alert(parentId);
                 vipBuyService.createOrder2(parentId, vm.index)
                     .then(function (response) {
                         //alert(JSON.stringify(response));
@@ -50,57 +57,43 @@
                             var orderId=result.orderId;
                             //vm.information = JSON.stringify(result);
                             var params = {
-                                partnerid: result.partnerid, // merchant id
-                                prepayid: result.prepayid, // prepay id
-                                noncestr: result.noncestr, // nonce
+                                mch_id: result.partnerid, // merchant id
+                                prepay_id: result.prepayid, // prepay id
+                                nonce: result.noncestr, // nonce
                                 timestamp: result.timestamp, // timestamp
-                                sign: result.sign, // signed string
+                                sign: result.pay_sign, // signed string
                             };
 
+                            //alert(JSON.stringify(params));
                             Wechat.sendPaymentRequest(params, function () {
-                                alert("Success");
+                                //alert("Success");
+                                //check order make sure user had pay the order ready.
+                                //alert("orderId="+orderId);
+                                vipBuyService.checkOrder(orderId).then(
+                                    function(result) {
+                                        //{"errno":0,"error":"",
+                                        // "data":{"orderId":"139630530220161103152842","wechatOrderId":"4003682001201611038611986947",
+                                        // "totalFee":"1","payState":"SUCCESS","payTime":"20161103152851"}}
+                                        //alert(JSON.stringify(result));
+                                        if(result.errno == 0 ){
+                                            MessageToaster.info("微信支付完成");
+                                            StateService.clearAllAndGo(AuthService.getNextPath());
+                                        }
+                                      },
+                                      function (reason) {
+                                          alert("checkOrder error "+JSON.stringify(reason));
+                                      }
+                                  );
                             }, function (reason) {
-                                alert("Failed: " + reason);
+                                //alert("Failed: " + reason);
+                                MessageToaster.error(reason);
                             });
-                            // WeixinJSBridge.invoke(
-                            //     'getBrandWCPayRequest',
-                            //     {
-                            //         "appId":result.appId,
-                            //         "timeStamp":""+result.timeStamp,
-                            //         "nonceStr":result.nonceStr,
-                            //         "package":"prepay_id="+result.prepay_id,
-                            //         "signType":"MD5",
-                            //         "paySign":result.paySign
-                            //     },
-                            //     function(res){
-                            //         var msg = res.err_msg;
-                            //         if(msg == "get_brand_wcpay_request:ok" ) {
-                            //             //保存数据．跳转页面
-                            //             //check order make sure user had pay the order ready.
-                            //             vipBuyService.checkOrder(orderId).then(
-                            //                 function(result) {
-                            //                     if(result.errno == 0 ){
-                            //                         MessageToaster.info("微信支付完成");
-                            //                         StateService.clearAllAndGo(AuthService.getNextPath());
-                            //                     }
-                            //                 },
-                            //                 function (reason) {
-                            //                     alert("checkOrder error "+JSON.stringify(reason));
-                            //                 }
-                            //             );
-                            //         }else if(msg.endsWith("cancel")){
-                            //             MessageToaster.info("微信支付已取消");
-                            //         }else if(msg.endsWith("fail")){
-                            //             alert("付款失败");
-                            //         }
-                            //     }
-                            // );
                           }else{
                             MessageToaster.error(response.error);
                           }
                     }, function (error) {
                         //alert(JSON.stringify(error));
-                        vm.information += " 请求付款失败 " + error;
+                        vm.information += " 请求付款失败 " + JSON.stringify(error);
                     });
             };
 
