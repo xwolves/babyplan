@@ -9,7 +9,7 @@
     'ngInject';
     $stateProvider
     .state('tabs.map', {
-      url: "/map",
+        url: "/map?:type",
       views: {
         'tab-map': {
           templateUrl: 'map/map.html',

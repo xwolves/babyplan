@@ -25,9 +25,9 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
       function loadMap(apiKey) {
 
           // 判断是否执行过加载过程
-          //if ($window.loadBaiduPromise) {
-          //    return $window.loadBaiduPromise;
-          //}
+          if ($window.loadBaiduPromise) {
+              return $window.loadBaiduPromise;
+          }
 
           var deferred = $q.defer(),
             resolve = function () {
@@ -129,6 +129,19 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
       function addMapMarker(map, point, options) {
 
           //{} clickCallback, poInfo, icon,markText
+
+          var ovs = map.getOverlays();
+          var isExist = false;
+          for (var i = 0; i < ovs.length; i++) {
+              var pt = ovs[i].getPosition();
+              if (pt.equals(point)) {
+                  isExist = true;
+                  break;
+              }
+          }
+
+          if (isExist) return;
+
           options = options || {};
           var mk;
 
@@ -424,7 +437,7 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
                   scope.currMode = MAP_MODES.MAP_SHOW;
 
                   // 清除所有标记，并添加当前位置标记
-                  scope.map.clearOverlays();
+                 // scope.map.clearOverlays();
                   var point = new BMap.Point(poi.Longitude, poi.Latitude);
                   if (poi.AccountID === 0) {
                       addMapMarker(scope.map, point, { onClick: openInfoWindow, type: MARKER_TYPES.BAIDU, data: poi });
@@ -449,8 +462,7 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
                           fillColor: "orange",//填充颜色
                           fillOpacity: 0.8//填充透明度
                       });
-
-                      scope.map.clearOverlays();
+                     // scope.map.clearOverlays();
                       addMapMarker(scope.map, scope.currentPosition, { type: MARKER_TYPES.CURRENT, icon: icon, text: '我的位置' });
                       scope.currentPosition && scope.map.panTo(scope.currentPosition);
                   }, 20);
@@ -604,7 +616,8 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
                */
               scope.$on('$destroy', function () {
                   $window.BMap = null;
-                  document.getElementById('map').remove();
+                  // document.getElementById('map').remove();
+                  elm.remove();
                   scope.modal && scope.modal.remove();
               });
 
@@ -613,7 +626,8 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
                   try{
 
                       // 创建百度地图
-                      var map = scope.map = buildMap(document.getElementById('map'), opts);
+                   // var map = scope.map = buildMap(document.getElementById('map'), opts);
+                      var map = scope.map = buildMap(elm.children().eq(0).children()[1], opts);
                       map.scope = scope;
 
                       // 添加导航栏

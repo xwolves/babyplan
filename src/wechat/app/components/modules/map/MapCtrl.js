@@ -22,7 +22,7 @@
             console.log("vm.type = "+vm.type+" vm.nav = "+vm.nav);
             if (vm.type == 1) {
                 $scope.mapOpts.mode = 2;
-                $scope.mapOpts.onlyShowList = true;
+               // $scope.mapOpts.onlyShowList = true;
             } 
 
             function activate() {

@@ -11,7 +11,7 @@
 
     .run(function ($ionicPlatform, $state, AuthService, JPushService) {
         $ionicPlatform.registerBackButtonAction(function (event) {
-           // alert("cur：" + JSON.stringify($state.current));
+           // alert("cur�? + JSON.stringify($state.current));
             if ($state.current.name == AuthService.getNextPath()) {
                 event.preventDefault();
                 cordova.plugins.backgroundMode.moveToBackground();
@@ -47,7 +47,7 @@
             var config = {
                 openNotificationInAndroidCallback: onOpenNotificationInAndroidCallback
             };
-            //启动极光推送服务
+            //启动极光推送服�?
             JPushService.init(config);
         });
     })
@@ -183,7 +183,7 @@ angular.module('BaiduService',[])
       }
 
     /**
-     * 根据经纬度获取附近机构列表
+     * 根据经纬度获取附近机构列�?
      * @param {*} longitude
      * @param {*} latitude
      */
@@ -235,7 +235,7 @@ angular.module('BaiduService',[])
       }
 
       /**
-       * 获取机构详情并带有评论信息
+       * 获取机构详情并带有评论信�?
        * @param {*} depositId
        */
       function _getDepositInfoWithComments (depositId) {
@@ -251,7 +251,7 @@ angular.module('BaiduService',[])
             depositInfo.Score = commentsData.scores || 0;
             depositInfo.Comments = [];
 
-            //转换所有图片为数组，以用于轮播图片源
+            //转换所有图片为数组，以用于轮播图片�?
             depositInfo.Images = [];
             depositInfo.FrontDeskLink && depositInfo.Images.push(_convertThumbUrl(depositInfo.FrontDeskLink));
             depositInfo.PublicZoneLink && depositInfo.Images.push(_convertThumbUrl(depositInfo.PublicZoneLink));
@@ -348,8 +348,8 @@ angular.module('BaiduService',[])
 var app = angular.module('CustomFilter', []);
 app.filter('gendarChange', function () {
     return function (input) {
-        if (input == "1")return "男";
-        else if (input == "2")return "女";
+        if (input == "1")return "�?;
+        else if (input == "2")return "�?;
         else return "";
     };
 });
@@ -365,15 +365,15 @@ app.filter('JSchange', function () {
 
 app.filter('PayStatus', function () {
     return function (input) {
-        if (input == "1")return "已付款";
-        else if (input == "0")return "未付款";
+        if (input == "1")return "已付�?;
+        else if (input == "0")return "未付�?;
         else return "未知";
     };
 });
 
 app.filter('PayType', function () {
     return function (input) {
-        if (input == "1")return "支付宝支付";
+        if (input == "1")return "支付宝支�?;
         else if (input == "0")return "微信支付";
         else if (input == "2")return "其它";
         else return "未知";
@@ -396,15 +396,15 @@ app.filter('dateChange', function () {
         var now = new Date();
         var time=now.getTime()- d.getTime();
         if(time>24*60*60*1000){
-            return d.Format('MM月dd日');
+            return d.Format('MM月dd�?);
         }else if(time>60*60*1000){
-            //return d.Format('hh')+"小时前";
+            //return d.Format('hh')+"小时�?;
             var hour=parseInt(time/(60*60*1000));
-            return hour+"小时前";
+            return hour+"小时�?;
         }else{
-            //return d.Format('mm')+"分钟前";
+            //return d.Format('mm')+"分钟�?;
             var min=parseInt(time/(60*1000));
-            return min+"分钟前";
+            return min+"分钟�?;
         }
     };
 });
@@ -441,7 +441,7 @@ app.filter('changeSize', function () {
 
 app.filter('statusChange', function () {
     return function (input,rule) {
-        //var rule=[{dm:"0",mc:"未办结"},{dm:"1",mc:"已办结"}];
+        //var rule=[{dm:"0",mc:"未办�?},{dm:"1",mc:"已办�?}];
         if(rule!=null&&rule.length>0) {
             for (var i = 0; i < rule.length; i++) {
                 if(rule[i].dm==input)return rule[i].mc;
@@ -480,8 +480,8 @@ app.filter('statusChange', function () {
          if (years > 0) return years + '年前';
          if (months > 0) return months + '月前';
          if (days > 0) return days + '天前';
-         if (hours > 0) return hours + '小时前';
-         if (minutes > 0) return minutes + '分钟前';
+         if (hours > 0) return hours + '小时�?;
+         if (minutes > 0) return minutes + '分钟�?;
          return '';
      };
    });
@@ -578,7 +578,7 @@ app.filter('statusChange', function () {
             for (var i = 0; i < ionViewArr.length; i++) {
                 if (angular.element(ionViewArr[i]).attr('nav-view') == 'active') {
                     activeNavView = angular.element(ionViewArr[i]);
-                    activeNavView.append("<loading><div class=\"loading-alert-container\"><div class=\"loading-body\"><div class=\"loading-text\">加载中...<div><div></div></loading>");
+                    activeNavView.append("<loading><div class=\"loading-alert-container\"><div class=\"loading-body\"><div class=\"loading-text\">加载�?..<div><div></div></loading>");
                 }
             }
         }
@@ -822,98 +822,6 @@ app.filter('statusChange', function () {
 }());
 
 (function() {
-  "use strict";
-  angular.module('config', [
-    'environmentConfig',
-    'constant',
-    'httpRelConfig'
-  ]);
-
-}());
-
-(function() {
-    "use strict";
-    angular.module('constant', [])
-        .constant('Path',{
-            'ParentRolePath':'tabs.childrenSteam',
-            'OrganizerRolePath':'tabs.organizer',
-            'TeacherRolePath':'tabs.message',
-            'VisitorRolePath':'tabs.map'
-        })
-        .constant('Role',{
-            'visitor':'-1',
-            'Organizer':'1',
-            'Parent':'2',
-            'Teacher':'3',
-            'Children':'4',
-            'ThirdParty':'5',
-            'Consultant':'6'
-        })
-        .constant('Weixin', {
-        })
-        .constant('AUTH_EVENTS', {
-            loginSuccess: 'auth-login-success',
-            loginFailed: 'auth-login-failed',
-            logoutSuccess: 'auth-logout-success',
-            sessionTimeout: 'auth-session-timeout',
-            notAuthenticated: 'auth-not-authenticated',
-            notAuthorized: 'auth-not-authorized'
-        })
-        .constant('ErrorMessage', {
-            ACCESS_FAIL: '通讯异常，请稍后再试！',
-            TOKEN_INVALID: '连接超时，请重新登录！'
-        })
-        .constant('SuccessMessage', {
-            SUBMIT_SUCESS: '提交成功',
-            OPERATION_SUCESS:'操作完成'
-        });
-}());
-
-(function() {
-    "use strict";
-    angular.module('environmentConfig', [])
-        .constant('Constants', {
-            'appTitle':'肯特育园',
-            'company':'深圳知行信息技术开发有限公司',
-            'serverUrl': 'http://wx.zxing-tech.cn/api/v1/',
-            'eshopApiUrl': 'http://api.mall.zxing-tech.cn/v2/',
-            'dfsUrl': 'http://wx.zxing-tech.cn/',
-            'buildID': '20170614v1',
-            'ENVIRONMENT':'release'
-        });
-}());
-//'serverUrl': 'http://120.76.226.47/api/v2/',
-//    'dfsUrl': 'http://120.76.226.47/',
-//http://localhost:8090/
-//http://wx.zxing-tech.cn
-
-(function() {
-    "use strict";
-    angular.module('httpDevConfig', [])
-        .config(function($httpProvider) {
-            $httpProvider.defaults.headers.post["Content-Type"] = "application/x-www-form-urlencoded";
-            $httpProvider.defaults.headers.put["Content-Type"] = "application/x-www-form-urlencoded";
-        });
-}());
-
-(function() {
-    "use strict";
-    angular.module('httpRelConfig', [])
-    .config(function($httpProvider) {
-        $httpProvider.defaults.cache = false;
-        if (!$httpProvider.defaults.headers.get) {
-           $httpProvider.defaults.headers.get = {};
-        }
-        // disable IE ajax request caching
-        $httpProvider.defaults.headers.get['If-Modified-Since'] = '0';
-
-        // Disable IE ajax request caching
-        $httpProvider.defaults.headers.get['Cache-Control'] = 'no-cache';
-        $httpProvider.defaults.headers.get['Pragma'] = 'no-cache';
-    });
-}());
-
-(function() {
     "use strict";
     angular.module('directive', [
       'BaiduMapDirective'
@@ -943,14 +851,14 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
        * 加载百度地图
        * @param {object}  $q angular $q
        * @param {string} apiKey 百度apiKey
-       * @param {string} version 版本号
+       * @param {string} version 版本�?
        */
       function loadMap(apiKey) {
 
-          // 判断是否执行过加载过程
-          //if ($window.loadBaiduPromise) {
-          //    return $window.loadBaiduPromise;
-          //}
+          // 判断是否执行过加载过�?
+          if ($window.loadBaiduPromise) {
+              return $window.loadBaiduPromise;
+          }
 
           var deferred = $q.defer(),
             resolve = function () {
@@ -1043,7 +951,7 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
       }
 
       /**
-       * 根据位置做标记
+       * 根据位置做标�?
        * @param {*} map
        * @param {*} point
        * @param {*} clickCallback
@@ -1052,6 +960,19 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
       function addMapMarker(map, point, options) {
 
           //{} clickCallback, poInfo, icon,markText
+
+          var ovs = map.getOverlays();
+          var isExist = false;
+          for (var i = 0; i < ovs.length; i++) {
+              var pt = ovs[i].getPosition();
+              if (pt.equals(point)) {
+                  isExist = true;
+                  break;
+              }
+          }
+
+          if (isExist) return;
+
           options = options || {};
           var mk;
 
@@ -1146,7 +1067,7 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
       }
 
       /**
-       * 添加搜索框自动完成功能
+       * 添加搜索框自动完成功�?
        * @param {*} map
        * @param {*} scope
        */
@@ -1157,8 +1078,8 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
               baiDuLocalSearchAndMark(map, keywrod).then(function (results) {
                   scope.baiDuSearchResults = results;
               }, function (err) {
-                  //ionicToast.show('检索异常!', 'middle', false, 3000);
-                  MessageToaster.error("检索异常!");
+                  //ionicToast.show('检索异�?', 'middle', false, 3000);
+                  MessageToaster.error("检索异�?");
               });
           }
           var ac = new BMap.Autocomplete({
@@ -1228,7 +1149,7 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
       }
 
       /**
-       * 根据关键字搜索百度数据并打标记
+       * 根据关键字搜索百度数据并打标�?
        * @param {*} map
        * @param {*} keyword
        */
@@ -1253,7 +1174,7 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
       }
 
       /**
-       * 根据位置搜索本地系统维护的后台数据
+       * 根据位置搜索本地系统维护的后台数�?
        * @param {*} point
        */
       function babyPlanLocalSearch(point) {
@@ -1261,7 +1182,7 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
       }
 
       /**
-       * 打开当前位置标记的详情页面
+       * 打开当前位置标记的详情页�?
        * @param {*} e
        */
       function openInfoWindow(e) {
@@ -1279,7 +1200,7 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
                   width: 250, // 信息窗口宽度
                   height: 80, // 信息窗口高度
                   title: p.babyPoi.OrgName,
-                  enableMessage: true // 设置允许信息窗发送短息
+                  enableMessage: true // 设置允许信息窗发送短�?
               },
                 content = p.babyPoi.Address;
               var point = new BMap.Point(p.babyPoi.Longitude, p.babyPoi.Latitude);
@@ -1321,15 +1242,15 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
               scope.keyword2 = '';
               scope.depositInfo = {};
               // scope.depositInfo = {
-              //   OrgName: '南科大',
-              //   Address: '学苑大道1088号',
+              //   OrgName: '南科�?,
+              //   Address: '学苑大道1088�?,
               //   FrontDeskLink1: 'http://120.76.226.47/group1/M00/00/03/Ci5ek1jxwpWAD29ZAC84O4JhWyE096.jpg',
               //   LicenseType: null,
               //   ContactPhone: '1311111111',
               //   Score: 50,
-              //   Remark: '宝宝的托管机构，宝宝的安全托管机构',
+              //   Remark: '宝宝的托管机构，宝宝的安全托管机�?,
               //   Images: ['http://120.76.226.47/group1/M00/00/03/Ci5ek1jxwpWAD29ZAC84O4JhWyE096.jpg', null],
-              //   Comments: [{comment: '对于缩略图视图，您可以在文件夹上放一个图片来提醒您它的内容。',create_date: '2017-4-23 12:00:00',creator: 'X*'}, {comment: '机构不错',create_date: '2017-4-21 12:00:00',creator: 'X*'}]
+              //   Comments: [{comment: '对于缩略图视图，您可以在文件夹上放一个图片来提醒您它的内容�?,create_date: '2017-4-23 12:00:00',creator: 'X*'}, {comment: '机构不错',create_date: '2017-4-21 12:00:00',creator: 'X*'}]
               // }
 
               /**
@@ -1343,11 +1264,11 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
                * 定位
                */
               scope.location = function (poi) {
-                  // 切换到地图模式
+                  // 切换到地图模�?
                   scope.currMode = MAP_MODES.MAP_SHOW;
 
-                  // 清除所有标记，并添加当前位置标记
-                  scope.map.clearOverlays();
+                  // 清除所有标记，并添加当前位置标�?
+                 // scope.map.clearOverlays();
                   var point = new BMap.Point(poi.Longitude, poi.Latitude);
                   if (poi.AccountID === 0) {
                       addMapMarker(scope.map, point, { onClick: openInfoWindow, type: MARKER_TYPES.BAIDU, data: poi });
@@ -1361,7 +1282,7 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
               };
 
               /**
-               * 定位到当前位置
+               * 定位到当前位�?
                */
               scope.locationCurrent = function () {
                   $timeout(function () {
@@ -1370,23 +1291,22 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
                       var icon = new BMap.Symbol(BMap_Symbol_SHAPE_POINT, {
                           scale: 1,//图标缩放大小
                           fillColor: "orange",//填充颜色
-                          fillOpacity: 0.8//填充透明度
+                          fillOpacity: 0.8//填充透明�?
                       });
-
-                      scope.map.clearOverlays();
+                     // scope.map.clearOverlays();
                       addMapMarker(scope.map, scope.currentPosition, { type: MARKER_TYPES.CURRENT, icon: icon, text: '我的位置' });
                       scope.currentPosition && scope.map.panTo(scope.currentPosition);
                   }, 20);
               };
 
               /**
-               * 定位标记所有位置
+               * 定位标记所有位�?
                */
               scope.locationAll = function () {
-                  // 切换到地图模式
+                  // 切换到地图模�?
                   scope.currMode = MAP_MODES.MAP_SHOW;
 
-                  // 清除所有标记，并添加当前位置标记
+                  // 清除所有标记，并添加当前位置标�?
                   scope.map.clearOverlays();
 
                   var poi, point;
@@ -1425,7 +1345,7 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
               scope.openDepositInfoForm = function (deposit) {
                   if (!deposit || deposit.AccountID == 0) return;
 
-                  // 根据ID获取机构详情和评论信息
+                  // 根据ID获取机构详情和评论信�?
                   BaiduService.getDepositInfoWithComments(deposit.AccountID).then(function (depositInfo) {
                       scope.depositInfo = depositInfo;
 
@@ -1448,7 +1368,7 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
               };
 
               /**
-               * 回退到地图模式
+               * 回退到地图模�?
                */
               scope.backToMapView = function () {
                   scope.currMode = MAP_MODES.MAP_SHOW;
@@ -1461,7 +1381,7 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
                   //
                   if (scope.currMode === mode) return;
 
-                  // 如果切换的目标模式为空，根据当前模式修正为正确目标模式
+                  // 如果切换的目标模式为空，根据当前模式修正为正确目标模�?
                   if (!mode) {
                       switch (scope.currMode) {
                           case MAP_MODES.MAP_SEARCH:
@@ -1480,7 +1400,7 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
                       }
                   }
 
-                  // 切换关键字
+                  // 切换关键�?
                   // if (scope.currMode <= MAP_MODES.MAP_SEARCH && mode > MAP_MODES.MAP_SEARCH) {
                   //   scope.keyword2 = scope.keyword1
                   // } else if (scope.currMode > MAP_MODES.MAP_SEARCH && mode <= MAP_MODES.MAP_SEARCH) {
@@ -1488,7 +1408,7 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
                   // }
                   //
 
-                  // 根据当前模式不同触发不同的行为
+                  // 根据当前模式不同触发不同的行�?
                   switch (scope.currMode) {
                       case MAP_MODES.MAP_SEARCH:
                           // if (!scope.keyword1) {
@@ -1527,7 +1447,8 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
                */
               scope.$on('$destroy', function () {
                   $window.BMap = null;
-                  document.getElementById('map').remove();
+                  // document.getElementById('map').remove();
+                  elm.remove();
                   scope.modal && scope.modal.remove();
               });
 
@@ -1536,34 +1457,35 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
                   try{
 
                       // 创建百度地图
-                      var map = scope.map = buildMap(document.getElementById('map'), opts);
+                   // var map = scope.map = buildMap(document.getElementById('map'), opts);
+                      var map = scope.map = buildMap(elm.children().eq(0).children()[1], opts);
                       map.scope = scope;
 
-                      // 添加导航栏
+                      // 添加导航�?
                       addMapNavigation(map, BMAP_ANCHOR_BOTTOM_RIGHT);
 
-                      // 添加地图搜索框自动完成功能
+                      // 添加地图搜索框自动完成功�?
                       addMapAutoComplete(map, scope);
 
-                      // 设置地图可视区中心位置
+                      // 设置地图可视区中心位�?
                       getCurrentPosition(map, opts).then(function (p) {
-                          // 记录当前位置并标记
+                          // 记录当前位置并标�?
                           scope.currentPosition = p;
 
                           // 指定Marker的icon属性为Symbol
                           var symbol = new BMap.Symbol(BMap_Symbol_SHAPE_POINT, {
                               scale: 1,//图标缩放大小
                               fillColor: "orange",//填充颜色
-                              fillOpacity: 0.8//填充透明度
+                              fillOpacity: 0.8//填充透明�?
                           });
 
                           addMapMarker(map, p, { onClick: openInfoWindow, type: MARKER_TYPES.CURRENT, icon: symbol, text: '我的位置'});
 
                          //  addMapMarker(map, p, openInfoWindow, null, symbol,'我的位置');
-                          // 设置为中心
+                          // 设置为中�?
                           map.centerAndZoom(p, 16);
 
-                          // 根据关键字检索百度相关位置数据和根据当前位置检索后台维护附近数据
+                          // 根据关键字检索百度相关位置数据和根据当前位置检索后台维护附近数�?
                           var bpSearchDeferred = babyPlanLocalSearch(p);
                           var bdSearchDeferred = baiDuLocalSearch(map, opts.keywords);
                           $q.all([bpSearchDeferred, bdSearchDeferred]).then(function (results) {
@@ -1572,7 +1494,7 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
                               var baiDuSearchResults= scope.baiDuSearchResults = results[1].sort(function (a, b) { return parseFloat(a.Dist) - parseFloat(b.Dist); });
                               var babyPlanSearchResults=  scope.babyPlanSearchResults = results[0];
 
-                              // 对满足条件的位置进行标记，
+                              // 对满足条件的位置进行标记�?
                               var point;
                               for (var i = 0; i < baiDuSearchResults.length; i++) {
                                   point = new BMap.Point(baiDuSearchResults[i].Longitude, baiDuSearchResults[i].Latitude);
@@ -1622,22 +1544,22 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
           if (BMapLib.RichMarker) return BMapLib.RichMarker;
 
           /**
-           * 声明baidu包
+           * 声明baidu�?
            */
           var baidu = baidu || {
               guid: "$BAIDU$"
           };
 
-          // 一些页面级别唯一的属性，需要挂载在window[baidu.guid]上
+          // 一些页面级别唯一的属性，需要挂载在window[baidu.guid]�?
           window[baidu.guid] = {};
 
           /**
-           * 将源对象的所有属性拷贝到目标对象中
+           * 将源对象的所有属性拷贝到目标对象�?
            * @name baidu.extend
            * @function
            * @grammar baidu.extend(target, source)
            * @param {Object} target 目标对象
-           * @param {Object} source 源对象
+           * @param {Object} source 源对�?
            * @returns {Object} 目标对象
            */
           baidu.extend = function (target, source) {
@@ -1652,16 +1574,16 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
           /**
            * @ignore
            * @namespace
-           * @baidu.lang 对语言层面的封装，包括类型判断、模块扩展、继承基类以及对象自定义事件的支持。
+           * @baidu.lang 对语言层面的封装，包括类型判断、模块扩展、继承基类以及对象自定义事件的支持�?
            * @property guid 对象的唯一标识
            */
           baidu.lang = baidu.lang || {};
 
           /**
-           * 返回一个当前页面的唯一标识字符串。
+           * 返回一个当前页面的唯一标识字符串�?
            * @function
            * @grammar baidu.lang.guid()
-           * @returns {String} 当前页面的唯一标识字符串
+           * @returns {String} 当前页面的唯一标识字符�?
            */
           baidu.lang.guid = function () {
               return "TANGRAM__" + (window[baidu.guid]._counter++).toString(36);
@@ -1676,15 +1598,15 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
           window[baidu.guid]._instances = window[baidu.guid]._instances || {};
 
           /**
-           * Tangram继承机制提供的一个基类，用户可以通过继承baidu.lang.Class来获取它的属性及方法。
+           * Tangram继承机制提供的一个基类，用户可以通过继承baidu.lang.Class来获取它的属性及方法�?
            * @function
            * @name baidu.lang.Class
            * @grammar baidu.lang.Class(guid)
            * @param {string} guid	对象的唯一标识
            * @meta standard
-           * @remark baidu.lang.Class和它的子类的实例均包含一个全局唯一的标识guid。
-           * guid是在构造函数中生成的，因此，继承自baidu.lang.Class的类应该直接或者间接调用它的构造函数。<br>
-           * baidu.lang.Class的构造函数中产生guid的方式可以保证guid的唯一性，及每个实例都有一个全局唯一的guid。
+           * @remark baidu.lang.Class和它的子类的实例均包含一个全局唯一的标识guid�?
+           * guid是在构造函数中生成的，因此，继承自baidu.lang.Class的类应该直接或者间接调用它的构造函数�?br>
+           * baidu.lang.Class的构造函数中产生guid的方式可以保证guid的唯一性，及每个实例都有一个全局唯一的guid�?
            */
           baidu.lang.Class = function (guid) {
               this.guid = guid || baidu.lang.guid();
@@ -1722,14 +1644,14 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
           };
 
           /**
-           * 自定义的事件对象。
+           * 自定义的事件对象�?
            * @function
            * @name baidu.lang.Event
            * @grammar baidu.lang.Event(type[, target])
-           * @param {string} type	 事件类型名称。为了方便区分事件和一个普通的方法，事件类型名称必须以"on"(小写)开头。
-           * @param {Object} [target]触发事件的对象
+           * @param {string} type	 事件类型名称。为了方便区分事件和一个普通的方法，事件类型名称必须以"on"(小写)开头�?
+           * @param {Object} [target]触发事件的对�?
            * @meta standard
-           * @remark 引入该模块，会自动为Class引入3个事件扩展方法：addEventListener、removeEventListener和dispatchEvent。
+           * @remark 引入该模块，会自动为Class引入3个事件扩展方法：addEventListener、removeEventListener和dispatchEvent�?
            * @see baidu.lang.Class
            */
           baidu.lang.Event = function (type, target) {
@@ -1740,12 +1662,12 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
           };
 
           /**
-           * 注册对象的事件监听器。引入baidu.lang.Event后，Class的子类实例才会获得该方法。
+           * 注册对象的事件监听器。引入baidu.lang.Event后，Class的子类实例才会获得该方法�?
            * @grammar obj.addEventListener(type, handler[, key])
            * @param 	{string}   type         自定义事件的名称
            * @param 	{Function} handler      自定义事件被触发时应该调用的回调函数
-           * @param 	{string}   [key]		为事件监听函数指定的名称，可在移除时使用。如果不提供，方法会默认为它生成一个全局唯一的key。
-           * @remark 	事件类型区分大小写。如果自定义事件名称不是以小写"on"开头，该方法会给它加上"on"再进行判断，即"click"和"onclick"会被认为是同一种事件。 
+           * @param 	{string}   [key]		为事件监听函数指定的名称，可在移除时使用。如果不提供，方法会默认为它生成一个全局唯一的key�?
+           * @remark 	事件类型区分大小写。如果自定义事件名称不是以小�?on"开头，该方法会给它加上"on"再进行判断，�?click"�?onclick"会被认为是同一种事件�?
            */
           baidu.lang.Class.prototype.addEventListener = function (type, handler, key) {
               if (!baidu.lang.isFunction(handler)) {
@@ -1769,11 +1691,11 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
           };
 
           /**
-           * 移除对象的事件监听器。引入baidu.lang.Event后，Class的子类实例才会获得该方法。
+           * 移除对象的事件监听器。引入baidu.lang.Event后，Class的子类实例才会获得该方法�?
            * @grammar obj.removeEventListener(type, handler)
            * @param {string}   type     事件类型
            * @param {Function|string} handler  要移除的事件监听函数或者监听函数的key
-           * @remark 	如果第二个参数handler没有被绑定到对应的自定义事件中，什么也不做。
+           * @remark 	如果第二个参数handler没有被绑定到对应的自定义事件中，什么也不做�?
            */
           baidu.lang.Class.prototype.removeEventListener = function (type, handler) {
               if (baidu.lang.isFunction(handler)) {
@@ -1790,12 +1712,12 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
           };
 
           /**
-           * 派发自定义事件，使得绑定到自定义事件上面的函数都会被执行。引入baidu.lang.Event后，Class的子类实例才会获得该方法。
+           * 派发自定义事件，使得绑定到自定义事件上面的函数都会被执行。引入baidu.lang.Event后，Class的子类实例才会获得该方法�?
            * @grammar obj.dispatchEvent(event, options)
-           * @param {baidu.lang.Event|String} event 	Event对象，或事件名称(1.1.1起支持)
-           * @param {Object} options 扩展参数,所含属性键值会扩展到Event对象上(1.2起支持)
-           * @remark 处理会调用通过addEventListenr绑定的自定义事件回调函数之外，还会调用直接绑定到对象上面的自定义事件。
-           * 例如：<br>
+           * @param {baidu.lang.Event|String} event 	Event对象，或事件名称(1.1.1起支�?
+           * @param {Object} options 扩展参数,所含属性键值会扩展到Event对象�?1.2起支�?
+           * @remark 处理会调用通过addEventListenr绑定的自定义事件回调函数之外，还会调用直接绑定到对象上面的自定义事件�?
+           * 例如�?br>
            * myobj.onMyEvent = function(){}<br>
            * myobj.addEventListener("onMyEvent", function(){});
            */
@@ -1824,7 +1746,7 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
           /**
            * @ignore
            * @namespace baidu.dom 
-           * 操作dom的方法
+           * 操作dom的方�?
            */
           baidu.dom = baidu.dom || {};
 
@@ -1834,7 +1756,7 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
            * 
            * @param {string|HTMLElement} id 元素的id或DOM元素
            * @meta standard
-           * @return {HTMLElement} DOM元素，如果不存在，返回null，如果参数不合法，直接返回参数
+           * @return {HTMLElement} DOM元素，如果不存在，返回null，如果参数不合法，直接返回参�?
            */
           baidu.dom._g = function (id) {
               if (baidu.lang.isString(id)) {
@@ -1846,16 +1768,16 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
 
           /**
            * @ignore
-           * @namespace baidu.event 屏蔽浏览器差异性的事件封装。
-           * @property target 	事件的触发元素
+           * @namespace baidu.event 屏蔽浏览器差异性的事件封装�?
+           * @property target 	事件的触发元�?
            * @property pageX 		鼠标事件的鼠标x坐标
            * @property pageY 		鼠标事件的鼠标y坐标
-           * @property keyCode 	键盘事件的键值
+           * @property keyCode 	键盘事件的键�?
            */
           baidu.event = baidu.event || {};
 
           /**
-           * 事件监听器的存储表
+           * 事件监听器的存储�?
            * @private
            * @meta standard
            */
@@ -1868,11 +1790,11 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
            * @grammar baidu.event.on(element, type, listener)
            * @param {HTMLElement|string|window} element 目标元素或目标元素id
            * @param {string} type 事件类型
-           * @param {Function} listener 需要添加的监听器
+           * @param {Function} listener 需要添加的监听�?
            * @remark
            * 
-          1. 不支持跨浏览器的鼠标滚轮事件监听器添加<br>
-          2. 改方法不为监听器灌入事件对象，以防止跨iframe事件挂载的事件对象获取失败
+          1. 不支持跨浏览器的鼠标滚轮事件监听器添�?br>
+          2. 改方法不为监听器灌入事件对象，以防止跨iframe事件挂载的事件对象获取失�?
               
            * @shortcut on
            * @meta standard
@@ -1912,7 +1834,7 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
            * @grammar baidu.event.un(element, type, listener)
            * @param {HTMLElement|string|window} element 目标元素或目标元素id
            * @param {string} type 事件类型
-           * @param {Function} listener 需要移除的监听器
+           * @param {Function} listener 需要移除的监听�?
            * @shortcut un
            * @meta standard
            * @see baidu.event.on
@@ -1946,7 +1868,7 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
           baidu.un = baidu.event.un;
 
           /**
-           * 阻止事件的默认行为
+           * 阻止事件的默认行�?
            * @name baidu.event.preventDefault
            * @function
            * @grammar baidu.event.preventDefault(event)
@@ -1967,21 +1889,21 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
            */
           var RichMarker =
           /**
-           * RichMarker类的构造函数
-           * @class 富Marker定义类，实现丰富的Marker展现效果。
+           * RichMarker类的构造函�?
+           * @class 富Marker定义类，实现丰富的Marker展现效果�?
            * 
            * @constructor
            * @param {String | HTMLElement} content 用户自定义的Marker内容，可以是字符串，也可以是dom节点
-           * @param {BMap.Point} position marker的位置
-           * @param {Json} RichMarkerOptions 可选的输入参数，非必填项。可输入选项包括：<br />
-           * {"<b>anchor</b>" : {BMap.Size} Marker的的位置偏移值,
+           * @param {BMap.Point} position marker的位�?
+           * @param {Json} RichMarkerOptions 可选的输入参数，非必填项。可输入选项包括�?br />
+           * {"<b>anchor</b>" : {BMap.Size} Marker的的位置偏移�?
            * <br />"<b>enableDragging</b>" : {Boolean} 是否启用拖拽，默认为false}
            *
            * @example <b>参考示例：</b>
            * var map = new BMap.Map("container");
            * map.centerAndZoom(new BMap.Point(116.309965, 40.058333), 17);
            * var htm = "&lt;div style='background:#E7F0F5;color:#0082CB;border:1px solid #333'&gt;"
-           *              +     "欢迎使用百度地图！"
+           *              +     "欢迎使用百度地图�?
            *              +     "&lt;img src='http://map.baidu.com/img/logo-map.gif' border='0' /&gt;"
            *              + "&lt;/div&gt;";
            * var point = new BMap.Point(116.30816, 40.056863);
@@ -2015,7 +1937,7 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
               this._position = position;
 
               /**
-               * marker主容器
+               * marker主容�?
                * @private
                * @type {HTMLElement}
                */
@@ -2030,8 +1952,8 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
 
               opts = opts || {};
               /**
-               * _opts是默认参数赋值。
-               * 下面通过用户输入的opts，对默认参数赋值
+               * _opts是默认参数赋值�?
+               * 下面通过用户输入的opts，对默认参数赋�?
                * @private
                * @type {Json}
                */
@@ -2059,7 +1981,7 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
 
           /**
            * 初始化，实现自定义覆盖物的initialize方法
-           * 主要生成Marker的主容器，填充自定义的内容，并附加事件
+           * 主要生成Marker的主容器，填充自定义的内容，并附加事�?
            * 
            * @private
            * @param {BMap} map map实例对象
@@ -2077,7 +1999,7 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
               });
               map.getPanes().labelPane.appendChild(div);
 
-              // 给主容器添加上用户自定义的内容
+              // 给主容器添加上用户自定义的内�?
               me._appendContent();
               // 给主容器添加事件处理
               me._setEventDispath();
@@ -2102,7 +2024,7 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
 
           /**
            * 设置Marker可以拖拽
-           * @return 无返回值
+           * @return 无返回�?
            * 
            * @example <b>参考示例：</b>
            * myRichMarkerObject.enableDragging();
@@ -2113,7 +2035,7 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
 
           /**
            * 设置Marker不能拖拽
-           * @return 无返回值
+           * @return 无返回�?
            * 
            * @example <b>参考示例：</b>
            * myRichMarkerObject.disableDragging();
@@ -2123,7 +2045,7 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
           }
 
           /**
-           * 获取Marker是否能被拖拽的状态
+           * 获取Marker是否能被拖拽的状�?
            * @return {Boolean} true为可以拖拽，false为不能被拖拽
            * 
            * @example <b>参考示例：</b>
@@ -2134,8 +2056,8 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
           }
 
           /**
-           * 获取Marker的显示位置
-           * @return {BMap.Point} 显示的位置
+           * 获取Marker的显示位�?
+           * @return {BMap.Point} 显示的位�?
            * 
            * @example <b>参考示例：</b>
            * myRichMarkerObject.getPosition();
@@ -2145,9 +2067,9 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
           }
 
           /**
-           * 设置Marker的显示位置
+           * 设置Marker的显示位�?
            * @param {BMap.Point} position 需要设置的位置
-           * @return 无返回值
+           * @return 无返回�?
            * 
            * @example <b>参考示例：</b>
            * myRichMarkerObject.setPosition(new BMap.Point(116.30816, 40.056863));
@@ -2173,8 +2095,8 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
 
           /**
            * 设置Marker的偏移量
-           * @param {BMap.Size} anchor 需要设置的偏移量
-           * @return 无返回值
+           * @param {BMap.Size} anchor 需要设置的偏移�?
+           * @return 无返回�?
            * 
            * @example <b>参考示例：</b>
            * myRichMarkerObject.setAnchor(new BMap.Size(-72, -84));
@@ -2188,10 +2110,10 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
           }
 
           /**
-           * 添加用户的自定义的内容
+           * 添加用户的自定义的内�?
            * 
            * @private
-           * @return 无返回值
+           * @return 无返回�?
            */
           RichMarker.prototype._appendContent = function () {
               var content = this._content;
@@ -2214,7 +2136,7 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
           }
 
           /**
-           * 获取Marker的内容
+           * 获取Marker的内�?
            * @return {String | HTMLElement} 当前内容
            * 
            * @example <b>参考示例：</b>
@@ -2225,13 +2147,13 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
           }
 
           /**
-           * 设置Marker的内容
+           * 设置Marker的内�?
            * @param {String | HTMLElement} content 需要设置的内容
-           * @return 无返回值
+           * @return 无返回�?
            * 
            * @example <b>参考示例：</b>
            * var htm = "&lt;div style='background:#E7F0F5;color:#0082CB;border:1px solid #333'&gt;"
-           *              +     "欢迎使用百度地图API！"
+           *              +     "欢迎使用百度地图API�?
            *              +     "&lt;img src='http://map.baidu.com/img/logo-map.gif' border='0' /&gt;"
            *              + "&lt;/div&gt;";
            * myRichMarkerObject.setContent(htm);
@@ -2247,7 +2169,7 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
           }
 
           /**
-           * 获取Marker的高宽
+           * 获取Marker的高�?
            * 
            * @private
            * @return {BMap.Size} 当前高宽
@@ -2262,7 +2184,7 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
           }
 
           /**
-           * 获取Marker的宽度
+           * 获取Marker的宽�?
            * @return {Number} 当前宽度
            * 
            * @example <b>参考示例：</b>
@@ -2276,9 +2198,9 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
           }
 
           /**
-           * 设置Marker的宽度
+           * 设置Marker的宽�?
            * @param {Number} width 需要设置的宽度
-           * @return 无返回值
+           * @return 无返回�?
            * 
            * @example <b>参考示例：</b>
            * myRichMarkerObject.setWidth(300);
@@ -2292,7 +2214,7 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
           }
 
           /**
-           * 获取Marker的高度
+           * 获取Marker的高�?
            * @return {Number} 当前高度
            * 
            * @example <b>参考示例：</b>
@@ -2306,9 +2228,9 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
           }
 
           /**
-           * 设置Marker的高度
+           * 设置Marker的高�?
            * @param {Number} height 需要设置的高度
-           * @return 无返回值
+           * @return 无返回�?
            * 
            * @example <b>参考示例：</b>
            * myRichMarkerObject.setHeight(200);
@@ -2322,19 +2244,19 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
           }
 
           /**
-           * 设置Marker的各种事件
+           * 设置Marker的各种事�?
            * 
            * @private
-           * @return 无返回值
+           * @return 无返回�?
            */
           RichMarker.prototype._setEventDispath = function () {
               var me = this,
                   div = me._container,
                   isMouseDown = false,
-                  // 鼠标是否按下，用以判断鼠标移动过程中的拖拽计算
-                  startPosition = null; // 拖拽时，鼠标按下的初始位置，拖拽的辅助计算参数   
+                  // 鼠标是否按下，用以判断鼠标移动过程中的拖拽计�?
+                  startPosition = null; // 拖拽时，鼠标按下的初始位置，拖拽的辅助计算参�?  
 
-              // 通过e参数获取当前鼠标所在位置
+              // 通过e参数获取当前鼠标所在位�?
               function _getPositionByEvent(e) {
                   var e = window.event || e,
                       x = e.pageX || e.clientX || 0,
@@ -2350,11 +2272,11 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
               // 单击事件
               baidu.on(div, "onclick", function (e) {
                   /**
-                   * 点击Marker时，派发事件的接口
+                   * 点击Marker时，派发事件的接�?
                    * @name RichMarker#onclick
                    * @event
                    * @param {Event Object} e 回调函数会返回event参数，包括以下返回值：
-                   * <br />{"<b>target</b> : {BMap.Overlay} 触发事件的元素,
+                   * <br />{"<b>target</b> : {BMap.Overlay} 触发事件的元�?
                    * <br />"<b>type</b>：{String} 事件类型}
                    *
                    * @example <b>参考示例：</b>
@@ -2369,11 +2291,11 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
               // 单击事件
               baidu.on(div, "ontouchend", function (e) {
                   /**
-                   * 点击Marker时，派发事件的接口
+                   * 点击Marker时，派发事件的接�?
                    * @name RichMarker#onclick
                    * @event
                    * @param {Event Object} e 回调函数会返回event参数，包括以下返回值：
-                   * <br />{"<b>target</b> : {BMap.Overlay} 触发事件的元素,
+                   * <br />{"<b>target</b> : {BMap.Overlay} 触发事件的元�?
                    * <br />"<b>type</b>：{String} 事件类型}
                    *
                    * @example <b>参考示例：</b>
@@ -2389,13 +2311,13 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
               baidu.on(div, "ondblclick", function (e) {
                   var position = _getPositionByEvent(e);
                   /**
-                   * 双击Marker时，派发事件的接口
+                   * 双击Marker时，派发事件的接�?
                    * @name RichMarker#ondblclick
                    * @event
                    * @param {Event Object} e 回调函数会返回event参数，包括以下返回值：
-                   * <br />{"<b>target</b> : {BMap.Overlay} 触发事件的元素,
+                   * <br />{"<b>target</b> : {BMap.Overlay} 触发事件的元�?
                    * <br />"<b>type</b>：{String} 事件类型,
-                   * <br />"<b>point</b>：{BMap.Point} 鼠标的物理坐标,
+                   * <br />"<b>point</b>：{BMap.Point} 鼠标的物理坐�?
                    * <br />"<b>pixel</b>：{BMap.Pixel} 鼠标的像素坐标}
                    *
                    * @example <b>参考示例：</b>
@@ -2418,9 +2340,9 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
                    * @name RichMarker#onmouseover
                    * @event
                    * @param {Event Object} e 回调函数会返回event参数，包括以下返回值：
-                   * <br />{"<b>target</b> : {BMap.Overlay} 触发事件的元素,
+                   * <br />{"<b>target</b> : {BMap.Overlay} 触发事件的元�?
                    * <br />"<b>type</b>：{String} 事件类型,
-                   * <br />"<b>point</b>：{BMap.Point} 鼠标的物理坐标,
+                   * <br />"<b>point</b>：{BMap.Point} 鼠标的物理坐�?
                    * <br />"<b>pixel</b>：{BMap.Pixel} 鼠标的像素坐标}
                    *
                    * @example <b>参考示例：</b>
@@ -2439,13 +2361,13 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
               div.onmouseout = function (e) {
                   var position = _getPositionByEvent(e);
                   /**
-                   * 鼠标移出Marker时，派发事件的接口
+                   * 鼠标移出Marker时，派发事件的接�?
                    * @name RichMarker#onmouseout
                    * @event
                    * @param {Event Object} e 回调函数会返回event参数，包括以下返回值：
-                   * <br />{"<b>target</b> : {BMap.Overlay} 触发事件的元素,
+                   * <br />{"<b>target</b> : {BMap.Overlay} 触发事件的元�?
                    * <br />"<b>type</b>：{String} 事件类型,
-                   * <br />"<b>point</b>：{BMap.Point} 鼠标的物理坐标,
+                   * <br />"<b>point</b>：{BMap.Point} 鼠标的物理坐�?
                    * <br />"<b>pixel</b>：{BMap.Pixel} 鼠标的像素坐标}
                    *
                    * @example <b>参考示例：</b>
@@ -2468,9 +2390,9 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
                    * @name RichMarker#onmouseup
                    * @event
                    * @param {Event Object} e 回调函数会返回event参数，包括以下返回值：
-                   * <br />{"<b>target</b> : {BMap.Overlay} 触发事件的元素,
+                   * <br />{"<b>target</b> : {BMap.Overlay} 触发事件的元�?
                    * <br />"<b>type</b>：{String} 事件类型,
-                   * <br />"<b>point</b>：{BMap.Point} 鼠标的物理坐标,
+                   * <br />"<b>point</b>：{BMap.Point} 鼠标的物理坐�?
                    * <br />"<b>pixel</b>：{BMap.Pixel} 鼠标的像素坐标}
                    *
                    * @example <b>参考示例：</b>
@@ -2499,13 +2421,13 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
                   // 拖拽结束时，释放鼠标捕获
                   me._container.releaseCapture && me._container.releaseCapture();
                   /**
-                   * 拖拽Marker结束时，派发事件的接口
+                   * 拖拽Marker结束时，派发事件的接�?
                    * @name RichMarker#ondragend
                    * @event
                    * @param {Event Object} e 回调函数会返回event参数，包括以下返回值：
-                   * <br />{"<b>target</b> : {BMap.Overlay} 触发事件的元素,
+                   * <br />{"<b>target</b> : {BMap.Overlay} 触发事件的元�?
                    * <br />"<b>type</b>：{String} 事件类型,
-                   * <br />"<b>point</b>：{BMap.Point} 鼠标的物理坐标,
+                   * <br />"<b>point</b>：{BMap.Point} 鼠标的物理坐�?
                    * <br />"<b>pixel</b>：{BMap.Pixel} 鼠标的像素坐标}
                    *
                    * @example <b>参考示例：</b>
@@ -2554,9 +2476,9 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
                    * @name RichMarker#ondragging
                    * @event
                    * @param {Event Object} e 回调函数会返回event参数，包括以下返回值：
-                   * <br />{"<b>target</b> : {BMap.Overlay} 触发事件的元素,
+                   * <br />{"<b>target</b> : {BMap.Overlay} 触发事件的元�?
                    * <br />"<b>type</b>：{String} 事件类型,
-                   * <br />"<b>point</b>：{BMap.Point} 鼠标的物理坐标,
+                   * <br />"<b>point</b>：{BMap.Point} 鼠标的物理坐�?
                    * <br />"<b>pixel</b>：{BMap.Pixel} 鼠标的像素坐标}
                    *
                    * @example <b>参考示例：</b>
@@ -2579,9 +2501,9 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
                    * @name RichMarker#onmousedown
                    * @event
                    * @param {Event Object} e 回调函数会返回event参数，包括以下返回值：
-                   * <br />{"<b>target</b> : {BMap.Overlay} 触发事件的元素,
+                   * <br />{"<b>target</b> : {BMap.Overlay} 触发事件的元�?
                    * <br />"<b>type</b>：{String} 事件类型,
-                   * <br />"<b>point</b>：{BMap.Point} 鼠标的物理坐标,
+                   * <br />"<b>point</b>：{BMap.Point} 鼠标的物理坐�?
                    * <br />"<b>pixel</b>：{BMap.Pixel} 鼠标的像素坐标}
                    *
                    * @example <b>参考示例：</b>
@@ -2609,13 +2531,13 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
                   }
                   startPosition = position.pixel;
                   /**
-                   * 开始拖拽Marker时，派发事件的接口
+                   * 开始拖拽Marker时，派发事件的接�?
                    * @name RichMarker#ondragstart
                    * @event
                    * @param {Event Object} e 回调函数会返回event参数，包括以下返回值：
-                   * <br />{"<b>target</b> : {BMap.Overlay} 触发事件的元素,
+                   * <br />{"<b>target</b> : {BMap.Overlay} 触发事件的元�?
                    * <br />"<b>type</b>：{String} 事件类型,
-                   * <br />"<b>point</b>：{BMap.Point} 鼠标的物理坐标,
+                   * <br />"<b>point</b>：{BMap.Point} 鼠标的物理坐�?
                    * <br />"<b>pixel</b>：{BMap.Pixel} 鼠标的像素坐标}
                    *
                    * @example <b>参考示例：</b>
@@ -2630,7 +2552,7 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
                   isMouseDown = true;
                   // 设置拖拽开始的鼠标手型
                   me._setCursor("dragstart");
-                  // 拖拽开始时，设置鼠标捕获
+                  // 拖拽开始时，设置鼠标捕�?
                   me._container.setCapture && me._container.setCapture();
                   // 拖拽过程中防止文字被选中
                   me._container.style['MozUserSelect'] = 'none';
@@ -2680,15 +2602,15 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
            * 删除Marker
            * 
            * @private
-           * @return 无返回值
+           * @return 无返回�?
            */
           RichMarker.prototype.remove = function () {
               _dispatchEvent(this, "onremove");
-              // 清除主容器上的事件绑定
+              // 清除主容器上的事件绑�?
               if (this._container) {
                   _purge(this._container);
               }
-              // 删除主容器
+              // 删除主容�?
               if (this._container && this._container.parentNode) {
                   this._container.parentNode.removeChild(this._container);
               }
@@ -2698,9 +2620,9 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
            * 集中派发事件函数
            *
            * @private
-           * @param {Object} instance 派发事件的实例
+           * @param {Object} instance 派发事件的实�?
            * @param {String} type 派发的事件名
-           * @param {Json} opts 派发事件里添加的参数，可选
+           * @param {Json} opts 派发事件里添加的参数，可�?
            */
           function _dispatchEvent(instance, type, opts) {
               type.indexOf("on") != 0 && (type = "on" + type);
@@ -2714,7 +2636,7 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
           }
 
           /**
-           * 清理DOM事件，防止循环引用
+           * 清理DOM事件，防止循环引�?
            *
            * @type {DOM} dom 需要清理的dom对象
            */
@@ -2767,14 +2689,103 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
 
 }());
 
+(function() {
+  "use strict";
+  angular.module('config', [
+    'environmentConfig',
+    'constant',
+    'httpRelConfig'
+  ]);
+
+}());
+
+(function() {
+    "use strict";
+    angular.module('constant', [])
+        .constant('Path',{
+            'ParentRolePath':'tabs.childrenSteam',
+            'OrganizerRolePath':'tabs.organizer',
+            'TeacherRolePath':'tabs.message',
+            'VisitorRolePath':'tabs.map'
+        })
+        .constant('Role',{
+            'visitor':'-1',
+            'Organizer':'1',
+            'Parent':'2',
+            'Teacher':'3',
+            'Children':'4',
+            'ThirdParty':'5',
+            'Consultant':'6'
+        })
+        .constant('Weixin', {
+        })
+        .constant('AUTH_EVENTS', {
+            loginSuccess: 'auth-login-success',
+            loginFailed: 'auth-login-failed',
+            logoutSuccess: 'auth-logout-success',
+            sessionTimeout: 'auth-session-timeout',
+            notAuthenticated: 'auth-not-authenticated',
+            notAuthorized: 'auth-not-authorized'
+        })
+        .constant('ErrorMessage', {
+            ACCESS_FAIL: '通讯异常，请稍后再试�?,
+            TOKEN_INVALID: '连接超时，请重新登录�?
+        })
+        .constant('SuccessMessage', {
+            SUBMIT_SUCESS: '提交成功',
+            OPERATION_SUCESS:'操作完成'
+        });
+}());
+
+(function() {
+    "use strict";
+    angular.module('environmentConfig', [])
+        .constant('Constants', {
+            'appTitle':'肯特育园',
+            'company':'深圳知行信息技术开发有限公�?,
+            'serverUrl': 'http://wx.zxing-tech.cn/api/v1/',
+            'eshopApiUrl': 'http://api.mall.zxing-tech.cn/v2/',
+            'dfsUrl': 'http://wx.zxing-tech.cn/',
+            'buildID': '20170614v1',
+            'ENVIRONMENT':'release'
+        });
+}());
+//'serverUrl': 'http://120.76.226.47/api/v2/',
+//    'dfsUrl': 'http://120.76.226.47/',
+//http://localhost:8090/
+//http://wx.zxing-tech.cn
+
+(function() {
+    "use strict";
+    angular.module('httpDevConfig', [])
+        .config(function($httpProvider) {
+            $httpProvider.defaults.headers.post["Content-Type"] = "application/x-www-form-urlencoded";
+            $httpProvider.defaults.headers.put["Content-Type"] = "application/x-www-form-urlencoded";
+        });
+}());
+
+(function() {
+    "use strict";
+    angular.module('httpRelConfig', [])
+    .config(function($httpProvider) {
+        $httpProvider.defaults.cache = false;
+        if (!$httpProvider.defaults.headers.get) {
+           $httpProvider.defaults.headers.get = {};
+        }
+        // disable IE ajax request caching
+        $httpProvider.defaults.headers.get['If-Modified-Since'] = '0';
+
+        // Disable IE ajax request caching
+        $httpProvider.defaults.headers.get['Cache-Control'] = 'no-cache';
+        $httpProvider.defaults.headers.get['Pragma'] = 'no-cache';
+    });
+}());
+
 Date.prototype.Format = function(fmt) {
     var o = {
         "M+": this.getMonth() + 1, //月份
-        "d+": this.getDate(), //日
-        "h+": this.getHours(), //小时
-        "m+": this.getMinutes(), //分
-        "s+": this.getSeconds(), //秒
-        "q+": Math.floor((this.getMonth() + 3) / 3), //季度
+        "d+": this.getDate(), //�?        "h+": this.getHours(), //小时
+        "m+": this.getMinutes(), //�?        "s+": this.getSeconds(), //�?        "q+": Math.floor((this.getMonth() + 3) / 3), //季度
         "S": this.getMilliseconds() //毫秒
     };
     if (/(y+)/.test(fmt))
@@ -2833,16 +2844,11 @@ Date.prototype.Format = function(fmt) {
                versions: function () {
                    var u = navigator.userAgent,
                        app = navigator.appVersion;
-                   return { //移动终端浏览器版本信息
-                       trident: u.indexOf('Trident') > -1, //IE内核
+                   return { //移动终端浏览器版本信�?                       trident: u.indexOf('Trident') > -1, //IE内核
                        presto: u.indexOf('Presto') > -1, //opera内核
-                       webKit: u.indexOf('AppleWebKit') > -1, //苹果、谷歌内核
-                       gecko: u.indexOf('Gecko') > -1 && u.indexOf('KHTML') == -1, //火狐内核
-                       mobile: !!u.match(/AppleWebKit.*Mobile.*/), //是否为移动终端
-                       ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
-                       android: u.indexOf('Android') > -1 || u.indexOf('Linux') > -1, //android终端或uc浏览器
-                       iPhone: u.indexOf('iPhone') > -1, //是否为iPhone或者QQHD浏览器
-                       iPad: u.indexOf('iPad') > -1, //是否iPad
+                       webKit: u.indexOf('AppleWebKit') > -1, //苹果、谷歌内�?                       gecko: u.indexOf('Gecko') > -1 && u.indexOf('KHTML') == -1, //火狐内核
+                       mobile: !!u.match(/AppleWebKit.*Mobile.*/), //是否为移动终�?                       ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
+                       android: u.indexOf('Android') > -1 || u.indexOf('Linux') > -1, //android终端或uc浏览�?                       iPhone: u.indexOf('iPhone') > -1, //是否为iPhone或者QQHD浏览�?                       iPad: u.indexOf('iPad') > -1, //是否iPad
                        webApp: u.indexOf('Safari') == -1 //是否web应该程序，没有头部与底部
                    };
                }(),
@@ -2988,7 +2994,7 @@ Date.prototype.Format = function(fmt) {
                         vm.childs = data.data;
                         for(var i=0;i<vm.childs.length;i++){
                             if(i==vm.childs.length-1)
-                                title+=(vm.childs[i].name+"的家长");
+                                title+=(vm.childs[i].name+"的家�?);
                             else
                                 title+=(vm.childs[i].name+",");
                             //vm.getMsg(vm.childs[i].uid);
@@ -3162,22 +3168,10 @@ Date.prototype.Format = function(fmt) {
       getChildrenAllInfo:getChildrenAllInfo
     };
 
-    //字段名	类型	备注
-    //InfoID 	int64 	信息编号，自增即可
-    //PublisherID 	int64 	发布老师的账号
-    //DepositID 	int64 	托管机构账号
-    //Longitude 	float 	信息发布的位置经度
-    //Latitude 	float 	信息发布的位置纬度
-    //ClickCount 	int64 	总浏览次数
-    //InfoType 	int32 	信息类型（1：就餐；2：培训；3：活动；4：作业）
-    //Description 	varchar2 	老师的描述，不超出1000字
-    //PhotoLink1 	varchar2 	照片/视频1的信息
-    //PhotoLink2 	varchar2 	照片/视频2的信息
-    //PhotoLink3 	varchar2 	照片/视频3的信息
-    //PhotoLink4 	varchar2 	照片/视频4的信息
-    //PhotoLink5 	varchar2 	照片/视频5的信息
-    //PhotoLink6 	varchar2 	照片/视频6的信息
-    //Status	int	1:正常发布，2:撤回,
+    //字段�?类型	备注
+    //InfoID 	int64 	信息编号，自增即�?    //PublisherID 	int64 	发布老师的账�?    //DepositID 	int64 	托管机构账号
+    //Longitude 	float 	信息发布的位置经�?    //Latitude 	float 	信息发布的位置纬�?    //ClickCount 	int64 	总浏览次�?    //InfoType 	int32 	信息类型�?：就餐；2：培训；3：活动；4：作业）
+    //Description 	varchar2 	老师的描述，不超�?000�?    //PhotoLink1 	varchar2 	照片/视频1的信�?    //PhotoLink2 	varchar2 	照片/视频2的信�?    //PhotoLink3 	varchar2 	照片/视频3的信�?    //PhotoLink4 	varchar2 	照片/视频4的信�?    //PhotoLink5 	varchar2 	照片/视频5的信�?    //PhotoLink6 	varchar2 	照片/视频6的信�?    //Status	int	1:正常发布�?:撤回,
     //CreateTime 	datetime 	创建时间
 
 
@@ -3328,7 +3322,7 @@ Date.prototype.Format = function(fmt) {
             vm.next=function(){
                 if(vm.page==5){
                     //save data
-                    //alert('尚未开放');
+                    //alert('尚未开�?);
                     console.log(vm.child.birthday);
                     var date=new Date();
                     console.log(vm.child.birthday.getTime());
@@ -3429,8 +3423,7 @@ Date.prototype.Format = function(fmt) {
                 //console.log("valid = "+valid+" dirty = "+dirty);
                 if (valid && dirty) {
 
-                    //日期转为日期格式字符串
-                    vm.child.Birthday = vm.child.Birthday && $filter('date')(vm.child.Birthday, "yyyy-MM-dd hh:mm");
+                    //日期转为日期格式字符�?                    vm.child.Birthday = vm.child.Birthday && $filter('date')(vm.child.Birthday, "yyyy-MM-dd hh:mm");
 
                     //save
                     if (vm.type == '1') {
@@ -3453,7 +3446,7 @@ Date.prototype.Format = function(fmt) {
                     }
                 }else{
                     if(!valid){
-                        MessageToaster.info("内容不全，无法更新");
+                        MessageToaster.info("内容不全，无法更�?);
                     }else if(!dirty) {
                         MessageToaster.info("无内容修改，无需更新");
                     }
@@ -3518,8 +3511,7 @@ Date.prototype.Format = function(fmt) {
             };
 
             vm.newChild2=function(){
-                //创建新的孩子信息,使用新局部编写界面
-                $ionicListDelegate.closeOptionButtons();
+                //创建新的孩子信息,使用新局部编写界�?                $ionicListDelegate.closeOptionButtons();
                 StateService.go('childrenAdd');
             };
 
@@ -3836,8 +3828,7 @@ Date.prototype.Format = function(fmt) {
                     $scope.$broadcast('scroll.refreshComplete');
                     $scope.$broadcast('scroll.infiniteScrollComplete');
                 }
-                //获取摄像头信息
-                for (var i = 0; i < depositsCount; i++) {
+                //获取摄像头信�?                for (var i = 0; i < depositsCount; i++) {
                     var id = vm.deposits[i].DepositID;
                     //get camera
                     if (id != null) {
@@ -4094,7 +4085,7 @@ Date.prototype.Format = function(fmt) {
             vm.showPopup = function (info, index) {
                 var myPopup = $ionicPopup.show({
                     template: '<input type="edittext" ng-model="vm.myComment">',
-                    title: '请输入评论内容',
+                    title: '请输入评论内�?,
                     scope: $scope,
                     buttons: [
                       { text: '取消' },
@@ -4136,7 +4127,7 @@ Date.prototype.Format = function(fmt) {
                         vm.childs = data.data;
                         for (var i = 0; i < vm.childs.length; i++) {
                             if (i == vm.childs.length - 1)
-                                title += (vm.childs[i].name + "的家长");
+                                title += (vm.childs[i].name + "的家�?);
                             else
                                 title += (vm.childs[i].name + ",");
                             //vm.getMsg(vm.childs[i].uid);
@@ -4321,22 +4312,10 @@ Date.prototype.Format = function(fmt) {
       getCamera:getCamera
     };
 
-    //字段名	类型	备注
-    //InfoID 	int64 	信息编号，自增即可
-    //PublisherID 	int64 	发布老师的账号
-    //DepositID 	int64 	托管机构账号
-    //Longitude 	float 	信息发布的位置经度
-    //Latitude 	float 	信息发布的位置纬度
-    //ClickCount 	int64 	总浏览次数
-    //InfoType 	int32 	信息类型（1：就餐；2：培训；3：活动；4：作业）
-    //Description 	varchar2 	老师的描述，不超出1000字
-    //PhotoLink1 	varchar2 	照片/视频1的信息
-    //PhotoLink2 	varchar2 	照片/视频2的信息
-    //PhotoLink3 	varchar2 	照片/视频3的信息
-    //PhotoLink4 	varchar2 	照片/视频4的信息
-    //PhotoLink5 	varchar2 	照片/视频5的信息
-    //PhotoLink6 	varchar2 	照片/视频6的信息
-    //Status	int	1:正常发布，2:撤回,
+    //字段�?类型	备注
+    //InfoID 	int64 	信息编号，自增即�?    //PublisherID 	int64 	发布老师的账�?    //DepositID 	int64 	托管机构账号
+    //Longitude 	float 	信息发布的位置经�?    //Latitude 	float 	信息发布的位置纬�?    //ClickCount 	int64 	总浏览次�?    //InfoType 	int32 	信息类型�?：就餐；2：培训；3：活动；4：作业）
+    //Description 	varchar2 	老师的描述，不超�?000�?    //PhotoLink1 	varchar2 	照片/视频1的信�?    //PhotoLink2 	varchar2 	照片/视频2的信�?    //PhotoLink3 	varchar2 	照片/视频3的信�?    //PhotoLink4 	varchar2 	照片/视频4的信�?    //PhotoLink5 	varchar2 	照片/视频5的信�?    //PhotoLink6 	varchar2 	照片/视频6的信�?    //Status	int	1:正常发布�?:撤回,
     //CreateTime 	datetime 	创建时间
 
 
@@ -4563,8 +4542,7 @@ Date.prototype.Format = function(fmt) {
             };
 
             vm.goTo=function(id,item){
-                //查看孩子的更多家长信息列表
-                StateService.go('teacherEdit',{cid:id,type:0});
+                //查看孩子的更多家长信息列�?                StateService.go('teacherEdit',{cid:id,type:0});
             };
 
             vm.queryChildren = function(){
@@ -4573,7 +4551,7 @@ Date.prototype.Format = function(fmt) {
                         console.log(data.data);
                         vm.children = data.data;
                     }else{
-                        MessageToaster.error("查不到任何数据 "+response.error);
+                        MessageToaster.error("查不到任何数�?"+response.error);
                     }
                 });
             };
@@ -4655,7 +4633,7 @@ Date.prototype.Format = function(fmt) {
                             vm.queryChildren(vm.teacher.depositid);
                         }
                     } else {
-                        MessageToaster.error("查不到任何数据 " + data.error);
+                        MessageToaster.error("查不到任何数�?" + data.error);
                     }
                 });
 
@@ -4666,8 +4644,7 @@ Date.prototype.Format = function(fmt) {
             };
 
             vm.goTo=function(id,item){
-                //查看孩子的更多家长信息列表
-                StateService.go('teacherEdit',{cid:id,type:0});
+                //查看孩子的更多家长信息列�?                StateService.go('teacherEdit',{cid:id,type:0});
             };
 
             vm.queryChildren = function(id){
@@ -4676,7 +4653,7 @@ Date.prototype.Format = function(fmt) {
                         console.log(data.data);
                         vm.children = data.data;
                     }else{
-                        MessageToaster.error("查不到任何数据 "+response.error);
+                        MessageToaster.error("查不到任何数�?"+response.error);
                     }
                 });
             };
@@ -5000,7 +4977,7 @@ angular.module('eshopService', [])
             'ngInject';
             var vm = this;
             vm.activated = false;
-            vm.text='确定要退出';//'正在退出...';
+            vm.text='确定要退�?;//'正在退�?..';
             $scope.$on('$ionicView.afterEnter', activate);
 
             function activate() {
@@ -5009,7 +4986,7 @@ angular.module('eshopService', [])
             }
 
             vm.exit=function(){
-                vm.text='正在退出...';
+                vm.text='正在退�?..';
                 if(AuthService.getLoginID().substring(0,1)=='2'){
                   Session.destroy();
                   StateService.clearAllAndGo("login");
@@ -5017,19 +4994,19 @@ angular.module('eshopService', [])
                   exitService.exit(AuthService.getLoginID()).then(function(data) {
                       if (data.errno == 0) {
                           console.log(data.data);
-                          vm.text='退出';
+                          vm.text='退�?;
                           //需清楚缓存
                           Session.destroy();
                           StateService.clearAllAndGo("register");
                           //StateService.clearAllAndGo(AuthService.getNextPath());
                       }else{
                           console.log(data.error);
-                          vm.text='未能退出';
-                          MessageToaster.error('退出失败');
+                          vm.text='未能退�?;
+                          MessageToaster.error('退出失�?);
                       }
                   },function(error){
                       console.log(error);
-                      vm.text='退出失败';
+                      vm.text='退出失�?;
                   });
                }
             };
@@ -5231,7 +5208,7 @@ angular.module('eshopService', [])
                         //WeuiModalLoading.hide();
                     });
                 } else {
-                    MessageToaster.error("请输入正确账号密码");
+                    MessageToaster.error("请输入正确账号密�?);
                 }
             }
 
@@ -5342,11 +5319,11 @@ angular.module('eshopService', [])
                         MessageToaster.info("请登录到你的邮箱查询你的新密码！");
                     }else{
                         if(data.errno==10009){
-                            MessageToaster.error("该账号邮箱格式错误，请联系管理员！");
+                            MessageToaster.error("该账号邮箱格式错误，请联系管理员�?);
                         }else if(data.errno==10010){
-                          MessageToaster.error("帐号未设置电子邮箱，无法重置密码！");
+                          MessageToaster.error("帐号未设置电子邮箱，无法重置密码�?);
                         }else if(data.errno==10002){
-                          MessageToaster.error("手机号未绑定任何账号！");
+                          MessageToaster.error("手机号未绑定任何账号�?);
                         }else{
                           MessageToaster.error(data.error);
                         }
@@ -5392,7 +5369,7 @@ angular.module('eshopService', [])
             console.log("vm.type = "+vm.type+" vm.nav = "+vm.nav);
             if (vm.type == 1) {
                 $scope.mapOpts.mode = 2;
-                $scope.mapOpts.onlyShowList = true;
+               // $scope.mapOpts.onlyShowList = true;
             } 
 
             function activate() {
@@ -5422,7 +5399,7 @@ angular.module('eshopService', [])
     'ngInject';
     $stateProvider
     .state('tabs.map', {
-      url: "/map",
+        url: "/map?:type",
       views: {
         'tab-map': {
           templateUrl: 'map/map.html',
@@ -5714,7 +5691,7 @@ angular.module('eshopService', [])
                 teacherService.queryTeacherDeposit(vm.id).then(function(data) {
                     console.log(data);
                     if(data!=null && data.data !=null && data.data.length>0)vm.deposit=data.data[0];
-                    else MessageToaster.error('找不到老师的机构信息');
+                    else MessageToaster.error('找不到老师的机构信�?);
                 });
             }
 
@@ -5722,7 +5699,7 @@ angular.module('eshopService', [])
                 if (vm.imgs.length > 0) {
                     vm.isClicked = true;
                     vm.btnText='正在提交';
-                    MessageToaster.info('上传信息中，请稍等...');
+                    MessageToaster.info('上传信息中，请稍�?..');
                     var data = vm.imgs[which];
                     if (data != null)messageService.postPhoto(data).then(function (e) {
                         console.log(e);
@@ -5741,7 +5718,7 @@ angular.module('eshopService', [])
                 }
             };
 
-            //infotype:信息类型（1：就餐；2：培训；3：活动；4：作业）
+            //infotype:信息类型�?：就餐；2：培训；3：活动；4：作业）
             vm.saveData=function(){
                 var data={
                     "depositid": Number(vm.deposit.depositid),
@@ -5911,7 +5888,7 @@ angular.module('eshopService', [])
         //        "edu_fire_safety":8,
         //        "teacher_responsibility":8
         //      },
-        //    "comments_text":"老师责任心很好"
+        //    "comments_text":"老师责任心很�?
         //}
         function saveDepositComment(data) {
             var url = Constants.serverUrl + 'comments/parent/deposit';
@@ -5937,7 +5914,7 @@ angular.module('eshopService', [])
         //            "edu_fire_safety":8,
         //            "teacher_responsibility":8
         //        },
-        //    "comments_text":"老师责任心很好"
+        //    "comments_text":"老师责任心很�?
         //    }
         //}
         function getDepositComment(pid,did) {
@@ -5945,8 +5922,7 @@ angular.module('eshopService', [])
             return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
         };
 
-        //3.获取总评分
-        //总评分计算公式： 总评分 = 公司评分 * 40% + 所有家长的各项评分的总平均分 * 60%
+        //3.获取总评�?        //总评分计算公式： 总评�?= 公司评分 * 40% + 所有家长的各项评分的总平均分 * 60%
         //GET
         //URL: /api/v1/comments/deposit/?depositid=10000001
         //Response Body:
@@ -6056,8 +6032,7 @@ angular.module('eshopService', [])
                             "border":"0"});
                         marker.setLabel(label);
                         marker.setTitle(newValue[1][i].title);
-                        vm.map.addOverlay(marker);              // 将标注添加到地图中
-                        vm.addClickHandler(content,marker);
+                        vm.map.addOverlay(marker);              // 将标注添加到地图�?                        vm.addClickHandler(content,marker);
                     }
                     console.log(vm.list);
                     //清空tmp
@@ -6065,8 +6040,7 @@ angular.module('eshopService', [])
                     //vm.show=true;
                     //显示在列表，
 
-                    //显示在图片
-                }else if(newValue[0]!=null){
+                    //显示在图�?                }else if(newValue[0]!=null){
                     console.log('get babyplan data');
                 }else if(newValue[1]!=null){
                     console.log('get baidu map data');
@@ -6083,8 +6057,7 @@ angular.module('eshopService', [])
                 var p = e.target;
                 var point = new BMap.Point(p.getPosition().lng, p.getPosition().lat);
                 var infoWindow = new BMap.InfoWindow(content,{enableCloseOnClick:true});  // 创建信息窗口对象
-                vm.map.openInfoWindow(infoWindow,point); //开启信息窗口
-            };
+                vm.map.openInfoWindow(infoWindow,point); //开启信息窗�?            };
 
             vm.getOrgContent = function(org){
                 var sContent =
@@ -6125,7 +6098,7 @@ angular.module('eshopService', [])
                         }
                     });
                 }else{
-                    MessageToaster.error("定位不成功");
+                    MessageToaster.error("定位不成�?);
                 }
             };
 
@@ -6134,8 +6107,7 @@ angular.module('eshopService', [])
                 var myPoint=null;
                 if(data!=null) {
                     var myGeo = new BMap.Geocoder();
-                    // 将地址解析结果显示在地图上,并调整地图视野
-                    console.log(data);
+                    // 将地址解析结果显示在地图上,并调整地图视�?                    console.log(data);
                     myGeo.getPoint(data, function (point) {
                         if (point) {
                             console.log("change address point");
@@ -6152,7 +6124,7 @@ angular.module('eshopService', [])
                             });
                             local.searchNearby('托管',myPoint, vm.distance);
                         } else {
-                            alert("您选择地址没有解析到结果!");
+                            alert("您选择地址没有解析到结�?");
                         }
                     }, vm.city);
                 }else{
@@ -6205,7 +6177,7 @@ angular.module('eshopService', [])
                         vm.city = r.address.city;
                         vm.map.setCurrentCity(vm.city);
                         vm.point = r.point;
-                        vm.map.centerAndZoom(vm.point , 15);  // 初始化地图,设置中心点坐标和地图级别
+                        vm.map.centerAndZoom(vm.point , 15);  // 初始化地�?设置中心点坐标和地图级别
                         var myIcon = new BMap.Icon("http://api.map.baidu.com/img/markers.png", new BMap.Size(23, 25), {
                             offset: new BMap.Size(10, 25), // 指定定位位置
                             imageOffset: new BMap.Size(0, 0 - 10 * 25) // 设置图片偏移
@@ -6221,7 +6193,7 @@ angular.module('eshopService', [])
 
             vm.goto=function(item){
                 if(item.AccountID.length!=8){
-                    MessageToaster.error("暂不提供此信息");
+                    MessageToaster.error("暂不提供此信�?);
                 }else {
                     CacheData.putObject(item.AccountID, item);
                     StateService.go('nearbyDepositInfo', {id: item.AccountID});
@@ -6451,8 +6423,7 @@ angular.module('eshopService', [])
       findNearbyDeposit:findNearbyDeposit
     };
 
-    //http://172.18.1.166/api/v1/nearbyDepositList/113.271/23.1353     附近的机构列表
-    function findNearbyDeposit(x,y) {
+    //http://172.18.1.166/api/v1/nearbyDepositList/113.271/23.1353     附近的机构列�?    function findNearbyDeposit(x,y) {
       var url = Constants.serverUrl + 'nearbyDepositList/'+x+"/"+y;
       return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
     };
@@ -6698,7 +6669,7 @@ angular.module('eshopService', [])
                     remark:"备注描述"
                 };
                 if(angular.isUndefined(vm.organizer.Address)||vm.organizer.Address==null||vm.organizer.Address.length==0){
-                    MessageToaster.error("机构地址不正确");
+                    MessageToaster.error("机构地址不正�?);
                     return ;
                 }
                 if(angular.isUndefined(vm.organizer.ContactName)||vm.organizer.ContactName==null||vm.organizer.ContactName.length==0){
@@ -6830,8 +6801,7 @@ angular.module('eshopService', [])
       //  "error":"",
       //  "data":{
       //    "uid":10000001,
-      //     …………
-      //  }
+      //     ………�?      //  }
       //}
       function queryOrganizer(id) {
         var url = Constants.serverUrl + 'account/query/deposit/'+id;
@@ -6844,7 +6814,7 @@ angular.module('eshopService', [])
       //    "orgname": "机构名称",
       //    "contactphone": "13812345678",
       //    "password":"abcd",
-      //    "weixinno":"微信号",
+      //    "weixinno":"微信�?,
       //    "address":"托管机构地址",
       //    "contactname":"托管机构联系人（管理者）",
       //    "remark":"托管机构信息描述"
@@ -6907,8 +6877,8 @@ angular.module('eshopService', [])
             vm.shouldShowReorder = false;
             vm.listCanSwipe = true
             vm.parentInfo = {
-              //name: "刘德华",
-              //nickName: "流的花",
+              //name: "刘德�?,
+              //nickName: "流的�?,
               //sex: 1,
               //mobile: '1342222235',
               //childrens: [
@@ -6941,21 +6911,21 @@ angular.module('eshopService', [])
                     vm.parentInfo = results[0].data || {},
                    vm.parentInfo.childrens = results[1].data || [];
                 }, function (err) {
-                    MessageToaster.error("检索异常!");
+                    MessageToaster.error("检索异�?");
                 });
             };
 
 
-            // 图片选择项
+            // 图片选择�?
             vm.showImageUploadChoices = function (prop) {
                 var hideSheet = $ionicActionSheet.show({
                     buttons: [{
                         text: '拍照上传'
                     }, {
-                        text: '从相册中选'
+                        text: '从相册中�?
                     }],
                     titleText: '图片上传',
-                    cancelText: '取 消',
+                    cancelText: '�?�?,
                     cancel: function () {
                     },
                     buttonClicked: function (index) {
@@ -6974,7 +6944,7 @@ angular.module('eshopService', [])
             //打开用户相册
             vm.readalbum = function (prop) {
                 if (!window.imagePicker) {
-                    MessageToaster.error("目前您的环境不支持相册上传!");
+                    MessageToaster.error("目前您的环境不支持相册上�?");
                     return;
                 }
 
@@ -7004,7 +6974,7 @@ angular.module('eshopService', [])
             //拍照
             vm.takePicture = function (prop) {
                 if (!navigator.camera) {
-                    MessageToaster.error("请在真机环境中使用拍照上传!");
+                    MessageToaster.error("请在真机环境中使用拍照上�?");
                     return;
                 }
 
@@ -7035,7 +7005,7 @@ angular.module('eshopService', [])
 
                 var ft = new FileTransfer();
                 $ionicLoading.show({
-                    template: '上传中...'
+                    template: '上传�?..'
                 });
                 ft.upload(fileURL, "http://wx.zxing-tech.cn/upload", function (data) {
                     //设置图片新地址
@@ -7056,7 +7026,7 @@ angular.module('eshopService', [])
             };
 
 
-            //创建新的孩子信息,使用新局部编写界面
+            //创建新的孩子信息,使用新局部编写界�?
             vm.addChild = function () {
                 $ionicListDelegate.closeOptionButtons();
                 StateService.go('childrenAdd');
@@ -7101,7 +7071,7 @@ angular.module('eshopService', [])
                 });
             };
 
-            //跳转到指定页面
+            //跳转到指定页�?
             vm.goTo = function (addr) {
                 console.log('go to path : ' + addr);
                 StateService.go(addr);
@@ -7122,8 +7092,8 @@ angular.module('eshopService', [])
             var vm = this;
             vm.activated = false;
             vm.parentInfo = {
-                //name: "刘德华",
-                //nickName: "流的花",
+                //name: "刘德�?,
+                //nickName: "流的�?,
                 //sex: 1,
                 //mobile: '1342222235'
             };
@@ -7142,7 +7112,7 @@ angular.module('eshopService', [])
                 var queryParentPromise = parentService.queryParent(pId).then(function (res) {
                     vm.parentInfo = res.data || {}
                 }, function (err) {
-                    MessageToaster.error("检索异常!");
+                    MessageToaster.error("检索异�?");
                 });
             }
 
@@ -7180,8 +7150,8 @@ angular.module('eshopService', [])
             vm.shouldShowReorder = false;
             vm.listCanSwipe = true
             vm.parentInfo = {
-                //name: "刘德华",
-                //nickName: "流的花",
+                //name: "刘德�?,
+                //nickName: "流的�?,
                 //sex: 1,
                 //mobile: '1342222235',
                 //childrens: [
@@ -7214,21 +7184,20 @@ angular.module('eshopService', [])
                     vm.parentInfo = results[0].data || {},
                    vm.parentInfo.childrens = results[1].data || [];
                 }, function (err) {
-                    MessageToaster.error("检索异常!");
+                    MessageToaster.error("检索异�?");
                 });
             };
 
 
-            // 图片选择项
-            vm.showImageUploadChoices = function (prop) {
+            // 图片选择�?            vm.showImageUploadChoices = function (prop) {
                 var hideSheet = $ionicActionSheet.show({
                     buttons: [{
                         text: '拍照上传'
                     }, {
-                        text: '从相册中选'
+                        text: '从相册中�?
                     }],
                     titleText: '图片上传',
-                    cancelText: '取 消',
+                    cancelText: '�?�?,
                     cancel: function () {
                     },
                     buttonClicked: function (index) {
@@ -7247,7 +7216,7 @@ angular.module('eshopService', [])
             //打开用户相册
             vm.readalbum = function (prop) {
                 if (!navigator.camera) {
-                    MessageToaster.error("目前您的环境不支持相册上传!");
+                    MessageToaster.error("目前您的环境不支持相册上�?");
                     return;
                 }
 
@@ -7271,7 +7240,7 @@ angular.module('eshopService', [])
             vm.takePicture = function (prop) {
 
                 if (!navigator.camera) {
-                    MessageToaster.error("请在真机环境中使用拍照上传!");
+                    MessageToaster.error("请在真机环境中使用拍照上�?");
                     return;
                 }
 
@@ -7303,7 +7272,7 @@ angular.module('eshopService', [])
 
                 var ft = new FileTransfer();
                 $ionicLoading.show({
-                    template: '上传中...'
+                    template: '上传�?..'
                 });
                 ft.upload(fileURL, "http://wx.zxing-tech.cn/upload", function (data) {
                     // 设置图片新地址
@@ -7325,8 +7294,7 @@ angular.module('eshopService', [])
             };
 
 
-            //创建新的孩子信息,使用新局部编写界面
-            vm.addChild = function () {
+            //创建新的孩子信息,使用新局部编写界�?            vm.addChild = function () {
                 $ionicListDelegate.closeOptionButtons();
                 StateService.go('childrenAdd');
             };
@@ -7370,8 +7338,7 @@ angular.module('eshopService', [])
                 });
             };
 
-            //跳转到指定页面
-            vm.goTo = function (addr) {
+            //跳转到指定页�?            vm.goTo = function (addr) {
                 console.log('go to path : ' + addr);
                 StateService.go(addr);
             };
@@ -7439,7 +7406,7 @@ angular.module('eshopService', [])
     //  "error":"",
     //  "data":{
     //  "uid":10000001,
-    //      "name":"张粑粑",
+    //      "name":"张粑�?,
     //      "sex":1,
     //      "mobile":"18612345678",
     //      "nick":"sam"
@@ -7471,7 +7438,7 @@ angular.module('eshopService', [])
     //    {
     //      "uid":10000001,
     //      "relationship":1,
-    //      "name":"赵大萌",
+    //      "name":"赵大�?,
     //      "sex":1,
     //      "fingerfeature":"xxxxx",
     //      "remark":"xxxx"
@@ -7678,16 +7645,15 @@ angular.module('eshopService', [])
 
 
 
-                // 图片选择项
-                vm.showImageUploadChoices = function (prop) {
+                // 图片选择�?                vm.showImageUploadChoices = function (prop) {
                     var hideSheet = $ionicActionSheet.show({
                         buttons: [{
                             text: '拍照上传'
                         }, {
-                            text: '从相册中选'
+                            text: '从相册中�?
                         }],
                         titleText: '图片上传',
-                        cancelText: '取 消',
+                        cancelText: '�?�?,
                         cancel: function () {
                         },
                         buttonClicked: function (index) {
@@ -7706,7 +7672,7 @@ angular.module('eshopService', [])
                 //打开用户相册
                 vm.readalbum = function (prop) {
                     if (!navigator.camera) {
-                        MessageToaster.error("目前您的环境不支持相册上传!");
+                        MessageToaster.error("目前您的环境不支持相册上�?");
                         return;
                     }
 
@@ -7730,7 +7696,7 @@ angular.module('eshopService', [])
                 vm.takePicture = function (prop) {
 
                     if (!navigator.camera) {
-                        MessageToaster.error("请在真机环境中使用拍照上传!");
+                        MessageToaster.error("请在真机环境中使用拍照上�?");
                         return;
                     }
 
@@ -7762,7 +7728,7 @@ angular.module('eshopService', [])
 
                     var ft = new FileTransfer();
                     $ionicLoading.show({
-                        template: '上传中...'
+                        template: '上传�?..'
                     });
                     ft.upload(fileURL, "http://wx.zxing-tech.cn/upload", function (data) {
                         // 设置图片新地址
@@ -7885,7 +7851,7 @@ angular.module('eshopService', [])
             $scope.$watch('vm.user.mobile', function (newValue, oldValue) {
                 if (vm.user.mobile != undefined) {
                     if (vm.user.mobile.length != 11) {
-                        vm.error = '手机长度必须为11位';
+                        vm.error = '手机长度必须�?1�?;
                     } else {
                         vm.error = null;
                     }
@@ -7901,13 +7867,13 @@ angular.module('eshopService', [])
                         vm.error = '电子邮箱格式不对';
                     }
                 } else {
-                    vm.error = '电子邮箱必须填写，用于找回密码';
+                    vm.error = '电子邮箱必须填写，用于找回密�?;
                 }
             });
             $scope.$watch('vm.user.password', function (newValue, oldValue) {
                 if (vm.user.password != undefined) {
                     if (vm.user.password.length < 6) {
-                        vm.error = '密码长度必须不小于6位';
+                        vm.error = '密码长度必须不小�?�?;
                     } else {
                         vm.error = null;
                     }
@@ -7918,7 +7884,7 @@ angular.module('eshopService', [])
             $scope.$watch('vm.user.pswConfirm', function (newValue, oldValue) {
                 if (vm.user.pswConfirm != undefined) {
                     if (vm.user.password != '' && vm.user.password.length >= 6 && vm.user.pswConfirm != vm.user.password) {
-                        vm.error = '密码不一致';
+                        vm.error = '密码不一�?;
                     } else {
                         vm.error = null;
                     }
@@ -7967,10 +7933,8 @@ angular.module('eshopService', [])
 
 
             vm.register = function () {
-                //检测输入数值是否正确
-                if (!vm.check()) return;
-                //先注册
-                vm.user.weixinno = '';
+                //检测输入数值是否正�?                if (!vm.check()) return;
+                //先注�?                vm.user.weixinno = '';
                 vm.user.wechat = '';
 
                 registerService.registerParent(vm.user).then(function (data) {
@@ -7992,12 +7956,12 @@ angular.module('eshopService', [])
                         if (data.errno == 10008) {
                             MessageToaster.error("手机号码已注册过");
                         } else {
-                            MessageToaster.error("注册不成功");
+                            MessageToaster.error("注册不成�?);
                         }
                     }
                 });
 
-                //注册成功后,使用账户去获取获取token,完成登录
+                //注册成功�?使用账户去获取获取token,完成登录
                 //Session.userId="70000103";
                 //Session.token='111';
                 //Session.userRole='2';
@@ -8058,7 +8022,7 @@ angular.module('eshopService', [])
     //POST URL: /api/v1/account/register/parent
     //{
     //  "weixinno": "xxxxxx",
-    //    "name": "李寻欢",
+    //    "name": "李寻�?,
     //    "sex":1,
     //    "mobile": "13812345678",
     //    "nick":"小李飞刀",
@@ -8160,6 +8124,78 @@ angular.module('eshopService', [])
 }());
 
 (function() {
+  "use strict";
+  angular.module('tabsModule', [
+    'tabsCtrl',
+    'tabsRouter',
+    'tabsService'
+  ]);
+
+}());
+
+(function() {
+  "use strict";
+  angular.module('tabsCtrl', [])
+    .controller('tabsCtrl', function($scope,tabsService,StateService,AuthService) {
+      'ngInject';
+      var vm = this;
+      vm.activated = false;
+
+      vm.who=AuthService.getUserRole();
+      //vm.slideBoxImgs = homeService.getSlideBoxImgs();
+      //vm.homeOptions = homeService.getHomeOptions();
+      vm.goState = StateService.go;
+      $scope.$on('$ionicView.afterEnter', activate);
+      function activate() {
+        vm.activated = true;
+      }
+      function goState(state){
+        StateService.go(state);
+      }
+    });
+}());
+
+(function() {
+  'use strict';
+
+  angular.module('tabsRouter', [])
+    .config(myRouter);
+
+
+  function myRouter($stateProvider, $urlRouterProvider) {
+    'ngInject';
+    $stateProvider
+      .state('tabs', {
+        url: '/tabs',
+        abstract: true,
+        templateUrl: 'tabs/tabs.html',
+        controller: 'tabsCtrl',
+        controllerAs: 'vm'
+      })
+  }
+
+}());
+
+(function() {
+    'use strict';
+
+    angular.module('tabsService', [])
+        .factory('tabsService', tabsService);
+
+    function tabsService($q, $http) {
+        'ngInject';
+        var service = {
+
+        };
+
+        return service;
+
+
+    }
+
+}());
+
+(function() {
     "use strict";
     angular.module('aboutCtrl', [])
         .controller('aboutCtrl', function($scope, Constants, Session,StateService, MessageToaster, parentService, AuthService ) {
@@ -8214,7 +8250,7 @@ angular.module('eshopService', [])
             $scope.$watch('vm.originPsw', function(newValue, oldValue) {
               if(vm.originPsw!=undefined) {
                   if (vm.originPsw.length < 6) {
-                      vm.error = '密码长度必须不小于6位';
+                      vm.error = '密码长度必须不小�?�?;
                   } else {
                       vm.error = null;
                   }
@@ -8225,7 +8261,7 @@ angular.module('eshopService', [])
             $scope.$watch('vm.password', function(newValue, oldValue) {
                 if(vm.password!=undefined) {
                     if (vm.password.length < 6) {
-                        vm.error = '密码长度必须不小于6位';
+                        vm.error = '密码长度必须不小�?�?;
                     } else {
                         vm.error = null;
                     }
@@ -8236,7 +8272,7 @@ angular.module('eshopService', [])
             $scope.$watch('vm.pswConfirm', function(newValue, oldValue) {
                 if(vm.pswConfirm!=undefined) {
                     if (vm.password != '' && vm.password.length >= 6  && vm.pswConfirm != vm.password) {
-                        vm.error = '密码不一致';
+                        vm.error = '密码不一�?;
                     } else {
                         vm.error = null;
                     }
@@ -8377,78 +8413,6 @@ angular.module('eshopService', [])
 
 (function() {
   "use strict";
-  angular.module('tabsModule', [
-    'tabsCtrl',
-    'tabsRouter',
-    'tabsService'
-  ]);
-
-}());
-
-(function() {
-  "use strict";
-  angular.module('tabsCtrl', [])
-    .controller('tabsCtrl', function($scope,tabsService,StateService,AuthService) {
-      'ngInject';
-      var vm = this;
-      vm.activated = false;
-
-      vm.who=AuthService.getUserRole();
-      //vm.slideBoxImgs = homeService.getSlideBoxImgs();
-      //vm.homeOptions = homeService.getHomeOptions();
-      vm.goState = StateService.go;
-      $scope.$on('$ionicView.afterEnter', activate);
-      function activate() {
-        vm.activated = true;
-      }
-      function goState(state){
-        StateService.go(state);
-      }
-    });
-}());
-
-(function() {
-  'use strict';
-
-  angular.module('tabsRouter', [])
-    .config(myRouter);
-
-
-  function myRouter($stateProvider, $urlRouterProvider) {
-    'ngInject';
-    $stateProvider
-      .state('tabs', {
-        url: '/tabs',
-        abstract: true,
-        templateUrl: 'tabs/tabs.html',
-        controller: 'tabsCtrl',
-        controllerAs: 'vm'
-      })
-  }
-
-}());
-
-(function() {
-    'use strict';
-
-    angular.module('tabsService', [])
-        .factory('tabsService', tabsService);
-
-    function tabsService($q, $http) {
-        'ngInject';
-        var service = {
-
-        };
-
-        return service;
-
-
-    }
-
-}());
-
-(function() {
-  "use strict";
   angular.module('teacherModule', [
     'teacherCtrl',
     'teacherEditCtrl',
@@ -8573,7 +8537,7 @@ angular.module('eshopService', [])
                         StateService.back();
                     }else{
                         //MessageToaster.error(data.error);
-                        MessageToaster.error('无法添加，请确认手机号码是否已经使用过');
+                        MessageToaster.error('无法添加，请确认手机号码是否已经使用�?);
                     }
                 },function(data){
                     MessageToaster.error(data);
@@ -8630,8 +8594,7 @@ angular.module('eshopService', [])
     };
 
 
-    //POST /api/v1/account/teacher/{$teacher_accnt_id}/update //老师账号信息更新，完善
-    //Request Body: { "name":"小强", "sex":1, "mobile":"13300001111", "teachage":5, "age":29, "photolink":"照片url", "password":"123456" }
+    //POST /api/v1/account/teacher/{$teacher_accnt_id}/update //老师账号信息更新，完�?    //Request Body: { "name":"小强", "sex":1, "mobile":"13300001111", "teachage":5, "age":29, "photolink":"照片url", "password":"123456" }
     //Response Body: { "errno":0, "error":"", "data":{ "uid":30000001 } }
     function updateTeacher(teacher, teacherId) {
       var data = {};
@@ -8679,7 +8642,7 @@ angular.module('eshopService', [])
     //  "data":[
     //    {
     //      "uid":10000001,
-    //      "name":"赵大萌",
+    //      "name":"赵大�?,
     //      "sex":1,
     //      "mobile":"15032145678",
     //      "teachage":10,
@@ -8687,8 +8650,7 @@ angular.module('eshopService', [])
     //      "photolink":"xxxxx"
     //      "remark":"xxxx"
     //    },
-    //    ……
-    //  ]
+    //    …�?    //  ]
     //}
     function queryTeacher(id) {
       var url = Constants.serverUrl + 'account/query/depositTeacher/'+id;
@@ -8857,8 +8819,7 @@ angular.module('eshopService', [])
                             //     function(res){
                             //         var msg = res.err_msg;
                             //         if(msg == "get_brand_wcpay_request:ok" ) {
-                            //             //保存数据．跳转页面
-                            //             //check order make sure user had pay the order ready.
+                            //             //保存数据．跳转页�?                            //             //check order make sure user had pay the order ready.
                             //             vipBuyService.checkOrder(orderId).then(
                             //                 function(result) {
                             //                     if(result.errno == 0 ){
@@ -8871,7 +8832,7 @@ angular.module('eshopService', [])
                             //                 }
                             //             );
                             //         }else if(msg.endsWith("cancel")){
-                            //             MessageToaster.info("微信支付已取消");
+                            //             MessageToaster.info("微信支付已取�?);
                             //         }else if(msg.endsWith("fail")){
                             //             alert("付款失败");
                             //         }
@@ -8978,8 +8939,7 @@ angular.module('eshopService', [])
                                     //alert(msg);
 
                                     if(msg == "get_brand_wcpay_request:ok" ) {
-                                        //保存数据．跳转页面
-                                        //check order make sure user had pay the order ready.
+                                        //保存数据．跳转页�?                                        //check order make sure user had pay the order ready.
                                         vipBuyService.checkOrder(orderId).then(
                                             function(result) {
                                                 //{"errno":0,"error":"",
@@ -8995,8 +8955,7 @@ angular.module('eshopService', [])
                                                 var payTime=result.data.payTime;
                                                 var endDate=vm.getEndDate(payTime,vm.item.numofdays);
                                                 if(status === 'SUCCESS'){
-                                                    //保存数据．跳转页面
-                                                    vipBuyService.updatePayedOrder(parentId,orderId,payTime,endDate).then(
+                                                    //保存数据．跳转页�?                                                    vipBuyService.updatePayedOrder(parentId,orderId,payTime,endDate).then(
                                                         function(updateResult) {
                                                             //alert("updatePayedOrder sucess "+JSON.stringify(updateResult));
                                                             //vm.information += " udpate success ";
@@ -9021,7 +8980,7 @@ angular.module('eshopService', [])
                                     }else if(msg.endsWith("cancel")){
                                         //alert("用户取消");
                                         //vm.information="用户取消";
-                                        MessageToaster.info("微信支付已取消");
+                                        MessageToaster.info("微信支付已取�?);
                                     //}else if(msg == "get_brand_wcpay_request:fail"){
                                     }else if(msg.endsWith("fail")){
                                         alert("付款失败");
@@ -9176,8 +9135,7 @@ angular.module('eshopService', [])
     };
 
     function updatePayedOrder(parentId,orderId,payTime,endDate){
-        //  "cutofftime":endDate, //不确定是什么值
-        var data = {
+        //  "cutofftime":endDate, //不确定是什么�?        var data = {
         "paystatus":1,
         "paytime":payTime,
         "orderid":orderId
@@ -9448,7 +9406,7 @@ angular.module('eshopService', [])
           }else if(next.url.indexOf('login')>0){
               console.log("login");
           }else if(next.url.indexOf('register')>0){
-              //未绑定用户者,进入注册绑定页面
+              //未绑定用户�?进入注册绑定页面
               console.log("register");
           }else if(next.url.indexOf('resetPsw')>0){
               console.log("resetPsw");
@@ -9499,8 +9457,7 @@ angular.module('eshopService', [])
                     vm.showChooseModal = showChooseModal;
                     vm.login = login;
                     vm.select = selectChoose;
-                    //获取到微信uid后先尝试登陆对应的用户类型
-                    if(vm.type){
+                    //获取到微信uid后先尝试登陆对应的用户类�?                    if(vm.type){
                         vm.wxlogin(vm.user,vm.type);
                     }else{
                         vm.showChooseModal();
