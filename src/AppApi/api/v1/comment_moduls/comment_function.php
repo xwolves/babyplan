@@ -129,7 +129,7 @@ class Comment extends Charge{
             if(!$row)
                 return 10003;
             $sc = (float)$row['total_score'];
-            $rsp_data['scores'] = round($sc,2);
+            $rsp_data['scores'] = sprintf("%01.2f",(float)$sc);
             $sql_str = "select CommentText as comment, CommentTime as create_date, (select REPLACE (name,substring(name,2),'**') from tb_accnt_parent where AccountID = ParentID ) as creator from db_deposit.tb_deposit_parent_comments a where a.DepositID = :depositid";
             $stmt = $this->DB->prepare($sql_str);
             $stmt->bindParam(":depositid", intval($depositid), PDO::PARAM_INT);

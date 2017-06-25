@@ -1172,7 +1172,7 @@ $app->get(
                 $sc = 8.0;
                 $s = $comment->getDepositScores($v['AccountID']);
                 if(gettype($s) == "array" && isset($s['scores'])) {
-                    $sc = (float)$s['scores'];
+                    $sc = $s['scores'];
                 }
                 $v['Scores'] = $sc;
                 $ret[] = $v;
