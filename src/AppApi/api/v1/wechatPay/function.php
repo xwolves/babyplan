@@ -170,15 +170,15 @@ function queryOrder($app,$orderId,$sql_db){
         $rsp_data['orderId'] = $order['out_trade_no'];
         $rsp_data['wechatOrderId'] = $order['transaction_id'];
         $rsp_data['totalFee'] = $order['total_fee'];
-	if($order['trade_state']=='SUCCESS')$state=1;
-	else $state=0;
+	      if($order['trade_state']=='SUCCESS')$state=1;
+	      else $state=0;
         $rsp_data['payState'] = $state;
         $rsp_data['payTime'] = $order['time_end'];
-	$result=updateParentOrder($rsp_data,$app,$sql_db);
-	if($result==0)
-            $response->setBody(rspData(0));
+	      $result=updateParentOrder($rsp_data,$app,$sql_db);
+	      if($result==0)
+           $response->setBody(rspData(0));
         else
-	    $response->setBody(rspData($result));
+	         $response->setBody(rspData($result));
     }else{
         $response->setBody(rspData(10001,  $order['err_code_des']));
     }
@@ -208,6 +208,19 @@ function createAppOrder($app,$sql_db){
       $app->getLog()->debug("Debug ".date('Y-m-d H:i:s')." : ".json_encode($result));
       $response->setBody(rspData(0,  $result));
     }
+}
+
+function calculateSign($arr, $key)
+{
+    ksort($arr);
+    $buff = "";
+    foreach ($arr as $k => $v) {
+        if ($k != "sign" && $k != "key" && $v != "" && !is_array($v)){
+            $buff .= $k . "=" . $v . "&";
+        }
+    }
+    $buff = trim($buff, "&");
+    return strtoupper(md5($buff . "&key=" . $key));
 }
 
 function createAppOrder2($app,$sql_db){
@@ -245,8 +258,10 @@ function createAppOrder2($app,$sql_db){
     $response->setBody(rspData(10000, $err));
     return;
   }
+
   $weixin = new WeixinPay();
   $orderId = $userId.'-'.date("YmdHis");
+
   $order_params = [
       'body' => $goodsName,
       'total_fee' => $goodsPrice,
@@ -256,7 +271,19 @@ function createAppOrder2($app,$sql_db){
   ];
   $weixin->setOrderParams($order_params);
   $order = $weixin->getAppParameters();
+
+  $newResponse = array(
+    'appid'     => WxPayConfig::APPID,
+    'noncestr'  => $order['noncestr'],
+    'package'   => 'Sign=WXPay',
+    'partnerid' => $order['partnerid'],
+    'prepayid'  => $order['prepayid'],
+    'timestamp' => $order['timestamp']
+  );
+  $order['pay_sign'] = calculateSign($newResponse, WxPayConfig::KEY);
+  $order['orderId'] = $orderId;
   //var_dump($order);
+
 /*
   $input = new WxPayUnifiedOrder();
   $input->SetBody($goodsName);//商品描述
