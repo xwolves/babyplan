@@ -1,4 +1,4 @@
-(function() {
+﻿(function() {
   "use strict";
   angular.module('AuthService', []).factory('AuthService', function(Session,Path,Role) {
     'ngInject';

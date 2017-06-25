@@ -73,10 +73,6 @@
     <icon src="resources/android/icon/drawable-xhdpi-icon.png" />
     <engine name="android" spec="^6.2.3" />
     <engine name="ios" spec="^4.3.1" />
-    <plugin name="cordova-plugin-baidumaplocation" spec="~2.0.3">
-        <variable name="ANDROID_KEY" value="ggtWDiqF3X7yG7FECXIBljdHH6dogGV5" />
-        <variable name="IOS_KEY" value="kb7M0jiGaemQX49hculUNNpWIDsRZ9u9" />
-    </plugin>
     <plugin name="cordova-plugin-cache-clear" spec="~1.3.6" />
     <plugin name="cordova-plugin-camera" spec="^2.4.1" />
     <plugin name="cordova-plugin-console" spec="^1.0.7" />
@@ -91,4 +87,9 @@
         <variable name="WECHATAPPID" value="wx3814600bfd67bfe6" />
     </plugin>
     <plugin name="cordova-plugin-whitelist" spec="1" />
+    <plugin name="cordova-plugin-baidumaplocation" spec="https://github.com/aruis/cordova-plugin-baidumaplocation.git">
+        <variable name="ANDROID_KEY" value="ggtWDiqF3X7yG7FECXIBljdHH6dogGV5" />
+        <variable name="IOS_KEY" value="kb7M0jiGaemQX49hculUNNpWIDsRZ9u9" />
+        <variable name="IOS_LOCATION_DESC" value="请点击'好'以允许访问。" />
+    </plugin>
 </widget>

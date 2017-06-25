@@ -1,5 +1,5 @@
 {
-    "name": "trusteeshipWechat",
+    "name": "com.trusteeship",
     "version": "0.0.1",
     "description": "托管管理微信应用: An Ionic project",
     "dependencies": {

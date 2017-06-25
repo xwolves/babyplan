@@ -7,13 +7,13 @@
         "files": {}
     },
     "installed_plugins": {
-        "cordova-plugin-baidumaplocation": {
-            "ANDROID_KEY": "ggtWDiqF3X7yG7FECXIBljdHH6dogGV5",
-            "IOS_KEY": "kb7M0jiGaemQX49hculUNNpWIDsRZ9u9",
-            "IOS_LOCATION_DESC": "请点击'好'以允许访问。",
+        "cordova-plugin-background-mode": {
             "PACKAGE_NAME": "com.trusteeship"
         },
         "cordova-plugin-cache-clear": {
+            "PACKAGE_NAME": "com.trusteeship"
+        },
+        "cordova-plugin-camera": {
             "PACKAGE_NAME": "com.trusteeship"
         },
         "cordova-plugin-compat": {
@@ -37,27 +37,21 @@
         "cordova-plugin-splashscreen": {
             "PACKAGE_NAME": "com.trusteeship"
         },
-        "cordova-plugin-wechat": {
-            "WECHATAPPID": "wx3814600bfd67bfe6",
-            "PACKAGE_NAME": "com.trusteeship"
-        },
         "cordova-plugin-whitelist": {
             "PACKAGE_NAME": "com.trusteeship"
         },
-        "cordova-plugin-camera": {
+        "cordova-plugin-wechat": {
+            "WECHATAPPID": "wx3814600bfd67bfe6",
             "PACKAGE_NAME": "com.trusteeship"
         },
         "jpush-phonegap-plugin": {
             "APP_KEY": "db6eb3016636e4b8d5a6fd69",
             "PACKAGE_NAME": "com.trusteeship"
         },
-        "cordova-plugin-badge": {
-            "PACKAGE_NAME": "com.trusteeship"
-        },
-        "cordova-plugin-background-mode": {
-            "PACKAGE_NAME": "com.trusteeship"
-        },
-        "cordova-plugin-appminimize": {
+        "cordova-plugin-baidumaplocation": {
+            "ANDROID_KEY": "ggtWDiqF3X7yG7FECXIBljdHH6dogGV5",
+            "IOS_KEY": "kb7M0jiGaemQX49hculUNNpWIDsRZ9u9",
+            "IOS_LOCATION_DESC": "请点击'好'以允许访问。",
             "PACKAGE_NAME": "com.trusteeship"
         }
     },

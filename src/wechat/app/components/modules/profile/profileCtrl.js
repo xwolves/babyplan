@@ -1,4 +1,4 @@
-(function () {
+ï»¿(function () {
     "use strict";
     angular.module('profileCtrl', [])
             .controller('profileCtrl', function ($scope, $q, $window, $cordovaImagePicker, $ionicActionSheet, $ionicListDelegate,
@@ -51,24 +51,24 @@
 
 
 
-                // Í¼Æ¬Ñ¡ÔñÏî
+                // å›¾ç‰‡é€‰æ‹©é¡¹
                 vm.showImageUploadChoices = function (prop) {
                     var hideSheet = $ionicActionSheet.show({
                         buttons: [{
-                            text: 'ÅÄÕÕÉÏ´«'
+                            text: 'æ‹ç…§ä¸Šä¼ '
                         }, {
-                            text: '´ÓÏà²áÖĞÑ¡'
+                            text: 'ä»ç›¸å†Œä¸­é€‰'
                         }],
-                        titleText: 'Í¼Æ¬ÉÏ´«',
-                        cancelText: 'È¡ Ïû',
+                        titleText: 'å›¾ç‰‡ä¸Šä¼ ',
+                        cancelText: 'å– æ¶ˆ',
                         cancel: function () {
                         },
                         buttonClicked: function (index) {
-                            // Ïà²áÎÄ¼şÑ¡ÔñÉÏ´«
+                            // ç›¸å†Œæ–‡ä»¶é€‰æ‹©ä¸Šä¼ 
                             if (index == 1) {
                                 vm.readalbum(prop);
                             } else if (index == 0) {
-                                // ÅÄÕÕÉÏ´«
+                                // æ‹ç…§ä¸Šä¼ 
                                 vm.takePicture(prop);
                             }
                             return true;
@@ -76,10 +76,10 @@
                     });
                 };
 
-                //´ò¿ªÓÃ»§Ïà²á
+                //æ‰“å¼€ç”¨æˆ·ç›¸å†Œ
                 vm.readalbum = function (prop) {
                     if (!navigator.camera) {
-                        MessageToaster.error("Ä¿Ç°ÄúµÄ»·¾³²»Ö§³ÖÏà²áÉÏ´«!");
+                        MessageToaster.error("ç›®å‰æ‚¨çš„ç¯å¢ƒä¸æ”¯æŒç›¸å†Œä¸Šä¼ !");
                         return;
                     }
 
@@ -94,16 +94,16 @@
                     navigator.camera.getPicture(function (imageURI) {
                         vm.uploadImage(imageURI);
                     }, function (error) {
-                        // MessageToaster.error("·ÃÎÊÏà²áÒì³£:Çë¼ì²éÊÇ·ñÓĞÈ¨ÏŞ!");
+                        // MessageToaster.error("è®¿é—®ç›¸å†Œå¼‚å¸¸:è¯·æ£€æŸ¥æ˜¯å¦æœ‰æƒé™!");
                     }, options);
                 };
 
 
-                // ÅÄÕÕ
+                // æ‹ç…§
                 vm.takePicture = function (prop) {
 
                     if (!navigator.camera) {
-                        MessageToaster.error("ÇëÔÚÕæ»ú»·¾³ÖĞÊ¹ÓÃÅÄÕÕÉÏ´«!");
+                        MessageToaster.error("è¯·åœ¨çœŸæœºç¯å¢ƒä¸­ä½¿ç”¨æ‹ç…§ä¸Šä¼ !");
                         return;
                     }
 
@@ -119,11 +119,11 @@
                     navigator.camera.getPicture(function (imageURI) {
                         vm.uploadImage(imageURI);
                     }, function (err) {
-                        // MessageToaster.error("ÅÄÕÕÒì³£:Çë¼ì²éÊÇ·ñÓĞÈ¨ÏŞ!");
+                        // MessageToaster.error("æ‹ç…§å¼‚å¸¸:è¯·æ£€æŸ¥æ˜¯å¦æœ‰æƒé™!");
                     }, options);
                 }
 
-                // ÉÏ´«
+                // ä¸Šä¼ 
                 vm.uploadImage = function (uri) {
                     var fileURL = uri;
 
@@ -135,23 +135,23 @@
 
                     var ft = new FileTransfer();
                     $ionicLoading.show({
-                        template: 'ÉÏ´«ÖĞ...'
+                        template: 'ä¸Šä¼ ä¸­...'
                     });
                     ft.upload(fileURL, "http://wx.zxing-tech.cn/upload", function (data) {
-                        // ÉèÖÃÍ¼Æ¬ĞÂµØÖ·
+                        // è®¾ç½®å›¾ç‰‡æ–°åœ°å€
                         var resp = JSON.parse(data.response);
                         vm.parentInfo.avatarlink = resp.data.fileurl;
 
                         parentService.updateParent(vm.parentInfo).then(function (res) {
-                            MessageToaster.info("¸üĞÂ³É¹¦!");
+                            MessageToaster.info("æ›´æ–°æˆåŠŸ!");
                             $ionicLoading.hide();
                         }, function (err) {
-                            MessageToaster.error("¸üĞÂÊ§°Ü!");
+                            MessageToaster.error("æ›´æ–°å¤±è´¥!");
                             $ionicLoading.hide();
                         })
 
                     }, function (error) {
-                        MessageToaster.error("ÉÏ´«Ê§°Ü!");
+                        MessageToaster.error("ä¸Šä¼ å¤±è´¥!");
                         $ionicLoading.hide();
                     }, options);
                 };

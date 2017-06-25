@@ -184,32 +184,38 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
        */
       function getCurrentPosition(map, options) {
           var deferred = $q.defer();
-          try{
+          try {
               if (baidumap_location) {
                   // 获取GPS当前位置
                   baidumap_location.getCurrentPosition(function (result) {
-                     // alert(JSON.stringify(result));
+                    // alert(JSON.stringify(result));
+                     // alert(result.locType);
                       var point;
                       if (result.locType == 161) {
                           point = new BMap.Point(result.lontitude, result.latitude);
                           $window.localStorage.setItem("current_pos", JSON.stringify(result));
                       } else {
-                          var curPos = $window.localStorage.getItem("current_pos");
-                          curPos = JSON.parse(curPos);
-                          point = new BMap.Point(curPos.lontitude, curPos.latitude);
+                          //var curPos = $window.localStorage.getItem("current_pos");
+                          //curPos = JSON.parse(curPos);
+                          //point = new BMap.Point(curPos.lontitude, curPos.latitude);
+
+                          var point = new BMap.Point(options.center.longitude, options.center.latitude); // 定义一个中心点坐标
+                          deferred.resolve(point);
                       }
 
                       deferred.resolve(point);
                   }, function (error) {
-                      alert(JSON.stringify(error));
-                      deferred.reject(error);
+                      var point = new BMap.Point(options.center.longitude, options.center.latitude); // 定义一个中心点坐标
+                      deferred.resolve(point);
+                      //alert(error.message);
+                      //deferred.reject(error);
                   });
               } else {
                   var point = new BMap.Point(options.center.longitude, options.center.latitude); // 定义一个中心点坐标
                   deferred.resolve(point);
               }
           } catch (e) {
-              alert(JSON.stringify(e));
+              alert(e.message);
               var point = new BMap.Point(options.center.longitude, options.center.latitude); // 定义一个中心点坐标
               deferred.resolve(point);
           }
@@ -337,7 +343,7 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
        */
       function openInfoWindow(e) {
           var p = e.target,
-            map = e.target._map;
+            map = e.target._map || e.target.map;
 
           if (!p.babyPoi) {
               return;

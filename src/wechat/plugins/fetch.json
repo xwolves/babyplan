@@ -7,17 +7,6 @@
         "is_top_level": true,
         "variables": {}
     },
-    "cordova-plugin-baidumaplocation": {
-        "source": {
-            "type": "registry",
-            "id": "cordova-plugin-baidumaplocation@~2.0.3"
-        },
-        "is_top_level": true,
-        "variables": {
-            "ANDROID_KEY": "ggtWDiqF3X7yG7FECXIBljdHH6dogGV5",
-            "IOS_KEY": "kb7M0jiGaemQX49hculUNNpWIDsRZ9u9"
-        }
-    },
     "cordova-plugin-cache-clear": {
         "source": {
             "type": "registry",
@@ -90,14 +79,6 @@
         "is_top_level": true,
         "variables": {}
     },
-    "cordova-plugin-wechat": {
-        "source": {
-            "type": "registry",
-            "id": "cordova-plugin-wechat@^1.4.0"
-        },
-        "is_top_level": true,
-        "variables": {}
-    },
     "cordova-plugin-camera": {
         "source": {
             "type": "git",
@@ -107,32 +88,12 @@
         "is_top_level": true,
         "variables": {}
     },
-    "jpush-phonegap-plugin": {
-        "source": {
-            "type": "git",
-            "url": "https://github.com/jpush/jpush-phonegap-plugin.git",
-            "subdir": "."
-        },
-        "is_top_level": true,
-        "variables": {
-            "APP_KEY": "db6eb3016636e4b8d5a6fd69"
-        }
-    },
     "cordova-plugin-jcore": {
         "source": {
             "type": "registry",
             "id": "cordova-plugin-jcore"
         },
         "is_top_level": false,
-        "variables": {}
-    },
-    "cordova-plugin-badge": {
-        "source": {
-            "type": "git",
-            "url": "https://github.com/katzer/cordova-plugin-badge.git",
-            "subdir": "."
-        },
-        "is_top_level": true,
         "variables": {}
     },
     "cordova-plugin-background-mode": {
@@ -143,12 +104,36 @@
         "is_top_level": true,
         "variables": {}
     },
-    "cordova-plugin-appminimize": {
+    "cordova-plugin-wechat": {
         "source": {
             "type": "registry",
-            "id": "cordova-plugin-appminimize"
+            "id": "cordova-plugin-wechat@^1.4.0"
         },
         "is_top_level": true,
-        "variables": {}
+        "variables": {
+            "WECHATAPPID": "wx3814600bfd67bfe6"
+        }
+    },
+    "jpush-phonegap-plugin": {
+        "source": {
+            "type": "registry",
+            "id": "jpush-phonegap-plugin"
+        },
+        "is_top_level": true,
+        "variables": {
+            "APP_KEY": "db6eb3016636e4b8d5a6fd69"
+        }
+    },
+    "cordova-plugin-baidumaplocation": {
+        "source": {
+            "type": "git",
+            "url": "https://github.com/aruis/cordova-plugin-baidumaplocation.git",
+            "subdir": "."
+        },
+        "is_top_level": true,
+        "variables": {
+            "ANDROID_KEY": "ggtWDiqF3X7yG7FECXIBljdHH6dogGV5",
+            "IOS_KEY": "kb7M0jiGaemQX49hculUNNpWIDsRZ9u9"
+        }
     }
 }
