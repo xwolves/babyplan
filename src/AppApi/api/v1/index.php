@@ -1174,7 +1174,7 @@ $app->get(
                 if(gettype($s) == "array" && isset($s['scores'])) {
                     $sc = (float)$s['scores'];
                 }
-                $v['Scores'] = round($sc, 2);
+                $v['Scores'] = $sc;
                 $ret[] = $v;
             }
             $app->getLog()->debug("Debug ".date('Y-m-d H:i:s')." longitude : ".$longitude.", latitude" . $latitude." rsp = ".rspData(0,$ret));

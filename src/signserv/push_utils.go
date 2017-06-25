@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"log"
 	"signserv/config"
+	"strconv"
 	"text/template"
 	"time"
 )
@@ -64,13 +65,13 @@ func getSigninMessage(depositId, childId, signinMode int) (string, string) {
 		return "", ""
 	}
 
-	return buf.String(), c.ParentPhone
+	return buf.String(), strconv.Itoa(c.ParentId)
 }
 
 func SigninPush(depositId, childId, signinMode int) {
-	msg, phone := getSigninMessage(depositId, childId, signinMode)
-	if len(msg) == 0 || len(phone) == 0 {
+	msg, parentUid := getSigninMessage(depositId, childId, signinMode)
+	if len(msg) == 0 || len(parentUid) == 0 {
 		return
 	}
-	JgPush(msg, phone)
+	JgPush(msg, parentUid)
 }
