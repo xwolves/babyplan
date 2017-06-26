@@ -1,7 +1,7 @@
 (function() {
     "use strict";
     angular.module('messageCtrl', [])
-        .controller('messageCtrl', function($scope, Constants, messageService,childrenSteamService, teacherService,AuthService, StateService,Session,$ionicModal, $ionicSlideBoxDelegate) {
+        .controller('messageCtrl', function($scope, Constants, messageService,childrenSteamService, MessageToaster,teacherService,AuthService, StateService,Session,$ionicModal, $ionicSlideBoxDelegate) {
             'ngInject';
             var vm = this;
             vm.activated = false;
@@ -15,6 +15,7 @@
                 vm.activated = true;
                 vm.version = Constants.buildID;
                 vm.messages=[];
+                vm.who=AuthService.getLoginID();
                 vm.getDepositInfo();
             }
 
@@ -86,6 +87,20 @@
                 //创建信息
                 StateService.go('newMessage');
             };
+
+            vm.del=function(item){
+              //console.log(item);
+              messageService.deleteMsg(item.InfoID).then(function(data) {
+                console.log(data);
+                if (data.errno == 0) {
+                    MessageToaster.info("删除成功");
+                    vm.messages=[];
+                    vm.doRefresh(0);
+                }else{
+                    MessageToaster.error("删除失败 "+data.error);
+                }
+              });
+            }
 
             vm.getImg = function(type){
                 if(type == 1){

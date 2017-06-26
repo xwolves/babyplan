@@ -1,32 +1,32 @@
 (function() {
     "use strict";
     angular.module('buyCtrl', [])
-        .controller('buyCtrl', function($scope, $state, $stateParams, Constants, StateService, vipBuyService, AuthService, MessageToaster, Session) {
+        .controller('buyCtrl', function($scope, $state, $stateParams, Constants, StateService, vipBuyService, AuthService, MessageToaster, Session,Wechat) {
             'ngInject';
             var vm = this;
 
             vm.activated = false;
-            vm.wechatPayReady = false;
+            //vm.wechatPayReady = false;
             vm.information = "";
 
-            $scope.onBridgeReady=function () {
-                //alert('wechat ok');
-                vm.wechatPayReady=true;
-            };
+            // $scope.onBridgeReady=function () {
+            //     //alert('wechat ok');
+            //     vm.wechatPayReady=true;
+            // };
 
-            if (typeof WeixinJSBridge == "undefined"){
-                console.log("not found WeixinJSBridge");
-                if(document.addEventListener){
-                    document.addEventListener('WeixinJSBridgeReady', $scope.onBridgeReady, false);
-                }else if (document.attachEvent){
-                    document.attachEvent('WeixinJSBridgeReady', $scope.onBridgeReady);
-                    document.attachEvent('onWeixinJSBridgeReady', $scope.onBridgeReady);
-                }
-                console.log("add event listener for WeixinJSBridge");
-            }else{
-                console.log("WeixinJSBridge exist");
-                $scope.onBridgeReady();
-            }
+            // if (typeof WeixinJSBridge == "undefined"){
+            //     console.log("not found WeixinJSBridge");
+            //     if(document.addEventListener){
+            //         document.addEventListener('WeixinJSBridgeReady', $scope.onBridgeReady, false);
+            //     }else if (document.attachEvent){
+            //         document.attachEvent('WeixinJSBridgeReady', $scope.onBridgeReady);
+            //         document.attachEvent('onWeixinJSBridgeReady', $scope.onBridgeReady);
+            //     }
+            //     console.log("add event listener for WeixinJSBridge");
+            // }else{
+            //     console.log("WeixinJSBridge exist");
+            //     $scope.onBridgeReady();
+            // }
 
             $scope.$on('$ionicView.afterEnter', activate);
 
@@ -39,7 +39,7 @@
                 vm.query(vm.index);
                 vm.wechatInit();
             }
-            
+
             vm.wechatInit = function(){};
 
             vm.query = function(id){
@@ -64,12 +64,65 @@
 
             vm.pay=function(){
                 var parentId=AuthService.getLoginID();
-                vipBuyService.createOrder(parentId, AuthService.getWechatId(), vm.index)
+                alert(parentId);
+                vipBuyService.createOrder2(parentId, vm.item.businessid)
                     .then(function (response) {
                         var result=response.data;
                         var orderId=result.orderId;
                         //vm.information = JSON.stringify(result);
                         //alert(JSON.stringify(result));
+                        var params = {
+                            partnerid: result.partnerid, // merchant id
+                            prepayid: result.prepay_id, // prepay id
+                            noncestr: result.nonceStr, // nonce
+                            timestamp: ""+result.timeStamp, // timestamp
+                            sign: result.paySign // signed string
+                        };
+                        alert(JSON.parse(params));
+                        Wechat.sendPaymentRequest(params, function (res) {
+                            alert("Success");
+                            alert(JSON.prase(res));
+                            var msg = res.err_msg;
+                            //alert(msg);
+
+                            if(msg == "get_brand_wcpay_request:ok" ) {
+                                //保存数据．跳转页面
+                                //check order make sure user had pay the order ready.
+                                vipBuyService.checkOrder(orderId).then(
+                                    function(result) {
+                                        //{"errno":0,"error":"",
+                                        // "data":{"orderId":"139630530220161103152842","wechatOrderId":"4003682001201611038611986947",
+                                        // "totalFee":"1","payState":"SUCCESS","payTime":"20161103152851"}}
+                                        alert(JSON.stringify(result));
+                                        if(result.errno == 0 ){
+                                            MessageToaster.info("微信支付完成");
+                                            StateService.clearAllAndGo(AuthService.getNextPath());
+                                        }
+                                      },
+                                      function (reason) {
+                                          alert("checkOrder error "+JSON.stringify(reason));
+                                      }
+                                  );
+                              //}else if(msg == "get_brand_wcpay_request:cancel"){
+                              } else if(msg.endsWith("cancel")) {
+                                  //alert("用户取消");
+                                  //vm.information="用户取消";
+                                  MessageToaster.info("微信支付已取消");
+                              //}else if(msg == "get_brand_wcpay_request:fail"){
+                              } else if(msg.endsWith("fail")) {
+                                  alert("付款失败");
+                              }
+
+                        }, function (reason) {
+                            alert("Failed sendPaymentRequest: " + reason);
+                            vm.information += " 请求付款失败 " + reason;
+                        });
+                      }, function (reason) {
+                            alert("Failed createOrder2: " + reason);
+                            vm.information += " 请求付款失败 " + reason;
+                      }
+                    );
+                        /*
                         if(vm.wechatPayReady){
                             WeixinJSBridge.invoke(
                                 'getBrandWCPayRequest',
@@ -121,7 +174,7 @@
                                                     );
                                                 }
                                                 */
-                                            },
+                                          /*  },
                                             function (reason) {
                                                 alert("checkOrder error "+JSON.stringify(reason));
                                             }
@@ -142,7 +195,9 @@
                         //alert(JSON.stringify(error));
                         vm.information += " 请求付款失败 " + error;
                     });
-            };
+                    */
+          //  };
 
-        });
+        };
+    });
 }());

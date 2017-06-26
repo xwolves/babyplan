@@ -9,12 +9,18 @@
     var service = {
       getMsg:getMsg,
       newMsg:newMsg,
+      deleteMsg:deleteMsg,
       postPhoto:postPhoto
     };
 
     function getMsg(depositid,offset,limit) {
       var url = Constants.serverUrl + 'deposit/allInformation/'+depositid+'?offset='+offset+'&limitcount='+limit;
       return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
+    };
+
+    function deleteMsg(id) {
+      var url = Constants.serverUrl + 'deposit/publish/'+id;
+      return $http.delete(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
     };
 
     function newMsg(data) {
