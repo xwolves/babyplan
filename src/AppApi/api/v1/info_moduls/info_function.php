@@ -646,6 +646,28 @@ class Info{
       return json_decode($result, true);
     }
 
+    public function delPublish($Id){
+        try{
+            $rsp_data = array();
+            $this->DB->beginTransaction();
+            $sql_str = "delete from tb_deposit_daily_comments where InfoID = :Id ";
+            $sql_str2 = "delete from tb_deposit_daily where InfoID = :Id ";
+            $stmt = $this->DB->prepare($sql_str);
+            $stmt->bindParam(":Id", intval($Id), PDO::PARAM_INT);
+            if (!$stmt->execute())
+                return 10001;
+            $stmt = $this->DB->prepare($sql_str2);
+            $stmt->bindParam(":Id", intval($Id), PDO::PARAM_INT);
+            if (!$stmt->execute())
+                return 10001;
+            $this->DB->commit();
+            return 0;
+        }catch (PDOException $e) {
+            $errs = $e->getMessage();
+            return 10000;
+        }
+    }
+
     private $DB;
 }
 ?>

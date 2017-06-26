@@ -819,6 +819,24 @@ $app->post(
     }
 );
 
+$app->delete(
+    '/deposit/publish/:Id',
+    function ($Id) use ($app, $sql_db, $redis){
+        $rsp_data = array();
+        $response = $app->response;
+        $request = $app->request->getBody();
+        $token = $app->request->headers('token');
+        $depositInfo = $redis->get($token);
+        if(!$depositInfo){
+            $response->setBody(rspData(10005));
+            return;
+        }
+        $info = new Info($sql_db);
+        $ret = $info->delPublish($Id);
+        $response->setBody(rspData($ret));
+    }
+);
+
 /*
  * 通过老师id获取老师所在的机构详细信息
  */
