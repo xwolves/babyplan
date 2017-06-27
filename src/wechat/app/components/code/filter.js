@@ -52,7 +52,7 @@ app.filter('dateChange', function () {
         var now = new Date();
         var time=now.getTime()- d.getTime();
         if(time>24*60*60*1000){
-            return d.Format('MM月dd日');
+            return d.Format('MM月dd日 hh:mm:ss');
         }else if(time>60*60*1000){
             //return d.Format('hh')+"小时前";
             var hour=parseInt(time/(60*60*1000));

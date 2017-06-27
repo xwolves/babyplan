@@ -1,12 +1,11 @@
 <ion-view view-title="肯特育园">
-    <ion-content>
-        <div align="center">
-            <button class="button-icon" style="margin-left:30px;margin-right:10px;" ng-click="vm.changeSteam(2)"><img src="./img/steam_notifcation.PNG" width="32" height="32"><div>动态</div></button>
-            <button class="button-icon" style="margin-left:30px;margin-right:30px;" ng-click="vm.changeSteam(1)"><img src="./img/steam_fingerprint.PNG" width="32" height="32"><div>指纹</div></button>
-            <button class="button-icon" style="margin-left:10px;margin-right:30px;" ng-click="vm.changeSteam(0)"><img src="./img/steam_camera.PNG" width="32" height="32"><div>监控</div></button>
-        </div>
-        <hr>
+    <div class="bar bar-subheader" style="height:58px;">
+        <button class="button-icon" style="margin-top:-6px;margin-left:15px;" ng-click="vm.changeSteam(2)"><img src="./img/steam_notifcation.PNG" width="32" height="32"><div style="margin-top:-16px;">动态</div></button>
+        <button class="button-icon center" style="margin-top:-6px;" ng-click="vm.changeSteam(1)"><img src="./img/steam_fingerprint.PNG" width="32" height="32"><div style="margin-top:-16px;">指纹</div></button>
+        <button class="button-icon" style="margin-top:-6px;" ng-click="vm.changeSteam(0)"><img src="./img/steam_camera.PNG" width="32" height="32"><div style="margin-top:-16px;">监控</div></button>
+    </div>
 
+    <ion-content class="has-subheader">
         <ion-refresher pulling-text="刷新信息" on-refresh="vm.doRefresh(vm.steam,0)"></ion-refresher>
         <div class="no-data" ng-if="vm.unPaid">
             {{vm.error}}
@@ -16,7 +15,7 @@
         <!-- {"deposit_id":"10000001","deposit_name":"鍗楃澶�","vedio_list":[{"rtmp_src":"rtmp://v.zxing-tech.cn/10000001/106","hls_src":"http://v.zxing-tech.cn/10000001/106.m3u8","room_name":null,"room_id":"106","poster":"http://v.zxing-tech.cn/10000001/106-poster-003.png"}]} -->
         <div ng-show="vm.showCamera && !vm.unPaid">
             <!-- <iframe data-tap-disabled="true" style="height:100%;width:100%;" ng-src="{{vm.cameraSrc}}"></iframe> -->
-            <div  ng-repeat="item in vm.cameras">
+            <div style="margin-top:16px;" ng-repeat="item in vm.cameras">
               <p>{{item.deposit_name}}</p>
               <div ng-repeat="c in item.vedio_list  track by $index" style="float:left;">
                 <button class="button-icon" style="margin-left:10px;margin-right:30px;"  ng-click="vm.watchVideo(c,item.deposit_name)"><img ng-src="{{c.poster}}" width="160" height="100">
