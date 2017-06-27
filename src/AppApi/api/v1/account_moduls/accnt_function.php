@@ -200,7 +200,7 @@ class Account{
         }catch (PDOException $e) {
             $errs = $e->getMessage();
             $code = $e->getCode();
-            $app->getLog()->debug("Debug ".$code." # ".date('Y-m-d H:i:s')." : ".$errs);
+            $app->getLog()->debug("Error ".$code." # ".date('Y-m-d H:i:s')." : ".$errs);
             //var_dump( $e);
             if($code == 23000){
               return 10008;

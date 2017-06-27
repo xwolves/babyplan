@@ -1614,7 +1614,7 @@ $app->delete(
 
 $app->post(
     '/account/parentRegister',
-    function () use ($app, $sql_db) {
+    function () use ($app, $sql_db, $redis) {
         $rsp_data = array();
         $response = $app->response;
         $request = $app->request->getBody();
@@ -1632,6 +1632,10 @@ $app->post(
         }
         $account = new Account($sql_db);
         $ret = $account->createAccount($app, $a_request, 2);
+        if (!isset($ret) || $ret < 10000000) {
+            $response->setBody(rspData($ret));
+            return;
+        }
         //$rsp_data['uid'] = $ret;
         //$response->setBody(rspData($ret, $rsp_data));
         //create eshop account
