@@ -575,6 +575,9 @@ class Info{
                 return 10001;
             while($row = $stmt->fetch(PDO::FETCH_ASSOC))
                 $rsp_data[] = $row;
+            if (!isset($rsp_data)) {
+                return 12009;
+            }
             return $rsp_data;
         }catch (PDOException $e) {
             $errs = $e->getMessage();

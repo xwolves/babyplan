@@ -11,6 +11,8 @@ static $errCode = array(
     10008 => 'Mobile already used',
     10009 => 'Fail to send email',
     10010 => 'No email address',
+    10011 => 'Eshop register fail',
+    10012 => 'Eshop login fail',
 
     12001 => 'Account Parames Empty',
     12002 => 'Account Parames Required Defect',
@@ -20,6 +22,7 @@ static $errCode = array(
     12006 => 'Account Have No Teacher Related',
     12007 => 'Deposit Account No Exist',
     12008 => 'Children Account No Exist',
+    12009 => 'No children account',
 
     13001 => 'Finger Parames Empty',
     13002 => 'Finger Parames Required Defect',

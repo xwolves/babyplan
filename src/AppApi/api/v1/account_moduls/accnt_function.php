@@ -735,7 +735,7 @@ class Account{
       }
     }
 
-    public function parentLogin($params, $redis){
+    public function parentLogin($app, $params, $redis){
         try{
             $userId = $params['username'];
             $psw = $params['password'];
@@ -746,28 +746,46 @@ class Account{
             $stmt = $this->DB->prepare($sql_str);
             $stmt->bindParam(":psw", $psw, PDO::PARAM_STR);
             $stmt->bindParam(":userId", $userId, PDO::PARAM_STR);
-            if(!$stmt->execute())
+            if(!$stmt->execute()) {
+                $app->getLog()->debug(date('Y-m-d H:i:s')." Error : user login fail. database error, userId = $userId");
                 return 10001;
+            }
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
             if($row){
-                $info['uid'] = $row['accountid'];
-                $info['name'] = $row['name'];
-                $info['type'] = 2;
-                $redisInfo['uid'] = $row['accountid'];
-                $redisInfo['name'] = $row['name'];
-                $redisInfo['mobile'] = $row['mobile'];
-                $token = strtolower($this->guid());
-                if(!$redis->set($token, json_encode($redisInfo)))
-                    return 10004;
-                $info['token'] = $token;
                 //eshop login
+                $app->getLog()->debug(date('Y-m-d H:i:s')." Debug : user deposit login ok. userId = $userId, name = ".$row['name']);
                 $eshopData = array('username' => $row['accountid'],'password' => $psw);
                 $infoObj = new Info($this->DB);
                 $eshop = $infoObj->eshopLogin(json_encode($eshopData));
+                if(!isset($eshop) || gettype($eshop) != "array") {
+                    $app->getLog()->debug(date('Y-m-d H:i:s')." Error : user eshop login fail. userId = $userId, name = ".$row['name']);
+                    return 10012;
+                }
+                if($eshop['error_code'] != 0){
+                    $app->getLog()->debug(date('Y-m-d H:i:s')." Error : user eshop login fail. userId = $userId, name = ".$row['name']." ".$eshop['error_desc']);
+                    return 10012;
+                }
+
+                $app->getLog()->debug(date('Y-m-d H:i:s')." Debug : user eshop login ok. userId = $userId, name = ".$row['name']);
+                $info['uid'] = $row['accountid'];
+                $info['name'] = $row['name'];
+                $info['type'] = 2;
                 $info['eshop']=$eshop;
+
+                $redisInfo['uid'] = $row['accountid'];
+                $redisInfo['name'] = $row['name'];
+                $redisInfo['mobile'] = $row['mobile'];
+                $redisInfo['eshop_token'] = $eshop['token'];
+
+                $token = $info['uid'].":".strtolower($this->guid());
+                if(!$redis->set($token, json_encode($redisInfo)))
+                    return 10004;
+                $info['token'] = $token;
+
                 return $info;
             }else{
-              return 10003;
+                $app->getLog()->debug(date('Y-m-d H:i:s')." Error : user login fail. user not exist in database, userId = $userId");
+                return 10003;
             }
         }catch (PDOException $e) {
             $errs = $e->getMessage();

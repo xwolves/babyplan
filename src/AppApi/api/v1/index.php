@@ -1514,7 +1514,7 @@ $app->post(
             return;
         }
         $account = new Account($sql_db);
-        $ret = $account->parentLogin($a_request, $redis);
+        $ret = $account->parentLogin($app, $a_request, $redis);
         if(gettype($ret) != "array"){
             $response->setBody(rspData($ret));
         }else{
@@ -1636,17 +1636,31 @@ $app->post(
             $response->setBody(rspData($ret));
             return;
         }
+        $app->getLog()->debug(date('Y-m-d H:i:s')." Debug : user deposit register ok. mobile = ".$a_request['mobile'].", name = ".$a_request['name'].", email = ".$a_request['name']);
         //$rsp_data['uid'] = $ret;
         //$response->setBody(rspData($ret, $rsp_data));
         //create eshop account
         $eshopData = array('username' => $ret,'password' => $a_request['password'],'email' => $a_request['email']);
         $info = new Info($sql_db);
         $eshop = $info->eshopRegister(json_encode($eshopData));
+        if(!isset($eshop) || gettype($eshop) != "array") {
+            $app->getLog()->debug(date('Y-m-d H:i:s')." Error : user eshop register fail. mobile = ".$a_request['mobile'].", name = ".$a_request['name'].", email = ".$a_request['name']);
+            $response->setBody(rspData(10011));
+            return;
+        }
+        if($eshop['error_code'] != 0) {
+            $app->getLog()->debug(date('Y-m-d H:i:s')." Error : user eshop register fail,error_desc = ".$eshop['error_desc']." mobile = ".$a_request['mobile'].", name = ".$a_request['name'].", email = ".$a_request['name']);
+            $response->setBody(rspData(10011));
+            return;
+        }
         //$eshopToken=$eshop['token'];
         //getToken
+    
+        $app->getLog()->debug(date('Y-m-d H:i:s')." Debug : user eshop register ok. mobile = ".$a_request['mobile'].", name = ".$a_request['name'].", email = ".$a_request['name']);
+
         $my_request=array('username' => $ret,'password' => $a_request['password']);
         $account = new Account($sql_db);
-        $ret = $account->parentLogin($my_request, $redis);
+        $ret = $account->parentLogin($app, $my_request, $redis);
         if(gettype($ret) != "array"){
             $response->setBody(rspData($ret));
         }else{
