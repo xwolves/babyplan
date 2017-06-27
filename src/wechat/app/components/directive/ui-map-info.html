@@ -45,7 +45,7 @@
       </div>
 
       <!--评论展示区-->
-      <a class="item item-icon-right item-comment-header" href="#">
+      <a class="item item-icon-right item-comment-header" href="javascript:void(0)">
     最新评论
       <span class="icon ion-heart  mech-comment"><i>{{depositInfo.Score}}</i></span>
       </a>
@@ -53,7 +53,7 @@
         <div class="no-data" ng-if="!depositInfo.Comments || depositInfo.Comments.length==0">
           暂无评论!
         </div>
-        <a class="item item-note-right item-text-wrap" ng-repeat="c in depositInfo.Comments" href="#">
+        <a class="item item-note-right item-text-wrap" ng-repeat="c in depositInfo.Comments" href="javascript:void(0)">
           <span class="item-note">
             {{c.create_date | formatTime}}
           </span>

@@ -11,7 +11,7 @@
 
     .run(function ($ionicPlatform, $state, AuthService, JPushService) {
         $ionicPlatform.registerBackButtonAction(function (event) {
-           // alert("cur�? + JSON.stringify($state.current));
+           // alert("cur：" + JSON.stringify($state.current));
             if ($state.current.name == AuthService.getNextPath()) {
                 event.preventDefault();
                 cordova.plugins.backgroundMode.moveToBackground();
@@ -47,7 +47,7 @@
             var config = {
                 openNotificationInAndroidCallback: onOpenNotificationInAndroidCallback
             };
-            //启动极光推送服�?
+            //启动极光推送服务
             JPushService.init(config);
         });
     })
@@ -183,7 +183,7 @@ angular.module('BaiduService',[])
       }
 
     /**
-     * 根据经纬度获取附近机构列�?
+     * 根据经纬度获取附近机构列表
      * @param {*} longitude
      * @param {*} latitude
      */
@@ -235,7 +235,7 @@ angular.module('BaiduService',[])
       }
 
       /**
-       * 获取机构详情并带有评论信�?
+       * 获取机构详情并带有评论信息
        * @param {*} depositId
        */
       function _getDepositInfoWithComments (depositId) {
@@ -251,7 +251,7 @@ angular.module('BaiduService',[])
             depositInfo.Score = commentsData.scores || 0;
             depositInfo.Comments = [];
 
-            //转换所有图片为数组，以用于轮播图片�?
+            //转换所有图片为数组，以用于轮播图片源
             depositInfo.Images = [];
             depositInfo.FrontDeskLink && depositInfo.Images.push(_convertThumbUrl(depositInfo.FrontDeskLink));
             depositInfo.PublicZoneLink && depositInfo.Images.push(_convertThumbUrl(depositInfo.PublicZoneLink));
@@ -348,8 +348,8 @@ angular.module('BaiduService',[])
 var app = angular.module('CustomFilter', []);
 app.filter('gendarChange', function () {
     return function (input) {
-        if (input == "1")return "�?;
-        else if (input == "2")return "�?;
+        if (input == "1")return "男";
+        else if (input == "2")return "女";
         else return "";
     };
 });
@@ -365,15 +365,15 @@ app.filter('JSchange', function () {
 
 app.filter('PayStatus', function () {
     return function (input) {
-        if (input == "1")return "已付�?;
-        else if (input == "0")return "未付�?;
+        if (input == "1")return "已付款";
+        else if (input == "0")return "未付款";
         else return "未知";
     };
 });
 
 app.filter('PayType', function () {
     return function (input) {
-        if (input == "1")return "支付宝支�?;
+        if (input == "1")return "支付宝支付";
         else if (input == "0")return "微信支付";
         else if (input == "2")return "其它";
         else return "未知";
@@ -396,15 +396,15 @@ app.filter('dateChange', function () {
         var now = new Date();
         var time=now.getTime()- d.getTime();
         if(time>24*60*60*1000){
-            return d.Format('MM月dd�?);
+            return d.Format('MM月dd日');
         }else if(time>60*60*1000){
-            //return d.Format('hh')+"小时�?;
+            //return d.Format('hh')+"小时前";
             var hour=parseInt(time/(60*60*1000));
-            return hour+"小时�?;
+            return hour+"小时前";
         }else{
-            //return d.Format('mm')+"分钟�?;
+            //return d.Format('mm')+"分钟前";
             var min=parseInt(time/(60*1000));
-            return min+"分钟�?;
+            return min+"分钟前";
         }
     };
 });
@@ -441,7 +441,7 @@ app.filter('changeSize', function () {
 
 app.filter('statusChange', function () {
     return function (input,rule) {
-        //var rule=[{dm:"0",mc:"未办�?},{dm:"1",mc:"已办�?}];
+        //var rule=[{dm:"0",mc:"未办结"},{dm:"1",mc:"已办结"}];
         if(rule!=null&&rule.length>0) {
             for (var i = 0; i < rule.length; i++) {
                 if(rule[i].dm==input)return rule[i].mc;
@@ -480,8 +480,8 @@ app.filter('statusChange', function () {
          if (years > 0) return years + '年前';
          if (months > 0) return months + '月前';
          if (days > 0) return days + '天前';
-         if (hours > 0) return hours + '小时�?;
-         if (minutes > 0) return minutes + '分钟�?;
+         if (hours > 0) return hours + '小时前';
+         if (minutes > 0) return minutes + '分钟前';
          return '';
      };
    });
@@ -578,7 +578,7 @@ app.filter('statusChange', function () {
             for (var i = 0; i < ionViewArr.length; i++) {
                 if (angular.element(ionViewArr[i]).attr('nav-view') == 'active') {
                     activeNavView = angular.element(ionViewArr[i]);
-                    activeNavView.append("<loading><div class=\"loading-alert-container\"><div class=\"loading-body\"><div class=\"loading-text\">加载�?..<div><div></div></loading>");
+                    activeNavView.append("<loading><div class=\"loading-alert-container\"><div class=\"loading-body\"><div class=\"loading-text\">加载中...<div><div></div></loading>");
                 }
             }
         }
@@ -822,6 +822,98 @@ app.filter('statusChange', function () {
 }());
 
 (function() {
+  "use strict";
+  angular.module('config', [
+    'environmentConfig',
+    'constant',
+    'httpRelConfig'
+  ]);
+
+}());
+
+(function() {
+    "use strict";
+    angular.module('constant', [])
+        .constant('Path',{
+            'ParentRolePath':'tabs.childrenSteam',
+            'OrganizerRolePath':'tabs.organizer',
+            'TeacherRolePath':'tabs.message',
+            'VisitorRolePath':'tabs.map'
+        })
+        .constant('Role',{
+            'visitor':'-1',
+            'Organizer':'1',
+            'Parent':'2',
+            'Teacher':'3',
+            'Children':'4',
+            'ThirdParty':'5',
+            'Consultant':'6'
+        })
+        .constant('Weixin', {
+        })
+        .constant('AUTH_EVENTS', {
+            loginSuccess: 'auth-login-success',
+            loginFailed: 'auth-login-failed',
+            logoutSuccess: 'auth-logout-success',
+            sessionTimeout: 'auth-session-timeout',
+            notAuthenticated: 'auth-not-authenticated',
+            notAuthorized: 'auth-not-authorized'
+        })
+        .constant('ErrorMessage', {
+            ACCESS_FAIL: '通讯异常，请稍后再试！',
+            TOKEN_INVALID: '连接超时，请重新登录！'
+        })
+        .constant('SuccessMessage', {
+            SUBMIT_SUCESS: '提交成功',
+            OPERATION_SUCESS:'操作完成'
+        });
+}());
+
+(function() {
+    "use strict";
+    angular.module('environmentConfig', [])
+        .constant('Constants', {
+            'appTitle':'肯特育园',
+            'company':'深圳知行信息技术开发有限公司',
+            'serverUrl': 'http://wx.zxing-tech.cn/api/v1/',
+            'eshopApiUrl': 'http://api.mall.zxing-tech.cn/v2/',
+            'dfsUrl': 'http://wx.zxing-tech.cn/',
+            'buildID': '20170614v1',
+            'ENVIRONMENT':'release'
+        });
+}());
+//'serverUrl': 'http://120.76.226.47/api/v2/',
+//    'dfsUrl': 'http://120.76.226.47/',
+//http://localhost:8090/
+//http://wx.zxing-tech.cn
+
+(function() {
+    "use strict";
+    angular.module('httpDevConfig', [])
+        .config(function($httpProvider) {
+            $httpProvider.defaults.headers.post["Content-Type"] = "application/x-www-form-urlencoded";
+            $httpProvider.defaults.headers.put["Content-Type"] = "application/x-www-form-urlencoded";
+        });
+}());
+
+(function() {
+    "use strict";
+    angular.module('httpRelConfig', [])
+    .config(function($httpProvider) {
+        $httpProvider.defaults.cache = false;
+        if (!$httpProvider.defaults.headers.get) {
+           $httpProvider.defaults.headers.get = {};
+        }
+        // disable IE ajax request caching
+        $httpProvider.defaults.headers.get['If-Modified-Since'] = '0';
+
+        // Disable IE ajax request caching
+        $httpProvider.defaults.headers.get['Cache-Control'] = 'no-cache';
+        $httpProvider.defaults.headers.get['Pragma'] = 'no-cache';
+    });
+}());
+
+(function() {
     "use strict";
     angular.module('directive', [
       'BaiduMapDirective'
@@ -851,11 +943,11 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
        * 加载百度地图
        * @param {object}  $q angular $q
        * @param {string} apiKey 百度apiKey
-       * @param {string} version 版本�?
+       * @param {string} version 版本号
        */
       function loadMap(apiKey) {
 
-          // 判断是否执行过加载过�?
+          // 判断是否执行过加载过程
           if ($window.loadBaiduPromise) {
               return $window.loadBaiduPromise;
           }
@@ -951,7 +1043,7 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
       }
 
       /**
-       * 根据位置做标�?
+       * 根据位置做标记
        * @param {*} map
        * @param {*} point
        * @param {*} clickCallback
@@ -1067,7 +1159,7 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
       }
 
       /**
-       * 添加搜索框自动完成功�?
+       * 添加搜索框自动完成功能
        * @param {*} map
        * @param {*} scope
        */
@@ -1078,8 +1170,8 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
               baiDuLocalSearchAndMark(map, keywrod).then(function (results) {
                   scope.baiDuSearchResults = results;
               }, function (err) {
-                  //ionicToast.show('检索异�?', 'middle', false, 3000);
-                  MessageToaster.error("检索异�?");
+                  //ionicToast.show('检索异常!', 'middle', false, 3000);
+                  MessageToaster.error("检索异常!");
               });
           }
           var ac = new BMap.Autocomplete({
@@ -1149,7 +1241,7 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
       }
 
       /**
-       * 根据关键字搜索百度数据并打标�?
+       * 根据关键字搜索百度数据并打标记
        * @param {*} map
        * @param {*} keyword
        */
@@ -1174,7 +1266,7 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
       }
 
       /**
-       * 根据位置搜索本地系统维护的后台数�?
+       * 根据位置搜索本地系统维护的后台数据
        * @param {*} point
        */
       function babyPlanLocalSearch(point) {
@@ -1182,7 +1274,7 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
       }
 
       /**
-       * 打开当前位置标记的详情页�?
+       * 打开当前位置标记的详情页面
        * @param {*} e
        */
       function openInfoWindow(e) {
@@ -1200,7 +1292,7 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
                   width: 250, // 信息窗口宽度
                   height: 80, // 信息窗口高度
                   title: p.babyPoi.OrgName,
-                  enableMessage: true // 设置允许信息窗发送短�?
+                  enableMessage: true // 设置允许信息窗发送短息
               },
                 content = p.babyPoi.Address;
               var point = new BMap.Point(p.babyPoi.Longitude, p.babyPoi.Latitude);
@@ -1242,15 +1334,15 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
               scope.keyword2 = '';
               scope.depositInfo = {};
               // scope.depositInfo = {
-              //   OrgName: '南科�?,
-              //   Address: '学苑大道1088�?,
+              //   OrgName: '南科大',
+              //   Address: '学苑大道1088号',
               //   FrontDeskLink1: 'http://120.76.226.47/group1/M00/00/03/Ci5ek1jxwpWAD29ZAC84O4JhWyE096.jpg',
               //   LicenseType: null,
               //   ContactPhone: '1311111111',
               //   Score: 50,
-              //   Remark: '宝宝的托管机构，宝宝的安全托管机�?,
+              //   Remark: '宝宝的托管机构，宝宝的安全托管机构',
               //   Images: ['http://120.76.226.47/group1/M00/00/03/Ci5ek1jxwpWAD29ZAC84O4JhWyE096.jpg', null],
-              //   Comments: [{comment: '对于缩略图视图，您可以在文件夹上放一个图片来提醒您它的内容�?,create_date: '2017-4-23 12:00:00',creator: 'X*'}, {comment: '机构不错',create_date: '2017-4-21 12:00:00',creator: 'X*'}]
+              //   Comments: [{comment: '对于缩略图视图，您可以在文件夹上放一个图片来提醒您它的内容。',create_date: '2017-4-23 12:00:00',creator: 'X*'}, {comment: '机构不错',create_date: '2017-4-21 12:00:00',creator: 'X*'}]
               // }
 
               /**
@@ -1264,10 +1356,10 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
                * 定位
                */
               scope.location = function (poi) {
-                  // 切换到地图模�?
+                  // 切换到地图模式
                   scope.currMode = MAP_MODES.MAP_SHOW;
 
-                  // 清除所有标记，并添加当前位置标�?
+                  // 清除所有标记，并添加当前位置标记
                  // scope.map.clearOverlays();
                   var point = new BMap.Point(poi.Longitude, poi.Latitude);
                   if (poi.AccountID === 0) {
@@ -1282,7 +1374,7 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
               };
 
               /**
-               * 定位到当前位�?
+               * 定位到当前位置
                */
               scope.locationCurrent = function () {
                   $timeout(function () {
@@ -1291,7 +1383,7 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
                       var icon = new BMap.Symbol(BMap_Symbol_SHAPE_POINT, {
                           scale: 1,//图标缩放大小
                           fillColor: "orange",//填充颜色
-                          fillOpacity: 0.8//填充透明�?
+                          fillOpacity: 0.8//填充透明度
                       });
                      // scope.map.clearOverlays();
                       addMapMarker(scope.map, scope.currentPosition, { type: MARKER_TYPES.CURRENT, icon: icon, text: '我的位置' });
@@ -1300,13 +1392,13 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
               };
 
               /**
-               * 定位标记所有位�?
+               * 定位标记所有位置
                */
               scope.locationAll = function () {
-                  // 切换到地图模�?
+                  // 切换到地图模式
                   scope.currMode = MAP_MODES.MAP_SHOW;
 
-                  // 清除所有标记，并添加当前位置标�?
+                  // 清除所有标记，并添加当前位置标记
                   scope.map.clearOverlays();
 
                   var poi, point;
@@ -1345,7 +1437,7 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
               scope.openDepositInfoForm = function (deposit) {
                   if (!deposit || deposit.AccountID == 0) return;
 
-                  // 根据ID获取机构详情和评论信�?
+                  // 根据ID获取机构详情和评论信息
                   BaiduService.getDepositInfoWithComments(deposit.AccountID).then(function (depositInfo) {
                       scope.depositInfo = depositInfo;
 
@@ -1368,7 +1460,7 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
               };
 
               /**
-               * 回退到地图模�?
+               * 回退到地图模式
                */
               scope.backToMapView = function () {
                   scope.currMode = MAP_MODES.MAP_SHOW;
@@ -1381,7 +1473,7 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
                   //
                   if (scope.currMode === mode) return;
 
-                  // 如果切换的目标模式为空，根据当前模式修正为正确目标模�?
+                  // 如果切换的目标模式为空，根据当前模式修正为正确目标模式
                   if (!mode) {
                       switch (scope.currMode) {
                           case MAP_MODES.MAP_SEARCH:
@@ -1400,7 +1492,7 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
                       }
                   }
 
-                  // 切换关键�?
+                  // 切换关键字
                   // if (scope.currMode <= MAP_MODES.MAP_SEARCH && mode > MAP_MODES.MAP_SEARCH) {
                   //   scope.keyword2 = scope.keyword1
                   // } else if (scope.currMode > MAP_MODES.MAP_SEARCH && mode <= MAP_MODES.MAP_SEARCH) {
@@ -1408,7 +1500,7 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
                   // }
                   //
 
-                  // 根据当前模式不同触发不同的行�?
+                  // 根据当前模式不同触发不同的行为
                   switch (scope.currMode) {
                       case MAP_MODES.MAP_SEARCH:
                           // if (!scope.keyword1) {
@@ -1461,31 +1553,31 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
                       var map = scope.map = buildMap(elm.children().eq(0).children()[1], opts);
                       map.scope = scope;
 
-                      // 添加导航�?
+                      // 添加导航栏
                       addMapNavigation(map, BMAP_ANCHOR_BOTTOM_RIGHT);
 
-                      // 添加地图搜索框自动完成功�?
+                      // 添加地图搜索框自动完成功能
                       addMapAutoComplete(map, scope);
 
-                      // 设置地图可视区中心位�?
+                      // 设置地图可视区中心位置
                       getCurrentPosition(map, opts).then(function (p) {
-                          // 记录当前位置并标�?
+                          // 记录当前位置并标记
                           scope.currentPosition = p;
 
                           // 指定Marker的icon属性为Symbol
                           var symbol = new BMap.Symbol(BMap_Symbol_SHAPE_POINT, {
                               scale: 1,//图标缩放大小
                               fillColor: "orange",//填充颜色
-                              fillOpacity: 0.8//填充透明�?
+                              fillOpacity: 0.8//填充透明度
                           });
 
                           addMapMarker(map, p, { onClick: openInfoWindow, type: MARKER_TYPES.CURRENT, icon: symbol, text: '我的位置'});
 
                          //  addMapMarker(map, p, openInfoWindow, null, symbol,'我的位置');
-                          // 设置为中�?
+                          // 设置为中心
                           map.centerAndZoom(p, 16);
 
-                          // 根据关键字检索百度相关位置数据和根据当前位置检索后台维护附近数�?
+                          // 根据关键字检索百度相关位置数据和根据当前位置检索后台维护附近数据
                           var bpSearchDeferred = babyPlanLocalSearch(p);
                           var bdSearchDeferred = baiDuLocalSearch(map, opts.keywords);
                           $q.all([bpSearchDeferred, bdSearchDeferred]).then(function (results) {
@@ -1494,7 +1586,7 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
                               var baiDuSearchResults= scope.baiDuSearchResults = results[1].sort(function (a, b) { return parseFloat(a.Dist) - parseFloat(b.Dist); });
                               var babyPlanSearchResults=  scope.babyPlanSearchResults = results[0];
 
-                              // 对满足条件的位置进行标记�?
+                              // 对满足条件的位置进行标记，
                               var point;
                               for (var i = 0; i < baiDuSearchResults.length; i++) {
                                   point = new BMap.Point(baiDuSearchResults[i].Longitude, baiDuSearchResults[i].Latitude);
@@ -1544,22 +1636,22 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
           if (BMapLib.RichMarker) return BMapLib.RichMarker;
 
           /**
-           * 声明baidu�?
+           * 声明baidu包
            */
           var baidu = baidu || {
               guid: "$BAIDU$"
           };
 
-          // 一些页面级别唯一的属性，需要挂载在window[baidu.guid]�?
+          // 一些页面级别唯一的属性，需要挂载在window[baidu.guid]上
           window[baidu.guid] = {};
 
           /**
-           * 将源对象的所有属性拷贝到目标对象�?
+           * 将源对象的所有属性拷贝到目标对象中
            * @name baidu.extend
            * @function
            * @grammar baidu.extend(target, source)
            * @param {Object} target 目标对象
-           * @param {Object} source 源对�?
+           * @param {Object} source 源对象
            * @returns {Object} 目标对象
            */
           baidu.extend = function (target, source) {
@@ -1574,16 +1666,16 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
           /**
            * @ignore
            * @namespace
-           * @baidu.lang 对语言层面的封装，包括类型判断、模块扩展、继承基类以及对象自定义事件的支持�?
+           * @baidu.lang 对语言层面的封装，包括类型判断、模块扩展、继承基类以及对象自定义事件的支持。
            * @property guid 对象的唯一标识
            */
           baidu.lang = baidu.lang || {};
 
           /**
-           * 返回一个当前页面的唯一标识字符串�?
+           * 返回一个当前页面的唯一标识字符串。
            * @function
            * @grammar baidu.lang.guid()
-           * @returns {String} 当前页面的唯一标识字符�?
+           * @returns {String} 当前页面的唯一标识字符串
            */
           baidu.lang.guid = function () {
               return "TANGRAM__" + (window[baidu.guid]._counter++).toString(36);
@@ -1598,15 +1690,15 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
           window[baidu.guid]._instances = window[baidu.guid]._instances || {};
 
           /**
-           * Tangram继承机制提供的一个基类，用户可以通过继承baidu.lang.Class来获取它的属性及方法�?
+           * Tangram继承机制提供的一个基类，用户可以通过继承baidu.lang.Class来获取它的属性及方法。
            * @function
            * @name baidu.lang.Class
            * @grammar baidu.lang.Class(guid)
            * @param {string} guid	对象的唯一标识
            * @meta standard
-           * @remark baidu.lang.Class和它的子类的实例均包含一个全局唯一的标识guid�?
-           * guid是在构造函数中生成的，因此，继承自baidu.lang.Class的类应该直接或者间接调用它的构造函数�?br>
-           * baidu.lang.Class的构造函数中产生guid的方式可以保证guid的唯一性，及每个实例都有一个全局唯一的guid�?
+           * @remark baidu.lang.Class和它的子类的实例均包含一个全局唯一的标识guid。
+           * guid是在构造函数中生成的，因此，继承自baidu.lang.Class的类应该直接或者间接调用它的构造函数。<br>
+           * baidu.lang.Class的构造函数中产生guid的方式可以保证guid的唯一性，及每个实例都有一个全局唯一的guid。
            */
           baidu.lang.Class = function (guid) {
               this.guid = guid || baidu.lang.guid();
@@ -1644,14 +1736,14 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
           };
 
           /**
-           * 自定义的事件对象�?
+           * 自定义的事件对象。
            * @function
            * @name baidu.lang.Event
            * @grammar baidu.lang.Event(type[, target])
-           * @param {string} type	 事件类型名称。为了方便区分事件和一个普通的方法，事件类型名称必须以"on"(小写)开头�?
-           * @param {Object} [target]触发事件的对�?
+           * @param {string} type	 事件类型名称。为了方便区分事件和一个普通的方法，事件类型名称必须以"on"(小写)开头。
+           * @param {Object} [target]触发事件的对象
            * @meta standard
-           * @remark 引入该模块，会自动为Class引入3个事件扩展方法：addEventListener、removeEventListener和dispatchEvent�?
+           * @remark 引入该模块，会自动为Class引入3个事件扩展方法：addEventListener、removeEventListener和dispatchEvent。
            * @see baidu.lang.Class
            */
           baidu.lang.Event = function (type, target) {
@@ -1662,12 +1754,12 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
           };
 
           /**
-           * 注册对象的事件监听器。引入baidu.lang.Event后，Class的子类实例才会获得该方法�?
+           * 注册对象的事件监听器。引入baidu.lang.Event后，Class的子类实例才会获得该方法。
            * @grammar obj.addEventListener(type, handler[, key])
            * @param 	{string}   type         自定义事件的名称
            * @param 	{Function} handler      自定义事件被触发时应该调用的回调函数
-           * @param 	{string}   [key]		为事件监听函数指定的名称，可在移除时使用。如果不提供，方法会默认为它生成一个全局唯一的key�?
-           * @remark 	事件类型区分大小写。如果自定义事件名称不是以小�?on"开头，该方法会给它加上"on"再进行判断，�?click"�?onclick"会被认为是同一种事件�?
+           * @param 	{string}   [key]		为事件监听函数指定的名称，可在移除时使用。如果不提供，方法会默认为它生成一个全局唯一的key。
+           * @remark 	事件类型区分大小写。如果自定义事件名称不是以小写"on"开头，该方法会给它加上"on"再进行判断，即"click"和"onclick"会被认为是同一种事件。 
            */
           baidu.lang.Class.prototype.addEventListener = function (type, handler, key) {
               if (!baidu.lang.isFunction(handler)) {
@@ -1691,11 +1783,11 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
           };
 
           /**
-           * 移除对象的事件监听器。引入baidu.lang.Event后，Class的子类实例才会获得该方法�?
+           * 移除对象的事件监听器。引入baidu.lang.Event后，Class的子类实例才会获得该方法。
            * @grammar obj.removeEventListener(type, handler)
            * @param {string}   type     事件类型
            * @param {Function|string} handler  要移除的事件监听函数或者监听函数的key
-           * @remark 	如果第二个参数handler没有被绑定到对应的自定义事件中，什么也不做�?
+           * @remark 	如果第二个参数handler没有被绑定到对应的自定义事件中，什么也不做。
            */
           baidu.lang.Class.prototype.removeEventListener = function (type, handler) {
               if (baidu.lang.isFunction(handler)) {
@@ -1712,12 +1804,12 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
           };
 
           /**
-           * 派发自定义事件，使得绑定到自定义事件上面的函数都会被执行。引入baidu.lang.Event后，Class的子类实例才会获得该方法�?
+           * 派发自定义事件，使得绑定到自定义事件上面的函数都会被执行。引入baidu.lang.Event后，Class的子类实例才会获得该方法。
            * @grammar obj.dispatchEvent(event, options)
-           * @param {baidu.lang.Event|String} event 	Event对象，或事件名称(1.1.1起支�?
-           * @param {Object} options 扩展参数,所含属性键值会扩展到Event对象�?1.2起支�?
-           * @remark 处理会调用通过addEventListenr绑定的自定义事件回调函数之外，还会调用直接绑定到对象上面的自定义事件�?
-           * 例如�?br>
+           * @param {baidu.lang.Event|String} event 	Event对象，或事件名称(1.1.1起支持)
+           * @param {Object} options 扩展参数,所含属性键值会扩展到Event对象上(1.2起支持)
+           * @remark 处理会调用通过addEventListenr绑定的自定义事件回调函数之外，还会调用直接绑定到对象上面的自定义事件。
+           * 例如：<br>
            * myobj.onMyEvent = function(){}<br>
            * myobj.addEventListener("onMyEvent", function(){});
            */
@@ -1746,7 +1838,7 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
           /**
            * @ignore
            * @namespace baidu.dom 
-           * 操作dom的方�?
+           * 操作dom的方法
            */
           baidu.dom = baidu.dom || {};
 
@@ -1756,7 +1848,7 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
            * 
            * @param {string|HTMLElement} id 元素的id或DOM元素
            * @meta standard
-           * @return {HTMLElement} DOM元素，如果不存在，返回null，如果参数不合法，直接返回参�?
+           * @return {HTMLElement} DOM元素，如果不存在，返回null，如果参数不合法，直接返回参数
            */
           baidu.dom._g = function (id) {
               if (baidu.lang.isString(id)) {
@@ -1768,16 +1860,16 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
 
           /**
            * @ignore
-           * @namespace baidu.event 屏蔽浏览器差异性的事件封装�?
-           * @property target 	事件的触发元�?
+           * @namespace baidu.event 屏蔽浏览器差异性的事件封装。
+           * @property target 	事件的触发元素
            * @property pageX 		鼠标事件的鼠标x坐标
            * @property pageY 		鼠标事件的鼠标y坐标
-           * @property keyCode 	键盘事件的键�?
+           * @property keyCode 	键盘事件的键值
            */
           baidu.event = baidu.event || {};
 
           /**
-           * 事件监听器的存储�?
+           * 事件监听器的存储表
            * @private
            * @meta standard
            */
@@ -1790,11 +1882,11 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
            * @grammar baidu.event.on(element, type, listener)
            * @param {HTMLElement|string|window} element 目标元素或目标元素id
            * @param {string} type 事件类型
-           * @param {Function} listener 需要添加的监听�?
+           * @param {Function} listener 需要添加的监听器
            * @remark
            * 
-          1. 不支持跨浏览器的鼠标滚轮事件监听器添�?br>
-          2. 改方法不为监听器灌入事件对象，以防止跨iframe事件挂载的事件对象获取失�?
+          1. 不支持跨浏览器的鼠标滚轮事件监听器添加<br>
+          2. 改方法不为监听器灌入事件对象，以防止跨iframe事件挂载的事件对象获取失败
               
            * @shortcut on
            * @meta standard
@@ -1834,7 +1926,7 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
            * @grammar baidu.event.un(element, type, listener)
            * @param {HTMLElement|string|window} element 目标元素或目标元素id
            * @param {string} type 事件类型
-           * @param {Function} listener 需要移除的监听�?
+           * @param {Function} listener 需要移除的监听器
            * @shortcut un
            * @meta standard
            * @see baidu.event.on
@@ -1868,7 +1960,7 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
           baidu.un = baidu.event.un;
 
           /**
-           * 阻止事件的默认行�?
+           * 阻止事件的默认行为
            * @name baidu.event.preventDefault
            * @function
            * @grammar baidu.event.preventDefault(event)
@@ -1889,21 +1981,21 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
            */
           var RichMarker =
           /**
-           * RichMarker类的构造函�?
-           * @class 富Marker定义类，实现丰富的Marker展现效果�?
+           * RichMarker类的构造函数
+           * @class 富Marker定义类，实现丰富的Marker展现效果。
            * 
            * @constructor
            * @param {String | HTMLElement} content 用户自定义的Marker内容，可以是字符串，也可以是dom节点
-           * @param {BMap.Point} position marker的位�?
-           * @param {Json} RichMarkerOptions 可选的输入参数，非必填项。可输入选项包括�?br />
-           * {"<b>anchor</b>" : {BMap.Size} Marker的的位置偏移�?
+           * @param {BMap.Point} position marker的位置
+           * @param {Json} RichMarkerOptions 可选的输入参数，非必填项。可输入选项包括：<br />
+           * {"<b>anchor</b>" : {BMap.Size} Marker的的位置偏移值,
            * <br />"<b>enableDragging</b>" : {Boolean} 是否启用拖拽，默认为false}
            *
            * @example <b>参考示例：</b>
            * var map = new BMap.Map("container");
            * map.centerAndZoom(new BMap.Point(116.309965, 40.058333), 17);
            * var htm = "&lt;div style='background:#E7F0F5;color:#0082CB;border:1px solid #333'&gt;"
-           *              +     "欢迎使用百度地图�?
+           *              +     "欢迎使用百度地图！"
            *              +     "&lt;img src='http://map.baidu.com/img/logo-map.gif' border='0' /&gt;"
            *              + "&lt;/div&gt;";
            * var point = new BMap.Point(116.30816, 40.056863);
@@ -1937,7 +2029,7 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
               this._position = position;
 
               /**
-               * marker主容�?
+               * marker主容器
                * @private
                * @type {HTMLElement}
                */
@@ -1952,8 +2044,8 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
 
               opts = opts || {};
               /**
-               * _opts是默认参数赋值�?
-               * 下面通过用户输入的opts，对默认参数赋�?
+               * _opts是默认参数赋值。
+               * 下面通过用户输入的opts，对默认参数赋值
                * @private
                * @type {Json}
                */
@@ -1981,7 +2073,7 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
 
           /**
            * 初始化，实现自定义覆盖物的initialize方法
-           * 主要生成Marker的主容器，填充自定义的内容，并附加事�?
+           * 主要生成Marker的主容器，填充自定义的内容，并附加事件
            * 
            * @private
            * @param {BMap} map map实例对象
@@ -1999,7 +2091,7 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
               });
               map.getPanes().labelPane.appendChild(div);
 
-              // 给主容器添加上用户自定义的内�?
+              // 给主容器添加上用户自定义的内容
               me._appendContent();
               // 给主容器添加事件处理
               me._setEventDispath();
@@ -2024,7 +2116,7 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
 
           /**
            * 设置Marker可以拖拽
-           * @return 无返回�?
+           * @return 无返回值
            * 
            * @example <b>参考示例：</b>
            * myRichMarkerObject.enableDragging();
@@ -2035,7 +2127,7 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
 
           /**
            * 设置Marker不能拖拽
-           * @return 无返回�?
+           * @return 无返回值
            * 
            * @example <b>参考示例：</b>
            * myRichMarkerObject.disableDragging();
@@ -2045,7 +2137,7 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
           }
 
           /**
-           * 获取Marker是否能被拖拽的状�?
+           * 获取Marker是否能被拖拽的状态
            * @return {Boolean} true为可以拖拽，false为不能被拖拽
            * 
            * @example <b>参考示例：</b>
@@ -2056,8 +2148,8 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
           }
 
           /**
-           * 获取Marker的显示位�?
-           * @return {BMap.Point} 显示的位�?
+           * 获取Marker的显示位置
+           * @return {BMap.Point} 显示的位置
            * 
            * @example <b>参考示例：</b>
            * myRichMarkerObject.getPosition();
@@ -2067,9 +2159,9 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
           }
 
           /**
-           * 设置Marker的显示位�?
+           * 设置Marker的显示位置
            * @param {BMap.Point} position 需要设置的位置
-           * @return 无返回�?
+           * @return 无返回值
            * 
            * @example <b>参考示例：</b>
            * myRichMarkerObject.setPosition(new BMap.Point(116.30816, 40.056863));
@@ -2095,8 +2187,8 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
 
           /**
            * 设置Marker的偏移量
-           * @param {BMap.Size} anchor 需要设置的偏移�?
-           * @return 无返回�?
+           * @param {BMap.Size} anchor 需要设置的偏移量
+           * @return 无返回值
            * 
            * @example <b>参考示例：</b>
            * myRichMarkerObject.setAnchor(new BMap.Size(-72, -84));
@@ -2110,10 +2202,10 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
           }
 
           /**
-           * 添加用户的自定义的内�?
+           * 添加用户的自定义的内容
            * 
            * @private
-           * @return 无返回�?
+           * @return 无返回值
            */
           RichMarker.prototype._appendContent = function () {
               var content = this._content;
@@ -2136,7 +2228,7 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
           }
 
           /**
-           * 获取Marker的内�?
+           * 获取Marker的内容
            * @return {String | HTMLElement} 当前内容
            * 
            * @example <b>参考示例：</b>
@@ -2147,13 +2239,13 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
           }
 
           /**
-           * 设置Marker的内�?
+           * 设置Marker的内容
            * @param {String | HTMLElement} content 需要设置的内容
-           * @return 无返回�?
+           * @return 无返回值
            * 
            * @example <b>参考示例：</b>
            * var htm = "&lt;div style='background:#E7F0F5;color:#0082CB;border:1px solid #333'&gt;"
-           *              +     "欢迎使用百度地图API�?
+           *              +     "欢迎使用百度地图API！"
            *              +     "&lt;img src='http://map.baidu.com/img/logo-map.gif' border='0' /&gt;"
            *              + "&lt;/div&gt;";
            * myRichMarkerObject.setContent(htm);
@@ -2169,7 +2261,7 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
           }
 
           /**
-           * 获取Marker的高�?
+           * 获取Marker的高宽
            * 
            * @private
            * @return {BMap.Size} 当前高宽
@@ -2184,7 +2276,7 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
           }
 
           /**
-           * 获取Marker的宽�?
+           * 获取Marker的宽度
            * @return {Number} 当前宽度
            * 
            * @example <b>参考示例：</b>
@@ -2198,9 +2290,9 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
           }
 
           /**
-           * 设置Marker的宽�?
+           * 设置Marker的宽度
            * @param {Number} width 需要设置的宽度
-           * @return 无返回�?
+           * @return 无返回值
            * 
            * @example <b>参考示例：</b>
            * myRichMarkerObject.setWidth(300);
@@ -2214,7 +2306,7 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
           }
 
           /**
-           * 获取Marker的高�?
+           * 获取Marker的高度
            * @return {Number} 当前高度
            * 
            * @example <b>参考示例：</b>
@@ -2228,9 +2320,9 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
           }
 
           /**
-           * 设置Marker的高�?
+           * 设置Marker的高度
            * @param {Number} height 需要设置的高度
-           * @return 无返回�?
+           * @return 无返回值
            * 
            * @example <b>参考示例：</b>
            * myRichMarkerObject.setHeight(200);
@@ -2244,19 +2336,19 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
           }
 
           /**
-           * 设置Marker的各种事�?
+           * 设置Marker的各种事件
            * 
            * @private
-           * @return 无返回�?
+           * @return 无返回值
            */
           RichMarker.prototype._setEventDispath = function () {
               var me = this,
                   div = me._container,
                   isMouseDown = false,
-                  // 鼠标是否按下，用以判断鼠标移动过程中的拖拽计�?
-                  startPosition = null; // 拖拽时，鼠标按下的初始位置，拖拽的辅助计算参�?  
+                  // 鼠标是否按下，用以判断鼠标移动过程中的拖拽计算
+                  startPosition = null; // 拖拽时，鼠标按下的初始位置，拖拽的辅助计算参数   
 
-              // 通过e参数获取当前鼠标所在位�?
+              // 通过e参数获取当前鼠标所在位置
               function _getPositionByEvent(e) {
                   var e = window.event || e,
                       x = e.pageX || e.clientX || 0,
@@ -2272,11 +2364,11 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
               // 单击事件
               baidu.on(div, "onclick", function (e) {
                   /**
-                   * 点击Marker时，派发事件的接�?
+                   * 点击Marker时，派发事件的接口
                    * @name RichMarker#onclick
                    * @event
                    * @param {Event Object} e 回调函数会返回event参数，包括以下返回值：
-                   * <br />{"<b>target</b> : {BMap.Overlay} 触发事件的元�?
+                   * <br />{"<b>target</b> : {BMap.Overlay} 触发事件的元素,
                    * <br />"<b>type</b>：{String} 事件类型}
                    *
                    * @example <b>参考示例：</b>
@@ -2291,11 +2383,11 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
               // 单击事件
               baidu.on(div, "ontouchend", function (e) {
                   /**
-                   * 点击Marker时，派发事件的接�?
+                   * 点击Marker时，派发事件的接口
                    * @name RichMarker#onclick
                    * @event
                    * @param {Event Object} e 回调函数会返回event参数，包括以下返回值：
-                   * <br />{"<b>target</b> : {BMap.Overlay} 触发事件的元�?
+                   * <br />{"<b>target</b> : {BMap.Overlay} 触发事件的元素,
                    * <br />"<b>type</b>：{String} 事件类型}
                    *
                    * @example <b>参考示例：</b>
@@ -2311,13 +2403,13 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
               baidu.on(div, "ondblclick", function (e) {
                   var position = _getPositionByEvent(e);
                   /**
-                   * 双击Marker时，派发事件的接�?
+                   * 双击Marker时，派发事件的接口
                    * @name RichMarker#ondblclick
                    * @event
                    * @param {Event Object} e 回调函数会返回event参数，包括以下返回值：
-                   * <br />{"<b>target</b> : {BMap.Overlay} 触发事件的元�?
+                   * <br />{"<b>target</b> : {BMap.Overlay} 触发事件的元素,
                    * <br />"<b>type</b>：{String} 事件类型,
-                   * <br />"<b>point</b>：{BMap.Point} 鼠标的物理坐�?
+                   * <br />"<b>point</b>：{BMap.Point} 鼠标的物理坐标,
                    * <br />"<b>pixel</b>：{BMap.Pixel} 鼠标的像素坐标}
                    *
                    * @example <b>参考示例：</b>
@@ -2340,9 +2432,9 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
                    * @name RichMarker#onmouseover
                    * @event
                    * @param {Event Object} e 回调函数会返回event参数，包括以下返回值：
-                   * <br />{"<b>target</b> : {BMap.Overlay} 触发事件的元�?
+                   * <br />{"<b>target</b> : {BMap.Overlay} 触发事件的元素,
                    * <br />"<b>type</b>：{String} 事件类型,
-                   * <br />"<b>point</b>：{BMap.Point} 鼠标的物理坐�?
+                   * <br />"<b>point</b>：{BMap.Point} 鼠标的物理坐标,
                    * <br />"<b>pixel</b>：{BMap.Pixel} 鼠标的像素坐标}
                    *
                    * @example <b>参考示例：</b>
@@ -2361,13 +2453,13 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
               div.onmouseout = function (e) {
                   var position = _getPositionByEvent(e);
                   /**
-                   * 鼠标移出Marker时，派发事件的接�?
+                   * 鼠标移出Marker时，派发事件的接口
                    * @name RichMarker#onmouseout
                    * @event
                    * @param {Event Object} e 回调函数会返回event参数，包括以下返回值：
-                   * <br />{"<b>target</b> : {BMap.Overlay} 触发事件的元�?
+                   * <br />{"<b>target</b> : {BMap.Overlay} 触发事件的元素,
                    * <br />"<b>type</b>：{String} 事件类型,
-                   * <br />"<b>point</b>：{BMap.Point} 鼠标的物理坐�?
+                   * <br />"<b>point</b>：{BMap.Point} 鼠标的物理坐标,
                    * <br />"<b>pixel</b>：{BMap.Pixel} 鼠标的像素坐标}
                    *
                    * @example <b>参考示例：</b>
@@ -2390,9 +2482,9 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
                    * @name RichMarker#onmouseup
                    * @event
                    * @param {Event Object} e 回调函数会返回event参数，包括以下返回值：
-                   * <br />{"<b>target</b> : {BMap.Overlay} 触发事件的元�?
+                   * <br />{"<b>target</b> : {BMap.Overlay} 触发事件的元素,
                    * <br />"<b>type</b>：{String} 事件类型,
-                   * <br />"<b>point</b>：{BMap.Point} 鼠标的物理坐�?
+                   * <br />"<b>point</b>：{BMap.Point} 鼠标的物理坐标,
                    * <br />"<b>pixel</b>：{BMap.Pixel} 鼠标的像素坐标}
                    *
                    * @example <b>参考示例：</b>
@@ -2421,13 +2513,13 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
                   // 拖拽结束时，释放鼠标捕获
                   me._container.releaseCapture && me._container.releaseCapture();
                   /**
-                   * 拖拽Marker结束时，派发事件的接�?
+                   * 拖拽Marker结束时，派发事件的接口
                    * @name RichMarker#ondragend
                    * @event
                    * @param {Event Object} e 回调函数会返回event参数，包括以下返回值：
-                   * <br />{"<b>target</b> : {BMap.Overlay} 触发事件的元�?
+                   * <br />{"<b>target</b> : {BMap.Overlay} 触发事件的元素,
                    * <br />"<b>type</b>：{String} 事件类型,
-                   * <br />"<b>point</b>：{BMap.Point} 鼠标的物理坐�?
+                   * <br />"<b>point</b>：{BMap.Point} 鼠标的物理坐标,
                    * <br />"<b>pixel</b>：{BMap.Pixel} 鼠标的像素坐标}
                    *
                    * @example <b>参考示例：</b>
@@ -2476,9 +2568,9 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
                    * @name RichMarker#ondragging
                    * @event
                    * @param {Event Object} e 回调函数会返回event参数，包括以下返回值：
-                   * <br />{"<b>target</b> : {BMap.Overlay} 触发事件的元�?
+                   * <br />{"<b>target</b> : {BMap.Overlay} 触发事件的元素,
                    * <br />"<b>type</b>：{String} 事件类型,
-                   * <br />"<b>point</b>：{BMap.Point} 鼠标的物理坐�?
+                   * <br />"<b>point</b>：{BMap.Point} 鼠标的物理坐标,
                    * <br />"<b>pixel</b>：{BMap.Pixel} 鼠标的像素坐标}
                    *
                    * @example <b>参考示例：</b>
@@ -2501,9 +2593,9 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
                    * @name RichMarker#onmousedown
                    * @event
                    * @param {Event Object} e 回调函数会返回event参数，包括以下返回值：
-                   * <br />{"<b>target</b> : {BMap.Overlay} 触发事件的元�?
+                   * <br />{"<b>target</b> : {BMap.Overlay} 触发事件的元素,
                    * <br />"<b>type</b>：{String} 事件类型,
-                   * <br />"<b>point</b>：{BMap.Point} 鼠标的物理坐�?
+                   * <br />"<b>point</b>：{BMap.Point} 鼠标的物理坐标,
                    * <br />"<b>pixel</b>：{BMap.Pixel} 鼠标的像素坐标}
                    *
                    * @example <b>参考示例：</b>
@@ -2531,13 +2623,13 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
                   }
                   startPosition = position.pixel;
                   /**
-                   * 开始拖拽Marker时，派发事件的接�?
+                   * 开始拖拽Marker时，派发事件的接口
                    * @name RichMarker#ondragstart
                    * @event
                    * @param {Event Object} e 回调函数会返回event参数，包括以下返回值：
-                   * <br />{"<b>target</b> : {BMap.Overlay} 触发事件的元�?
+                   * <br />{"<b>target</b> : {BMap.Overlay} 触发事件的元素,
                    * <br />"<b>type</b>：{String} 事件类型,
-                   * <br />"<b>point</b>：{BMap.Point} 鼠标的物理坐�?
+                   * <br />"<b>point</b>：{BMap.Point} 鼠标的物理坐标,
                    * <br />"<b>pixel</b>：{BMap.Pixel} 鼠标的像素坐标}
                    *
                    * @example <b>参考示例：</b>
@@ -2552,7 +2644,7 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
                   isMouseDown = true;
                   // 设置拖拽开始的鼠标手型
                   me._setCursor("dragstart");
-                  // 拖拽开始时，设置鼠标捕�?
+                  // 拖拽开始时，设置鼠标捕获
                   me._container.setCapture && me._container.setCapture();
                   // 拖拽过程中防止文字被选中
                   me._container.style['MozUserSelect'] = 'none';
@@ -2602,15 +2694,15 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
            * 删除Marker
            * 
            * @private
-           * @return 无返回�?
+           * @return 无返回值
            */
           RichMarker.prototype.remove = function () {
               _dispatchEvent(this, "onremove");
-              // 清除主容器上的事件绑�?
+              // 清除主容器上的事件绑定
               if (this._container) {
                   _purge(this._container);
               }
-              // 删除主容�?
+              // 删除主容器
               if (this._container && this._container.parentNode) {
                   this._container.parentNode.removeChild(this._container);
               }
@@ -2620,9 +2712,9 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
            * 集中派发事件函数
            *
            * @private
-           * @param {Object} instance 派发事件的实�?
+           * @param {Object} instance 派发事件的实例
            * @param {String} type 派发的事件名
-           * @param {Json} opts 派发事件里添加的参数，可�?
+           * @param {Json} opts 派发事件里添加的参数，可选
            */
           function _dispatchEvent(instance, type, opts) {
               type.indexOf("on") != 0 && (type = "on" + type);
@@ -2636,7 +2728,7 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
           }
 
           /**
-           * 清理DOM事件，防止循环引�?
+           * 清理DOM事件，防止循环引用
            *
            * @type {DOM} dom 需要清理的dom对象
            */
@@ -2690,112 +2782,6 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
 }());
 
 (function() {
-  "use strict";
-  angular.module('config', [
-    'environmentConfig',
-    'constant',
-    'httpRelConfig'
-  ]);
-
-}());
-
-(function() {
-    "use strict";
-    angular.module('constant', [])
-        .constant('Path',{
-            'ParentRolePath':'tabs.childrenSteam',
-            'OrganizerRolePath':'tabs.organizer',
-            'TeacherRolePath':'tabs.message',
-            'VisitorRolePath':'tabs.map'
-        })
-        .constant('Role',{
-            'visitor':'-1',
-            'Organizer':'1',
-            'Parent':'2',
-            'Teacher':'3',
-            'Children':'4',
-            'ThirdParty':'5',
-            'Consultant':'6'
-        })
-        .constant('Weixin', {
-        })
-        .constant('AUTH_EVENTS', {
-            loginSuccess: 'auth-login-success',
-            loginFailed: 'auth-login-failed',
-            logoutSuccess: 'auth-logout-success',
-            sessionTimeout: 'auth-session-timeout',
-            notAuthenticated: 'auth-not-authenticated',
-            notAuthorized: 'auth-not-authorized'
-        })
-        .constant('ErrorMessage', {
-            ACCESS_FAIL: '通讯异常，请稍后再试�?,
-            TOKEN_INVALID: '连接超时，请重新登录�?
-        })
-        .constant('SuccessMessage', {
-            SUBMIT_SUCESS: '提交成功',
-            OPERATION_SUCESS:'操作完成'
-        });
-}());
-
-(function() {
-    "use strict";
-    angular.module('environmentConfig', [])
-        .constant('Constants', {
-            'appTitle':'肯特育园',
-            'company':'深圳知行信息技术开发有限公�?,
-            'serverUrl': 'http://wx.zxing-tech.cn/api/v1/',
-            'eshopApiUrl': 'http://api.mall.zxing-tech.cn/v2/',
-            'dfsUrl': 'http://wx.zxing-tech.cn/',
-            'buildID': '20170614v1',
-            'ENVIRONMENT':'release'
-        });
-}());
-//'serverUrl': 'http://120.76.226.47/api/v2/',
-//    'dfsUrl': 'http://120.76.226.47/',
-//http://localhost:8090/
-//http://wx.zxing-tech.cn
-
-(function() {
-    "use strict";
-    angular.module('httpDevConfig', [])
-        .config(function($httpProvider) {
-            $httpProvider.defaults.headers.post["Content-Type"] = "application/x-www-form-urlencoded";
-            $httpProvider.defaults.headers.put["Content-Type"] = "application/x-www-form-urlencoded";
-        });
-}());
-
-(function() {
-    "use strict";
-    angular.module('httpRelConfig', [])
-    .config(function($httpProvider) {
-        $httpProvider.defaults.cache = false;
-        if (!$httpProvider.defaults.headers.get) {
-           $httpProvider.defaults.headers.get = {};
-        }
-        // disable IE ajax request caching
-        $httpProvider.defaults.headers.get['If-Modified-Since'] = '0';
-
-        // Disable IE ajax request caching
-        $httpProvider.defaults.headers.get['Cache-Control'] = 'no-cache';
-        $httpProvider.defaults.headers.get['Pragma'] = 'no-cache';
-    });
-}());
-
-Date.prototype.Format = function(fmt) {
-    var o = {
-        "M+": this.getMonth() + 1, //月份
-        "d+": this.getDate(), //�?        "h+": this.getHours(), //小时
-        "m+": this.getMinutes(), //�?        "s+": this.getSeconds(), //�?        "q+": Math.floor((this.getMonth() + 3) / 3), //季度
-        "S": this.getMilliseconds() //毫秒
-    };
-    if (/(y+)/.test(fmt))
-        fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
-    for (var k in o)
-        if (new RegExp("(" + k + ")").test(fmt))
-            fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
-    return fmt;
-};
-(function() {
     "use strict";
     angular.module('modules', [
         'LoginModule',
@@ -2829,6 +2815,23 @@ Date.prototype.Format = function(fmt) {
 
 }());
 
+Date.prototype.Format = function(fmt) {
+    var o = {
+        "M+": this.getMonth() + 1, //月份
+        "d+": this.getDate(), //日
+        "h+": this.getHours(), //小时
+        "m+": this.getMinutes(), //分
+        "s+": this.getSeconds(), //秒
+        "q+": Math.floor((this.getMonth() + 3) / 3), //季度
+        "S": this.getMilliseconds() //毫秒
+    };
+    if (/(y+)/.test(fmt))
+        fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+    for (var k in o)
+        if (new RegExp("(" + k + ")").test(fmt))
+            fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+    return fmt;
+};
 (function() {
   "use strict";
   angular.module('tools', []).service('tools', tools);
@@ -2844,11 +2847,16 @@ Date.prototype.Format = function(fmt) {
                versions: function () {
                    var u = navigator.userAgent,
                        app = navigator.appVersion;
-                   return { //移动终端浏览器版本信�?                       trident: u.indexOf('Trident') > -1, //IE内核
+                   return { //移动终端浏览器版本信息
+                       trident: u.indexOf('Trident') > -1, //IE内核
                        presto: u.indexOf('Presto') > -1, //opera内核
-                       webKit: u.indexOf('AppleWebKit') > -1, //苹果、谷歌内�?                       gecko: u.indexOf('Gecko') > -1 && u.indexOf('KHTML') == -1, //火狐内核
-                       mobile: !!u.match(/AppleWebKit.*Mobile.*/), //是否为移动终�?                       ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
-                       android: u.indexOf('Android') > -1 || u.indexOf('Linux') > -1, //android终端或uc浏览�?                       iPhone: u.indexOf('iPhone') > -1, //是否为iPhone或者QQHD浏览�?                       iPad: u.indexOf('iPad') > -1, //是否iPad
+                       webKit: u.indexOf('AppleWebKit') > -1, //苹果、谷歌内核
+                       gecko: u.indexOf('Gecko') > -1 && u.indexOf('KHTML') == -1, //火狐内核
+                       mobile: !!u.match(/AppleWebKit.*Mobile.*/), //是否为移动终端
+                       ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
+                       android: u.indexOf('Android') > -1 || u.indexOf('Linux') > -1, //android终端或uc浏览器
+                       iPhone: u.indexOf('iPhone') > -1, //是否为iPhone或者QQHD浏览器
+                       iPad: u.indexOf('iPad') > -1, //是否iPad
                        webApp: u.indexOf('Safari') == -1 //是否web应该程序，没有头部与底部
                    };
                }(),
@@ -2869,406 +2877,6 @@ Date.prototype.Format = function(fmt) {
 
       return tools;
     };
-
-}());
-
-(function() {
-  "use strict";
-  angular.module('childrenModule', [
-    'childrenCtrl',
-    'childrenRouter',
-    'childrenService'
-  ]);
-
-}());
-
-(function() {
-    "use strict";
-    angular.module('childrenCtrl', [])
-        .controller('childrenCtrl', function($scope, Constants,childrenService,AuthService,Session, StateService,$ionicModal, $ionicSlideBoxDelegate) {
-            'ngInject';
-            console.log("childrenCtrl");
-            var vm = this;
-            vm.activated = false;
-            vm.parent={};
-            vm.fingerprintLogs=[];
-            vm.fingerprintLogSample=[];
-            vm.messages=[];
-            vm.simpleFilter='';
-            vm.offset=0;
-            vm.limit=30;
-            vm.canLoadMore=true;
-            $scope.$on('$ionicView.afterEnter', activate);
-
-            function activate() {
-                vm.activated = true;
-                vm.version = Constants.buildID;
-                //从微信获取家长的基本信息
-                vm.getWechatInfo(AuthService.getWechatId());
-                //vm.parent.wechat={
-                //    "nickname": "Band",
-                //    "sex": 1,
-                //    "language": "zh_CN",
-                //    "city": "广州",
-                //    "province": "广东",
-                //    "country": "中国",
-                //    "headimgurl":  "http://wx.qlogo.cn/mmopen/g3MonUZtNHkdmzicIlibx6iaFqAc56vxLSUfpb6n5WKSYVY0ChQKkiaJSgQ1dZuTOgvLLrhJbERQQ4eMsv84eavHiaiceqxibJxCfHe/0"
-                //};
-                vm.getChildrenInfo(AuthService.getLoginID(),vm.offset,vm.limit);
-
-                vm.getChildren();
-            };
-
-            vm.doRefresh = function(offset){
-                vm.getChildrenInfo(AuthService.getLoginID(),offset,vm.limit);
-            };
-
-            vm.getChildrenInfo = function(pId,offset,limit){
-                childrenService.getChildrenAllInfo(pId,offset,limit).then(function(data) {
-                    if (data.errno == 0) {
-                        console.log("getChildrenAllInfo: ");
-                        console.log(data.data);
-                        if(vm.messages.length == 0)
-                            vm.messages=data.data;
-                        else
-                            vm.messages=vm.messages.concat(data.data);
-                        console.log(vm.messages);
-                        vm.offset+=data.data.length;
-                        if(data.data.length < vm.limit){
-                            console.log("it is the last data");
-                            vm.canLoadMore = false;
-                        }else{
-                            vm.canLoadMore = true;
-                        }
-                        $scope.$broadcast('scroll.refreshComplete');
-                        $scope.$broadcast('scroll.infiniteScrollComplete');
-                    }else{
-                        console.log(data);
-                    }
-                });
-            };
-
-            vm.getWechatInfo = function(wId){
-                console.log("wechat id : "+wId);
-                childrenService.getWechatInfo(wId).then(function(data) {
-                    if (data.errno == 0) {
-                        console.log("wechat info: ");
-                        console.log(data.data);
-                        vm.parent.wechat = data.data;
-                    }
-                });
-            };
-
-            vm.getImg = function(type){
-                if(type == 1){
-                    return {name:"就餐",src:"img/dinner.png"};
-                }else if(type == 2){
-                    return {name:"培训",src:"img/traning.png"};
-                }else if(type == 3){
-                    return {name:"活动",src:"img/play.png"};
-                }else if(type == 4){
-                    return {name:"作业",src:"img/homework.png"};
-                }else if(type == 5){
-                    return {name:"接入",src:"img/login.png"};
-                }else if(type == 6){
-                    return {name:"送到",src:"img/logout.png"};
-                }else{
-                    return {name:"未知信息类型",src:"img/unknown.png"};
-                }
-            };
-
-            vm.goPhoto=function(msgIndex,index){
-                Session.setData('temp',vm.msg[msgIndex]);
-                StateService.go("photo",{index:index});
-            };
-
-            vm.star = function(){
-                console.log("add star");
-            };
-
-            vm.getChildren = function(){
-                childrenService.getChildren(AuthService.getLoginID()).then(function(data) {
-                    var title="";
-                    if (data.errno == 0) {
-                        console.log(data.data);
-                        vm.childs = data.data;
-                        for(var i=0;i<vm.childs.length;i++){
-                            if(i==vm.childs.length-1)
-                                title+=(vm.childs[i].name+"的家�?);
-                            else
-                                title+=(vm.childs[i].name+",");
-                            //vm.getMsg(vm.childs[i].uid);
-                            //vm.getChildSignIn(vm.childs[i].uid,vm.childs[i].name);
-                        }
-                        vm.parent.title=title;
-                    }
-                    //vm.fingerprintLogs.sort(function(a,b){return a.log-b.log});
-                });
-            };
-
-            vm.change = function(){
-                if(vm.simpleFilterSelect==='-1'){
-                    vm.simpleFilter="";
-                }else if(vm.simpleFilterSelect==='0'){
-                    vm.simpleFilter={datatype:'2'};
-                }else if(vm.simpleFilterSelect==='1'){
-                    vm.simpleFilter={datatype:'1',InfoType:'1'};
-                }else if(vm.simpleFilterSelect==='2'){
-                    vm.simpleFilter={datatype:'1',InfoType:'2'};
-                }else if(vm.simpleFilterSelect==='3'){
-                    vm.simpleFilter={datatype:'1',InfoType:'3'};
-                }else if(vm.simpleFilterSelect==='4'){
-                    vm.simpleFilter={datatype:'1',InfoType:'4'};
-                }else if(vm.simpleFilterSelect==='5'){
-                    vm.simpleFilter={datatype:'1',InfoType:'5'};
-                }else if(vm.simpleFilterSelect==='6'){
-                    vm.simpleFilter={datatype:'1',InfoType:'6'};
-                }
-            };
-
-            vm.getImages=function(msg){
-                vm.imgCount=0;
-                if(msg.PhotoLink1!=null && msg.PhotoLink1!=""){
-                    var data={src:msg.PhotoLink1,msg:''};
-                    vm.images[vm.imgCount]=data;
-                    vm.imgCount++;
-                }
-                if(msg.PhotoLink2!=null && msg.PhotoLink2!=""){
-                    var data={src:msg.PhotoLink2,msg:''};
-                    vm.images[vm.imgCount]=data;
-                    vm.imgCount++;
-                }
-                if(msg.PhotoLink3!=null && msg.PhotoLink3!=""){
-                    var data={src:msg.PhotoLink3,msg:''};
-                    vm.images[vm.imgCount]=data;
-                    vm.imgCount++;
-                }
-                if(msg.PhotoLink4!=null && msg.PhotoLink4!=""){
-                    var data={src:msg.PhotoLink4,msg:''};
-                    vm.images[vm.imgCount]=data;
-                    vm.imgCount++;
-                }
-                if(msg.PhotoLink5!=null && msg.PhotoLink5!=""){
-                    var data={src:msg.PhotoLink5,msg:''};
-                    vm.images[vm.imgCount]=data;
-                    vm.imgCount++;
-                }
-                if(msg.PhotoLink6!=null && msg.PhotoLink6!=""){
-                    var data={src:msg.PhotoLink6,msg:''};
-                    vm.images[vm.imgCount]=data;
-                    vm.imgCount++;
-                }
-                console.log(vm.images);
-            };
-
-            $ionicModal.fromTemplateUrl('message/image-modal.html', {
-                scope: $scope,
-                animation: 'slide-in-up'
-            }).then(function(modal) {
-                $scope.modal = modal;
-            });
-
-            $scope.openModal = function() {
-                $ionicSlideBoxDelegate.slide(0);
-                $scope.modal.show();
-            };
-
-            $scope.closeModal = function() {
-                $scope.modal.hide();
-            };
-
-            // Cleanup the modal when we're done with it!
-            $scope.$on('$destroy', function() {
-                $scope.modal.remove();
-            });
-            // Execute action on hide modal
-            $scope.$on('modal.hide', function() {
-                // Execute action
-            });
-            // Execute action on remove modal
-            $scope.$on('modal.removed', function() {
-                // Execute action
-            });
-            $scope.$on('modal.shown', function() {
-                console.log('Modal is shown!');
-            });
-
-            // Call this functions if you need to manually control the slides
-            $scope.next = function() {
-                $ionicSlideBoxDelegate.next();
-            };
-
-            $scope.previous = function() {
-                $ionicSlideBoxDelegate.previous();
-            };
-
-            $scope.goToSlide = function(index,msg) {
-                vm.images=[];
-                vm.getImages(msg);
-                $scope.modal.show();
-                $ionicSlideBoxDelegate.slide(index);
-            };
-
-            // Called each time the slide changes
-            $scope.slideChanged = function(index) {
-                $scope.slideIndex = index;
-            };
-
-        });
-}());
-
-(function() {
-  'use strict';
-
-  angular.module('childrenRouter', [])
-    .config(myRouter);
-
-
-  function myRouter($stateProvider, $urlRouterProvider) {
-    'ngInject';
-    $stateProvider
-      .state('tabs.children', {
-        url: "/children",
-          views: {
-            'tab-children': {
-              templateUrl: 'children/children.html',
-              controller: 'childrenCtrl',
-              controllerAs: 'vm'
-            }
-          }
-      })
-      .state('tabs.childrenSignIn', {
-        url: "/childrenSignIn",
-        views: {
-          'tab-children': {
-            templateUrl: 'children/childrenSignIn.html',
-            controller: 'childrenCtrl',
-            controllerAs: 'vm'
-          }
-        }
-      });
-  }
-}());
-
-(function() {
-  'use strict';
-
-  angular.module('childrenService', [])
-    .factory('childrenService', childrenService);
-
-  function childrenService( $q, $http,Constants,ResultHandler) {
-    'ngInject';
-    var service = {
-      getMsg:getMsg,
-      getChildrenMsg:getChildrenMsg,
-      getChildren:getChildren,
-      getChildSignIn:getChildSignIn,
-      getChildrenSignIn:getChildrenSignIn,
-      getWechatInfo:getWechatInfo,
-      getChildrenAllInfo:getChildrenAllInfo
-    };
-
-    //字段�?类型	备注
-    //InfoID 	int64 	信息编号，自增即�?    //PublisherID 	int64 	发布老师的账�?    //DepositID 	int64 	托管机构账号
-    //Longitude 	float 	信息发布的位置经�?    //Latitude 	float 	信息发布的位置纬�?    //ClickCount 	int64 	总浏览次�?    //InfoType 	int32 	信息类型�?：就餐；2：培训；3：活动；4：作业）
-    //Description 	varchar2 	老师的描述，不超�?000�?    //PhotoLink1 	varchar2 	照片/视频1的信�?    //PhotoLink2 	varchar2 	照片/视频2的信�?    //PhotoLink3 	varchar2 	照片/视频3的信�?    //PhotoLink4 	varchar2 	照片/视频4的信�?    //PhotoLink5 	varchar2 	照片/视频5的信�?    //PhotoLink6 	varchar2 	照片/视频6的信�?    //Status	int	1:正常发布�?:撤回,
-    //CreateTime 	datetime 	创建时间
-
-
-    /*
-     GET /api/v1/children/information/{$childuid}
-     return
-     {
-     "errno":0,
-     "error":"",
-     "data":{
-     "childuid":41000001,
-     "childname":"xxx",
-     "childavatarlink":"http://xxxxxxx.jpg",
-     "timeline":[
-     {
-     "timestamp":1468051200,
-     "actiontype":0,
-     "actionname":"signin",
-     "actiondata":{}
-     },
-     {
-     "timestamp":146805200,
-     "actiontype":1,
-     "actionname":"dining",
-     "actiondata":{
-     "imgs":["http://xxxxxxxxxx1.jpg", "http://xxxxxxxxx2.jpg",...],
-     "desc":"孩子们愉快的享受着美味"
-     }
-     },
-     ]
-     "signin":1468051200,
-     "name":"yyy",
-     "avatarlink":"http://yyyyyyyyyyy.jpg",
-     }
-     ]
-     }
-     */
-    function getMsg(childId) {
-        var url = Constants.serverUrl + 'parent/children/information/'+childId;
-        return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
-    };
-
-    /*
-     GET /api/v1/parent/childrenlist/{$parentuid}
-     return
-     {
-     "errno":0,
-     "error":"",
-     "data":[
-     {
-     "uid":41000001,
-     "name":"xxx",
-     "avatarlink":"http://xxxxxxx.jpg",
-     },
-     {
-     "uid":41000002,
-     "name":"yyy",
-     "avatarlink":"http://yyyyyyyyyyy.jpg",
-     }
-     ]
-     }
-     */
-    function getChildren(parentId) {
-        var url = Constants.serverUrl + 'parent/childrenList/'+parentId;
-        return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
-    };
-
-    function getChildSignIn(childId) {
-        var url = Constants.serverUrl + 'parent/children/signin/'+childId;
-        return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
-    };
-
-    function getChildrenMsg(parentId) {
-        var url = Constants.serverUrl + 'parent/children/allInformation/'+parentId;
-        return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
-    };
-
-    function getChildrenSignIn(parentId) {
-        var url = Constants.serverUrl + 'parent/children/allSignin/'+parentId;
-        return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
-    };
-
-    function getChildrenAllInfo(parentId,offset,count){
-        var url = Constants.serverUrl + 'parent/childrenInformation/fetch/'+parentId+'?offset='+offset+'&limitcount='+count;
-        return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
-    }
-
-    function getWechatInfo(wid) {
-        var url = Constants.serverUrl + 'wechat/'+wid;
-        return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
-    };
-
-    return service;
-
-
-  }
-
 
 }());
 
@@ -3322,7 +2930,7 @@ Date.prototype.Format = function(fmt) {
             vm.next=function(){
                 if(vm.page==5){
                     //save data
-                    //alert('尚未开�?);
+                    //alert('尚未开放');
                     console.log(vm.child.birthday);
                     var date=new Date();
                     console.log(vm.child.birthday.getTime());
@@ -3423,7 +3031,8 @@ Date.prototype.Format = function(fmt) {
                 //console.log("valid = "+valid+" dirty = "+dirty);
                 if (valid && dirty) {
 
-                    //日期转为日期格式字符�?                    vm.child.Birthday = vm.child.Birthday && $filter('date')(vm.child.Birthday, "yyyy-MM-dd hh:mm");
+                    //日期转为日期格式字符串
+                    vm.child.Birthday = vm.child.Birthday && $filter('date')(vm.child.Birthday, "yyyy-MM-dd hh:mm");
 
                     //save
                     if (vm.type == '1') {
@@ -3446,7 +3055,7 @@ Date.prototype.Format = function(fmt) {
                     }
                 }else{
                     if(!valid){
-                        MessageToaster.info("内容不全，无法更�?);
+                        MessageToaster.info("内容不全，无法更新");
                     }else if(!dirty) {
                         MessageToaster.info("无内容修改，无需更新");
                     }
@@ -3511,7 +3120,8 @@ Date.prototype.Format = function(fmt) {
             };
 
             vm.newChild2=function(){
-                //创建新的孩子信息,使用新局部编写界�?                $ionicListDelegate.closeOptionButtons();
+                //创建新的孩子信息,使用新局部编写界面
+                $ionicListDelegate.closeOptionButtons();
                 StateService.go('childrenAdd');
             };
 
@@ -3710,43 +3320,68 @@ Date.prototype.Format = function(fmt) {
 
 (function() {
   "use strict";
-  angular.module('childrenSteamModule', [
-    'childrenSteamCtrl',
-    'childrenSteamRouter',
-    'childrenSteamService',
-    'videoCtrl'
+  angular.module('commentModule', [
+    'commentService'
   ]);
 
 }());
 
-(function () {
+(function() {
+  'use strict';
+
+  angular.module('commentService', [])
+    .factory('commentService', commentService);
+
+  function commentService($q, $http, Constants, ResultHandler) {
+    'ngInject';
+    var service = {
+        queryDepositComment:queryDepositComment
+    };
+
+    //http://172.18.1.166/api/v1/comment/deposit/fetch/:depositid
+    function queryDepositComment(id) {
+        var url = Constants.serverUrl + 'comment/deposit/fetch/'+id;
+        return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
+    };
+
+    return service;
+  }
+
+}());
+
+(function() {
+  "use strict";
+  angular.module('childrenModule', [
+    'childrenCtrl',
+    'childrenRouter',
+    'childrenService'
+  ]);
+
+}());
+
+(function() {
     "use strict";
-    angular.module('childrenSteamCtrl', [])
-        .controller('childrenSteamCtrl', function ($scope, $ionicPopup, $sce,$stateParams, Constants, childrenService, childrenSteamService, AuthService, Session, StateService, $ionicModal, $ionicSlideBoxDelegate) {
+    angular.module('childrenCtrl', [])
+        .controller('childrenCtrl', function($scope, Constants,childrenService,AuthService,Session, StateService,$ionicModal, $ionicSlideBoxDelegate) {
             'ngInject';
-            console.log("childrenSteamCtrl");
+            console.log("childrenCtrl");
             var vm = this;
             vm.activated = false;
-            vm.parent = {};
-            vm.deposits = {};
-            vm.fingerprintLogs = [];
-            vm.messages = [];
-            vm.cameras = [];
-            vm.unPaid = false,
-            vm.myComment;
-            vm.simpleFilter = '';
-            vm.offset = [0, 0, 0];
-            vm.limit = 30;
-            vm.error = '';
-            vm.canLoadMore = true;
+            vm.parent={};
+            vm.fingerprintLogs=[];
+            vm.fingerprintLogSample=[];
+            vm.messages=[];
+            vm.simpleFilter='';
+            vm.offset=0;
+            vm.limit=30;
+            vm.canLoadMore=true;
             $scope.$on('$ionicView.afterEnter', activate);
-            vm.steam = 0;
+
             function activate() {
                 vm.activated = true;
                 vm.version = Constants.buildID;
-                vm.user = AuthService.getLoginID();
                 //从微信获取家长的基本信息
-                //vm.getWechatInfo(AuthService.getWechatId());
+                vm.getWechatInfo(AuthService.getWechatId());
                 //vm.parent.wechat={
                 //    "nickname": "Band",
                 //    "sex": 1,
@@ -3756,242 +3391,43 @@ Date.prototype.Format = function(fmt) {
                 //    "country": "中国",
                 //    "headimgurl":  "http://wx.qlogo.cn/mmopen/g3MonUZtNHkdmzicIlibx6iaFqAc56vxLSUfpb6n5WKSYVY0ChQKkiaJSgQ1dZuTOgvLLrhJbERQQ4eMsv84eavHiaiceqxibJxCfHe/0"
                 //};
-                //vm.getChildrenInfo(AuthService.getLoginID(),vm.offset,vm.limit);
-                //vm.getChildren();
-                vm.getChildrenDeposit();
+                vm.getChildrenInfo(AuthService.getLoginID(),vm.offset,vm.limit);
 
-                //如果是通知消息进来，直接根据通知消息参数打开指定页面
-                var index = $stateParams.index;;
-                vm.steam =index || Session.getData('steam');
-                if (vm.steam === null) {
-                    vm.steam = 1;
-                    console.log('steam = ' + vm.steam);
-                }
-
-                //转为数字
-                vm.steam = parseInt(vm.steam);
-
-
-                vm.changeSteam(vm.steam);
+                vm.getChildren();
             };
 
-            vm.changeSteam = function (index) {
-                vm.steam = index;
-                Session.setData('steam', index);
-                vm.canLoadMore = true;
-                if (index === 0) {
-                    vm.showCamera = true;
-                    vm.showFingerPrint = false;
-                    vm.showNotificatin = false;
-                    if (vm.cameras.length === 0) vm.getCamera();
-                } else if (index === 1) {
-                    vm.showCamera = false;
-                    vm.showFingerPrint = true;
-                    vm.showNotificatin = false;
-                    console.log('fingerprintLogs = ' + vm.fingerprintLogs);
-                    if (vm.fingerprintLogs.length === 0) vm.getFingerPrint(0, vm.limit);
-                } else if (index === 2) {
-                    vm.showCamera = false;
-                    vm.showFingerPrint = false;
-                    vm.showNotificatin = true;
-                    if (vm.messages.length === 0) vm.getMessage(0, vm.limit);
-                }
+            vm.doRefresh = function(offset){
+                vm.getChildrenInfo(AuthService.getLoginID(),offset,vm.limit);
             };
 
-            vm.watchVideo = function (video, name) {
-                video.deposit_name = name;
-                Session.setData('video', JSON.stringify(video));
-                StateService.go('video');
-            };
-
-            vm.getChildrenDeposit = function () {
-                childrenSteamService.getChildrenDeposit(AuthService.getLoginID()).then(function (data) {
-                    if (data.errno == 0) {
-                        console.log(data.data);
-                        vm.deposits = data.data;
-                    }else {
-                        vm.unPaid = true;
-                        vm.error = data.error;
-                    }
-                });
-            };
-
-            vm.getCamera = function () {
-              console.log("getCamera "+ vm.steam);
-                var count = 1,
-                    depositsCount = vm.deposits.length;
-                vm.canLoadMore = false;
-                vm.cameras = [];
-                if(typeof(depositsCount) == "undefined"){
-                    console.log("Camera = "+ depositsCount);
-                    vm.canLoadMore = false;
-                    $scope.$broadcast('scroll.refreshComplete');
-                    $scope.$broadcast('scroll.infiniteScrollComplete');
-                }
-                //获取摄像头信�?                for (var i = 0; i < depositsCount; i++) {
-                    var id = vm.deposits[i].DepositID;
-                    //get camera
-                    if (id != null) {
-                        //console.log('http://v.zxing-tech.cn/?v='+id);
-                        //vm.cameraSrc = $sce.trustAsResourceUrl('http://v.zxing-tech.cn/?v='+id);
-                        childrenSteamService.getCamera(id).then(function (data) {
-                            //if(data.data.length<vm.limit){vm.canLoadMore = false;}
-                            vm.cameras[vm.cameras.length] = data.data;
-
-                            if (data.errno === 16005) {
-                                vm.unPaid = true;
-
-                            }
-
-                            count += 1;
-                            if (count === depositsCount) {
-                                $scope.$broadcast('scroll.refreshComplete');
-                                $scope.$broadcast('scroll.infiniteScrollComplete');
-                            }
-
-                        }, function (e) {
-                            count += 1;
-                            if (count === depositsCount) {
-                                $scope.$broadcast('scroll.refreshComplete');
-                                $scope.$broadcast('scroll.infiniteScrollComplete');
-                            }
-                        });
-                    }
-                }
-            };
-
-            vm.getFingerPrint = function (offset, limit) {
-                console.log("getFingerPrint");
-                childrenSteamService.getAllChildrenSignIn(AuthService.getLoginID(), offset, limit).then(function (data) {
-                    if (data.errno == 0) {
-                        console.log(data.data);
-                        if(offset==0)vm.fingerprintLogs=[];
-                        if (vm.fingerprintLogs.length == 0)
-                            vm.fingerprintLogs = data.data;
-                        else
-                            vm.fingerprintLogs = vm.fingerprintLogs.concat(data.data);
-                        console.log(vm.fingerprintLogs);
-                        vm.offset[1] += data.data.length;
-                        if (data.data.length < vm.limit) {
-                            console.log("it is the last data");
-                            vm.canLoadMore = false;
-                        } else {
-                            vm.canLoadMore = true;
-                        }
-                    } else {
-                        console.log(data);
-                        if (data.errno === 16005) {
-                            vm.unPaid = true;
-                        }
-                        vm.canLoadMore = false;
-                    }
-
-                    //始终隐藏加载更多面板
-                    $scope.$broadcast('scroll.refreshComplete');
-                    $scope.$broadcast('scroll.infiniteScrollComplete');
-
-                }, function () {
-                    //始终隐藏加载更多面板
-                    vm.canLoadMore = false;
-                    $scope.$broadcast('scroll.refreshComplete');
-                    $scope.$broadcast('scroll.infiniteScrollComplete');
-                })
-            };
-
-            vm.getMessage = function (offset, limit) {
-                console.log("getMessage");
-                childrenSteamService.getAllChildrenMsg(AuthService.getLoginID(), offset, limit).then(function (data) {
-                    if (data.errno == 0) {
-                        console.log(data.data);
-                        if(offset==0)vm.messages=[];
-                        var start = 0;
-                        if (vm.messages.length == 0)
-                            vm.messages = data.data;
-                        else {
-                            start = vm.messages.length;
-                            vm.messages = vm.messages.concat(data.data);
-                        }
-                        console.log(vm.messages);
-                        //update comment
-                        for (var i = 0; i < data.data.length; i++) {
-                            //vm.messages[start+i]
-                            childrenSteamService.getDailyComment(vm.messages[start + i].InfoID, start + i).then(function (sdata) {
-                                if (data.errno == 0) {
-                                    console.log("getDailyComment: ");
-                                    console.log(sdata.data);
-                                    var index = sdata.data.index;
-                                    vm.messages[index].comments = sdata.data.comments;
-                                    vm.messages[index].likes = sdata.data.likes;
-                                }
-                            });
-                        }
-                        vm.offset[2] += data.data.length;
-                        if (data.data.length < vm.limit) {
-                            console.log("it is the last data");
-                            vm.canLoadMore = false;
-                        } else {
-                            vm.canLoadMore = true;
-                        }
-                        //$scope.$broadcast('scroll.refreshComplete');
-                        //$scope.$broadcast('scroll.infiniteScrollComplete');
-                    } else {
-                        console.log(data);
-                        if (data.errno == 16005) {
-                            vm.unPaid = true;
-                        }
-                        vm.canLoadMore = false;
-                    }
-
-                    //始终隐藏加载更多面板
-                    $scope.$broadcast('scroll.refreshComplete');
-                    $scope.$broadcast('scroll.infiniteScrollComplete');
-
-                }, function () {
-                    //始终隐藏加载更多面板
-                    $scope.$broadcast('scroll.refreshComplete');
-                    $scope.$broadcast('scroll.infiniteScrollComplete');
-                });
-            };
-
-            vm.doRefresh = function (type, offset) {
-              console.log(vm.steam +" - "+type+" = "+offset);
-                if (vm.steam === 0) {
-                    vm.getCamera();
-                } else if (vm.steam === 1) {
-                    vm.getFingerPrint(offset, vm.limit);
-                } else if (vm.steam === 2) {
-                    vm.getMessage(offset, vm.limit);
-                }
-            };
-
-            vm.getChildrenInfo = function (pId, offset, limit) {
-                childrenService.getChildrenAllInfo(pId, offset, limit).then(function (data) {
+            vm.getChildrenInfo = function(pId,offset,limit){
+                childrenService.getChildrenAllInfo(pId,offset,limit).then(function(data) {
                     if (data.errno == 0) {
                         console.log("getChildrenAllInfo: ");
                         console.log(data.data);
-                        if (vm.messages.length == 0)
-                            vm.messages = data.data;
+                        if(vm.messages.length == 0)
+                            vm.messages=data.data;
                         else
-                            vm.messages = vm.messages.concat(data.data);
+                            vm.messages=vm.messages.concat(data.data);
                         console.log(vm.messages);
-                        vm.offset += data.data.length;
-                        if (data.data.length < vm.limit) {
+                        vm.offset+=data.data.length;
+                        if(data.data.length < vm.limit){
                             console.log("it is the last data");
                             vm.canLoadMore = false;
-                        } else {
+                        }else{
                             vm.canLoadMore = true;
                         }
                         $scope.$broadcast('scroll.refreshComplete');
                         $scope.$broadcast('scroll.infiniteScrollComplete');
-                    } else {
+                    }else{
                         console.log(data);
                     }
                 });
             };
 
-            vm.getWechatInfo = function (wId) {
-                console.log("wechat id : " + wId);
-                childrenService.getWechatInfo(wId).then(function (data) {
+            vm.getWechatInfo = function(wId){
+                console.log("wechat id : "+wId);
+                childrenService.getWechatInfo(wId).then(function(data) {
                     if (data.errno == 0) {
                         console.log("wechat info: ");
                         console.log(data.data);
@@ -4000,195 +3436,103 @@ Date.prototype.Format = function(fmt) {
                 });
             };
 
-            vm.getImg = function (type) {
-                if (type == 1) {
-                    return { name: "就餐", src: "img/dinner.png" };
-                } else if (type == 2) {
-                    return { name: "培训", src: "img/traning.png" };
-                } else if (type == 3) {
-                    return { name: "活动", src: "img/play.png" };
-                } else if (type == 4) {
-                    return { name: "作业", src: "img/homework.png" };
-                } else if (type == 5) {
-                    return { name: "接入", src: "img/login.png" };
-                } else if (type == 6) {
-                    return { name: "送到", src: "img/logout.png" };
-                } else {
-                    return { name: "未知信息类型", src: "img/unknown.png" };
+            vm.getImg = function(type){
+                if(type == 1){
+                    return {name:"就餐",src:"img/dinner.png"};
+                }else if(type == 2){
+                    return {name:"培训",src:"img/traning.png"};
+                }else if(type == 3){
+                    return {name:"活动",src:"img/play.png"};
+                }else if(type == 4){
+                    return {name:"作业",src:"img/homework.png"};
+                }else if(type == 5){
+                    return {name:"接入",src:"img/login.png"};
+                }else if(type == 6){
+                    return {name:"送到",src:"img/logout.png"};
+                }else{
+                    return {name:"未知信息类型",src:"img/unknown.png"};
                 }
             };
 
-            vm.goPhoto = function (msgIndex, index) {
-                Session.setData('temp', vm.msg[msgIndex]);
-                StateService.go("photo", { index: index });
+            vm.goPhoto=function(msgIndex,index){
+                Session.setData('temp',vm.msg[msgIndex]);
+                StateService.go("photo",{index:index});
             };
 
-            vm.star = function () {
+            vm.star = function(){
                 console.log("add star");
             };
 
-            vm.getDailyComments = function (infoid, index) {
-                console.log("getDailyComments index = " + index);
-                childrenSteamService.getDailyComment(infoid, index).then(function (sdata) {
-                    if (sdata.errno == 0) {
-                        console.log("getDailyComment: ");
-                        console.log(sdata.data);
-                        var sindex = sdata.data.index;
-                        vm.messages[sindex].comments = sdata.data.comments;
-                        vm.messages[sindex].likes = sdata.data.likes;
-                    }
-                });
-            };
-
-            vm.like = function (info, index) {
-                //如果已经like，去like
-                //没有like，加like
-                console.log(info + " and index=" + index);
-                var needAdd = true;
-                for (var i = 0; i < info.likes.length; i++) {
-                    if (info.likes[i].CommentBy == vm.user) {
-                        //remove
-                        needAdd = false;
-                        childrenSteamService.delDailyComment(info.likes[i].CommentID).then(function (data) {
-                            console.log('rmComment likes');
-                            console.log(data);
-                            vm.getDailyComments(info.InfoID, index);
-                            return;
-                        });
-                    }
-                }
-                //add
-                if (needAdd) {
-                    var comment = { infoid: info.InfoID, commentby: vm.user, commentdata: null };
-                    childrenSteamService.createDailyComment(comment).then(function (data) {
-                        console.log('addComment likes');
-                        console.log(data);
-                        vm.getDailyComments(info.InfoID, index);
-                        return;
-                    });
-                }
-            };
-
-            vm.comment = function (info, index) {
-                console.log(info + " and index=" + index);
-                vm.showPopup(info, index);
-            };
-
-            vm.rmComment = function (comment, index) {
-                childrenSteamService.delDailyComment(comment.CommentID).then(function (data) {
-                    console.log('rmComment');
-                    console.log(data);
-                    vm.getDailyComments(comment.InfoID, index);
-                });
-            };
-
-            vm.showPopup = function (info, index) {
-                var myPopup = $ionicPopup.show({
-                    template: '<input type="edittext" ng-model="vm.myComment">',
-                    title: '请输入评论内�?,
-                    scope: $scope,
-                    buttons: [
-                      { text: '取消' },
-                      {
-                          text: '<b>提交</b>',
-                          type: 'button-positive',
-                          onTap: function (e) {
-                              if (!vm.myComment) {
-                                  e.preventDefault();
-                              } else {
-                                  return vm.myComment;
-                              }
-                          }
-                      }
-                    ]
-                });
-
-                myPopup.then(function (res) {
-                    console.log('Tapped!', res);
-                    //add comment
-                    if (res.length > 0) {
-                        var comment = { infoid: info.InfoID, commentby: vm.user, commentdata: res };
-                        childrenSteamService.createDailyComment(comment).then(function (data) {
-                            console.log('addComment comments');
-                            console.log(data);
-                            vm.myComment = null;
-                            vm.getDailyComments(info.InfoID, index);
-                            return;
-                        });
-                    }
-                });
-            };
-
-            vm.getChildren = function () {
-                childrenService.getChildren(AuthService.getLoginID()).then(function (data) {
-                    var title = "";
+            vm.getChildren = function(){
+                childrenService.getChildren(AuthService.getLoginID()).then(function(data) {
+                    var title="";
                     if (data.errno == 0) {
                         console.log(data.data);
                         vm.childs = data.data;
-                        for (var i = 0; i < vm.childs.length; i++) {
-                            if (i == vm.childs.length - 1)
-                                title += (vm.childs[i].name + "的家�?);
+                        for(var i=0;i<vm.childs.length;i++){
+                            if(i==vm.childs.length-1)
+                                title+=(vm.childs[i].name+"的家长");
                             else
-                                title += (vm.childs[i].name + ",");
+                                title+=(vm.childs[i].name+",");
                             //vm.getMsg(vm.childs[i].uid);
                             //vm.getChildSignIn(vm.childs[i].uid,vm.childs[i].name);
                         }
-                        vm.parent.title = title;
+                        vm.parent.title=title;
                     }
                     //vm.fingerprintLogs.sort(function(a,b){return a.log-b.log});
                 });
             };
 
-            vm.change = function () {
-                if (vm.simpleFilterSelect === '-1') {
-                    vm.simpleFilter = "";
-                } else if (vm.simpleFilterSelect === '0') {
-                    vm.simpleFilter = { datatype: '2' };
-                } else if (vm.simpleFilterSelect === '1') {
-                    vm.simpleFilter = { datatype: '1', InfoType: '1' };
-                } else if (vm.simpleFilterSelect === '2') {
-                    vm.simpleFilter = { datatype: '1', InfoType: '2' };
-                } else if (vm.simpleFilterSelect === '3') {
-                    vm.simpleFilter = { datatype: '1', InfoType: '3' };
-                } else if (vm.simpleFilterSelect === '4') {
-                    vm.simpleFilter = { datatype: '1', InfoType: '4' };
-                } else if (vm.simpleFilterSelect === '5') {
-                    vm.simpleFilter = { datatype: '1', InfoType: '5' };
-                } else if (vm.simpleFilterSelect === '6') {
-                    vm.simpleFilter = { datatype: '1', InfoType: '6' };
+            vm.change = function(){
+                if(vm.simpleFilterSelect==='-1'){
+                    vm.simpleFilter="";
+                }else if(vm.simpleFilterSelect==='0'){
+                    vm.simpleFilter={datatype:'2'};
+                }else if(vm.simpleFilterSelect==='1'){
+                    vm.simpleFilter={datatype:'1',InfoType:'1'};
+                }else if(vm.simpleFilterSelect==='2'){
+                    vm.simpleFilter={datatype:'1',InfoType:'2'};
+                }else if(vm.simpleFilterSelect==='3'){
+                    vm.simpleFilter={datatype:'1',InfoType:'3'};
+                }else if(vm.simpleFilterSelect==='4'){
+                    vm.simpleFilter={datatype:'1',InfoType:'4'};
+                }else if(vm.simpleFilterSelect==='5'){
+                    vm.simpleFilter={datatype:'1',InfoType:'5'};
+                }else if(vm.simpleFilterSelect==='6'){
+                    vm.simpleFilter={datatype:'1',InfoType:'6'};
                 }
             };
 
-            vm.getImages = function (msg) {
-                vm.imgCount = 0;
-                if (msg.PhotoLink1 != null && msg.PhotoLink1 != "") {
-                    var data = { src: msg.PhotoLink1, msg: '' };
-                    vm.images[vm.imgCount] = data;
+            vm.getImages=function(msg){
+                vm.imgCount=0;
+                if(msg.PhotoLink1!=null && msg.PhotoLink1!=""){
+                    var data={src:msg.PhotoLink1,msg:''};
+                    vm.images[vm.imgCount]=data;
                     vm.imgCount++;
                 }
-                if (msg.PhotoLink2 != null && msg.PhotoLink2 != "") {
-                    var data = { src: msg.PhotoLink2, msg: '' };
-                    vm.images[vm.imgCount] = data;
+                if(msg.PhotoLink2!=null && msg.PhotoLink2!=""){
+                    var data={src:msg.PhotoLink2,msg:''};
+                    vm.images[vm.imgCount]=data;
                     vm.imgCount++;
                 }
-                if (msg.PhotoLink3 != null && msg.PhotoLink3 != "") {
-                    var data = { src: msg.PhotoLink3, msg: '' };
-                    vm.images[vm.imgCount] = data;
+                if(msg.PhotoLink3!=null && msg.PhotoLink3!=""){
+                    var data={src:msg.PhotoLink3,msg:''};
+                    vm.images[vm.imgCount]=data;
                     vm.imgCount++;
                 }
-                if (msg.PhotoLink4 != null && msg.PhotoLink4 != "") {
-                    var data = { src: msg.PhotoLink4, msg: '' };
-                    vm.images[vm.imgCount] = data;
+                if(msg.PhotoLink4!=null && msg.PhotoLink4!=""){
+                    var data={src:msg.PhotoLink4,msg:''};
+                    vm.images[vm.imgCount]=data;
                     vm.imgCount++;
                 }
-                if (msg.PhotoLink5 != null && msg.PhotoLink5 != "") {
-                    var data = { src: msg.PhotoLink5, msg: '' };
-                    vm.images[vm.imgCount] = data;
+                if(msg.PhotoLink5!=null && msg.PhotoLink5!=""){
+                    var data={src:msg.PhotoLink5,msg:''};
+                    vm.images[vm.imgCount]=data;
                     vm.imgCount++;
                 }
-                if (msg.PhotoLink6 != null && msg.PhotoLink6 != "") {
-                    var data = { src: msg.PhotoLink6, msg: '' };
-                    vm.images[vm.imgCount] = data;
+                if(msg.PhotoLink6!=null && msg.PhotoLink6!=""){
+                    var data={src:msg.PhotoLink6,msg:''};
+                    vm.images[vm.imgCount]=data;
                     vm.imgCount++;
                 }
                 console.log(vm.images);
@@ -4197,61 +3541,53 @@ Date.prototype.Format = function(fmt) {
             $ionicModal.fromTemplateUrl('message/image-modal.html', {
                 scope: $scope,
                 animation: 'slide-in-up'
-            }).then(function (modal) {
+            }).then(function(modal) {
                 $scope.modal = modal;
             });
 
-            $scope.openModal = function () {
+            $scope.openModal = function() {
                 $ionicSlideBoxDelegate.slide(0);
                 $scope.modal.show();
             };
 
-            $scope.closeModal = function () {
+            $scope.closeModal = function() {
                 $scope.modal.hide();
             };
 
             // Cleanup the modal when we're done with it!
-            $scope.$on('$destroy', function () {
+            $scope.$on('$destroy', function() {
                 $scope.modal.remove();
             });
             // Execute action on hide modal
-            $scope.$on('modal.hide', function () {
+            $scope.$on('modal.hide', function() {
                 // Execute action
             });
             // Execute action on remove modal
-            $scope.$on('modal.removed', function () {
+            $scope.$on('modal.removed', function() {
                 // Execute action
             });
-            $scope.$on('modal.shown', function () {
+            $scope.$on('modal.shown', function() {
                 console.log('Modal is shown!');
             });
 
-            $scope.$on('scroll.refreshComplete', function () {
-                console.log('scroll.refreshComplete is call!');
-            });
-
-            $scope.$on('scroll.infiniteScrollComplete', function () {
-                console.log('scroll.infiniteScrollComplete is call!');
-            });
-
             // Call this functions if you need to manually control the slides
-            $scope.next = function () {
+            $scope.next = function() {
                 $ionicSlideBoxDelegate.next();
             };
 
-            $scope.previous = function () {
+            $scope.previous = function() {
                 $ionicSlideBoxDelegate.previous();
             };
 
-            $scope.goToSlide = function (index, msg) {
-                vm.images = [];
+            $scope.goToSlide = function(index,msg) {
+                vm.images=[];
                 vm.getImages(msg);
                 $scope.modal.show();
                 $ionicSlideBoxDelegate.slide(index);
             };
 
             // Called each time the slide changes
-            $scope.slideChanged = function (index) {
+            $scope.slideChanged = function(index) {
                 $scope.slideIndex = index;
             };
 
@@ -4261,28 +3597,32 @@ Date.prototype.Format = function(fmt) {
 (function() {
   'use strict';
 
-  angular.module('childrenSteamRouter', [])
+  angular.module('childrenRouter', [])
     .config(myRouter);
 
 
   function myRouter($stateProvider, $urlRouterProvider) {
     'ngInject';
     $stateProvider
-      .state('tabs.childrenSteam', {
-          url: "/childrenSteam?:index",
+      .state('tabs.children', {
+        url: "/children",
           views: {
-            'tab-childrenSteam': {
-              templateUrl: 'childrenSteam/childrenSteam.html',
-              controller: 'childrenSteamCtrl',
+            'tab-children': {
+              templateUrl: 'children/children.html',
+              controller: 'childrenCtrl',
               controllerAs: 'vm'
             }
           }
       })
-      .state('video', {
-        url: "/video",
-        templateUrl: 'childrenSteam/video.html',
-        controller: 'videoCtrl',
-        controllerAs: 'vm'
+      .state('tabs.childrenSignIn', {
+        url: "/childrenSignIn",
+        views: {
+          'tab-children': {
+            templateUrl: 'children/childrenSignIn.html',
+            controller: 'childrenCtrl',
+            controllerAs: 'vm'
+          }
+        }
       });
   }
 }());
@@ -4290,10 +3630,10 @@ Date.prototype.Format = function(fmt) {
 (function() {
   'use strict';
 
-  angular.module('childrenSteamService', [])
-    .factory('childrenSteamService', childrenSteamService);
+  angular.module('childrenService', [])
+    .factory('childrenService', childrenService);
 
-  function childrenSteamService( $q, $http,Constants,ResultHandler) {
+  function childrenService( $q, $http,Constants,ResultHandler) {
     'ngInject';
     var service = {
       getMsg:getMsg,
@@ -4302,20 +3642,25 @@ Date.prototype.Format = function(fmt) {
       getChildSignIn:getChildSignIn,
       getChildrenSignIn:getChildrenSignIn,
       getWechatInfo:getWechatInfo,
-      getChildrenAllInfo:getChildrenAllInfo,
-      getAllChildrenSignIn:getAllChildrenSignIn,
-      getAllChildrenMsg:getAllChildrenMsg,
-      getChildrenDeposit:getChildrenDeposit,
-      getDailyComment:getDailyComment,
-      createDailyComment:createDailyComment,
-      delDailyComment:delDailyComment,
-      getCamera:getCamera
+      getChildrenAllInfo:getChildrenAllInfo
     };
 
-    //字段�?类型	备注
-    //InfoID 	int64 	信息编号，自增即�?    //PublisherID 	int64 	发布老师的账�?    //DepositID 	int64 	托管机构账号
-    //Longitude 	float 	信息发布的位置经�?    //Latitude 	float 	信息发布的位置纬�?    //ClickCount 	int64 	总浏览次�?    //InfoType 	int32 	信息类型�?：就餐；2：培训；3：活动；4：作业）
-    //Description 	varchar2 	老师的描述，不超�?000�?    //PhotoLink1 	varchar2 	照片/视频1的信�?    //PhotoLink2 	varchar2 	照片/视频2的信�?    //PhotoLink3 	varchar2 	照片/视频3的信�?    //PhotoLink4 	varchar2 	照片/视频4的信�?    //PhotoLink5 	varchar2 	照片/视频5的信�?    //PhotoLink6 	varchar2 	照片/视频6的信�?    //Status	int	1:正常发布�?:撤回,
+    //字段名	类型	备注
+    //InfoID 	int64 	信息编号，自增即可
+    //PublisherID 	int64 	发布老师的账号
+    //DepositID 	int64 	托管机构账号
+    //Longitude 	float 	信息发布的位置经度
+    //Latitude 	float 	信息发布的位置纬度
+    //ClickCount 	int64 	总浏览次数
+    //InfoType 	int32 	信息类型（1：就餐；2：培训；3：活动；4：作业）
+    //Description 	varchar2 	老师的描述，不超出1000字
+    //PhotoLink1 	varchar2 	照片/视频1的信息
+    //PhotoLink2 	varchar2 	照片/视频2的信息
+    //PhotoLink3 	varchar2 	照片/视频3的信息
+    //PhotoLink4 	varchar2 	照片/视频4的信息
+    //PhotoLink5 	varchar2 	照片/视频5的信息
+    //PhotoLink6 	varchar2 	照片/视频6的信息
+    //Status	int	1:正常发布，2:撤回,
     //CreateTime 	datetime 	创建时间
 
 
@@ -4398,116 +3743,21 @@ Date.prototype.Format = function(fmt) {
         return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
     };
 
-    function getAllChildrenSignIn(parentId,offset,count) {
-        var url = Constants.serverUrl + 'parent/children/fp/'+parentId+'?offset='+offset+'&limitcount='+count;
-        return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
-    };
-
-    function getAllChildrenMsg(parentId,offset,count){
-        var url = Constants.serverUrl + 'parent/children/msg/'+parentId+'?offset='+offset+'&limitcount='+count;
-        return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
-    };
-
     function getChildrenAllInfo(parentId,offset,count){
         var url = Constants.serverUrl + 'parent/childrenInformation/fetch/'+parentId+'?offset='+offset+'&limitcount='+count;
         return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
-    };
+    }
 
     function getWechatInfo(wid) {
         var url = Constants.serverUrl + 'wechat/'+wid;
         return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
     };
 
-    function getChildrenDeposit(pid) {
-        var url = Constants.serverUrl + 'parent/children/deposit/'+pid;
-        return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
-    };
-
-    function getDailyComment(infoId,index) {
-        var url = Constants.serverUrl + 'dailyComment/'+infoId+'?index='+index;
-        return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
-    };
-
-    function createDailyComment(data) {
-        var url = Constants.serverUrl + 'dailyComment';
-        return $http({
-            method: 'post',
-            url: url,
-            data: data
-        }).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
-    };
-
-    function delDailyComment(id) {
-        var url = Constants.serverUrl + 'dailyComment/'+id;
-        return $http.delete(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
-    };
-
-    function getCamera(did){
-      //var url =  Constants.serverUrl +"cgi-bin/video.pl?did="+did;
-      var url =  Constants.serverUrl +"camera/"+did;
-      return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
-    };
-
     return service;
 
 
   }
 
-
-}());
-
-(function() {
-    "use strict";
-    angular.module('videoCtrl', [])
-        .controller('videoCtrl', function($scope, Session, StateService, Constants) {
-            'ngInject';
-
-            var vm = this;
-            vm.activated = false;
-
-            $scope.$on('$ionicView.afterEnter', activate);
-            function activate() {
-                vm.activated = true;
-                vm.version = Constants.buildID;
-                vm.video=JSON.parse(Session.getData('video'));
-
-                console.log(vm.video);
-            }
-
-            vm.back = function(){
-                StateService.back();
-            };
-        });
-}());
-
-(function() {
-  "use strict";
-  angular.module('commentModule', [
-    'commentService'
-  ]);
-
-}());
-
-(function() {
-  'use strict';
-
-  angular.module('commentService', [])
-    .factory('commentService', commentService);
-
-  function commentService($q, $http, Constants, ResultHandler) {
-    'ngInject';
-    var service = {
-        queryDepositComment:queryDepositComment
-    };
-
-    //http://172.18.1.166/api/v1/comment/deposit/fetch/:depositid
-    function queryDepositComment(id) {
-        var url = Constants.serverUrl + 'comment/deposit/fetch/'+id;
-        return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
-    };
-
-    return service;
-  }
 
 }());
 
@@ -4542,7 +3792,8 @@ Date.prototype.Format = function(fmt) {
             };
 
             vm.goTo=function(id,item){
-                //查看孩子的更多家长信息列�?                StateService.go('teacherEdit',{cid:id,type:0});
+                //查看孩子的更多家长信息列表
+                StateService.go('teacherEdit',{cid:id,type:0});
             };
 
             vm.queryChildren = function(){
@@ -4551,7 +3802,7 @@ Date.prototype.Format = function(fmt) {
                         console.log(data.data);
                         vm.children = data.data;
                     }else{
-                        MessageToaster.error("查不到任何数�?"+response.error);
+                        MessageToaster.error("查不到任何数据 "+response.error);
                     }
                 });
             };
@@ -4633,7 +3884,7 @@ Date.prototype.Format = function(fmt) {
                             vm.queryChildren(vm.teacher.depositid);
                         }
                     } else {
-                        MessageToaster.error("查不到任何数�?" + data.error);
+                        MessageToaster.error("查不到任何数据 " + data.error);
                     }
                 });
 
@@ -4644,7 +3895,8 @@ Date.prototype.Format = function(fmt) {
             };
 
             vm.goTo=function(id,item){
-                //查看孩子的更多家长信息列�?                StateService.go('teacherEdit',{cid:id,type:0});
+                //查看孩子的更多家长信息列表
+                StateService.go('teacherEdit',{cid:id,type:0});
             };
 
             vm.queryChildren = function(id){
@@ -4653,7 +3905,7 @@ Date.prototype.Format = function(fmt) {
                         console.log(data.data);
                         vm.children = data.data;
                     }else{
-                        MessageToaster.error("查不到任何数�?"+response.error);
+                        MessageToaster.error("查不到任何数据 "+response.error);
                     }
                 });
             };
@@ -4977,7 +4229,7 @@ angular.module('eshopService', [])
             'ngInject';
             var vm = this;
             vm.activated = false;
-            vm.text='确定要退�?;//'正在退�?..';
+            vm.text='确定要退出';//'正在退出...';
             $scope.$on('$ionicView.afterEnter', activate);
 
             function activate() {
@@ -4986,7 +4238,7 @@ angular.module('eshopService', [])
             }
 
             vm.exit=function(){
-                vm.text='正在退�?..';
+                vm.text='正在退出...';
                 if(AuthService.getLoginID().substring(0,1)=='2'){
                   Session.destroy();
                   StateService.clearAllAndGo("login");
@@ -4994,19 +4246,19 @@ angular.module('eshopService', [])
                   exitService.exit(AuthService.getLoginID()).then(function(data) {
                       if (data.errno == 0) {
                           console.log(data.data);
-                          vm.text='退�?;
+                          vm.text='退出';
                           //需清楚缓存
                           Session.destroy();
                           StateService.clearAllAndGo("register");
                           //StateService.clearAllAndGo(AuthService.getNextPath());
                       }else{
                           console.log(data.error);
-                          vm.text='未能退�?;
-                          MessageToaster.error('退出失�?);
+                          vm.text='未能退出';
+                          MessageToaster.error('退出失败');
                       }
                   },function(error){
                       console.log(error);
-                      vm.text='退出失�?;
+                      vm.text='退出失败';
                   });
                }
             };
@@ -5208,7 +4460,7 @@ angular.module('eshopService', [])
                         //WeuiModalLoading.hide();
                     });
                 } else {
-                    MessageToaster.error("请输入正确账号密�?);
+                    MessageToaster.error("请输入正确账号密码");
                 }
             }
 
@@ -5319,11 +4571,11 @@ angular.module('eshopService', [])
                         MessageToaster.info("请登录到你的邮箱查询你的新密码！");
                     }else{
                         if(data.errno==10009){
-                            MessageToaster.error("该账号邮箱格式错误，请联系管理员�?);
+                            MessageToaster.error("该账号邮箱格式错误，请联系管理员！");
                         }else if(data.errno==10010){
-                          MessageToaster.error("帐号未设置电子邮箱，无法重置密码�?);
+                          MessageToaster.error("帐号未设置电子邮箱，无法重置密码！");
                         }else if(data.errno==10002){
-                          MessageToaster.error("手机号未绑定任何账号�?);
+                          MessageToaster.error("手机号未绑定任何账号！");
                         }else{
                           MessageToaster.error(data.error);
                         }
@@ -5691,7 +4943,7 @@ angular.module('eshopService', [])
                 teacherService.queryTeacherDeposit(vm.id).then(function(data) {
                     console.log(data);
                     if(data!=null && data.data !=null && data.data.length>0)vm.deposit=data.data[0];
-                    else MessageToaster.error('找不到老师的机构信�?);
+                    else MessageToaster.error('找不到老师的机构信息');
                 });
             }
 
@@ -5699,7 +4951,7 @@ angular.module('eshopService', [])
                 if (vm.imgs.length > 0) {
                     vm.isClicked = true;
                     vm.btnText='正在提交';
-                    MessageToaster.info('上传信息中，请稍�?..');
+                    MessageToaster.info('上传信息中，请稍等...');
                     var data = vm.imgs[which];
                     if (data != null)messageService.postPhoto(data).then(function (e) {
                         console.log(e);
@@ -5718,7 +4970,7 @@ angular.module('eshopService', [])
                 }
             };
 
-            //infotype:信息类型�?：就餐；2：培训；3：活动；4：作业）
+            //infotype:信息类型（1：就餐；2：培训；3：活动；4：作业）
             vm.saveData=function(){
                 var data={
                     "depositid": Number(vm.deposit.depositid),
@@ -5888,7 +5140,7 @@ angular.module('eshopService', [])
         //        "edu_fire_safety":8,
         //        "teacher_responsibility":8
         //      },
-        //    "comments_text":"老师责任心很�?
+        //    "comments_text":"老师责任心很好"
         //}
         function saveDepositComment(data) {
             var url = Constants.serverUrl + 'comments/parent/deposit';
@@ -5914,7 +5166,7 @@ angular.module('eshopService', [])
         //            "edu_fire_safety":8,
         //            "teacher_responsibility":8
         //        },
-        //    "comments_text":"老师责任心很�?
+        //    "comments_text":"老师责任心很好"
         //    }
         //}
         function getDepositComment(pid,did) {
@@ -5922,7 +5174,8 @@ angular.module('eshopService', [])
             return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
         };
 
-        //3.获取总评�?        //总评分计算公式： 总评�?= 公司评分 * 40% + 所有家长的各项评分的总平均分 * 60%
+        //3.获取总评分
+        //总评分计算公式： 总评分 = 公司评分 * 40% + 所有家长的各项评分的总平均分 * 60%
         //GET
         //URL: /api/v1/comments/deposit/?depositid=10000001
         //Response Body:
@@ -6032,7 +5285,8 @@ angular.module('eshopService', [])
                             "border":"0"});
                         marker.setLabel(label);
                         marker.setTitle(newValue[1][i].title);
-                        vm.map.addOverlay(marker);              // 将标注添加到地图�?                        vm.addClickHandler(content,marker);
+                        vm.map.addOverlay(marker);              // 将标注添加到地图中
+                        vm.addClickHandler(content,marker);
                     }
                     console.log(vm.list);
                     //清空tmp
@@ -6040,7 +5294,8 @@ angular.module('eshopService', [])
                     //vm.show=true;
                     //显示在列表，
 
-                    //显示在图�?                }else if(newValue[0]!=null){
+                    //显示在图片
+                }else if(newValue[0]!=null){
                     console.log('get babyplan data');
                 }else if(newValue[1]!=null){
                     console.log('get baidu map data');
@@ -6057,7 +5312,8 @@ angular.module('eshopService', [])
                 var p = e.target;
                 var point = new BMap.Point(p.getPosition().lng, p.getPosition().lat);
                 var infoWindow = new BMap.InfoWindow(content,{enableCloseOnClick:true});  // 创建信息窗口对象
-                vm.map.openInfoWindow(infoWindow,point); //开启信息窗�?            };
+                vm.map.openInfoWindow(infoWindow,point); //开启信息窗口
+            };
 
             vm.getOrgContent = function(org){
                 var sContent =
@@ -6098,7 +5354,7 @@ angular.module('eshopService', [])
                         }
                     });
                 }else{
-                    MessageToaster.error("定位不成�?);
+                    MessageToaster.error("定位不成功");
                 }
             };
 
@@ -6107,7 +5363,8 @@ angular.module('eshopService', [])
                 var myPoint=null;
                 if(data!=null) {
                     var myGeo = new BMap.Geocoder();
-                    // 将地址解析结果显示在地图上,并调整地图视�?                    console.log(data);
+                    // 将地址解析结果显示在地图上,并调整地图视野
+                    console.log(data);
                     myGeo.getPoint(data, function (point) {
                         if (point) {
                             console.log("change address point");
@@ -6124,7 +5381,7 @@ angular.module('eshopService', [])
                             });
                             local.searchNearby('托管',myPoint, vm.distance);
                         } else {
-                            alert("您选择地址没有解析到结�?");
+                            alert("您选择地址没有解析到结果!");
                         }
                     }, vm.city);
                 }else{
@@ -6177,7 +5434,7 @@ angular.module('eshopService', [])
                         vm.city = r.address.city;
                         vm.map.setCurrentCity(vm.city);
                         vm.point = r.point;
-                        vm.map.centerAndZoom(vm.point , 15);  // 初始化地�?设置中心点坐标和地图级别
+                        vm.map.centerAndZoom(vm.point , 15);  // 初始化地图,设置中心点坐标和地图级别
                         var myIcon = new BMap.Icon("http://api.map.baidu.com/img/markers.png", new BMap.Size(23, 25), {
                             offset: new BMap.Size(10, 25), // 指定定位位置
                             imageOffset: new BMap.Size(0, 0 - 10 * 25) // 设置图片偏移
@@ -6193,7 +5450,7 @@ angular.module('eshopService', [])
 
             vm.goto=function(item){
                 if(item.AccountID.length!=8){
-                    MessageToaster.error("暂不提供此信�?);
+                    MessageToaster.error("暂不提供此信息");
                 }else {
                     CacheData.putObject(item.AccountID, item);
                     StateService.go('nearbyDepositInfo', {id: item.AccountID});
@@ -6423,7 +5680,8 @@ angular.module('eshopService', [])
       findNearbyDeposit:findNearbyDeposit
     };
 
-    //http://172.18.1.166/api/v1/nearbyDepositList/113.271/23.1353     附近的机构列�?    function findNearbyDeposit(x,y) {
+    //http://172.18.1.166/api/v1/nearbyDepositList/113.271/23.1353     附近的机构列表
+    function findNearbyDeposit(x,y) {
       var url = Constants.serverUrl + 'nearbyDepositList/'+x+"/"+y;
       return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
     };
@@ -6433,6 +5691,885 @@ angular.module('eshopService', [])
 
   }
 
+}());
+
+(function() {
+  "use strict";
+  angular.module('organizerModule', [
+    'organizerCtrl',
+    'organizerInfoCtrl',
+    'organizerEditCtrl',
+    'organizerRouter',
+    'organizerService'
+  ]);
+
+}());
+
+(function() {
+    "use strict";
+    angular.module('organizerCtrl', [])
+        .controller('organizerCtrl', function($scope, Constants, StateService,organizerService,AuthService) {
+            'ngInject';
+            var vm = this;
+            vm.activated = false;
+            $scope.$on('$ionicView.afterEnter', activate);
+
+            function activate() {
+                vm.activated = true;
+                vm.version = Constants.buildID;
+            }
+
+            vm.goTo = function(addr){
+                StateService.go(addr);
+            };
+
+            vm.getOrganizer = function(){
+                organizerService.queryOrganizer(AuthService.getLoginID()).then(function(data) {
+                    if (data.errno == 0) {
+                        vm.organizer = data.data;
+                    }
+                });
+            };
+
+            vm.getChildren = function(){
+                organizerService.queryTeacher(AuthService.getLoginID()).then(function(data) {
+                    if (data.errno == 0) {
+                        vm.teacher = data.data;
+                    }
+                });
+            };
+        });
+}());
+
+(function() {
+    "use strict";
+    angular.module('organizerEditCtrl', [])
+        .controller('organizerEditCtrl', function($scope, $stateParams, Constants, MessageToaster, AuthService, StateService, organizerService) {
+            'ngInject';
+            var vm = this;
+            vm.activated = false;
+
+            $scope.$on('$ionicView.afterEnter', activate);
+
+            function activate() {
+                vm.activated = true;
+                vm.version = Constants.buildID;
+
+                vm.getOrganizer();
+            }
+
+            vm.back=function(){
+                StateService.back();
+            };
+
+            vm.save=function(){
+                var data={
+                    contactphone: vm.organizer.ContactPhone,
+                    address:vm.organizer.Address,
+                    contactname:vm.organizer.ContactName,
+                    remark:"备注描述"
+                };
+                if(angular.isUndefined(vm.organizer.Address)||vm.organizer.Address==null||vm.organizer.Address.length==0){
+                    MessageToaster.error("机构地址不正确");
+                    return ;
+                }
+                if(angular.isUndefined(vm.organizer.ContactName)||vm.organizer.ContactName==null||vm.organizer.ContactName.length==0){
+                    MessageToaster.error("联系人不正确");
+                    return ;
+                }
+                if(angular.isUndefined(vm.organizer.ContactPhone)||vm.organizer.ContactPhone==null||vm.organizer.ContactPhone.length==0
+                    ||vm.organizer.ContactPhone.length!=11){
+                    MessageToaster.error("联系人电话不正确");
+                    return ;
+                }
+                organizerService.updateOrganizer(AuthService.getLoginID(),data).then(function(response) {
+                    console.log(response);
+                    if(response.errno==0)
+                        MessageToaster.success("更新成功");
+                    else
+                        MessageToaster.error("更新失败");
+                    return ;
+                }).finally(function() {
+                    StateService.back();
+                });
+
+            };
+
+            vm.getOrganizer = function(){
+                organizerService.queryOrganizer(AuthService.getLoginID()).then(function(data) {
+                    if (data.errno == 0) {
+                        console.log(data.data);
+                        vm.organizer = data.data;
+                    }
+                });
+            };
+
+
+        });
+}());
+
+(function() {
+    "use strict";
+    angular.module('organizerInfoCtrl', [])
+        .controller('organizerInfoCtrl', function($scope,Constants,StateService,organizerService,AuthService) {
+            'ngInject';
+            var vm = this;
+            vm.activated = false;
+            $scope.$on('$ionicView.afterEnter', activate);
+
+            function activate() {
+                vm.activated = true;
+                vm.version = Constants.buildID;
+                //vm.organizer = {name:'abc 托管',contactName:"sam",contactPhone:"15986632761"};
+                vm.getOrganizer();
+            }
+
+            vm.back=function(){
+                StateService.back();
+            };
+
+            vm.edit=function(id){
+                //编辑机构信息
+                StateService.go('organizerEdit');
+            };
+
+            vm.getOrganizer = function(){
+                organizerService.queryOrganizer(AuthService.getLoginID()).then(function(data) {
+                    if (data.errno == 0) {
+                        console.log(data.data);
+                        vm.organizer = data.data;
+                    }
+                });
+            };
+        });
+}());
+
+(function() {
+  'use strict';
+
+  angular.module('organizerRouter', [])
+    .config(myRouter);
+
+
+  function myRouter($stateProvider, $urlRouterProvider) {
+    'ngInject';
+    $stateProvider
+      .state('tabs.organizer', {
+        url: "/organizer",
+          views: {
+            'tab-orgnize': {
+              templateUrl: 'organizer/organizer.html',
+              controller: 'organizerCtrl',
+              controllerAs: 'vm'
+            }
+          }
+      })
+      .state('organizerInfo', {
+        url: "/organizerInfo",
+        templateUrl: 'organizer/organizerInfo.html',
+        controller: 'organizerInfoCtrl',
+        controllerAs: 'vm'
+      })
+      .state('organizerEdit', {
+        url: "/organizerEdit",
+        templateUrl: 'organizer/organizerEdit.html',
+        controller: 'organizerEditCtrl',
+        controllerAs: 'vm'
+      })
+    ;
+  }
+}());
+
+(function() {
+  'use strict';
+
+  angular.module('organizerService', [])
+    .factory('organizerService', organizerService);
+
+  function organizerService($q, $http,Constants,ResultHandler) {
+      'ngInject';
+      var service = {
+        queryOrganizer:queryOrganizer,
+        queryDepositInfo:queryDepositInfo,
+        updateOrganizer:updateOrganizer
+      };
+
+
+      //GET /api/v1/account/query/deposit/{deposit_accnt_id}
+      //return
+      //{
+      //  "errno":0,
+      //  "error":"",
+      //  "data":{
+      //    "uid":10000001,
+      //     …………
+      //  }
+      //}
+      function queryOrganizer(id) {
+        var url = Constants.serverUrl + 'account/query/deposit/'+id;
+        return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
+      };
+
+
+      //post /api/v1/account/deposit/{deposit_accnt_id}/update
+      //  {
+      //    "orgname": "机构名称",
+      //    "contactphone": "13812345678",
+      //    "password":"abcd",
+      //    "weixinno":"微信号",
+      //    "address":"托管机构地址",
+      //    "contactname":"托管机构联系人（管理者）",
+      //    "remark":"托管机构信息描述"
+      //  };
+      //return
+      //{
+      //  "errno":0,
+      //    "error":"",
+      //    "data":{
+      //      "uid":11000001
+      //    }
+      //}
+      function updateOrganizer(id,data) {
+          var url = Constants.serverUrl + 'account/deposit/'+id+'/update';
+          return $http({
+            method: 'post',
+            url: url,
+            data: data
+          }).then(function (response) {
+            return response.data;
+          }, function (error) {
+            return $q.reject(error);
+          });
+      };
+
+      function queryDepositInfo(id) {
+          //http://172.18.1.166/api/v1/depositInfo/fetch/:depositid
+          var url = Constants.serverUrl + 'depositInfo/fetch/'+id;
+          return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
+      };
+
+      return service;
+
+
+  }
+
+}());
+
+(function() {
+  "use strict";
+  angular.module('parentModule', [
+    'parentCtrl',
+    'parentEditCtrl',
+    'parentRouter',
+    'parentService',
+    'parentInfoCtrl'
+  ]);
+
+}());
+
+(function () {
+    "use strict";
+    angular.module('parentCtrl', [])
+        .controller('parentCtrl', function ($scope, $q, $cordovaImagePicker, $ionicActionSheet, $ionicListDelegate,
+            $ionicPopup, $ionicLoading, Session, Constants, MessageToaster, AuthService, StateService, parentService, childrenSettingService) {
+            'ngInject';
+            var vm = this;
+            vm.activated = false;
+            vm.shouldShowDelete = false;
+            vm.shouldShowReorder = false;
+            vm.listCanSwipe = true
+            vm.parentInfo = {
+              //name: "刘德华",
+              //nickName: "流的花",
+              //sex: 1,
+              //mobile: '1342222235',
+              //childrens: [
+              //    {
+              //        name: '刘能',
+              //        sex:1
+              //    },
+              //    {
+              //        name: '刘星',
+              //        sex: 1
+              //    }
+              //]
+            };
+
+            //页面激活时处理逻辑
+            $scope.$on('$ionicView.afterEnter', activate);
+            function activate() {
+                vm.activated = true;
+                vm.version = Constants.buildID;
+                init();
+            };
+
+            //初始化逻辑
+            function init() {
+                var pId = AuthService.getLoginID();
+                var queryParentPromise = parentService.queryParent(pId);
+                var queryChildrensPromise = parentService.queryChildren(pId);
+
+                $q.all([queryParentPromise, queryChildrensPromise]).then(function (results) {
+                    vm.parentInfo = results[0].data || {},
+                   vm.parentInfo.childrens = results[1].data || [];
+                }, function (err) {
+                    MessageToaster.error("检索异常!");
+                });
+            };
+
+
+            // 图片选择项
+            vm.showImageUploadChoices = function (prop) {
+                var hideSheet = $ionicActionSheet.show({
+                    buttons: [{
+                        text: '拍照上传'
+                    }, {
+                        text: '从相册中选'
+                    }],
+                    titleText: '图片上传',
+                    cancelText: '取 消',
+                    cancel: function () {
+                    },
+                    buttonClicked: function (index) {
+                        //相册文件选择上传
+                        if (index == 1) {
+                            vm.readalbum(prop);
+                        } else if (index == 0) {
+                            //拍照上传
+                            vn.takePicture(prop);
+                        }
+                        return true;
+                    }
+                });
+            };
+
+            //打开用户相册
+            vm.readalbum = function (prop) {
+                if (!window.imagePicker) {
+                    MessageToaster.error("目前您的环境不支持相册上传!");
+                    return;
+                }
+
+                var options = {
+                    maximumImagesCount: 1,
+                    width: 800,
+                    height: 800,
+                    quality: 80
+                };
+
+                $cordovaImagePicker.getPictures(options).then(function (results) {
+                    var uri = results[0],
+                        name = uri;
+                    if (name.indexOf('/')) {
+                        var i = name.lastIndexOf('/');
+                        name = name.substring(i + 1);
+                    }
+
+                    vm.uploadimage(uri, prop);
+
+                }, function (error) {
+                    MessageToaster.error("访问相册异常:请检查是否有权限!");
+                });
+            };
+
+
+            //拍照
+            vm.takePicture = function (prop) {
+                if (!navigator.camera) {
+                    MessageToaster.error("请在真机环境中使用拍照上传!");
+                    return;
+                }
+
+                var options = {
+                    quality: 75,
+                    targetWidth: 800,
+                    targetHeight: 800,
+                    saveToPhotoAlbum: false
+                };
+
+                navigator.camera.getPicture(function (imageURI) {
+                    vm.uploadimage(imageURI);
+                }, function (err) {
+                    MessageToaster.error("拍照异常:请检查是否有权限!");
+                }, options);
+
+            }
+
+            //上传
+            vm.uploadimage = function (uri) {
+                var fileURL = uri;
+
+                var options = new FileUploadOptions();
+                options.fileKey = "file";
+                options.fileName = fileURL.substr(fileURL.lastIndexOf('/') + 1);
+                options.mimeType = "image/jpeg";
+                options.chunkedMode = true;
+
+                var ft = new FileTransfer();
+                $ionicLoading.show({
+                    template: '上传中...'
+                });
+                ft.upload(fileURL, "http://wx.zxing-tech.cn/upload", function (data) {
+                    //设置图片新地址
+                    var resp = JSON.parse(data.response);
+                    vm.parentInfo.avatarlink = resp.data.fileurl;
+
+                    parentService.updateParent(vm.parentInfo).then(function (res) {
+                        MessageToaster.error("更新成功!");
+                        $ionicLoading.hide();
+                    }, function (err) {
+                        MessageToaster.error("更新失败!");
+                        $ionicLoading.hide();
+                    })
+
+                }, function (error) {
+                    $ionicLoading.hide();
+                }, options);
+            };
+
+
+            //创建新的孩子信息,使用新局部编写界面
+            vm.addChild = function () {
+                $ionicListDelegate.closeOptionButtons();
+                StateService.go('childrenAdd');
+            };
+
+            //查看孩子信息
+            vm.editChild = function (child) {
+                $ionicListDelegate.closeOptionButtons();
+                Session.setData('temp', child);
+                StateService.go('childrenEdit', { cid: child.uid, type: 2 });
+            };
+
+            //删除孩子信息
+            vm.delChild = function (child) {
+
+                $ionicListDelegate.closeOptionButtons();
+
+                var confirmPopup = $ionicPopup.confirm({
+                    title: '确定要删除此孩子:' + child.name,
+                    buttons: [
+                        { text: '取消', type: 'button-positive' },
+                        { text: '确定', type: 'button-assertive', onTap: function (e) { return true } }
+                    ]
+                });
+                confirmPopup.then(function (result) {
+                    if (result) {
+                        childrenSettingService.deleteChild(child.uid).then(function (data) {
+                            console.log(data);
+                            if (data.errno == 0) {
+
+                                console.log(data.data);
+
+                                var idx = vm.parentInfo.childrens.indexOf(child);
+                                vm.parentInfo.childrens.splice(idx, 1);
+
+                                MessageToaster.error("删除成功!");
+                            }
+                        });
+                    } else {
+                        console.log('cancel delete');
+                    }
+                });
+            };
+
+            //跳转到指定页面
+            vm.goTo = function (addr) {
+                console.log('go to path : ' + addr);
+                StateService.go(addr);
+            };
+
+            //返回到上一页面
+            vm.back = function () {
+                StateService.back();
+            };
+        });
+}());
+
+(function() {
+    "use strict";
+    angular.module('parentEditCtrl', [])
+        .controller('parentEditCtrl', function ($scope, Constants, AuthService, parentService, StateService, MessageToaster) {
+            'ngInject';
+            var vm = this;
+            vm.activated = false;
+            vm.parentInfo = {
+                //name: "刘德华",
+                //nickName: "流的花",
+                //sex: 1,
+                //mobile: '1342222235'
+            };
+
+            //页面激活时处理逻辑
+            $scope.$on('$ionicView.afterEnter', activate);
+            function activate() {
+                vm.activated = true;
+                vm.version = Constants.buildID;
+                init();
+            }
+
+            //初始化逻辑
+            function init() {
+                var pId = AuthService.getLoginID();
+                var queryParentPromise = parentService.queryParent(pId).then(function (res) {
+                    vm.parentInfo = res.data || {}
+                }, function (err) {
+                    MessageToaster.error("检索异常!");
+                });
+            }
+
+            //保存家长信息
+            vm.save = function () {
+                if (!vm.parentInfo.name) {
+                    MessageToaster.error("请填写用户名!");
+                    return;
+                }
+
+                parentService.updateParent(vm.parentInfo).then(function (res) {
+                    vm.back();
+                    MessageToaster.info("更新成功!");
+                }, function (err) {
+                    MessageToaster.error("更新失败!");
+                })
+            };
+
+            //返回到上一页面
+            vm.back = function () {
+                StateService.back();
+            };
+        });
+}());
+
+(function() {
+    "use strict";
+    angular.module('parentInfoCtrl', [])
+        .controller('parentInfoCtrl', function ($scope, $q,$window, $cordovaImagePicker, $ionicActionSheet, $ionicListDelegate,
+            $ionicPopup, $ionicLoading, Session, Constants, MessageToaster, AuthService, StateService, parentService, childrenSettingService) {
+            'ngInject';
+            var vm = this;
+            vm.activated = false;
+            vm.shouldShowDelete = false;
+            vm.shouldShowReorder = false;
+            vm.listCanSwipe = true
+            vm.parentInfo = {
+                //name: "刘德华",
+                //nickName: "流的花",
+                //sex: 1,
+                //mobile: '1342222235',
+                //childrens: [
+                //    {
+                //        name: '刘能',
+                //        sex:1
+                //    },
+                //    {
+                //        name: '刘星',
+                //        sex: 1
+                //    }
+                //]
+            };
+
+            //页面激活时处理逻辑
+            $scope.$on('$ionicView.afterEnter', activate);
+            function activate() {
+                vm.activated = true;
+                vm.version = Constants.buildID;
+                init();
+            };
+
+            //初始化逻辑
+            function init() {
+                var pId = AuthService.getLoginID();
+                var queryParentPromise = parentService.queryParent(pId);
+                var queryChildrensPromise = parentService.queryChildren(pId);
+
+                $q.all([queryParentPromise, queryChildrensPromise]).then(function (results) {
+                    vm.parentInfo = results[0].data || {},
+                   vm.parentInfo.childrens = results[1].data || [];
+                }, function (err) {
+                    MessageToaster.error("检索异常!");
+                });
+            };
+
+
+            // 图片选择项
+            vm.showImageUploadChoices = function (prop) {
+                var hideSheet = $ionicActionSheet.show({
+                    buttons: [{
+                        text: '拍照上传'
+                    }, {
+                        text: '从相册中选'
+                    }],
+                    titleText: '图片上传',
+                    cancelText: '取 消',
+                    cancel: function () {
+                    },
+                    buttonClicked: function (index) {
+                        // 相册文件选择上传
+                        if (index == 1) {
+                            vm.readalbum(prop);
+                        } else if (index == 0) {
+                            // 拍照上传
+                            vm.takePicture(prop);
+                        }
+                        return true;
+                    }
+                });
+            };
+
+            //打开用户相册
+            vm.readalbum = function (prop) {
+                if (!navigator.camera) {
+                    MessageToaster.error("目前您的环境不支持相册上传!");
+                    return;
+                }
+
+                var options = {
+                    maximumImagesCount: 1,
+                    sourceType: 2,
+                    targetWidth: 80,
+                    targetHeight: 80,
+                    allowEdit: true,
+                    quality: 80
+                };
+                navigator.camera.getPicture(function (imageURI) {
+                    vm.uploadImage(imageURI);
+                }, function (error) {
+                    // MessageToaster.error("访问相册异常:请检查是否有权限!");
+                }, options);
+            };
+
+
+            // 拍照
+            vm.takePicture = function (prop) {
+
+                if (!navigator.camera) {
+                    MessageToaster.error("请在真机环境中使用拍照上传!");
+                    return;
+                }
+
+                var options = {
+                    quality: 100,
+                    targetWidth: 80,
+                    targetHeight: 80,
+                    allowEdit: true,
+                    saveToPhotoAlbum: true
+                };
+
+
+                navigator.camera.getPicture(function (imageURI) {
+                    vm.uploadImage(imageURI);
+                }, function (err) {
+                  // MessageToaster.error("拍照异常:请检查是否有权限!");
+                }, options);
+            }
+
+            // 上传
+            vm.uploadImage = function (uri) {
+                var fileURL = uri;
+
+                var options = new FileUploadOptions();
+                options.fileKey = "file";
+                options.fileName = fileURL.substr(fileURL.lastIndexOf('/') + 1);
+                options.mimeType = "image/jpeg";
+                options.chunkedMode = true;
+
+                var ft = new FileTransfer();
+                $ionicLoading.show({
+                    template: '上传中...'
+                });
+                ft.upload(fileURL, "http://wx.zxing-tech.cn/upload", function (data) {
+                    // 设置图片新地址
+                    var resp = JSON.parse(data.response);
+                    vm.parentInfo.avatarlink = resp.data.fileurl;
+
+                    parentService.updateParent(vm.parentInfo).then(function (res) {
+                        MessageToaster.info("更新成功!");
+                        $ionicLoading.hide();
+                    }, function (err) {
+                        MessageToaster.error("更新失败!");
+                        $ionicLoading.hide();
+                    })
+
+                }, function (error) {
+                    MessageToaster.error("上传失败!");
+                    $ionicLoading.hide();
+                }, options);
+            };
+
+
+            //创建新的孩子信息,使用新局部编写界面
+            vm.addChild = function () {
+                $ionicListDelegate.closeOptionButtons();
+                StateService.go('childrenAdd');
+            };
+
+            //查看孩子信息
+            vm.editChild = function ( child) {
+                $ionicListDelegate.closeOptionButtons();
+                Session.setData('temp', child);
+                StateService.go('childrenEdit', { cid: child.uid, type: 2 });
+            };
+
+            //删除孩子信息
+            vm.delChild = function (child) {
+               
+                $ionicListDelegate.closeOptionButtons();
+
+                var confirmPopup = $ionicPopup.confirm({
+                    title: '确定要删除此孩子:' + child.name,
+                    buttons: [
+                        { text: '取消', type: 'button-positive' },
+                        { text: '确定', type: 'button-assertive', onTap: function (e) { return true } }
+                    ]
+                });
+                confirmPopup.then(function (result) {
+                    if (result) {
+                        childrenSettingService.deleteChild(child.uid).then(function (data) {
+                            console.log(data);
+                            if (data.errno == 0) {
+
+                                console.log(data.data);
+
+                                var idx = vm.parentInfo.childrens.indexOf(child);
+                                vm.parentInfo.childrens.splice(idx, 1);
+
+                                MessageToaster.info("删除成功!");
+                            }
+                        });
+                    } else {
+                        console.log('cancel delete');
+                    }
+                });
+            };
+
+            //跳转到指定页面
+            vm.goTo = function (addr) {
+                console.log('go to path : ' + addr);
+                StateService.go(addr);
+            };
+
+            //返回到上一页面
+            vm.back=function(){
+                StateService.back();
+            };
+        });
+}());
+
+(function() {
+  'use strict';
+
+  angular.module('parentRouter', [])
+    .config(myRouter);
+
+
+  function myRouter($stateProvider, $urlRouterProvider) {
+    'ngInject';
+    $stateProvider
+    .state('parentInfo', {
+        url: "/parentInfo",
+        templateUrl: 'parent/parentInfo.html',
+        controller: 'parentInfoCtrl',
+        controllerAs: 'vm'
+      })
+      .state('parent', {
+        url: "/parent",
+        templateUrl: 'parent/parent.html',
+        controller: 'parentCtrl',
+        controllerAs: 'vm'
+      })
+      .state('parentEdit', {
+        url: "/parentEdit",
+        templateUrl: 'parent/parentEdit.html',
+        controller: 'parentEditCtrl',
+        controllerAs: 'vm'
+      })
+    ;
+  }
+}());
+
+(function() {
+  'use strict';
+
+  angular.module('parentService', [])
+    .factory('parentService', parentService);
+
+  function parentService( $q, $http, Session, Constants, ResultHandler) {
+    'ngInject';
+    var service = {
+      queryParent:queryParent,
+      updateParent:updateParent,
+      queryChildren:queryChildren,
+      resetPsw:resetPsw
+    };
+
+    //-----HTTP Header => Authorization: Bearer-{$token}-----//
+
+    //GET /api/v1/account/query/parent/{parent_accnt_id}
+    //return
+    //{
+    //  "errno":0,
+    //  "error":"",
+    //  "data":{
+    //  "uid":10000001,
+    //      "name":"张粑粑",
+    //      "sex":1,
+    //      "mobile":"18612345678",
+    //      "nick":"sam"
+    //  }
+    //}
+    function queryParent(id) {
+        console.log($http.defaults.headers);
+        var url = Constants.serverUrl + 'account/query/parent/'+id;
+        return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
+    };
+
+    function updateParent(data) {
+        var url = Constants.serverUrl + 'account/parent/' + data.uid;
+        return $http({
+            method: 'post',
+            url: url,
+            data: data
+        }).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
+    };
+
+
+
+    //GET /api/v1/account/query/parentChildren/{parent_accnt_id}
+    //return
+    //{
+    //  "errno":0,
+    //  "error":"",
+    //  "data":[
+    //    {
+    //      "uid":10000001,
+    //      "relationship":1,
+    //      "name":"赵大萌",
+    //      "sex":1,
+    //      "fingerfeature":"xxxxx",
+    //      "remark":"xxxx"
+    //    },
+    //    ...
+    //  ]
+    //}
+    function queryChildren(id) {
+      var url = Constants.serverUrl + 'account/query/parentChildren/'+id;
+      return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
+    };
+
+    function resetPsw(mobile){
+     // var authInfo = JSON.parse(Session.getData("eshop_auth"));
+     // console.log(authInfo);
+     // var data = {eshopToken:authInfo.token};
+        var url = Constants.serverUrl + 'account/resetPsw/' + mobile;
+      return $http({
+        method: 'post',
+        url: url
+      }).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
+    };
+
+    return service;
+
+  };
 }());
 
 (function() {
@@ -6594,877 +6731,214 @@ angular.module('eshopService', [])
 
 (function() {
   "use strict";
-  angular.module('organizerModule', [
-    'organizerCtrl',
-    'organizerInfoCtrl',
-    'organizerEditCtrl',
-    'organizerRouter',
-    'organizerService'
-  ]);
-
-}());
-
-(function() {
-    "use strict";
-    angular.module('organizerCtrl', [])
-        .controller('organizerCtrl', function($scope, Constants, StateService,organizerService,AuthService) {
-            'ngInject';
-            var vm = this;
-            vm.activated = false;
-            $scope.$on('$ionicView.afterEnter', activate);
-
-            function activate() {
-                vm.activated = true;
-                vm.version = Constants.buildID;
-            }
-
-            vm.goTo = function(addr){
-                StateService.go(addr);
-            };
-
-            vm.getOrganizer = function(){
-                organizerService.queryOrganizer(AuthService.getLoginID()).then(function(data) {
-                    if (data.errno == 0) {
-                        vm.organizer = data.data;
-                    }
-                });
-            };
-
-            vm.getChildren = function(){
-                organizerService.queryTeacher(AuthService.getLoginID()).then(function(data) {
-                    if (data.errno == 0) {
-                        vm.teacher = data.data;
-                    }
-                });
-            };
-        });
-}());
-
-(function() {
-    "use strict";
-    angular.module('organizerEditCtrl', [])
-        .controller('organizerEditCtrl', function($scope, $stateParams, Constants, MessageToaster, AuthService, StateService, organizerService) {
-            'ngInject';
-            var vm = this;
-            vm.activated = false;
-
-            $scope.$on('$ionicView.afterEnter', activate);
-
-            function activate() {
-                vm.activated = true;
-                vm.version = Constants.buildID;
-
-                vm.getOrganizer();
-            }
-
-            vm.back=function(){
-                StateService.back();
-            };
-
-            vm.save=function(){
-                var data={
-                    contactphone: vm.organizer.ContactPhone,
-                    address:vm.organizer.Address,
-                    contactname:vm.organizer.ContactName,
-                    remark:"备注描述"
-                };
-                if(angular.isUndefined(vm.organizer.Address)||vm.organizer.Address==null||vm.organizer.Address.length==0){
-                    MessageToaster.error("机构地址不正�?);
-                    return ;
-                }
-                if(angular.isUndefined(vm.organizer.ContactName)||vm.organizer.ContactName==null||vm.organizer.ContactName.length==0){
-                    MessageToaster.error("联系人不正确");
-                    return ;
-                }
-                if(angular.isUndefined(vm.organizer.ContactPhone)||vm.organizer.ContactPhone==null||vm.organizer.ContactPhone.length==0
-                    ||vm.organizer.ContactPhone.length!=11){
-                    MessageToaster.error("联系人电话不正确");
-                    return ;
-                }
-                organizerService.updateOrganizer(AuthService.getLoginID(),data).then(function(response) {
-                    console.log(response);
-                    if(response.errno==0)
-                        MessageToaster.success("更新成功");
-                    else
-                        MessageToaster.error("更新失败");
-                    return ;
-                }).finally(function() {
-                    StateService.back();
-                });
-
-            };
-
-            vm.getOrganizer = function(){
-                organizerService.queryOrganizer(AuthService.getLoginID()).then(function(data) {
-                    if (data.errno == 0) {
-                        console.log(data.data);
-                        vm.organizer = data.data;
-                    }
-                });
-            };
-
-
-        });
-}());
-
-(function() {
-    "use strict";
-    angular.module('organizerInfoCtrl', [])
-        .controller('organizerInfoCtrl', function($scope,Constants,StateService,organizerService,AuthService) {
-            'ngInject';
-            var vm = this;
-            vm.activated = false;
-            $scope.$on('$ionicView.afterEnter', activate);
-
-            function activate() {
-                vm.activated = true;
-                vm.version = Constants.buildID;
-                //vm.organizer = {name:'abc 托管',contactName:"sam",contactPhone:"15986632761"};
-                vm.getOrganizer();
-            }
-
-            vm.back=function(){
-                StateService.back();
-            };
-
-            vm.edit=function(id){
-                //编辑机构信息
-                StateService.go('organizerEdit');
-            };
-
-            vm.getOrganizer = function(){
-                organizerService.queryOrganizer(AuthService.getLoginID()).then(function(data) {
-                    if (data.errno == 0) {
-                        console.log(data.data);
-                        vm.organizer = data.data;
-                    }
-                });
-            };
-        });
-}());
-
-(function() {
-  'use strict';
-
-  angular.module('organizerRouter', [])
-    .config(myRouter);
-
-
-  function myRouter($stateProvider, $urlRouterProvider) {
-    'ngInject';
-    $stateProvider
-      .state('tabs.organizer', {
-        url: "/organizer",
-          views: {
-            'tab-orgnize': {
-              templateUrl: 'organizer/organizer.html',
-              controller: 'organizerCtrl',
-              controllerAs: 'vm'
-            }
-          }
-      })
-      .state('organizerInfo', {
-        url: "/organizerInfo",
-        templateUrl: 'organizer/organizerInfo.html',
-        controller: 'organizerInfoCtrl',
-        controllerAs: 'vm'
-      })
-      .state('organizerEdit', {
-        url: "/organizerEdit",
-        templateUrl: 'organizer/organizerEdit.html',
-        controller: 'organizerEditCtrl',
-        controllerAs: 'vm'
-      })
-    ;
-  }
-}());
-
-(function() {
-  'use strict';
-
-  angular.module('organizerService', [])
-    .factory('organizerService', organizerService);
-
-  function organizerService($q, $http,Constants,ResultHandler) {
-      'ngInject';
-      var service = {
-        queryOrganizer:queryOrganizer,
-        queryDepositInfo:queryDepositInfo,
-        updateOrganizer:updateOrganizer
-      };
-
-
-      //GET /api/v1/account/query/deposit/{deposit_accnt_id}
-      //return
-      //{
-      //  "errno":0,
-      //  "error":"",
-      //  "data":{
-      //    "uid":10000001,
-      //     ………�?      //  }
-      //}
-      function queryOrganizer(id) {
-        var url = Constants.serverUrl + 'account/query/deposit/'+id;
-        return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
-      };
-
-
-      //post /api/v1/account/deposit/{deposit_accnt_id}/update
-      //  {
-      //    "orgname": "机构名称",
-      //    "contactphone": "13812345678",
-      //    "password":"abcd",
-      //    "weixinno":"微信�?,
-      //    "address":"托管机构地址",
-      //    "contactname":"托管机构联系人（管理者）",
-      //    "remark":"托管机构信息描述"
-      //  };
-      //return
-      //{
-      //  "errno":0,
-      //    "error":"",
-      //    "data":{
-      //      "uid":11000001
-      //    }
-      //}
-      function updateOrganizer(id,data) {
-          var url = Constants.serverUrl + 'account/deposit/'+id+'/update';
-          return $http({
-            method: 'post',
-            url: url,
-            data: data
-          }).then(function (response) {
-            return response.data;
-          }, function (error) {
-            return $q.reject(error);
-          });
-      };
-
-      function queryDepositInfo(id) {
-          //http://172.18.1.166/api/v1/depositInfo/fetch/:depositid
-          var url = Constants.serverUrl + 'depositInfo/fetch/'+id;
-          return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
-      };
-
-      return service;
-
-
-  }
-
-}());
-
-(function() {
-  "use strict";
-  angular.module('parentModule', [
-    'parentCtrl',
-    'parentEditCtrl',
-    'parentRouter',
-    'parentService',
-    'parentInfoCtrl'
+  angular.module('profileModule', [
+    'profileCtrl',
+    'profileRouter',
+    'profileService'
   ]);
 
 }());
 
 (function () {
     "use strict";
-    angular.module('parentCtrl', [])
-        .controller('parentCtrl', function ($scope, $q, $cordovaImagePicker, $ionicActionSheet, $ionicListDelegate,
-            $ionicPopup, $ionicLoading, Session, Constants, MessageToaster, AuthService, StateService, parentService, childrenSettingService) {
-            'ngInject';
-            var vm = this;
-            vm.activated = false;
-            vm.shouldShowDelete = false;
-            vm.shouldShowReorder = false;
-            vm.listCanSwipe = true
-            vm.parentInfo = {
-              //name: "刘德�?,
-              //nickName: "流的�?,
-              //sex: 1,
-              //mobile: '1342222235',
-              //childrens: [
-              //    {
-              //        name: '刘能',
-              //        sex:1
-              //    },
-              //    {
-              //        name: '刘星',
-              //        sex: 1
-              //    }
-              //]
-            };
+    angular.module('profileCtrl', [])
+            .controller('profileCtrl', function ($scope, $q, $window, $cordovaImagePicker, $ionicActionSheet, $ionicListDelegate,
+           $ionicPopup, $ionicLoading, Session, Constants, MessageToaster, AuthService, StateService, parentService, childrenSettingService) {
 
-            //页面激活时处理逻辑
-            $scope.$on('$ionicView.afterEnter', activate);
-            function activate() {
-                vm.activated = true;
-                vm.version = Constants.buildID;
-                init();
-            };
+                'ngInject';
+                var vm = this;
+                vm.activated = false;
+                $scope.$on('$ionicView.afterEnter', activate);
 
-            //初始化逻辑
-            function init() {
-                var pId = AuthService.getLoginID();
-                var queryParentPromise = parentService.queryParent(pId);
-                var queryChildrensPromise = parentService.queryChildren(pId);
+                function activate() {
+                    vm.activated = true;
+                    vm.version = Constants.buildID;
+                    vm.getParent();
+                    vm.getChildren();
+                };
 
-                $q.all([queryParentPromise, queryChildrensPromise]).then(function (results) {
-                    vm.parentInfo = results[0].data || {},
-                   vm.parentInfo.childrens = results[1].data || [];
-                }, function (err) {
-                    MessageToaster.error("检索异�?");
-                });
-            };
-
-
-            // 图片选择�?
-            vm.showImageUploadChoices = function (prop) {
-                var hideSheet = $ionicActionSheet.show({
-                    buttons: [{
-                        text: '拍照上传'
-                    }, {
-                        text: '从相册中�?
-                    }],
-                    titleText: '图片上传',
-                    cancelText: '�?�?,
-                    cancel: function () {
-                    },
-                    buttonClicked: function (index) {
-                        //相册文件选择上传
-                        if (index == 1) {
-                            vm.readalbum(prop);
-                        } else if (index == 0) {
-                            //拍照上传
-                            vn.takePicture(prop);
+                vm.getParent = function () {
+                    parentService.queryParent(AuthService.getLoginID()).then(function (data) {
+                        if (data.errno == 0) {
+                            console.log(data.data);
+                            vm.parent = data.data;
                         }
-                        return true;
-                    }
-                });
-            };
-
-            //打开用户相册
-            vm.readalbum = function (prop) {
-                if (!window.imagePicker) {
-                    MessageToaster.error("目前您的环境不支持相册上�?");
-                    return;
-                }
-
-                var options = {
-                    maximumImagesCount: 1,
-                    width: 800,
-                    height: 800,
-                    quality: 80
+                    });
                 };
 
-                $cordovaImagePicker.getPictures(options).then(function (results) {
-                    var uri = results[0],
-                        name = uri;
-                    if (name.indexOf('/')) {
-                        var i = name.lastIndexOf('/');
-                        name = name.substring(i + 1);
-                    }
-
-                    vm.uploadimage(uri, prop);
-
-                }, function (error) {
-                    MessageToaster.error("访问相册异常:请检查是否有权限!");
-                });
-            };
-
-
-            //拍照
-            vm.takePicture = function (prop) {
-                if (!navigator.camera) {
-                    MessageToaster.error("请在真机环境中使用拍照上�?");
-                    return;
-                }
-
-                var options = {
-                    quality: 75,
-                    targetWidth: 800,
-                    targetHeight: 800,
-                    saveToPhotoAlbum: false
-                };
-
-                navigator.camera.getPicture(function (imageURI) {
-                    vm.uploadimage(imageURI);
-                }, function (err) {
-                    MessageToaster.error("拍照异常:请检查是否有权限!");
-                }, options);
-
-            }
-
-            //上传
-            vm.uploadimage = function (uri) {
-                var fileURL = uri;
-
-                var options = new FileUploadOptions();
-                options.fileKey = "file";
-                options.fileName = fileURL.substr(fileURL.lastIndexOf('/') + 1);
-                options.mimeType = "image/jpeg";
-                options.chunkedMode = true;
-
-                var ft = new FileTransfer();
-                $ionicLoading.show({
-                    template: '上传�?..'
-                });
-                ft.upload(fileURL, "http://wx.zxing-tech.cn/upload", function (data) {
-                    //设置图片新地址
-                    var resp = JSON.parse(data.response);
-                    vm.parentInfo.avatarlink = resp.data.fileurl;
-
-                    parentService.updateParent(vm.parentInfo).then(function (res) {
-                        MessageToaster.error("更新成功!");
-                        $ionicLoading.hide();
-                    }, function (err) {
-                        MessageToaster.error("更新失败!");
-                        $ionicLoading.hide();
-                    })
-
-                }, function (error) {
-                    $ionicLoading.hide();
-                }, options);
-            };
-
-
-            //创建新的孩子信息,使用新局部编写界�?
-            vm.addChild = function () {
-                $ionicListDelegate.closeOptionButtons();
-                StateService.go('childrenAdd');
-            };
-
-            //查看孩子信息
-            vm.editChild = function (child) {
-                $ionicListDelegate.closeOptionButtons();
-                Session.setData('temp', child);
-                StateService.go('childrenEdit', { cid: child.uid, type: 2 });
-            };
-
-            //删除孩子信息
-            vm.delChild = function (child) {
-
-                $ionicListDelegate.closeOptionButtons();
-
-                var confirmPopup = $ionicPopup.confirm({
-                    title: '确定要删除此孩子:' + child.name,
-                    buttons: [
-                        { text: '取消', type: 'button-positive' },
-                        { text: '确定', type: 'button-assertive', onTap: function (e) { return true } }
-                    ]
-                });
-                confirmPopup.then(function (result) {
-                    if (result) {
-                        childrenSettingService.deleteChild(child.uid).then(function (data) {
-                            console.log(data);
-                            if (data.errno == 0) {
-
-                                console.log(data.data);
-
-                                var idx = vm.parentInfo.childrens.indexOf(child);
-                                vm.parentInfo.childrens.splice(idx, 1);
-
-                                MessageToaster.error("删除成功!");
+                vm.getChildren = function () {
+                    parentService.queryChildren(AuthService.getLoginID()).then(function (data) {
+                        if (data.errno == 0) {
+                            console.log(data.data);
+                            vm.children = data.data;
+                            var children = "";
+                            for (var i = 0; i < vm.children.length; i++) {
+                                if (children == "")
+                                    children += vm.children[i].name
+                                else {
+                                    children += "," + vm.children[i].name
+                                }
                             }
-                        });
-                    } else {
-                        console.log('cancel delete');
-                    }
-                });
-            };
-
-            //跳转到指定页�?
-            vm.goTo = function (addr) {
-                console.log('go to path : ' + addr);
-                StateService.go(addr);
-            };
-
-            //返回到上一页面
-            vm.back = function () {
-                StateService.back();
-            };
-        });
-}());
-
-(function() {
-    "use strict";
-    angular.module('parentEditCtrl', [])
-        .controller('parentEditCtrl', function ($scope, Constants, AuthService, parentService, StateService, MessageToaster) {
-            'ngInject';
-            var vm = this;
-            vm.activated = false;
-            vm.parentInfo = {
-                //name: "刘德�?,
-                //nickName: "流的�?,
-                //sex: 1,
-                //mobile: '1342222235'
-            };
-
-            //页面激活时处理逻辑
-            $scope.$on('$ionicView.afterEnter', activate);
-            function activate() {
-                vm.activated = true;
-                vm.version = Constants.buildID;
-                init();
-            }
-
-            //初始化逻辑
-            function init() {
-                var pId = AuthService.getLoginID();
-                var queryParentPromise = parentService.queryParent(pId).then(function (res) {
-                    vm.parentInfo = res.data || {}
-                }, function (err) {
-                    MessageToaster.error("检索异�?");
-                });
-            }
-
-            //保存家长信息
-            vm.save = function () {
-                if (!vm.parentInfo.name) {
-                    MessageToaster.error("请填写用户名!");
-                    return;
-                }
-
-                parentService.updateParent(vm.parentInfo).then(function (res) {
-                    vm.back();
-                    MessageToaster.info("更新成功!");
-                }, function (err) {
-                    MessageToaster.error("更新失败!");
-                })
-            };
-
-            //返回到上一页面
-            vm.back = function () {
-                StateService.back();
-            };
-        });
-}());
-
-(function() {
-    "use strict";
-    angular.module('parentInfoCtrl', [])
-        .controller('parentInfoCtrl', function ($scope, $q,$window, $cordovaImagePicker, $ionicActionSheet, $ionicListDelegate,
-            $ionicPopup, $ionicLoading, Session, Constants, MessageToaster, AuthService, StateService, parentService, childrenSettingService) {
-            'ngInject';
-            var vm = this;
-            vm.activated = false;
-            vm.shouldShowDelete = false;
-            vm.shouldShowReorder = false;
-            vm.listCanSwipe = true
-            vm.parentInfo = {
-                //name: "刘德�?,
-                //nickName: "流的�?,
-                //sex: 1,
-                //mobile: '1342222235',
-                //childrens: [
-                //    {
-                //        name: '刘能',
-                //        sex:1
-                //    },
-                //    {
-                //        name: '刘星',
-                //        sex: 1
-                //    }
-                //]
-            };
-
-            //页面激活时处理逻辑
-            $scope.$on('$ionicView.afterEnter', activate);
-            function activate() {
-                vm.activated = true;
-                vm.version = Constants.buildID;
-                init();
-            };
-
-            //初始化逻辑
-            function init() {
-                var pId = AuthService.getLoginID();
-                var queryParentPromise = parentService.queryParent(pId);
-                var queryChildrensPromise = parentService.queryChildren(pId);
-
-                $q.all([queryParentPromise, queryChildrensPromise]).then(function (results) {
-                    vm.parentInfo = results[0].data || {},
-                   vm.parentInfo.childrens = results[1].data || [];
-                }, function (err) {
-                    MessageToaster.error("检索异�?");
-                });
-            };
-
-
-            // 图片选择�?            vm.showImageUploadChoices = function (prop) {
-                var hideSheet = $ionicActionSheet.show({
-                    buttons: [{
-                        text: '拍照上传'
-                    }, {
-                        text: '从相册中�?
-                    }],
-                    titleText: '图片上传',
-                    cancelText: '�?�?,
-                    cancel: function () {
-                    },
-                    buttonClicked: function (index) {
-                        // 相册文件选择上传
-                        if (index == 1) {
-                            vm.readalbum(prop);
-                        } else if (index == 0) {
-                            // 拍照上传
-                            vm.takePicture(prop);
+                            vm.childrenName = children;
                         }
-                        return true;
-                    }
-                });
-            };
-
-            //打开用户相册
-            vm.readalbum = function (prop) {
-                if (!navigator.camera) {
-                    MessageToaster.error("目前您的环境不支持相册上�?");
-                    return;
-                }
-
-                var options = {
-                    maximumImagesCount: 1,
-                    sourceType: 2,
-                    targetWidth: 80,
-                    targetHeight: 80,
-                    allowEdit: true,
-                    quality: 80
+                    });
                 };
-                navigator.camera.getPicture(function (imageURI) {
-                    vm.uploadImage(imageURI);
-                }, function (error) {
-                    // MessageToaster.error("访问相册异常:请检查是否有权限!");
-                }, options);
-            };
 
-
-            // 拍照
-            vm.takePicture = function (prop) {
-
-                if (!navigator.camera) {
-                    MessageToaster.error("请在真机环境中使用拍照上�?");
-                    return;
-                }
-
-                var options = {
-                    quality: 100,
-                    targetWidth: 80,
-                    targetHeight: 80,
-                    allowEdit: true,
-                    saveToPhotoAlbum: true
+                vm.goTo = function (addr, params) {
+                    console.log('go to path : ' + addr);
+                    if (params) console.log(params);
+                    StateService.go(addr, params);
                 };
 
 
-                navigator.camera.getPicture(function (imageURI) {
-                    vm.uploadImage(imageURI);
-                }, function (err) {
-                  // MessageToaster.error("拍照异常:请检查是否有权限!");
-                }, options);
-            }
 
-            // 上传
-            vm.uploadImage = function (uri) {
-                var fileURL = uri;
-
-                var options = new FileUploadOptions();
-                options.fileKey = "file";
-                options.fileName = fileURL.substr(fileURL.lastIndexOf('/') + 1);
-                options.mimeType = "image/jpeg";
-                options.chunkedMode = true;
-
-                var ft = new FileTransfer();
-                $ionicLoading.show({
-                    template: '上传�?..'
-                });
-                ft.upload(fileURL, "http://wx.zxing-tech.cn/upload", function (data) {
-                    // 设置图片新地址
-                    var resp = JSON.parse(data.response);
-                    vm.parentInfo.avatarlink = resp.data.fileurl;
-
-                    parentService.updateParent(vm.parentInfo).then(function (res) {
-                        MessageToaster.info("更新成功!");
-                        $ionicLoading.hide();
-                    }, function (err) {
-                        MessageToaster.error("更新失败!");
-                        $ionicLoading.hide();
-                    })
-
-                }, function (error) {
-                    MessageToaster.error("上传失败!");
-                    $ionicLoading.hide();
-                }, options);
-            };
-
-
-            //创建新的孩子信息,使用新局部编写界�?            vm.addChild = function () {
-                $ionicListDelegate.closeOptionButtons();
-                StateService.go('childrenAdd');
-            };
-
-            //查看孩子信息
-            vm.editChild = function ( child) {
-                $ionicListDelegate.closeOptionButtons();
-                Session.setData('temp', child);
-                StateService.go('childrenEdit', { cid: child.uid, type: 2 });
-            };
-
-            //删除孩子信息
-            vm.delChild = function (child) {
-               
-                $ionicListDelegate.closeOptionButtons();
-
-                var confirmPopup = $ionicPopup.confirm({
-                    title: '确定要删除此孩子:' + child.name,
-                    buttons: [
-                        { text: '取消', type: 'button-positive' },
-                        { text: '确定', type: 'button-assertive', onTap: function (e) { return true } }
-                    ]
-                });
-                confirmPopup.then(function (result) {
-                    if (result) {
-                        childrenSettingService.deleteChild(child.uid).then(function (data) {
-                            console.log(data);
-                            if (data.errno == 0) {
-
-                                console.log(data.data);
-
-                                var idx = vm.parentInfo.childrens.indexOf(child);
-                                vm.parentInfo.childrens.splice(idx, 1);
-
-                                MessageToaster.info("删除成功!");
+                // 图片选择项
+                vm.showImageUploadChoices = function (prop) {
+                    var hideSheet = $ionicActionSheet.show({
+                        buttons: [{
+                            text: '拍照上传'
+                        }, {
+                            text: '从相册中选'
+                        }],
+                        titleText: '图片上传',
+                        cancelText: '取 消',
+                        cancel: function () {
+                        },
+                        buttonClicked: function (index) {
+                            // 相册文件选择上传
+                            if (index == 1) {
+                                vm.readalbum(prop);
+                            } else if (index == 0) {
+                                // 拍照上传
+                                vm.takePicture(prop);
                             }
-                        });
-                    } else {
-                        console.log('cancel delete');
+                            return true;
+                        }
+                    });
+                };
+
+                //打开用户相册
+                vm.readalbum = function (prop) {
+                    if (!navigator.camera) {
+                        MessageToaster.error("目前您的环境不支持相册上传!");
+                        return;
                     }
-                });
-            };
 
-            //跳转到指定页�?            vm.goTo = function (addr) {
-                console.log('go to path : ' + addr);
-                StateService.go(addr);
-            };
+                    var options = {
+                        maximumImagesCount: 1,
+                        sourceType: 2,
+                        targetWidth: 80,
+                        targetHeight: 80,
+                        allowEdit: true,
+                        quality: 80
+                    };
+                    navigator.camera.getPicture(function (imageURI) {
+                        vm.uploadImage(imageURI);
+                    }, function (error) {
+                        // MessageToaster.error("访问相册异常:请检查是否有权限!");
+                    }, options);
+                };
 
-            //返回到上一页面
-            vm.back=function(){
-                StateService.back();
-            };
-        });
+
+                // 拍照
+                vm.takePicture = function (prop) {
+
+                    if (!navigator.camera) {
+                        MessageToaster.error("请在真机环境中使用拍照上传!");
+                        return;
+                    }
+
+                    var options = {
+                        quality: 100,
+                        targetWidth: 80,
+                        targetHeight: 80,
+                        allowEdit: true,
+                        saveToPhotoAlbum: true
+                    };
+
+
+                    navigator.camera.getPicture(function (imageURI) {
+                        vm.uploadImage(imageURI);
+                    }, function (err) {
+                        // MessageToaster.error("拍照异常:请检查是否有权限!");
+                    }, options);
+                }
+
+                // 上传
+                vm.uploadImage = function (uri) {
+                    var fileURL = uri;
+
+                    var options = new FileUploadOptions();
+                    options.fileKey = "file";
+                    options.fileName = fileURL.substr(fileURL.lastIndexOf('/') + 1);
+                    options.mimeType = "image/jpeg";
+                    options.chunkedMode = true;
+
+                    var ft = new FileTransfer();
+                    $ionicLoading.show({
+                        template: '上传中...'
+                    });
+                    ft.upload(fileURL, "http://wx.zxing-tech.cn/upload", function (data) {
+                        // 设置图片新地址
+                        var resp = JSON.parse(data.response);
+                        vm.parentInfo.avatarlink = resp.data.fileurl;
+
+                        parentService.updateParent(vm.parentInfo).then(function (res) {
+                            MessageToaster.info("更新成功!");
+                            $ionicLoading.hide();
+                        }, function (err) {
+                            MessageToaster.error("更新失败!");
+                            $ionicLoading.hide();
+                        })
+
+                    }, function (error) {
+                        MessageToaster.error("上传失败!");
+                        $ionicLoading.hide();
+                    }, options);
+                };
+
+
+            });
 }());
 
 (function() {
   'use strict';
 
-  angular.module('parentRouter', [])
+  angular.module('profileRouter', [])
     .config(myRouter);
 
 
   function myRouter($stateProvider, $urlRouterProvider) {
     'ngInject';
     $stateProvider
-    .state('parentInfo', {
-        url: "/parentInfo",
-        templateUrl: 'parent/parentInfo.html',
-        controller: 'parentInfoCtrl',
-        controllerAs: 'vm'
-      })
-      .state('parent', {
-        url: "/parent",
-        templateUrl: 'parent/parent.html',
-        controller: 'parentCtrl',
-        controllerAs: 'vm'
-      })
-      .state('parentEdit', {
-        url: "/parentEdit",
-        templateUrl: 'parent/parentEdit.html',
-        controller: 'parentEditCtrl',
-        controllerAs: 'vm'
-      })
-    ;
+      .state('tabs.profile', {
+        url: "/profile",
+          views: {
+            'tab-profile': {
+              templateUrl: 'profile/profile.html',
+              controller: 'profileCtrl',
+              controllerAs: 'vm'
+            }
+          }
+      });
   }
 }());
 
 (function() {
   'use strict';
 
-  angular.module('parentService', [])
-    .factory('parentService', parentService);
+  angular.module('profileService', [])
+    .factory('profileService', profileService);
 
-  function parentService( $q, $http, Session, Constants, ResultHandler) {
+  function profileService( $q, $http) {
     'ngInject';
     var service = {
-      queryParent:queryParent,
-      updateParent:updateParent,
-      queryChildren:queryChildren,
-      resetPsw:resetPsw
     };
-
-    //-----HTTP Header => Authorization: Bearer-{$token}-----//
-
-    //GET /api/v1/account/query/parent/{parent_accnt_id}
-    //return
-    //{
-    //  "errno":0,
-    //  "error":"",
-    //  "data":{
-    //  "uid":10000001,
-    //      "name":"张粑�?,
-    //      "sex":1,
-    //      "mobile":"18612345678",
-    //      "nick":"sam"
-    //  }
-    //}
-    function queryParent(id) {
-        console.log($http.defaults.headers);
-        var url = Constants.serverUrl + 'account/query/parent/'+id;
-        return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
-    };
-
-    function updateParent(data) {
-        var url = Constants.serverUrl + 'account/parent/' + data.uid;
-        return $http({
-            method: 'post',
-            url: url,
-            data: data
-        }).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
-    };
-
-
-
-    //GET /api/v1/account/query/parentChildren/{parent_accnt_id}
-    //return
-    //{
-    //  "errno":0,
-    //  "error":"",
-    //  "data":[
-    //    {
-    //      "uid":10000001,
-    //      "relationship":1,
-    //      "name":"赵大�?,
-    //      "sex":1,
-    //      "fingerfeature":"xxxxx",
-    //      "remark":"xxxx"
-    //    },
-    //    ...
-    //  ]
-    //}
-    function queryChildren(id) {
-      var url = Constants.serverUrl + 'account/query/parentChildren/'+id;
-      return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
-    };
-
-    function resetPsw(mobile){
-     // var authInfo = JSON.parse(Session.getData("eshop_auth"));
-     // console.log(authInfo);
-     // var data = {eshopToken:authInfo.token};
-        var url = Constants.serverUrl + 'account/resetPsw/' + mobile;
-      return $http({
-        method: 'post',
-        url: url
-      }).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
-    };
-
     return service;
 
-  };
+
+  }
+
 }());
 
 (function() {
@@ -7584,217 +7058,6 @@ angular.module('eshopService', [])
 
 (function() {
   "use strict";
-  angular.module('profileModule', [
-    'profileCtrl',
-    'profileRouter',
-    'profileService'
-  ]);
-
-}());
-
-(function () {
-    "use strict";
-    angular.module('profileCtrl', [])
-            .controller('profileCtrl', function ($scope, $q, $window, $cordovaImagePicker, $ionicActionSheet, $ionicListDelegate,
-           $ionicPopup, $ionicLoading, Session, Constants, MessageToaster, AuthService, StateService, parentService, childrenSettingService) {
-
-                'ngInject';
-                var vm = this;
-                vm.activated = false;
-                $scope.$on('$ionicView.afterEnter', activate);
-
-                function activate() {
-                    vm.activated = true;
-                    vm.version = Constants.buildID;
-                    vm.getParent();
-                    vm.getChildren();
-                };
-
-                vm.getParent = function () {
-                    parentService.queryParent(AuthService.getLoginID()).then(function (data) {
-                        if (data.errno == 0) {
-                            console.log(data.data);
-                            vm.parent = data.data;
-                        }
-                    });
-                };
-
-                vm.getChildren = function () {
-                    parentService.queryChildren(AuthService.getLoginID()).then(function (data) {
-                        if (data.errno == 0) {
-                            console.log(data.data);
-                            vm.children = data.data;
-                            var children = "";
-                            for (var i = 0; i < vm.children.length; i++) {
-                                if (children == "")
-                                    children += vm.children[i].name
-                                else {
-                                    children += "," + vm.children[i].name
-                                }
-                            }
-                            vm.childrenName = children;
-                        }
-                    });
-                };
-
-                vm.goTo = function (addr, params) {
-                    console.log('go to path : ' + addr);
-                    if (params) console.log(params);
-                    StateService.go(addr, params);
-                };
-
-
-
-                // 图片选择�?                vm.showImageUploadChoices = function (prop) {
-                    var hideSheet = $ionicActionSheet.show({
-                        buttons: [{
-                            text: '拍照上传'
-                        }, {
-                            text: '从相册中�?
-                        }],
-                        titleText: '图片上传',
-                        cancelText: '�?�?,
-                        cancel: function () {
-                        },
-                        buttonClicked: function (index) {
-                            // 相册文件选择上传
-                            if (index == 1) {
-                                vm.readalbum(prop);
-                            } else if (index == 0) {
-                                // 拍照上传
-                                vm.takePicture(prop);
-                            }
-                            return true;
-                        }
-                    });
-                };
-
-                //打开用户相册
-                vm.readalbum = function (prop) {
-                    if (!navigator.camera) {
-                        MessageToaster.error("目前您的环境不支持相册上�?");
-                        return;
-                    }
-
-                    var options = {
-                        maximumImagesCount: 1,
-                        sourceType: 2,
-                        targetWidth: 80,
-                        targetHeight: 80,
-                        allowEdit: true,
-                        quality: 80
-                    };
-                    navigator.camera.getPicture(function (imageURI) {
-                        vm.uploadImage(imageURI);
-                    }, function (error) {
-                        // MessageToaster.error("访问相册异常:请检查是否有权限!");
-                    }, options);
-                };
-
-
-                // 拍照
-                vm.takePicture = function (prop) {
-
-                    if (!navigator.camera) {
-                        MessageToaster.error("请在真机环境中使用拍照上�?");
-                        return;
-                    }
-
-                    var options = {
-                        quality: 100,
-                        targetWidth: 80,
-                        targetHeight: 80,
-                        allowEdit: true,
-                        saveToPhotoAlbum: true
-                    };
-
-
-                    navigator.camera.getPicture(function (imageURI) {
-                        vm.uploadImage(imageURI);
-                    }, function (err) {
-                        // MessageToaster.error("拍照异常:请检查是否有权限!");
-                    }, options);
-                }
-
-                // 上传
-                vm.uploadImage = function (uri) {
-                    var fileURL = uri;
-
-                    var options = new FileUploadOptions();
-                    options.fileKey = "file";
-                    options.fileName = fileURL.substr(fileURL.lastIndexOf('/') + 1);
-                    options.mimeType = "image/jpeg";
-                    options.chunkedMode = true;
-
-                    var ft = new FileTransfer();
-                    $ionicLoading.show({
-                        template: '上传�?..'
-                    });
-                    ft.upload(fileURL, "http://wx.zxing-tech.cn/upload", function (data) {
-                        // 设置图片新地址
-                        var resp = JSON.parse(data.response);
-                        vm.parentInfo.avatarlink = resp.data.fileurl;
-
-                        parentService.updateParent(vm.parentInfo).then(function (res) {
-                            MessageToaster.info("更新成功!");
-                            $ionicLoading.hide();
-                        }, function (err) {
-                            MessageToaster.error("更新失败!");
-                            $ionicLoading.hide();
-                        })
-
-                    }, function (error) {
-                        MessageToaster.error("上传失败!");
-                        $ionicLoading.hide();
-                    }, options);
-                };
-
-
-            });
-}());
-
-(function() {
-  'use strict';
-
-  angular.module('profileRouter', [])
-    .config(myRouter);
-
-
-  function myRouter($stateProvider, $urlRouterProvider) {
-    'ngInject';
-    $stateProvider
-      .state('tabs.profile', {
-        url: "/profile",
-          views: {
-            'tab-profile': {
-              templateUrl: 'profile/profile.html',
-              controller: 'profileCtrl',
-              controllerAs: 'vm'
-            }
-          }
-      });
-  }
-}());
-
-(function() {
-  'use strict';
-
-  angular.module('profileService', [])
-    .factory('profileService', profileService);
-
-  function profileService( $q, $http) {
-    'ngInject';
-    var service = {
-    };
-    return service;
-
-
-  }
-
-}());
-
-(function() {
-  "use strict";
   angular.module('registerModule', [
     'registerCtrl',
     'registerRouter',
@@ -7851,7 +7114,7 @@ angular.module('eshopService', [])
             $scope.$watch('vm.user.mobile', function (newValue, oldValue) {
                 if (vm.user.mobile != undefined) {
                     if (vm.user.mobile.length != 11) {
-                        vm.error = '手机长度必须�?1�?;
+                        vm.error = '手机长度必须为11位';
                     } else {
                         vm.error = null;
                     }
@@ -7867,13 +7130,13 @@ angular.module('eshopService', [])
                         vm.error = '电子邮箱格式不对';
                     }
                 } else {
-                    vm.error = '电子邮箱必须填写，用于找回密�?;
+                    vm.error = '电子邮箱必须填写，用于找回密码';
                 }
             });
             $scope.$watch('vm.user.password', function (newValue, oldValue) {
                 if (vm.user.password != undefined) {
                     if (vm.user.password.length < 6) {
-                        vm.error = '密码长度必须不小�?�?;
+                        vm.error = '密码长度必须不小于6位';
                     } else {
                         vm.error = null;
                     }
@@ -7884,7 +7147,7 @@ angular.module('eshopService', [])
             $scope.$watch('vm.user.pswConfirm', function (newValue, oldValue) {
                 if (vm.user.pswConfirm != undefined) {
                     if (vm.user.password != '' && vm.user.password.length >= 6 && vm.user.pswConfirm != vm.user.password) {
-                        vm.error = '密码不一�?;
+                        vm.error = '密码不一致';
                     } else {
                         vm.error = null;
                     }
@@ -7933,8 +7196,10 @@ angular.module('eshopService', [])
 
 
             vm.register = function () {
-                //检测输入数值是否正�?                if (!vm.check()) return;
-                //先注�?                vm.user.weixinno = '';
+                //检测输入数值是否正确
+                if (!vm.check()) return;
+                //先注册
+                vm.user.weixinno = '';
                 vm.user.wechat = '';
 
                 registerService.registerParent(vm.user).then(function (data) {
@@ -7956,12 +7221,12 @@ angular.module('eshopService', [])
                         if (data.errno == 10008) {
                             MessageToaster.error("手机号码已注册过");
                         } else {
-                            MessageToaster.error("注册不成�?);
+                            MessageToaster.error("注册不成功");
                         }
                     }
                 });
 
-                //注册成功�?使用账户去获取获取token,完成登录
+                //注册成功后,使用账户去获取获取token,完成登录
                 //Session.userId="70000103";
                 //Session.token='111';
                 //Session.userRole='2';
@@ -8022,7 +7287,7 @@ angular.module('eshopService', [])
     //POST URL: /api/v1/account/register/parent
     //{
     //  "weixinno": "xxxxxx",
-    //    "name": "李寻�?,
+    //    "name": "李寻欢",
     //    "sex":1,
     //    "mobile": "13812345678",
     //    "nick":"小李飞刀",
@@ -8250,7 +7515,7 @@ angular.module('eshopService', [])
             $scope.$watch('vm.originPsw', function(newValue, oldValue) {
               if(vm.originPsw!=undefined) {
                   if (vm.originPsw.length < 6) {
-                      vm.error = '密码长度必须不小�?�?;
+                      vm.error = '密码长度必须不小于6位';
                   } else {
                       vm.error = null;
                   }
@@ -8261,7 +7526,7 @@ angular.module('eshopService', [])
             $scope.$watch('vm.password', function(newValue, oldValue) {
                 if(vm.password!=undefined) {
                     if (vm.password.length < 6) {
-                        vm.error = '密码长度必须不小�?�?;
+                        vm.error = '密码长度必须不小于6位';
                     } else {
                         vm.error = null;
                     }
@@ -8272,7 +7537,7 @@ angular.module('eshopService', [])
             $scope.$watch('vm.pswConfirm', function(newValue, oldValue) {
                 if(vm.pswConfirm!=undefined) {
                     if (vm.password != '' && vm.password.length >= 6  && vm.pswConfirm != vm.password) {
-                        vm.error = '密码不一�?;
+                        vm.error = '密码不一致';
                     } else {
                         vm.error = null;
                     }
@@ -8412,337 +7677,6 @@ angular.module('eshopService', [])
 }());
 
 (function() {
-  "use strict";
-  angular.module('teacherModule', [
-    'teacherCtrl',
-    'teacherEditCtrl',
-    'teacherRouter',
-    'teacherService'
-  ]);
-
-}());
-
-(function() {
-    "use strict";
-    angular.module('teacherCtrl', [])
-        .controller('teacherCtrl', function($scope,Constants,StateService,$ionicListDelegate,$ionicPopup,teacherService,AuthService,CacheData) {
-            'ngInject';
-            var vm = this;
-            vm.activated = false;
-            $scope.$on('$ionicView.afterEnter', activate);
-
-            function activate() {
-                vm.activated = true;
-                vm.version = Constants.buildID;
-                vm.getOrganizerTeachers();
-            }
-
-            vm.back=function(){
-                StateService.back();
-            };
-
-            vm.goTo=function(id,item){
-                //查看老师信息
-                $ionicListDelegate.closeOptionButtons();
-                CacheData.putObject(id,item);
-                StateService.go('teacherEdit',{cid:id,type:0});
-            };
-
-            vm.new=function(){
-                //创建新的老师信息
-                $ionicListDelegate.closeOptionButtons();
-                StateService.go('teacherEdit',{type:1});
-            };
-
-            vm.edit=function(id){
-                //编辑老师信息
-                $ionicListDelegate.closeOptionButtons();
-                StateService.go('teacherEdit',{cid:id,type:2});
-            };
-
-            vm.del=function(item){
-                //删除老师信息
-                $ionicListDelegate.closeOptionButtons();
-
-                var confirmPopup = $ionicPopup.confirm({
-                    title: '确定要删除此老师:'+item.name,
-                    buttons: [
-                        {text: '取消', type: 'button-positive'},
-                        {text: '确定', type: 'button-assertive',onTap: function(e) { return true}}
-                    ]
-                });
-                confirmPopup.then(function(result) {
-                    if(result) {
-                        console.log('confirm to del this teacher '+item.sid);
-                        //delete(id);
-                    } else {
-                        console.log('cancel delete');
-                    }
-                });
-            };
-
-            vm.getOrganizerTeachers = function(){
-                teacherService.queryTeacher(AuthService.getLoginID()).then(function(data) {
-                    if (data.errno == 0) {
-                        console.log(data.data);
-                        vm.teachers = data.data;
-                    }
-                });
-            };
-        });
-}());
-
-(function() {
-    "use strict";
-    angular.module('teacherEditCtrl', [])
-        .controller('teacherEditCtrl', function($scope, $stateParams, Constants, StateService, teacherService, AuthService, CacheData,MessageToaster) {
-            'ngInject';
-            var vm = this;
-            vm.activated = false;
-
-            vm.query = function(id){
-                vm.item =CacheData.getObject(vm.cid);
-                console.log(vm.item);
-                //vm.item = {name:'girl B',gendar:'2',sid:id,remark:'abcdefg'};
-            };
-
-            $scope.$on('$ionicView.afterEnter', activate);
-
-            function activate() {
-                console.log($stateParams);
-                vm.cid = $stateParams.cid;
-                //0:query 1:create 2:update
-                vm.type = $stateParams.type;
-
-                if(vm.type=='0')vm.isEditing = false;
-                else vm.isEditing = true;
-
-                vm.activated = true;
-                vm.version = Constants.buildID;
-
-                if(vm.type!='1')vm.query(vm.cid);
-            }
-
-            vm.back=function(){
-                StateService.back();
-            };
-
-            vm.save=function(){
-                console.log(vm.item);
-                //create
-                teacherService.createTeacher(vm.item,AuthService.getLoginID()).then(function(data) {
-                    if (data.errno == 0) {
-                        //var userId = data.data.uid;
-                        //wxlogin(vm.user.wechat);
-                        StateService.back();
-                    }else{
-                        //MessageToaster.error(data.error);
-                        MessageToaster.error('无法添加，请确认手机号码是否已经使用�?);
-                    }
-                },function(data){
-                    MessageToaster.error(data);
-                });
-            };
-
-
-        });
-}());
-
-(function() {
-  'use strict';
-
-  angular.module('teacherRouter', [])
-    .config(myRouter);
-
-
-  function myRouter($stateProvider, $urlRouterProvider) {
-    'ngInject';
-    $stateProvider
-      .state('teacher', {
-        url: "/teacher",
-        templateUrl: 'teacher/teacher.html',
-        controller: 'teacherCtrl',
-        controllerAs: 'vm'
-      })
-      .state('teacherEdit', {
-        url: "/teacherEdit?:cid&:type",
-        params: {
-          cid : null,
-          type : '0'
-        },
-        templateUrl: 'teacher/teacherEdit.html',
-        controller: 'teacherEditCtrl',
-        controllerAs: 'vm'
-      })
-    ;
-  }
-}());
-
-(function() {
-  'use strict';
-
-  angular.module('teacherService', [])
-    .factory('teacherService', teacherService);
-
-  function teacherService( $q, $http, Constants, ResultHandler) {
-    'ngInject';
-    var service = {
-      createTeacher:createTeacher,
-      updateTeacher:updateTeacher,
-      queryTeacher:queryTeacher,
-      queryTeacherDeposit:queryTeacherDeposit
-    };
-
-
-    //POST /api/v1/account/teacher/{$teacher_accnt_id}/update //老师账号信息更新，完�?    //Request Body: { "name":"小强", "sex":1, "mobile":"13300001111", "teachage":5, "age":29, "photolink":"照片url", "password":"123456" }
-    //Response Body: { "errno":0, "error":"", "data":{ "uid":30000001 } }
-    function updateTeacher(teacher, teacherId) {
-      var data = {};
-      if(teacher.name!=null)data.name=teacher.name;
-      if(teacher.sex!=null)data.sex=teacher.sex;
-      if(teacher.mobile!=null)data.mobile=teacher.mobile;
-      if(teacher.teachage!=null)data.teachage=teacher.teachage;
-      if(teacher.age!=null)data.age=teacher.age;
-      if(teacher.url!=null)data.photolink=teacher.url;
-      if(teacher.password!=null)data.password=teacher.password;
-      if(teacher.remark!=null)data.remark=teacher.remark;
-
-      var url = Constants.serverUrl + "account/teacher/"+teacherId+"/update";
-      return $http({
-        method: 'post',
-        url: url,
-        data: data
-      }).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
-    }
-
-    //POST /api/v1/deposit/{$deposit_accnt_id}/addteacher
-    //Request Body: { "mobile":"13300001111" }
-    //Response Body: { "errno":0, "error":"", "data":{ "teacheruid":30000001, "passwd":"123456" } }
-    function createTeacher(teacher, orgId) {
-      var data = {
-        "name":teacher.name,
-        "sex":teacher.sex,
-        "mobile":teacher.mobile,
-        "teachage":teacher.teachage,
-        "age":teacher.age
-      };
-      var url = Constants.serverUrl + "deposit/"+orgId+"/addteacher";
-      return $http({
-        method: 'post',
-        url: url,
-        data: data
-      }).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
-    };
-
-    //GET /api/v1/account/query/depositTeacher/{deposit_accnt_id}
-    //return
-    //{
-    //  "errno":0,
-    //  "error":"",
-    //  "data":[
-    //    {
-    //      "uid":10000001,
-    //      "name":"赵大�?,
-    //      "sex":1,
-    //      "mobile":"15032145678",
-    //      "teachage":10,
-    //      "age":32,
-    //      "photolink":"xxxxx"
-    //      "remark":"xxxx"
-    //    },
-    //    …�?    //  ]
-    //}
-    function queryTeacher(id) {
-      var url = Constants.serverUrl + 'account/query/depositTeacher/'+id;
-      return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
-    };
-
-
-    function queryTeacherDeposit(id) {
-      var url = Constants.serverUrl + 'deposit/teacher/'+id;
-      return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
-    };
-
-    return service;
-
-
-  }
-
-}());
-
-(function() {
-  "use strict";
-  angular.module('teacherSettingModule', [
-    'teacherSettingCtrl',
-    'teacherSettingRouter',
-    'teacherSettingService'
-  ]);
-
-}());
-
-(function() {
-    "use strict";
-    angular.module('teacherSettingCtrl', [])
-        .controller('teacherSettingCtrl', function($scope, $state, Constants, StateService) {
-            'ngInject';
-            var vm = this;
-            vm.activated = false;
-            $scope.$on('$ionicView.afterEnter', activate);
-
-            function activate() {
-                vm.activated = true;
-                vm.version = Constants.buildID;
-            }
-
-            vm.goTo = function(addr){
-                console.log(addr);
-                StateService.go(addr);
-            };
-
-        });
-}());
-
-(function() {
-  'use strict';
-
-  angular.module('teacherSettingRouter', [])
-    .config(myRouter);
-
-
-  function myRouter($stateProvider, $urlRouterProvider) {
-    'ngInject';
-    $stateProvider
-      .state('tabs.teacherSetting', {
-        url: "/teacherSetting",
-          views: {
-            'tab-teacherSetting': {
-              templateUrl: 'teacherSetting/teacherSetting.html',
-              controller: 'teacherSettingCtrl',
-              controllerAs: 'vm'
-            }
-          }
-      });
-  }
-}());
-
-(function() {
-  'use strict';
-
-  angular.module('teacherSettingService', [])
-    .factory('teacherSettingService', myService);
-
-  function myService( $q, $http) {
-    'ngInject';
-    var service = {
-    };
-    return service;
-
-
-  }
-
-}());
-
-(function() {
     "use strict";
     angular.module('buyAppCtrl', [])
         .controller('buyAppCtrl', function($scope, $state, $stateParams, Constants, StateService, vipBuyService, AuthService, MessageToaster, Session) {
@@ -8760,6 +7694,12 @@ angular.module('eshopService', [])
                 vm.activated = true;
                 vm.version = Constants.buildID;
                 vm.query(vm.index);
+                Wechat.isInstalled(function (installed) {
+                    console.log("Wechat installed: " + (installed ? "Yes" : "No"));
+                }, function (reason) {
+                    console.log('未装微信插件无法支付:Wechat.isInstalled is fail '+reason);
+                    alert("未装微信插件无法支付" + reason);
+                });
             }
 
 
@@ -8786,6 +7726,7 @@ angular.module('eshopService', [])
 
             vm.pay=function(){
                 var parentId=AuthService.getLoginID();
+                //alert(parentId);
                 vipBuyService.createOrder2(parentId, vm.index)
                     .then(function (response) {
                         //alert(JSON.stringify(response));
@@ -8794,56 +7735,43 @@ angular.module('eshopService', [])
                             var orderId=result.orderId;
                             //vm.information = JSON.stringify(result);
                             var params = {
-                                partnerid: result.partnerid, // merchant id
-                                prepayid: result.prepayid, // prepay id
-                                noncestr: result.noncestr, // nonce
+                                mch_id: result.partnerid, // merchant id
+                                prepay_id: result.prepayid, // prepay id
+                                nonce: result.noncestr, // nonce
                                 timestamp: result.timestamp, // timestamp
-                                sign: result.sign, // signed string
+                                sign: result.pay_sign, // signed string
                             };
 
+                            //alert(JSON.stringify(params));
                             Wechat.sendPaymentRequest(params, function () {
-                                alert("Success");
+                                //alert("Success");
+                                //check order make sure user had pay the order ready.
+                                //alert("orderId="+orderId);
+                                vipBuyService.checkOrder(orderId).then(
+                                    function(result) {
+                                        //{"errno":0,"error":"",
+                                        // "data":{"orderId":"139630530220161103152842","wechatOrderId":"4003682001201611038611986947",
+                                        // "totalFee":"1","payState":"SUCCESS","payTime":"20161103152851"}}
+                                        //alert(JSON.stringify(result));
+                                        if(result.errno == 0 ){
+                                            MessageToaster.info("微信支付完成");
+                                            StateService.clearAllAndGo(AuthService.getNextPath());
+                                        }
+                                      },
+                                      function (reason) {
+                                          alert("checkOrder error "+JSON.stringify(reason));
+                                      }
+                                  );
                             }, function (reason) {
-                                alert("Failed: " + reason);
+                                //alert("Failed: " + reason);
+                                MessageToaster.error(reason);
                             });
-                            // WeixinJSBridge.invoke(
-                            //     'getBrandWCPayRequest',
-                            //     {
-                            //         "appId":result.appId,
-                            //         "timeStamp":""+result.timeStamp,
-                            //         "nonceStr":result.nonceStr,
-                            //         "package":"prepay_id="+result.prepay_id,
-                            //         "signType":"MD5",
-                            //         "paySign":result.paySign
-                            //     },
-                            //     function(res){
-                            //         var msg = res.err_msg;
-                            //         if(msg == "get_brand_wcpay_request:ok" ) {
-                            //             //保存数据．跳转页�?                            //             //check order make sure user had pay the order ready.
-                            //             vipBuyService.checkOrder(orderId).then(
-                            //                 function(result) {
-                            //                     if(result.errno == 0 ){
-                            //                         MessageToaster.info("微信支付完成");
-                            //                         StateService.clearAllAndGo(AuthService.getNextPath());
-                            //                     }
-                            //                 },
-                            //                 function (reason) {
-                            //                     alert("checkOrder error "+JSON.stringify(reason));
-                            //                 }
-                            //             );
-                            //         }else if(msg.endsWith("cancel")){
-                            //             MessageToaster.info("微信支付已取�?);
-                            //         }else if(msg.endsWith("fail")){
-                            //             alert("付款失败");
-                            //         }
-                            //     }
-                            // );
                           }else{
                             MessageToaster.error(response.error);
                           }
                     }, function (error) {
                         //alert(JSON.stringify(error));
-                        vm.information += " 请求付款失败 " + error;
+                        vm.information += " 请求付款失败 " + JSON.stringify(error);
                     });
             };
 
@@ -8853,32 +7781,32 @@ angular.module('eshopService', [])
 (function() {
     "use strict";
     angular.module('buyCtrl', [])
-        .controller('buyCtrl', function($scope, $state, $stateParams, Constants, StateService, vipBuyService, AuthService, MessageToaster, Session) {
+        .controller('buyCtrl', function($scope, $state, $stateParams, Constants, StateService, vipBuyService, AuthService, MessageToaster, Session,Wechat) {
             'ngInject';
             var vm = this;
 
             vm.activated = false;
-            vm.wechatPayReady = false;
+            //vm.wechatPayReady = false;
             vm.information = "";
 
-            $scope.onBridgeReady=function () {
-                //alert('wechat ok');
-                vm.wechatPayReady=true;
-            };
+            // $scope.onBridgeReady=function () {
+            //     //alert('wechat ok');
+            //     vm.wechatPayReady=true;
+            // };
 
-            if (typeof WeixinJSBridge == "undefined"){
-                console.log("not found WeixinJSBridge");
-                if(document.addEventListener){
-                    document.addEventListener('WeixinJSBridgeReady', $scope.onBridgeReady, false);
-                }else if (document.attachEvent){
-                    document.attachEvent('WeixinJSBridgeReady', $scope.onBridgeReady);
-                    document.attachEvent('onWeixinJSBridgeReady', $scope.onBridgeReady);
-                }
-                console.log("add event listener for WeixinJSBridge");
-            }else{
-                console.log("WeixinJSBridge exist");
-                $scope.onBridgeReady();
-            }
+            // if (typeof WeixinJSBridge == "undefined"){
+            //     console.log("not found WeixinJSBridge");
+            //     if(document.addEventListener){
+            //         document.addEventListener('WeixinJSBridgeReady', $scope.onBridgeReady, false);
+            //     }else if (document.attachEvent){
+            //         document.attachEvent('WeixinJSBridgeReady', $scope.onBridgeReady);
+            //         document.attachEvent('onWeixinJSBridgeReady', $scope.onBridgeReady);
+            //     }
+            //     console.log("add event listener for WeixinJSBridge");
+            // }else{
+            //     console.log("WeixinJSBridge exist");
+            //     $scope.onBridgeReady();
+            // }
 
             $scope.$on('$ionicView.afterEnter', activate);
 
@@ -8891,7 +7819,7 @@ angular.module('eshopService', [])
                 vm.query(vm.index);
                 vm.wechatInit();
             }
-            
+
             vm.wechatInit = function(){};
 
             vm.query = function(id){
@@ -8916,12 +7844,65 @@ angular.module('eshopService', [])
 
             vm.pay=function(){
                 var parentId=AuthService.getLoginID();
-                vipBuyService.createOrder(parentId, AuthService.getWechatId(), vm.index)
+                alert(parentId);
+                vipBuyService.createOrder2(parentId, vm.item.businessid)
                     .then(function (response) {
                         var result=response.data;
                         var orderId=result.orderId;
                         //vm.information = JSON.stringify(result);
                         //alert(JSON.stringify(result));
+                        var params = {
+                            partnerid: result.partnerid, // merchant id
+                            prepayid: result.prepay_id, // prepay id
+                            noncestr: result.nonceStr, // nonce
+                            timestamp: ""+result.timeStamp, // timestamp
+                            sign: result.paySign // signed string
+                        };
+                        alert(JSON.parse(params));
+                        Wechat.sendPaymentRequest(params, function (res) {
+                            alert("Success");
+                            alert(JSON.prase(res));
+                            var msg = res.err_msg;
+                            //alert(msg);
+
+                            if(msg == "get_brand_wcpay_request:ok" ) {
+                                //保存数据．跳转页面
+                                //check order make sure user had pay the order ready.
+                                vipBuyService.checkOrder(orderId).then(
+                                    function(result) {
+                                        //{"errno":0,"error":"",
+                                        // "data":{"orderId":"139630530220161103152842","wechatOrderId":"4003682001201611038611986947",
+                                        // "totalFee":"1","payState":"SUCCESS","payTime":"20161103152851"}}
+                                        alert(JSON.stringify(result));
+                                        if(result.errno == 0 ){
+                                            MessageToaster.info("微信支付完成");
+                                            StateService.clearAllAndGo(AuthService.getNextPath());
+                                        }
+                                      },
+                                      function (reason) {
+                                          alert("checkOrder error "+JSON.stringify(reason));
+                                      }
+                                  );
+                              //}else if(msg == "get_brand_wcpay_request:cancel"){
+                              } else if(msg.endsWith("cancel")) {
+                                  //alert("用户取消");
+                                  //vm.information="用户取消";
+                                  MessageToaster.info("微信支付已取消");
+                              //}else if(msg == "get_brand_wcpay_request:fail"){
+                              } else if(msg.endsWith("fail")) {
+                                  alert("付款失败");
+                              }
+
+                        }, function (reason) {
+                            alert("Failed sendPaymentRequest: " + reason);
+                            vm.information += " 请求付款失败 " + reason;
+                        });
+                      }, function (reason) {
+                            alert("Failed createOrder2: " + reason);
+                            vm.information += " 请求付款失败 " + reason;
+                      }
+                    );
+                        /*
                         if(vm.wechatPayReady){
                             WeixinJSBridge.invoke(
                                 'getBrandWCPayRequest',
@@ -8939,7 +7920,8 @@ angular.module('eshopService', [])
                                     //alert(msg);
 
                                     if(msg == "get_brand_wcpay_request:ok" ) {
-                                        //保存数据．跳转页�?                                        //check order make sure user had pay the order ready.
+                                        //保存数据．跳转页面
+                                        //check order make sure user had pay the order ready.
                                         vipBuyService.checkOrder(orderId).then(
                                             function(result) {
                                                 //{"errno":0,"error":"",
@@ -8955,7 +7937,8 @@ angular.module('eshopService', [])
                                                 var payTime=result.data.payTime;
                                                 var endDate=vm.getEndDate(payTime,vm.item.numofdays);
                                                 if(status === 'SUCCESS'){
-                                                    //保存数据．跳转页�?                                                    vipBuyService.updatePayedOrder(parentId,orderId,payTime,endDate).then(
+                                                    //保存数据．跳转页面
+                                                    vipBuyService.updatePayedOrder(parentId,orderId,payTime,endDate).then(
                                                         function(updateResult) {
                                                             //alert("updatePayedOrder sucess "+JSON.stringify(updateResult));
                                                             //vm.information += " udpate success ";
@@ -8971,7 +7954,7 @@ angular.module('eshopService', [])
                                                     );
                                                 }
                                                 */
-                                            },
+                                          /*  },
                                             function (reason) {
                                                 alert("checkOrder error "+JSON.stringify(reason));
                                             }
@@ -8980,7 +7963,7 @@ angular.module('eshopService', [])
                                     }else if(msg.endsWith("cancel")){
                                         //alert("用户取消");
                                         //vm.information="用户取消";
-                                        MessageToaster.info("微信支付已取�?);
+                                        MessageToaster.info("微信支付已取消");
                                     //}else if(msg == "get_brand_wcpay_request:fail"){
                                     }else if(msg.endsWith("fail")){
                                         alert("付款失败");
@@ -8992,9 +7975,11 @@ angular.module('eshopService', [])
                         //alert(JSON.stringify(error));
                         vm.information += " 请求付款失败 " + error;
                     });
-            };
+                    */
+          //  };
 
-        });
+        };
+    });
 }());
 
 (function() {
@@ -9135,7 +8120,8 @@ angular.module('eshopService', [])
     };
 
     function updatePayedOrder(parentId,orderId,payTime,endDate){
-        //  "cutofftime":endDate, //不确定是什么�?        var data = {
+        //  "cutofftime":endDate, //不确定是什么值
+        var data = {
         "paystatus":1,
         "paytime":payTime,
         "orderid":orderId
@@ -9150,6 +8136,637 @@ angular.module('eshopService', [])
 
     return service;
   }
+
+}());
+
+(function() {
+  "use strict";
+  angular.module('teacherModule', [
+    'teacherCtrl',
+    'teacherEditCtrl',
+    'teacherRouter',
+    'teacherService'
+  ]);
+
+}());
+
+(function() {
+    "use strict";
+    angular.module('teacherCtrl', [])
+        .controller('teacherCtrl', function($scope,Constants,StateService,$ionicListDelegate,$ionicPopup,teacherService,AuthService,CacheData) {
+            'ngInject';
+            var vm = this;
+            vm.activated = false;
+            $scope.$on('$ionicView.afterEnter', activate);
+
+            function activate() {
+                vm.activated = true;
+                vm.version = Constants.buildID;
+                vm.getOrganizerTeachers();
+            }
+
+            vm.back=function(){
+                StateService.back();
+            };
+
+            vm.goTo=function(id,item){
+                //查看老师信息
+                $ionicListDelegate.closeOptionButtons();
+                CacheData.putObject(id,item);
+                StateService.go('teacherEdit',{cid:id,type:0});
+            };
+
+            vm.new=function(){
+                //创建新的老师信息
+                $ionicListDelegate.closeOptionButtons();
+                StateService.go('teacherEdit',{type:1});
+            };
+
+            vm.edit=function(id){
+                //编辑老师信息
+                $ionicListDelegate.closeOptionButtons();
+                StateService.go('teacherEdit',{cid:id,type:2});
+            };
+
+            vm.del=function(item){
+                //删除老师信息
+                $ionicListDelegate.closeOptionButtons();
+
+                var confirmPopup = $ionicPopup.confirm({
+                    title: '确定要删除此老师:'+item.name,
+                    buttons: [
+                        {text: '取消', type: 'button-positive'},
+                        {text: '确定', type: 'button-assertive',onTap: function(e) { return true}}
+                    ]
+                });
+                confirmPopup.then(function(result) {
+                    if(result) {
+                        console.log('confirm to del this teacher '+item.sid);
+                        //delete(id);
+                    } else {
+                        console.log('cancel delete');
+                    }
+                });
+            };
+
+            vm.getOrganizerTeachers = function(){
+                teacherService.queryTeacher(AuthService.getLoginID()).then(function(data) {
+                    if (data.errno == 0) {
+                        console.log(data.data);
+                        vm.teachers = data.data;
+                    }
+                });
+            };
+        });
+}());
+
+(function() {
+    "use strict";
+    angular.module('teacherEditCtrl', [])
+        .controller('teacherEditCtrl', function($scope, $stateParams, Constants, StateService, teacherService, AuthService, CacheData,MessageToaster) {
+            'ngInject';
+            var vm = this;
+            vm.activated = false;
+
+            vm.query = function(id){
+                vm.item =CacheData.getObject(vm.cid);
+                console.log(vm.item);
+                //vm.item = {name:'girl B',gendar:'2',sid:id,remark:'abcdefg'};
+            };
+
+            $scope.$on('$ionicView.afterEnter', activate);
+
+            function activate() {
+                console.log($stateParams);
+                vm.cid = $stateParams.cid;
+                //0:query 1:create 2:update
+                vm.type = $stateParams.type;
+
+                if(vm.type=='0')vm.isEditing = false;
+                else vm.isEditing = true;
+
+                vm.activated = true;
+                vm.version = Constants.buildID;
+
+                if(vm.type!='1')vm.query(vm.cid);
+            }
+
+            vm.back=function(){
+                StateService.back();
+            };
+
+            vm.save=function(){
+                console.log(vm.item);
+                //create
+                teacherService.createTeacher(vm.item,AuthService.getLoginID()).then(function(data) {
+                    if (data.errno == 0) {
+                        //var userId = data.data.uid;
+                        //wxlogin(vm.user.wechat);
+                        StateService.back();
+                    }else{
+                        //MessageToaster.error(data.error);
+                        MessageToaster.error('无法添加，请确认手机号码是否已经使用过');
+                    }
+                },function(data){
+                    MessageToaster.error(data);
+                });
+            };
+
+
+        });
+}());
+
+(function() {
+  'use strict';
+
+  angular.module('teacherRouter', [])
+    .config(myRouter);
+
+
+  function myRouter($stateProvider, $urlRouterProvider) {
+    'ngInject';
+    $stateProvider
+      .state('teacher', {
+        url: "/teacher",
+        templateUrl: 'teacher/teacher.html',
+        controller: 'teacherCtrl',
+        controllerAs: 'vm'
+      })
+      .state('teacherEdit', {
+        url: "/teacherEdit?:cid&:type",
+        params: {
+          cid : null,
+          type : '0'
+        },
+        templateUrl: 'teacher/teacherEdit.html',
+        controller: 'teacherEditCtrl',
+        controllerAs: 'vm'
+      })
+    ;
+  }
+}());
+
+(function() {
+  'use strict';
+
+  angular.module('teacherService', [])
+    .factory('teacherService', teacherService);
+
+  function teacherService( $q, $http, Constants, ResultHandler) {
+    'ngInject';
+    var service = {
+      createTeacher:createTeacher,
+      updateTeacher:updateTeacher,
+      queryTeacher:queryTeacher,
+      queryTeacherDeposit:queryTeacherDeposit
+    };
+
+
+    //POST /api/v1/account/teacher/{$teacher_accnt_id}/update //老师账号信息更新，完善
+    //Request Body: { "name":"小强", "sex":1, "mobile":"13300001111", "teachage":5, "age":29, "photolink":"照片url", "password":"123456" }
+    //Response Body: { "errno":0, "error":"", "data":{ "uid":30000001 } }
+    function updateTeacher(teacher, teacherId) {
+      var data = {};
+      if(teacher.name!=null)data.name=teacher.name;
+      if(teacher.sex!=null)data.sex=teacher.sex;
+      if(teacher.mobile!=null)data.mobile=teacher.mobile;
+      if(teacher.teachage!=null)data.teachage=teacher.teachage;
+      if(teacher.age!=null)data.age=teacher.age;
+      if(teacher.url!=null)data.photolink=teacher.url;
+      if(teacher.password!=null)data.password=teacher.password;
+      if(teacher.remark!=null)data.remark=teacher.remark;
+
+      var url = Constants.serverUrl + "account/teacher/"+teacherId+"/update";
+      return $http({
+        method: 'post',
+        url: url,
+        data: data
+      }).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
+    }
+
+    //POST /api/v1/deposit/{$deposit_accnt_id}/addteacher
+    //Request Body: { "mobile":"13300001111" }
+    //Response Body: { "errno":0, "error":"", "data":{ "teacheruid":30000001, "passwd":"123456" } }
+    function createTeacher(teacher, orgId) {
+      var data = {
+        "name":teacher.name,
+        "sex":teacher.sex,
+        "mobile":teacher.mobile,
+        "teachage":teacher.teachage,
+        "age":teacher.age
+      };
+      var url = Constants.serverUrl + "deposit/"+orgId+"/addteacher";
+      return $http({
+        method: 'post',
+        url: url,
+        data: data
+      }).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
+    };
+
+    //GET /api/v1/account/query/depositTeacher/{deposit_accnt_id}
+    //return
+    //{
+    //  "errno":0,
+    //  "error":"",
+    //  "data":[
+    //    {
+    //      "uid":10000001,
+    //      "name":"赵大萌",
+    //      "sex":1,
+    //      "mobile":"15032145678",
+    //      "teachage":10,
+    //      "age":32,
+    //      "photolink":"xxxxx"
+    //      "remark":"xxxx"
+    //    },
+    //    ……
+    //  ]
+    //}
+    function queryTeacher(id) {
+      var url = Constants.serverUrl + 'account/query/depositTeacher/'+id;
+      return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
+    };
+
+
+    function queryTeacherDeposit(id) {
+      var url = Constants.serverUrl + 'deposit/teacher/'+id;
+      return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
+    };
+
+    return service;
+
+
+  }
+
+}());
+
+(function() {
+  "use strict";
+  angular.module('teacherSettingModule', [
+    'teacherSettingCtrl',
+    'teacherSettingRouter',
+    'teacherSettingService'
+  ]);
+
+}());
+
+(function() {
+    "use strict";
+    angular.module('teacherSettingCtrl', [])
+        .controller('teacherSettingCtrl', function($scope, $state, Constants, StateService) {
+            'ngInject';
+            var vm = this;
+            vm.activated = false;
+            $scope.$on('$ionicView.afterEnter', activate);
+
+            function activate() {
+                vm.activated = true;
+                vm.version = Constants.buildID;
+            }
+
+            vm.goTo = function(addr){
+                console.log(addr);
+                StateService.go(addr);
+            };
+
+        });
+}());
+
+(function() {
+  'use strict';
+
+  angular.module('teacherSettingRouter', [])
+    .config(myRouter);
+
+
+  function myRouter($stateProvider, $urlRouterProvider) {
+    'ngInject';
+    $stateProvider
+      .state('tabs.teacherSetting', {
+        url: "/teacherSetting",
+          views: {
+            'tab-teacherSetting': {
+              templateUrl: 'teacherSetting/teacherSetting.html',
+              controller: 'teacherSettingCtrl',
+              controllerAs: 'vm'
+            }
+          }
+      });
+  }
+}());
+
+(function() {
+  'use strict';
+
+  angular.module('teacherSettingService', [])
+    .factory('teacherSettingService', myService);
+
+  function myService( $q, $http) {
+    'ngInject';
+    var service = {
+    };
+    return service;
+
+
+  }
+
+}());
+
+(function() {
+    "use strict";
+    angular.module('WxLoginModule', [
+        'WxLoginCtrl',
+        'WxLoginRouter',
+        'WxLoginService'
+    ]).run(function($rootScope, Session, StateService,$location,tools) {
+        $rootScope.$on('$stateChangeStart', function(event, next) {
+          console.log("stateChangeStart");
+          console.log(next);
+
+          if (next.url.indexOf('wxlogin')>0 ) {
+              console.log("wxlogin");
+              //alert($location.absUrl());
+              var url = $location.absUrl();
+              //获取ticket参数，因为angualr的路径不规范，会出现http://10.20.68.73:8080/casOauth/?ticket=ST-16-HzIjcAlxbKvlyJQAX2XI-cas01.sustc.edu.cn#/login，无法用公共方法获取
+              var start = url.indexOf('user=') + 5;
+              var end = url.indexOf('&type=');
+              if(!start<=5 && end <= 0){
+                StateService.clearAllAndGo('login');
+              }else{
+                //如果是http://10.20.68.73:8080/casOauth?ticket=ST-16-HzIjcAlxbKvlyJQAX2XI-cas01.sustc.edu.cn这种情况
+                //或者是是http://10.20.68.73:8080/casOauth/#/login?ticket=ST-16-HzIjcAlxbKvlyJQAX2XI-cas01.sustc.edu.cn这种情况
+                if (end == -1 || end < start) end = url.length;
+                console.log("wxlogin 1" + start + " - " + end);
+                var myUser = url.toString().substring(start, end);
+                console.log("get user = " + myUser);
+
+                var start = url.indexOf('&type=') + 6;
+                var end = url.indexOf('#/wxlogin');
+                if (end == -1 || end < start) end = url.length;
+                console.log("wxlogin 2" + start + " - " + end);
+                var myType = url.toString().substring(start, end);
+                console.log("get type = " + myType);
+                StateService.clearAllAndGo('wxlogin',{user:myUser,type:myType});
+              }
+          }else if(next.url.indexOf('login')>0){
+              console.log("login");
+          }else if(next.url.indexOf('register')>0){
+              //未绑定用户者,进入注册绑定页面
+              console.log("register");
+          }else if(next.url.indexOf('resetPsw')>0){
+              console.log("resetPsw");
+          }else{
+            if (Session.getData('userId') && Session.getData('token')) {
+                //login successed
+            } else {
+                console.log("user not login with ");
+                event.preventDefault();
+                if (tools.getAgent() != 'wx')
+                    StateService.clearAllAndGo('login');
+                else
+                    StateService.clearAllAndGo('wxlogin');
+            }
+          }
+        });
+
+    });
+
+}());
+
+(function() {
+    "use strict";
+    angular.module('WxLoginCtrl', [])
+        .controller('WxLoginCtrl', function(Constants, AuthService, MessageToaster, LoginService, $timeout, $scope, Session, $stateParams, StateService, $ionicModal, Role) {
+            'ngInject';
+
+            var vm = this;
+            vm.wxlogin = wxlogin;
+            vm.isDev = Constants.ENVIRONMENT == 'dev' ? true : false;
+            $scope.$on('$ionicView.beforeEnter', validate);
+
+            function validate() {
+                vm.user = $stateParams.user;
+                vm.type = $stateParams.type;
+                console.log("vm.type = "+vm.type+" with "+vm.user);
+            /////////////////////////////////////////////////////////
+            //    vm.user = "o_Nkcw4CsZh5dbE2v8XVLUxfd96A";//"oVyGDuNPkAbtljfJKusP4oaCrYG0";//test
+            //    vm.type = 2;//test
+            ////////////////////////////////////////////////////////
+                //MessageToaster.info('user = '+vm.user);
+                if (vm.user) {
+                    //login failed
+                    //MessageToaster.info('logining....');
+                    vm.info = "正在登录，请稍后...";
+                    vm.showLoginModal = showLoginModal;
+                    //vm.roleList = [{type:1,user:'1111'}];//test
+                    vm.showChooseModal = showChooseModal;
+                    vm.login = login;
+                    vm.select = selectChoose;
+                    //获取到微信uid后先尝试登陆对应的用户类型
+                    if(vm.type){
+                        vm.wxlogin(vm.user,vm.type);
+                    }else{
+                        vm.showChooseModal();
+                    }
+                }
+            }
+
+            function wxlogin(userid,type) {
+                console.log(userid+"  type = "+type);
+                //MessageToaster.info('准备登录');
+                LoginService.wxLogin(userid,type).then(function(response) {
+                    console.log(response);
+                    if(response.errno==0) {
+                        var result = response.data;
+                        if (result instanceof Array && result.length > 1) {
+                            //modal select type
+                            vm.roleList=result;
+                            //MessageToaster.info("have select "+result.length);
+                            vm.showChooseModal();
+                        }else{
+                            var u=result[0];
+                            if (u.uid != null && u.token != null && u.type != null) {
+                                AuthService.setSession(u.uid, u.token, u.eshop, u.type,userid);
+                                StateService.clearAllAndGo(AuthService.getNextPath());
+                            }
+                        }
+                    }else{
+                        if(response.errno==12004){
+                            //no data found
+                            AuthService.setSession(null, null, null, Role.unknown,userid);
+
+                            StateService.clearAllAndGo("register",{type:vm.type});
+                        }
+                        //MessageToaster.error(response.error);
+                    }
+                });
+            };
+
+            //WeuiModalLoading
+            function login(user) {
+                //WeuiModalLoading.show();
+                //test
+                AuthService.setSession('1', '123', '1');
+                StateService.go(AuthService.getNextPath());
+                //test
+
+                LoginService.login(user.userId, user.password).then(function(response) {
+                    if (vm.modal)
+                        vm.closeDetailsModal();
+                    MessageToaster.success(response.message);
+                    AuthService.setSession(response.data.uid, response.data.token,response.data.eshop,response.data.type);
+                    StateService.clearAllAndGo(AuthService.getNextPath());
+                }).finally(function() {
+                    //WeuiModalLoading.hide();
+                });
+            }
+
+            function showLoginModal() {
+                $ionicModal.fromTemplateUrl('Login/LoginModal.html', {
+                    scope: $scope,
+                    animation: 'slide-in-up'
+                }).then(function(modal) {
+                    vm.modal = modal;
+                    vm.modal.show();
+                });
+
+                vm.closeDetailsModal = function() {
+                    vm.modal.remove();
+                };
+                $scope.$on('$ionicView.leave', function() {
+                    vm.modal.remove();
+                });
+            }
+
+            function showChooseModal() {
+                $ionicModal.fromTemplateUrl('Login/ChooseModal.html', {
+                    scope: $scope,
+                    animation: 'slide-in-up'
+                }).then(function(modal) {
+                    vm.cmodal = modal;
+                    vm.cmodal.show();
+                });
+
+                vm.closeChooseModal = function() {
+                    vm.cmodal.remove();
+                };
+                $scope.$on('$ionicView.leave', function() {
+                    vm.cmodal.remove();
+                });
+            }
+
+            function selectChoose(){
+                if(vm.choose!=null){
+                    //know user choose then login agin with type
+                    wxlogin(vm.user, vm.choose);
+                }
+            }
+        });
+}());
+
+(function() {
+  'use strict';
+
+  angular.module('WxLoginRouter', [])
+    .config(wxLoginRouter);
+
+
+  function wxLoginRouter($stateProvider,$urlRouterProvider) {
+    'ngInject';
+    $stateProvider
+    .state('wxlogin', {
+      url: "/wxlogin?:user&:type",
+      params:{
+        user:null,
+        type:0
+      },
+      templateUrl: 'WxLogin/wxlogin.html',
+      controller: 'WxLoginCtrl',
+      controllerAs: 'vm'
+    });
+    // $urlRouterProvider.when('', '/wxlogin');
+    //$urlRouterProvider.otherwise('/wxlogin');
+    $urlRouterProvider.otherwise(function($injector, $location) {
+          //console.log("Could not find " + $location);
+          $location.path('/login');
+    });
+
+  }
+}());
+
+(function() {
+    'use strict';
+
+    angular.module('WxLoginService', [])
+        .factory('WxLoginService', wxLoginService);
+
+    function wxLoginService($q, $http, ResultHandler, Constants) {
+        'ngInject';
+        var service = {
+            login: login,
+            logout: logout,
+            wxLogin: wxLogin
+        };
+
+        function logout() {
+
+        }
+
+        function login(userId, password) {
+            var data = {
+                id: md5(userId),
+                psw: md5(password)
+            };
+            var url = Constants.serverUrl + 'login';
+            return $http({
+                method: 'post',
+                url: url,
+                data: data
+            }).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
+        }
+
+        //POST /api/v1/login
+        //Request Body:
+        //{
+        //    "weixinno": "xxxxxx"
+        //}
+        //Response Body:
+        //{
+        //    "errno":0,
+        //    "error":"",
+        //    "data":{
+        //        "token":"fdddsdsdddsssssdfff",
+        //        "uid":"用户id",
+        //        "type":"用户类型"   uid的第一位数
+        //    }
+        //}
+        function wxLogin(wxId,type) {
+            var data = {
+                weixinno: wxId
+            };
+            var end="";
+            if(type!=null){
+                //console.log("include type "+type);
+                data.type=type;
+                end="?type="+type;
+            }
+            var url = Constants.serverUrl + 'login'+end;
+            return $http({
+                method: 'post',
+                url: url,
+                data: data
+            }).then(function (response) {
+                return response.data;
+            }, function (error) {
+                return $q.reject(error);
+            });
+        }
+
+
+        return service;
+
+
+    }
 
 }());
 
@@ -9368,300 +8985,788 @@ angular.module('eshopService', [])
 }());
 
 (function() {
-    "use strict";
-    angular.module('WxLoginModule', [
-        'WxLoginCtrl',
-        'WxLoginRouter',
-        'WxLoginService'
-    ]).run(function($rootScope, Session, StateService,$location,tools) {
-        $rootScope.$on('$stateChangeStart', function(event, next) {
-          console.log("stateChangeStart");
-          console.log(next);
-
-          if (next.url.indexOf('wxlogin')>0 ) {
-              console.log("wxlogin");
-              //alert($location.absUrl());
-              var url = $location.absUrl();
-              //获取ticket参数，因为angualr的路径不规范，会出现http://10.20.68.73:8080/casOauth/?ticket=ST-16-HzIjcAlxbKvlyJQAX2XI-cas01.sustc.edu.cn#/login，无法用公共方法获取
-              var start = url.indexOf('user=') + 5;
-              var end = url.indexOf('&type=');
-              if(!start<=5 && end <= 0){
-                StateService.clearAllAndGo('login');
-              }else{
-                //如果是http://10.20.68.73:8080/casOauth?ticket=ST-16-HzIjcAlxbKvlyJQAX2XI-cas01.sustc.edu.cn这种情况
-                //或者是是http://10.20.68.73:8080/casOauth/#/login?ticket=ST-16-HzIjcAlxbKvlyJQAX2XI-cas01.sustc.edu.cn这种情况
-                if (end == -1 || end < start) end = url.length;
-                console.log("wxlogin 1" + start + " - " + end);
-                var myUser = url.toString().substring(start, end);
-                console.log("get user = " + myUser);
-
-                var start = url.indexOf('&type=') + 6;
-                var end = url.indexOf('#/wxlogin');
-                if (end == -1 || end < start) end = url.length;
-                console.log("wxlogin 2" + start + " - " + end);
-                var myType = url.toString().substring(start, end);
-                console.log("get type = " + myType);
-                StateService.clearAllAndGo('wxlogin',{user:myUser,type:myType});
-              }
-          }else if(next.url.indexOf('login')>0){
-              console.log("login");
-          }else if(next.url.indexOf('register')>0){
-              //未绑定用户�?进入注册绑定页面
-              console.log("register");
-          }else if(next.url.indexOf('resetPsw')>0){
-              console.log("resetPsw");
-          }else{
-            if (Session.getData('userId') && Session.getData('token')) {
-                //login successed
-            } else {
-                console.log("user not login with ");
-                event.preventDefault();
-                if (tools.getAgent() != 'wx')
-                    StateService.clearAllAndGo('login');
-                else
-                    StateService.clearAllAndGo('wxlogin');
-            }
-          }
-        });
-
-    });
+  "use strict";
+  angular.module('childrenSteamModule', [
+    'childrenSteamCtrl',
+    'childrenSteamRouter',
+    'childrenSteamService',
+    'videoCtrl'
+  ]);
 
 }());
 
-(function() {
+(function () {
     "use strict";
-    angular.module('WxLoginCtrl', [])
-        .controller('WxLoginCtrl', function(Constants, AuthService, MessageToaster, LoginService, $timeout, $scope, Session, $stateParams, StateService, $ionicModal, Role) {
+    angular.module('childrenSteamCtrl', [])
+        .controller('childrenSteamCtrl', function ($scope, $ionicPopup, $sce,$stateParams, Constants, childrenService, childrenSteamService, AuthService, Session, StateService, $ionicModal, $ionicSlideBoxDelegate) {
             'ngInject';
-
+            console.log("childrenSteamCtrl");
             var vm = this;
-            vm.wxlogin = wxlogin;
-            vm.isDev = Constants.ENVIRONMENT == 'dev' ? true : false;
-            $scope.$on('$ionicView.beforeEnter', validate);
+            vm.activated = false;
+            vm.parent = {};
+            vm.deposits = {};
+            vm.fingerprintLogs = [];
+            vm.messages = [];
+            vm.cameras = [];
+            vm.unPaid = false,
+            vm.myComment;
+            vm.simpleFilter = '';
+            vm.offset = [0, 0, 0];
+            vm.limit = 30;
+            vm.error = '';
+            vm.canLoadMore = true;
+            $scope.$on('$ionicView.afterEnter', activate);
+            vm.steam = 0;
+            function activate() {
+                vm.activated = true;
+                vm.version = Constants.buildID;
+                vm.user = AuthService.getLoginID();
+                //从微信获取家长的基本信息
+                //vm.getWechatInfo(AuthService.getWechatId());
+                //vm.parent.wechat={
+                //    "nickname": "Band",
+                //    "sex": 1,
+                //    "language": "zh_CN",
+                //    "city": "广州",
+                //    "province": "广东",
+                //    "country": "中国",
+                //    "headimgurl":  "http://wx.qlogo.cn/mmopen/g3MonUZtNHkdmzicIlibx6iaFqAc56vxLSUfpb6n5WKSYVY0ChQKkiaJSgQ1dZuTOgvLLrhJbERQQ4eMsv84eavHiaiceqxibJxCfHe/0"
+                //};
+                //vm.getChildrenInfo(AuthService.getLoginID(),vm.offset,vm.limit);
+                //vm.getChildren();
+                vm.getChildrenDeposit();
 
-            function validate() {
-                vm.user = $stateParams.user;
-                vm.type = $stateParams.type;
-                console.log("vm.type = "+vm.type+" with "+vm.user);
-            /////////////////////////////////////////////////////////
-            //    vm.user = "o_Nkcw4CsZh5dbE2v8XVLUxfd96A";//"oVyGDuNPkAbtljfJKusP4oaCrYG0";//test
-            //    vm.type = 2;//test
-            ////////////////////////////////////////////////////////
-                //MessageToaster.info('user = '+vm.user);
-                if (vm.user) {
-                    //login failed
-                    //MessageToaster.info('logining....');
-                    vm.info = "正在登录，请稍后...";
-                    vm.showLoginModal = showLoginModal;
-                    //vm.roleList = [{type:1,user:'1111'}];//test
-                    vm.showChooseModal = showChooseModal;
-                    vm.login = login;
-                    vm.select = selectChoose;
-                    //获取到微信uid后先尝试登陆对应的用户类�?                    if(vm.type){
-                        vm.wxlogin(vm.user,vm.type);
-                    }else{
-                        vm.showChooseModal();
-                    }
+                //如果是通知消息进来，直接根据通知消息参数打开指定页面
+                var index = $stateParams.index;;
+                vm.steam =index || Session.getData('steam');
+                if (vm.steam === null) {
+                    vm.steam = 1;
+                    console.log('steam = ' + vm.steam);
                 }
-            }
 
-            function wxlogin(userid,type) {
-                console.log(userid+"  type = "+type);
-                //MessageToaster.info('准备登录');
-                LoginService.wxLogin(userid,type).then(function(response) {
-                    console.log(response);
-                    if(response.errno==0) {
-                        var result = response.data;
-                        if (result instanceof Array && result.length > 1) {
-                            //modal select type
-                            vm.roleList=result;
-                            //MessageToaster.info("have select "+result.length);
-                            vm.showChooseModal();
-                        }else{
-                            var u=result[0];
-                            if (u.uid != null && u.token != null && u.type != null) {
-                                AuthService.setSession(u.uid, u.token, u.eshop, u.type,userid);
-                                StateService.clearAllAndGo(AuthService.getNextPath());
-                            }
-                        }
-                    }else{
-                        if(response.errno==12004){
-                            //no data found
-                            AuthService.setSession(null, null, null, Role.unknown,userid);
+                //转为数字
+                vm.steam = parseInt(vm.steam);
 
-                            StateService.clearAllAndGo("register",{type:vm.type});
-                        }
-                        //MessageToaster.error(response.error);
+
+                vm.changeSteam(vm.steam);
+            };
+
+            vm.changeSteam = function (index) {
+                vm.steam = index;
+                Session.setData('steam', index);
+                vm.canLoadMore = true;
+                if (index === 0) {
+                    vm.showCamera = true;
+                    vm.showFingerPrint = false;
+                    vm.showNotificatin = false;
+                    if (vm.cameras.length === 0) vm.getCamera();
+                } else if (index === 1) {
+                    vm.showCamera = false;
+                    vm.showFingerPrint = true;
+                    vm.showNotificatin = false;
+                    console.log('fingerprintLogs = ' + vm.fingerprintLogs);
+                    if (vm.fingerprintLogs.length === 0) vm.getFingerPrint(0, vm.limit);
+                } else if (index === 2) {
+                    vm.showCamera = false;
+                    vm.showFingerPrint = false;
+                    vm.showNotificatin = true;
+                    if (vm.messages.length === 0) vm.getMessage(0, vm.limit);
+                }
+            };
+
+            vm.watchVideo = function (video, name) {
+                video.deposit_name = name;
+                Session.setData('video', JSON.stringify(video));
+                StateService.go('video');
+            };
+
+            vm.getChildrenDeposit = function () {
+                childrenSteamService.getChildrenDeposit(AuthService.getLoginID()).then(function (data) {
+                    if (data.errno == 0) {
+                        console.log(data.data);
+                        vm.deposits = data.data;
+                    }else {
+                        vm.unPaid = true;
+                        vm.error = data.error;
                     }
                 });
             };
 
-            //WeuiModalLoading
-            function login(user) {
-                //WeuiModalLoading.show();
-                //test
-                AuthService.setSession('1', '123', '1');
-                StateService.go(AuthService.getNextPath());
-                //test
-
-                LoginService.login(user.userId, user.password).then(function(response) {
-                    if (vm.modal)
-                        vm.closeDetailsModal();
-                    MessageToaster.success(response.message);
-                    AuthService.setSession(response.data.uid, response.data.token,response.data.eshop,response.data.type);
-                    StateService.clearAllAndGo(AuthService.getNextPath());
-                }).finally(function() {
-                    //WeuiModalLoading.hide();
-                });
-            }
-
-            function showLoginModal() {
-                $ionicModal.fromTemplateUrl('Login/LoginModal.html', {
-                    scope: $scope,
-                    animation: 'slide-in-up'
-                }).then(function(modal) {
-                    vm.modal = modal;
-                    vm.modal.show();
-                });
-
-                vm.closeDetailsModal = function() {
-                    vm.modal.remove();
-                };
-                $scope.$on('$ionicView.leave', function() {
-                    vm.modal.remove();
-                });
-            }
-
-            function showChooseModal() {
-                $ionicModal.fromTemplateUrl('Login/ChooseModal.html', {
-                    scope: $scope,
-                    animation: 'slide-in-up'
-                }).then(function(modal) {
-                    vm.cmodal = modal;
-                    vm.cmodal.show();
-                });
-
-                vm.closeChooseModal = function() {
-                    vm.cmodal.remove();
-                };
-                $scope.$on('$ionicView.leave', function() {
-                    vm.cmodal.remove();
-                });
-            }
-
-            function selectChoose(){
-                if(vm.choose!=null){
-                    //know user choose then login agin with type
-                    wxlogin(vm.user, vm.choose);
+            vm.getCamera = function () {
+              console.log("getCamera "+ vm.steam);
+                var count = 1,
+                    depositsCount = vm.deposits.length;
+                vm.canLoadMore = false;
+                vm.cameras = [];
+                if(typeof(depositsCount) == "undefined"){
+                    console.log("Camera = "+ depositsCount);
+                    vm.canLoadMore = false;
+                    $scope.$broadcast('scroll.refreshComplete');
+                    $scope.$broadcast('scroll.infiniteScrollComplete');
                 }
-            }
+                //获取摄像头信息
+                for (var i = 0; i < depositsCount; i++) {
+                    var id = vm.deposits[i].DepositID;
+                    //get camera
+                    if (id != null) {
+                        //console.log('http://v.zxing-tech.cn/?v='+id);
+                        //vm.cameraSrc = $sce.trustAsResourceUrl('http://v.zxing-tech.cn/?v='+id);
+                        childrenSteamService.getCamera(id).then(function (data) {
+                            //if(data.data.length<vm.limit){vm.canLoadMore = false;}
+                            vm.cameras[vm.cameras.length] = data.data;
+
+                            if (data.errno === 16005) {
+                                vm.unPaid = true;
+
+                            }
+
+                            count += 1;
+                            if (count === depositsCount) {
+                                $scope.$broadcast('scroll.refreshComplete');
+                                $scope.$broadcast('scroll.infiniteScrollComplete');
+                            }
+
+                        }, function (e) {
+                            count += 1;
+                            if (count === depositsCount) {
+                                $scope.$broadcast('scroll.refreshComplete');
+                                $scope.$broadcast('scroll.infiniteScrollComplete');
+                            }
+                        });
+                    }
+                }
+            };
+
+            vm.getFingerPrint = function (offset, limit) {
+                console.log("getFingerPrint");
+                childrenSteamService.getAllChildrenSignIn(AuthService.getLoginID(), offset, limit).then(function (data) {
+                    if (data.errno == 0) {
+                        console.log(data.data);
+                        if(offset==0)vm.fingerprintLogs=[];
+                        if (vm.fingerprintLogs.length == 0)
+                            vm.fingerprintLogs = data.data;
+                        else
+                            vm.fingerprintLogs = vm.fingerprintLogs.concat(data.data);
+                        console.log(vm.fingerprintLogs);
+                        vm.offset[1] += data.data.length;
+                        if (data.data.length < vm.limit) {
+                            console.log("it is the last data");
+                            vm.canLoadMore = false;
+                        } else {
+                            vm.canLoadMore = true;
+                        }
+                    } else {
+                        console.log(data);
+                        if (data.errno === 16005) {
+                            vm.unPaid = true;
+                        }
+                        vm.canLoadMore = false;
+                    }
+
+                    //始终隐藏加载更多面板
+                    $scope.$broadcast('scroll.refreshComplete');
+                    $scope.$broadcast('scroll.infiniteScrollComplete');
+
+                }, function () {
+                    //始终隐藏加载更多面板
+                    vm.canLoadMore = false;
+                    $scope.$broadcast('scroll.refreshComplete');
+                    $scope.$broadcast('scroll.infiniteScrollComplete');
+                })
+            };
+
+            vm.getMessage = function (offset, limit) {
+                console.log("getMessage");
+                childrenSteamService.getAllChildrenMsg(AuthService.getLoginID(), offset, limit).then(function (data) {
+                    if (data.errno == 0) {
+                        console.log(data.data);
+                        if(offset==0)vm.messages=[];
+                        var start = 0;
+                        if (vm.messages.length == 0)
+                            vm.messages = data.data;
+                        else {
+                            start = vm.messages.length;
+                            vm.messages = vm.messages.concat(data.data);
+                        }
+                        console.log(vm.messages);
+                        //update comment
+                        for (var i = 0; i < data.data.length; i++) {
+                            //vm.messages[start+i]
+                            childrenSteamService.getDailyComment(vm.messages[start + i].InfoID, start + i).then(function (sdata) {
+                                if (data.errno == 0) {
+                                    console.log("getDailyComment: ");
+                                    console.log(sdata.data);
+                                    var index = sdata.data.index;
+                                    vm.messages[index].comments = sdata.data.comments;
+                                    vm.messages[index].likes = sdata.data.likes;
+                                }
+                            });
+                        }
+                        vm.offset[2] += data.data.length;
+                        if (data.data.length < vm.limit) {
+                            console.log("it is the last data");
+                            vm.canLoadMore = false;
+                        } else {
+                            vm.canLoadMore = true;
+                        }
+                        //$scope.$broadcast('scroll.refreshComplete');
+                        //$scope.$broadcast('scroll.infiniteScrollComplete');
+                    } else {
+                        console.log(data);
+                        if (data.errno == 16005) {
+                            vm.unPaid = true;
+                        }
+                        vm.canLoadMore = false;
+                    }
+
+                    //始终隐藏加载更多面板
+                    $scope.$broadcast('scroll.refreshComplete');
+                    $scope.$broadcast('scroll.infiniteScrollComplete');
+
+                }, function () {
+                    //始终隐藏加载更多面板
+                    $scope.$broadcast('scroll.refreshComplete');
+                    $scope.$broadcast('scroll.infiniteScrollComplete');
+                });
+            };
+
+            vm.doRefresh = function (type, offset) {
+              console.log(vm.steam +" - "+type+" = "+offset);
+                if (vm.steam === 0) {
+                    vm.getCamera();
+                } else if (vm.steam === 1) {
+                    vm.getFingerPrint(offset, vm.limit);
+                } else if (vm.steam === 2) {
+                    vm.getMessage(offset, vm.limit);
+                }
+            };
+
+            vm.getChildrenInfo = function (pId, offset, limit) {
+                childrenService.getChildrenAllInfo(pId, offset, limit).then(function (data) {
+                    if (data.errno == 0) {
+                        console.log("getChildrenAllInfo: ");
+                        console.log(data.data);
+                        if (vm.messages.length == 0)
+                            vm.messages = data.data;
+                        else
+                            vm.messages = vm.messages.concat(data.data);
+                        console.log(vm.messages);
+                        vm.offset += data.data.length;
+                        if (data.data.length < vm.limit) {
+                            console.log("it is the last data");
+                            vm.canLoadMore = false;
+                        } else {
+                            vm.canLoadMore = true;
+                        }
+                        $scope.$broadcast('scroll.refreshComplete');
+                        $scope.$broadcast('scroll.infiniteScrollComplete');
+                    } else {
+                        console.log(data);
+                    }
+                });
+            };
+
+            vm.getWechatInfo = function (wId) {
+                console.log("wechat id : " + wId);
+                childrenService.getWechatInfo(wId).then(function (data) {
+                    if (data.errno == 0) {
+                        console.log("wechat info: ");
+                        console.log(data.data);
+                        vm.parent.wechat = data.data;
+                    }
+                });
+            };
+
+            vm.getImg = function (type) {
+                if (type == 1) {
+                    return { name: "就餐", src: "img/dinner.png" };
+                } else if (type == 2) {
+                    return { name: "培训", src: "img/traning.png" };
+                } else if (type == 3) {
+                    return { name: "活动", src: "img/play.png" };
+                } else if (type == 4) {
+                    return { name: "作业", src: "img/homework.png" };
+                } else if (type == 5) {
+                    return { name: "接入", src: "img/login.png" };
+                } else if (type == 6) {
+                    return { name: "送到", src: "img/logout.png" };
+                } else {
+                    return { name: "未知信息类型", src: "img/unknown.png" };
+                }
+            };
+
+            vm.goPhoto = function (msgIndex, index) {
+                Session.setData('temp', vm.msg[msgIndex]);
+                StateService.go("photo", { index: index });
+            };
+
+            vm.star = function () {
+                console.log("add star");
+            };
+
+            vm.getDailyComments = function (infoid, index) {
+                console.log("getDailyComments index = " + index);
+                childrenSteamService.getDailyComment(infoid, index).then(function (sdata) {
+                    if (sdata.errno == 0) {
+                        console.log("getDailyComment: ");
+                        console.log(sdata.data);
+                        var sindex = sdata.data.index;
+                        vm.messages[sindex].comments = sdata.data.comments;
+                        vm.messages[sindex].likes = sdata.data.likes;
+                    }
+                });
+            };
+
+            vm.like = function (info, index) {
+                //如果已经like，去like
+                //没有like，加like
+                console.log(info + " and index=" + index);
+                var needAdd = true;
+                for (var i = 0; i < info.likes.length; i++) {
+                    if (info.likes[i].CommentBy == vm.user) {
+                        //remove
+                        needAdd = false;
+                        childrenSteamService.delDailyComment(info.likes[i].CommentID).then(function (data) {
+                            console.log('rmComment likes');
+                            console.log(data);
+                            vm.getDailyComments(info.InfoID, index);
+                            return;
+                        });
+                    }
+                }
+                //add
+                if (needAdd) {
+                    var comment = { infoid: info.InfoID, commentby: vm.user, commentdata: null };
+                    childrenSteamService.createDailyComment(comment).then(function (data) {
+                        console.log('addComment likes');
+                        console.log(data);
+                        vm.getDailyComments(info.InfoID, index);
+                        return;
+                    });
+                }
+            };
+
+            vm.comment = function (info, index) {
+                console.log(info + " and index=" + index);
+                vm.showPopup(info, index);
+            };
+
+            vm.rmComment = function (comment, index) {
+                childrenSteamService.delDailyComment(comment.CommentID).then(function (data) {
+                    console.log('rmComment');
+                    console.log(data);
+                    vm.getDailyComments(comment.InfoID, index);
+                });
+            };
+
+            vm.showPopup = function (info, index) {
+                var myPopup = $ionicPopup.show({
+                    template: '<input type="edittext" ng-model="vm.myComment">',
+                    title: '请输入评论内容',
+                    scope: $scope,
+                    buttons: [
+                      { text: '取消' },
+                      {
+                          text: '<b>提交</b>',
+                          type: 'button-positive',
+                          onTap: function (e) {
+                              if (!vm.myComment) {
+                                  e.preventDefault();
+                              } else {
+                                  return vm.myComment;
+                              }
+                          }
+                      }
+                    ]
+                });
+
+                myPopup.then(function (res) {
+                    console.log('Tapped!', res);
+                    //add comment
+                    if (res.length > 0) {
+                        var comment = { infoid: info.InfoID, commentby: vm.user, commentdata: res };
+                        childrenSteamService.createDailyComment(comment).then(function (data) {
+                            console.log('addComment comments');
+                            console.log(data);
+                            vm.myComment = null;
+                            vm.getDailyComments(info.InfoID, index);
+                            return;
+                        });
+                    }
+                });
+            };
+
+            vm.getChildren = function () {
+                childrenService.getChildren(AuthService.getLoginID()).then(function (data) {
+                    var title = "";
+                    if (data.errno == 0) {
+                        console.log(data.data);
+                        vm.childs = data.data;
+                        for (var i = 0; i < vm.childs.length; i++) {
+                            if (i == vm.childs.length - 1)
+                                title += (vm.childs[i].name + "的家长");
+                            else
+                                title += (vm.childs[i].name + ",");
+                            //vm.getMsg(vm.childs[i].uid);
+                            //vm.getChildSignIn(vm.childs[i].uid,vm.childs[i].name);
+                        }
+                        vm.parent.title = title;
+                    }
+                    //vm.fingerprintLogs.sort(function(a,b){return a.log-b.log});
+                });
+            };
+
+            vm.change = function () {
+                if (vm.simpleFilterSelect === '-1') {
+                    vm.simpleFilter = "";
+                } else if (vm.simpleFilterSelect === '0') {
+                    vm.simpleFilter = { datatype: '2' };
+                } else if (vm.simpleFilterSelect === '1') {
+                    vm.simpleFilter = { datatype: '1', InfoType: '1' };
+                } else if (vm.simpleFilterSelect === '2') {
+                    vm.simpleFilter = { datatype: '1', InfoType: '2' };
+                } else if (vm.simpleFilterSelect === '3') {
+                    vm.simpleFilter = { datatype: '1', InfoType: '3' };
+                } else if (vm.simpleFilterSelect === '4') {
+                    vm.simpleFilter = { datatype: '1', InfoType: '4' };
+                } else if (vm.simpleFilterSelect === '5') {
+                    vm.simpleFilter = { datatype: '1', InfoType: '5' };
+                } else if (vm.simpleFilterSelect === '6') {
+                    vm.simpleFilter = { datatype: '1', InfoType: '6' };
+                }
+            };
+
+            vm.getImages = function (msg) {
+                vm.imgCount = 0;
+                if (msg.PhotoLink1 != null && msg.PhotoLink1 != "") {
+                    var data = { src: msg.PhotoLink1, msg: '' };
+                    vm.images[vm.imgCount] = data;
+                    vm.imgCount++;
+                }
+                if (msg.PhotoLink2 != null && msg.PhotoLink2 != "") {
+                    var data = { src: msg.PhotoLink2, msg: '' };
+                    vm.images[vm.imgCount] = data;
+                    vm.imgCount++;
+                }
+                if (msg.PhotoLink3 != null && msg.PhotoLink3 != "") {
+                    var data = { src: msg.PhotoLink3, msg: '' };
+                    vm.images[vm.imgCount] = data;
+                    vm.imgCount++;
+                }
+                if (msg.PhotoLink4 != null && msg.PhotoLink4 != "") {
+                    var data = { src: msg.PhotoLink4, msg: '' };
+                    vm.images[vm.imgCount] = data;
+                    vm.imgCount++;
+                }
+                if (msg.PhotoLink5 != null && msg.PhotoLink5 != "") {
+                    var data = { src: msg.PhotoLink5, msg: '' };
+                    vm.images[vm.imgCount] = data;
+                    vm.imgCount++;
+                }
+                if (msg.PhotoLink6 != null && msg.PhotoLink6 != "") {
+                    var data = { src: msg.PhotoLink6, msg: '' };
+                    vm.images[vm.imgCount] = data;
+                    vm.imgCount++;
+                }
+                console.log(vm.images);
+            };
+
+            $ionicModal.fromTemplateUrl('message/image-modal.html', {
+                scope: $scope,
+                animation: 'slide-in-up'
+            }).then(function (modal) {
+                $scope.modal = modal;
+            });
+
+            $scope.openModal = function () {
+                $ionicSlideBoxDelegate.slide(0);
+                $scope.modal.show();
+            };
+
+            $scope.closeModal = function () {
+                $scope.modal.hide();
+            };
+
+            // Cleanup the modal when we're done with it!
+            $scope.$on('$destroy', function () {
+                $scope.modal.remove();
+            });
+            // Execute action on hide modal
+            $scope.$on('modal.hide', function () {
+                // Execute action
+            });
+            // Execute action on remove modal
+            $scope.$on('modal.removed', function () {
+                // Execute action
+            });
+            $scope.$on('modal.shown', function () {
+                console.log('Modal is shown!');
+            });
+
+            $scope.$on('scroll.refreshComplete', function () {
+                console.log('scroll.refreshComplete is call!');
+            });
+
+            $scope.$on('scroll.infiniteScrollComplete', function () {
+                console.log('scroll.infiniteScrollComplete is call!');
+            });
+
+            // Call this functions if you need to manually control the slides
+            $scope.next = function () {
+                $ionicSlideBoxDelegate.next();
+            };
+
+            $scope.previous = function () {
+                $ionicSlideBoxDelegate.previous();
+            };
+
+            $scope.goToSlide = function (index, msg) {
+                vm.images = [];
+                vm.getImages(msg);
+                $scope.modal.show();
+                $ionicSlideBoxDelegate.slide(index);
+            };
+
+            // Called each time the slide changes
+            $scope.slideChanged = function (index) {
+                $scope.slideIndex = index;
+            };
+
         });
 }());
 
 (function() {
   'use strict';
 
-  angular.module('WxLoginRouter', [])
-    .config(wxLoginRouter);
+  angular.module('childrenSteamRouter', [])
+    .config(myRouter);
 
 
-  function wxLoginRouter($stateProvider,$urlRouterProvider) {
+  function myRouter($stateProvider, $urlRouterProvider) {
     'ngInject';
     $stateProvider
-    .state('wxlogin', {
-      url: "/wxlogin?:user&:type",
-      params:{
-        user:null,
-        type:0
-      },
-      templateUrl: 'WxLogin/wxlogin.html',
-      controller: 'WxLoginCtrl',
-      controllerAs: 'vm'
-    });
-    // $urlRouterProvider.when('', '/wxlogin');
-    //$urlRouterProvider.otherwise('/wxlogin');
-    $urlRouterProvider.otherwise(function($injector, $location) {
-          //console.log("Could not find " + $location);
-          $location.path('/login');
-    });
-
+      .state('tabs.childrenSteam', {
+          url: "/childrenSteam?:index",
+          views: {
+            'tab-childrenSteam': {
+              templateUrl: 'childrenSteam/childrenSteam.html',
+              controller: 'childrenSteamCtrl',
+              controllerAs: 'vm'
+            }
+          }
+      })
+      .state('video', {
+        url: "/video",
+        templateUrl: 'childrenSteam/video.html',
+        controller: 'videoCtrl',
+        controllerAs: 'vm'
+      });
   }
 }());
 
 (function() {
-    'use strict';
+  'use strict';
 
-    angular.module('WxLoginService', [])
-        .factory('WxLoginService', wxLoginService);
+  angular.module('childrenSteamService', [])
+    .factory('childrenSteamService', childrenSteamService);
 
-    function wxLoginService($q, $http, ResultHandler, Constants) {
-        'ngInject';
-        var service = {
-            login: login,
-            logout: logout,
-            wxLogin: wxLogin
-        };
+  function childrenSteamService( $q, $http,Constants,ResultHandler) {
+    'ngInject';
+    var service = {
+      getMsg:getMsg,
+      getChildrenMsg:getChildrenMsg,
+      getChildren:getChildren,
+      getChildSignIn:getChildSignIn,
+      getChildrenSignIn:getChildrenSignIn,
+      getWechatInfo:getWechatInfo,
+      getChildrenAllInfo:getChildrenAllInfo,
+      getAllChildrenSignIn:getAllChildrenSignIn,
+      getAllChildrenMsg:getAllChildrenMsg,
+      getChildrenDeposit:getChildrenDeposit,
+      getDailyComment:getDailyComment,
+      createDailyComment:createDailyComment,
+      delDailyComment:delDailyComment,
+      getCamera:getCamera
+    };
 
-        function logout() {
+    //字段名	类型	备注
+    //InfoID 	int64 	信息编号，自增即可
+    //PublisherID 	int64 	发布老师的账号
+    //DepositID 	int64 	托管机构账号
+    //Longitude 	float 	信息发布的位置经度
+    //Latitude 	float 	信息发布的位置纬度
+    //ClickCount 	int64 	总浏览次数
+    //InfoType 	int32 	信息类型（1：就餐；2：培训；3：活动；4：作业）
+    //Description 	varchar2 	老师的描述，不超出1000字
+    //PhotoLink1 	varchar2 	照片/视频1的信息
+    //PhotoLink2 	varchar2 	照片/视频2的信息
+    //PhotoLink3 	varchar2 	照片/视频3的信息
+    //PhotoLink4 	varchar2 	照片/视频4的信息
+    //PhotoLink5 	varchar2 	照片/视频5的信息
+    //PhotoLink6 	varchar2 	照片/视频6的信息
+    //Status	int	1:正常发布，2:撤回,
+    //CreateTime 	datetime 	创建时间
 
-        }
 
-        function login(userId, password) {
-            var data = {
-                id: md5(userId),
-                psw: md5(password)
-            };
-            var url = Constants.serverUrl + 'login';
-            return $http({
-                method: 'post',
-                url: url,
-                data: data
-            }).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
-        }
+    /*
+     GET /api/v1/children/information/{$childuid}
+     return
+     {
+     "errno":0,
+     "error":"",
+     "data":{
+     "childuid":41000001,
+     "childname":"xxx",
+     "childavatarlink":"http://xxxxxxx.jpg",
+     "timeline":[
+     {
+     "timestamp":1468051200,
+     "actiontype":0,
+     "actionname":"signin",
+     "actiondata":{}
+     },
+     {
+     "timestamp":146805200,
+     "actiontype":1,
+     "actionname":"dining",
+     "actiondata":{
+     "imgs":["http://xxxxxxxxxx1.jpg", "http://xxxxxxxxx2.jpg",...],
+     "desc":"孩子们愉快的享受着美味"
+     }
+     },
+     ]
+     "signin":1468051200,
+     "name":"yyy",
+     "avatarlink":"http://yyyyyyyyyyy.jpg",
+     }
+     ]
+     }
+     */
+    function getMsg(childId) {
+        var url = Constants.serverUrl + 'parent/children/information/'+childId;
+        return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
+    };
 
-        //POST /api/v1/login
-        //Request Body:
-        //{
-        //    "weixinno": "xxxxxx"
-        //}
-        //Response Body:
-        //{
-        //    "errno":0,
-        //    "error":"",
-        //    "data":{
-        //        "token":"fdddsdsdddsssssdfff",
-        //        "uid":"用户id",
-        //        "type":"用户类型"   uid的第一位数
-        //    }
-        //}
-        function wxLogin(wxId,type) {
-            var data = {
-                weixinno: wxId
-            };
-            var end="";
-            if(type!=null){
-                //console.log("include type "+type);
-                data.type=type;
-                end="?type="+type;
+    /*
+     GET /api/v1/parent/childrenlist/{$parentuid}
+     return
+     {
+     "errno":0,
+     "error":"",
+     "data":[
+     {
+     "uid":41000001,
+     "name":"xxx",
+     "avatarlink":"http://xxxxxxx.jpg",
+     },
+     {
+     "uid":41000002,
+     "name":"yyy",
+     "avatarlink":"http://yyyyyyyyyyy.jpg",
+     }
+     ]
+     }
+     */
+    function getChildren(parentId) {
+        var url = Constants.serverUrl + 'parent/childrenList/'+parentId;
+        return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
+    };
+
+    function getChildSignIn(childId) {
+        var url = Constants.serverUrl + 'parent/children/signin/'+childId;
+        return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
+    };
+
+    function getChildrenMsg(parentId) {
+        var url = Constants.serverUrl + 'parent/children/allInformation/'+parentId;
+        return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
+    };
+
+    function getChildrenSignIn(parentId) {
+        var url = Constants.serverUrl + 'parent/children/allSignin/'+parentId;
+        return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
+    };
+
+    function getAllChildrenSignIn(parentId,offset,count) {
+        var url = Constants.serverUrl + 'parent/children/fp/'+parentId+'?offset='+offset+'&limitcount='+count;
+        return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
+    };
+
+    function getAllChildrenMsg(parentId,offset,count){
+        var url = Constants.serverUrl + 'parent/children/msg/'+parentId+'?offset='+offset+'&limitcount='+count;
+        return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
+    };
+
+    function getChildrenAllInfo(parentId,offset,count){
+        var url = Constants.serverUrl + 'parent/childrenInformation/fetch/'+parentId+'?offset='+offset+'&limitcount='+count;
+        return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
+    };
+
+    function getWechatInfo(wid) {
+        var url = Constants.serverUrl + 'wechat/'+wid;
+        return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
+    };
+
+    function getChildrenDeposit(pid) {
+        var url = Constants.serverUrl + 'parent/children/deposit/'+pid;
+        return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
+    };
+
+    function getDailyComment(infoId,index) {
+        var url = Constants.serverUrl + 'dailyComment/'+infoId+'?index='+index;
+        return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
+    };
+
+    function createDailyComment(data) {
+        var url = Constants.serverUrl + 'dailyComment';
+        return $http({
+            method: 'post',
+            url: url,
+            data: data
+        }).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
+    };
+
+    function delDailyComment(id) {
+        var url = Constants.serverUrl + 'dailyComment/'+id;
+        return $http.delete(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
+    };
+
+    function getCamera(did){
+      //var url =  Constants.serverUrl +"cgi-bin/video.pl?did="+did;
+      var url =  Constants.serverUrl +"camera/"+did;
+      return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
+    };
+
+    return service;
+
+
+  }
+
+
+}());
+
+(function() {
+    "use strict";
+    angular.module('videoCtrl', [])
+        .controller('videoCtrl', function($scope, Session, StateService, Constants) {
+            'ngInject';
+
+            var vm = this;
+            vm.activated = false;
+
+            $scope.$on('$ionicView.afterEnter', activate);
+            function activate() {
+                vm.activated = true;
+                vm.version = Constants.buildID;
+                vm.video=JSON.parse(Session.getData('video'));
+
+                console.log(vm.video);
             }
-            var url = Constants.serverUrl + 'login'+end;
-            return $http({
-                method: 'post',
-                url: url,
-                data: data
-            }).then(function (response) {
-                return response.data;
-            }, function (error) {
-                return $q.reject(error);
-            });
-        }
 
-
-        return service;
-
-
-    }
-
+            vm.back = function(){
+                StateService.back();
+            };
+        });
 }());
 
 //# sourceMappingURL=app.js.map
