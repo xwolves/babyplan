@@ -94,11 +94,11 @@ class Comment extends Charge{
             $rsp_data['depositid'] = $depositid;
             $rsp_data['parentid'] = $parentid;
             $tmp_ar = array();
-            $tmp_ar['kitchen'] = $row['kitchen'];
-            $tmp_ar['food'] = $row['food'];
-            $tmp_ar['roadsafety'] = $row['roadsafety'];
-            $tmp_ar['edufiresafety'] = $row['edufiresafety'];
-            $tmp_ar['teacherresp'] = $row['teacherresp'];
+            $tmp_ar['kitchen'] = (int)$row['kitchen'];
+            $tmp_ar['food'] = (int)$row['food'];
+            $tmp_ar['roadsafety'] = (int)$row['roadsafety'];
+            $tmp_ar['edufiresafety'] = (int)$row['edufiresafety'];
+            $tmp_ar['teacherresp'] = (int)$row['teacherresp'];
             $rsp_data['scores'] = $tmp_ar;
             $rsp_data['commenttext'] = $row['commenttext'];
 
