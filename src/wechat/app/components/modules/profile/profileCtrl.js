@@ -129,7 +129,7 @@
 
                     var options = new FileUploadOptions();
                     options.fileKey = "file";
-                    options.fileName = fileURL.substr(fileURL.lastIndexOf('/') + 1);
+                    options.fileName = fileURL.substr(fileURL.lastIndexOf('/')+1);
                     options.mimeType = "image/jpeg";
                     options.chunkedMode = true;
 
@@ -140,9 +140,9 @@
                     ft.upload(fileURL, "http://wx.zxing-tech.cn/upload", function (data) {
                         // 设置图片新地址
                         var resp = JSON.parse(data.response);
-                        vm.parentInfo.avatarlink = resp.data.fileurl;
+                        vm.parent.avatarlink = resp.data.fileurl;
 
-                        parentService.updateParent(vm.parentInfo).then(function (res) {
+                        parentService.updateParent(vm.parent).then(function (res) {
                             MessageToaster.info("更新成功!");
                             $ionicLoading.hide();
                         }, function (err) {

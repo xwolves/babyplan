@@ -9,13 +9,16 @@
         'modules'
     ])
 
-    .run(function ($ionicPlatform, $state, AuthService, JPushService) {
+    .run(function ($ionicPlatform, $state,$ionicHistory, AuthService, JPushService) {
         $ionicPlatform.registerBackButtonAction(function (event) {
            // alert("cur：" + JSON.stringify($state.current));
-            if ($state.current.name == AuthService.getNextPath()) {
+            if ($state.current.name.indexOf("tabs")>-1) {
                 event.preventDefault();
                 cordova.plugins.backgroundMode.moveToBackground();
+            } else  if ($ionicHistory.backView()) {
+                    $ionicHistory.goBack();
             }
+            return false;
         }, 100);
 
         $ionicPlatform.ready(function () {

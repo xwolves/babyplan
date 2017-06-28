@@ -58,7 +58,8 @@
             }
 
             vm.register = function () {
-                StateService.clearAllAndGo("register", { type: vm.type });
+                StateService.go("register", { type: vm.type });
+              //  StateService.clearAllAndGo("register", { type: vm.type });
             }
 
 
