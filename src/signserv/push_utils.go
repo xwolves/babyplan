@@ -17,6 +17,26 @@ type signinMessage struct {
 	SigninTime  string `json:"signin_time"`
 }
 
+func checkParentPayment(parentId int) bool {
+	sql := `SELECT parentid, TIMESTAMPDIFF(DAY, NOW(), cutofftime) as retdays, businessid 
+	FROM tb_parent_order WHERE paystatus = 1 AND NOW() <= cutofftime AND parentid=?`
+	db := getDB()
+	if db == nil {
+		log.Printf("checkParentPayment get db fail, parentId = %v", parentId)
+		return false
+	}
+	defer db.Close()
+	rows, err := db.Query(sql, parentId)
+	if err != nil {
+		log.Printf("checkParentPayment query db fail. parentId = %v, %v", parentId, err)
+		return false
+	}
+	if rows.Next() {
+		return true
+	}
+	return false
+}
+
 // return message, parent-phone
 func getSigninMessage(depositId, childId, signinMode int) (string, string) {
 	var (
@@ -35,6 +55,11 @@ func getSigninMessage(depositId, childId, signinMode int) (string, string) {
 
 	if c, err = getChildInfo(childId); err != nil {
 		log.Printf("push: %v", err.Error())
+		return "", ""
+	}
+	if !checkParentPayment(c.ParentId) {
+		log.Printf("push: parent not payment, we don't push this message, parentId = %v, childId = %v, parentName = %v",
+			c.ParentId, childId, c.ParentName)
 		return "", ""
 	}
 	msg.ParentName = c.ParentName
