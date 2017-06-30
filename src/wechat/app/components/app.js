@@ -9,7 +9,7 @@
         'modules'
     ])
 
-    .run(function ($ionicPlatform, $state,$ionicHistory, AuthService, JPushService) {
+    .run(function ($ionicPlatform, $state, $ionicHistory, AuthService, JPushService, Constants) {
         $ionicPlatform.registerBackButtonAction(function (event) {
            // alert("cur：" + JSON.stringify($state.current));
             if ($state.current.name.indexOf("tabs")>-1) {
@@ -34,14 +34,30 @@
             }
 
          
+            //版本更新
+            function checkAppUpdate() {
+                window.AppUpdate && window.AppUpdate.checkAppUpdate(function () {
+                    //console.log('success', JSON.stringify(arguments), arguments);
+                   // alert("success" + JSON.stringify(arguments));
+                }, function () {
+                    //console.log('fail', JSON.stringify(arguments), arguments);
+                   // alert("fail" + JSON.stringify(arguments));
+                }, Constants.versionUpdateUrl + "apk-pub/ktyy.version.xml");
+            }
+
             //应用可以进入后台运行
             //cordova.plugins.backgroundMode.enable();
             //cordova.plugins.backgroundMode.overrideBackButton();
-            //cordova.plugins.backgroundMode.on('activate', function () {
-            //     cordova.plugins.notification.badge.clear();
-            //});
+            cordova.plugins.backgroundMode.on('activate', function () {
+                checkAppUpdate();
+            });
 
            
+            checkAppUpdate();
+
+            //cordova.getAppVersion.getVersionNumber(function (version) {
+            //    alert(version);
+            //});
 
             //推送初始化
             var onOpenNotificationInAndroidCallback = function (data) {

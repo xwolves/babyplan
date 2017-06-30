@@ -53,6 +53,12 @@
             "IOS_KEY": "kb7M0jiGaemQX49hculUNNpWIDsRZ9u9",
             "IOS_LOCATION_DESC": "请点击'好'以允许访问。",
             "PACKAGE_NAME": "com.trusteeship"
+        },
+        "cordova-plugin-app-version": {
+            "PACKAGE_NAME": "com.trusteeship"
+        },
+        "cordova-plugin-app-update": {
+            "PACKAGE_NAME": "com.trusteeship"
         }
     },
     "dependent_plugins": {
@@ -60,6 +66,9 @@
             "PACKAGE_NAME": "com.trusteeship"
         },
         "cordova-plugin-jcore": {
+            "PACKAGE_NAME": "com.trusteeship"
+        },
+        "cordova-plugin-appversion": {
             "PACKAGE_NAME": "com.trusteeship"
         }
     }

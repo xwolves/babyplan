@@ -9,7 +9,11 @@
 
             function activate() {
                 vm.activated = true;
-                vm.version = Constants.buildID;
+
+                cordova.getAppVersion.getVersionNumber(function (version) {
+                    vm.version = version;
+                });
+              
                 vm.name = Constants.appTitle;
                 vm.company = Constants.company;
             }

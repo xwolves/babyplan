@@ -9,7 +9,7 @@
         'modules'
     ])
 
-    .run(function ($ionicPlatform, $state,$ionicHistory, AuthService, JPushService) {
+    .run(function ($ionicPlatform, $state, $ionicHistory, AuthService, JPushService, Constants) {
         $ionicPlatform.registerBackButtonAction(function (event) {
            // alert("cur：" + JSON.stringify($state.current));
             if ($state.current.name.indexOf("tabs")>-1) {
@@ -34,14 +34,30 @@
             }
 
          
+            //版本更新
+            function checkAppUpdate() {
+                window.AppUpdate && window.AppUpdate.checkAppUpdate(function () {
+                    //console.log('success', JSON.stringify(arguments), arguments);
+                   // alert("success" + JSON.stringify(arguments));
+                }, function () {
+                    //console.log('fail', JSON.stringify(arguments), arguments);
+                   // alert("fail" + JSON.stringify(arguments));
+                }, Constants.versionUpdateUrl + "apk-pub/ktyy.version.xml");
+            }
+
             //应用可以进入后台运行
             //cordova.plugins.backgroundMode.enable();
             //cordova.plugins.backgroundMode.overrideBackButton();
-            //cordova.plugins.backgroundMode.on('activate', function () {
-            //     cordova.plugins.notification.badge.clear();
-            //});
+            cordova.plugins.backgroundMode.on('activate', function () {
+                checkAppUpdate();
+            });
 
            
+            checkAppUpdate();
+
+            //cordova.getAppVersion.getVersionNumber(function (version) {
+            //    alert(version);
+            //});
 
             //推送初始化
             var onOpenNotificationInAndroidCallback = function (data) {
@@ -881,6 +897,7 @@ app.filter('statusChange', function () {
             'serverUrl': 'http://wx.zxing-tech.cn/api/v1/',
             'eshopApiUrl': 'http://api.mall.zxing-tech.cn/v2/',
             'dfsUrl': 'http://wx.zxing-tech.cn/',
+            'versionUpdateUrl': 'http://wx.zxing-tech.cn/',
             'buildID': '20170614v1',
             'ENVIRONMENT':'release'
         });
@@ -914,6 +931,57 @@ app.filter('statusChange', function () {
         $httpProvider.defaults.headers.get['Cache-Control'] = 'no-cache';
         $httpProvider.defaults.headers.get['Pragma'] = 'no-cache';
     });
+}());
+
+Date.prototype.Format = function(fmt) {
+    var o = {
+        "M+": this.getMonth() + 1, //月份
+        "d+": this.getDate(), //日
+        "h+": this.getHours(), //小时
+        "m+": this.getMinutes(), //分
+        "s+": this.getSeconds(), //秒
+        "q+": Math.floor((this.getMonth() + 3) / 3), //季度
+        "S": this.getMilliseconds() //毫秒
+    };
+    if (/(y+)/.test(fmt))
+        fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+    for (var k in o)
+        if (new RegExp("(" + k + ")").test(fmt))
+            fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+    return fmt;
+};
+(function() {
+    "use strict";
+    angular.module('modules', [
+        'LoginModule',
+        'WxLoginModule',
+        'childrenSteamModule',
+        'registerModule',
+        'tabsModule',
+        'childrenModule',
+        'nearbyModule',
+        'orderModule',
+        'profileModule',
+        'organizerModule',
+        'messageModule',
+        'parentModule',
+        'childrenSettingModule',
+        'teacherModule',
+        'teacherSettingModule',
+        'depositChildrenModule',
+        'vipBuyModule',
+        'vipRecordModule',
+        'vipTipsModule',
+        'commentModule',
+        'exitModule',
+        'photoModule',
+        'MapModule',
+        'eshopEntryModule',
+        'estimateModule',
+        'helpModule',
+        'settingsModule'
+    ]);
+
 }());
 
 (function() {
@@ -2784,57 +2852,6 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
 
 }());
 
-Date.prototype.Format = function(fmt) {
-    var o = {
-        "M+": this.getMonth() + 1, //月份
-        "d+": this.getDate(), //日
-        "h+": this.getHours(), //小时
-        "m+": this.getMinutes(), //分
-        "s+": this.getSeconds(), //秒
-        "q+": Math.floor((this.getMonth() + 3) / 3), //季度
-        "S": this.getMilliseconds() //毫秒
-    };
-    if (/(y+)/.test(fmt))
-        fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
-    for (var k in o)
-        if (new RegExp("(" + k + ")").test(fmt))
-            fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
-    return fmt;
-};
-(function() {
-    "use strict";
-    angular.module('modules', [
-        'LoginModule',
-        'WxLoginModule',
-        'childrenSteamModule',
-        'registerModule',
-        'tabsModule',
-        'childrenModule',
-        'nearbyModule',
-        'orderModule',
-        'profileModule',
-        'organizerModule',
-        'messageModule',
-        'parentModule',
-        'childrenSettingModule',
-        'teacherModule',
-        'teacherSettingModule',
-        'depositChildrenModule',
-        'vipBuyModule',
-        'vipRecordModule',
-        'vipTipsModule',
-        'commentModule',
-        'exitModule',
-        'photoModule',
-        'MapModule',
-        'eshopEntryModule',
-        'estimateModule',
-        'helpModule',
-        'settingsModule'
-    ]);
-
-}());
-
 (function() {
   "use strict";
   angular.module('tools', []).service('tools', tools);
@@ -3735,6 +3752,37 @@ Date.prototype.Format = function(fmt) {
 
 (function() {
   "use strict";
+  angular.module('commentModule', [
+    'commentService'
+  ]);
+
+}());
+
+(function() {
+  'use strict';
+
+  angular.module('commentService', [])
+    .factory('commentService', commentService);
+
+  function commentService($q, $http, Constants, ResultHandler) {
+    'ngInject';
+    var service = {
+        queryDepositComment:queryDepositComment
+    };
+
+    //http://172.18.1.166/api/v1/comment/deposit/fetch/:depositid
+    function queryDepositComment(id) {
+        var url = Constants.serverUrl + 'comment/deposit/fetch/'+id;
+        return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
+    };
+
+    return service;
+  }
+
+}());
+
+(function() {
+  "use strict";
   angular.module('childrenSteamModule', [
     'childrenSteamCtrl',
     'childrenSteamRouter',
@@ -4516,37 +4564,6 @@ Date.prototype.Format = function(fmt) {
                 StateService.back();
             };
         });
-}());
-
-(function() {
-  "use strict";
-  angular.module('commentModule', [
-    'commentService'
-  ]);
-
-}());
-
-(function() {
-  'use strict';
-
-  angular.module('commentService', [])
-    .factory('commentService', commentService);
-
-  function commentService($q, $http, Constants, ResultHandler) {
-    'ngInject';
-    var service = {
-        queryDepositComment:queryDepositComment
-    };
-
-    //http://172.18.1.166/api/v1/comment/deposit/fetch/:depositid
-    function queryDepositComment(id) {
-        var url = Constants.serverUrl + 'comment/deposit/fetch/'+id;
-        return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
-    };
-
-    return service;
-  }
-
 }());
 
 (function() {
@@ -7774,7 +7791,7 @@ angular.module('eshopService', [])
 
                     var options = new FileUploadOptions();
                     options.fileKey = "file";
-                    options.fileName = fileURL.substr(fileURL.lastIndexOf('/'));
+                    options.fileName = fileURL.substr(fileURL.lastIndexOf('/')+1);
                     options.mimeType = "image/jpeg";
                     options.chunkedMode = true;
 
@@ -8188,7 +8205,11 @@ angular.module('eshopService', [])
 
             function activate() {
                 vm.activated = true;
-                vm.version = Constants.buildID;
+
+                cordova.getAppVersion.getVersionNumber(function (version) {
+                    vm.version = version;
+                });
+              
                 vm.name = Constants.appTitle;
                 vm.company = Constants.company;
             }

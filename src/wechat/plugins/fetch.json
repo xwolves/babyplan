@@ -135,5 +135,29 @@
             "ANDROID_KEY": "ggtWDiqF3X7yG7FECXIBljdHH6dogGV5",
             "IOS_KEY": "kb7M0jiGaemQX49hculUNNpWIDsRZ9u9"
         }
+    },
+    "cordova-plugin-app-version": {
+        "source": {
+            "type": "registry",
+            "id": "cordova-plugin-app-version"
+        },
+        "is_top_level": true,
+        "variables": {}
+    },
+    "cordova-plugin-app-update": {
+        "source": {
+            "type": "registry",
+            "id": "cordova-plugin-app-update"
+        },
+        "is_top_level": true,
+        "variables": {}
+    },
+    "cordova-plugin-appversion": {
+        "source": {
+            "type": "registry",
+            "id": "cordova-plugin-appversion"
+        },
+        "is_top_level": false,
+        "variables": {}
     }
 }
