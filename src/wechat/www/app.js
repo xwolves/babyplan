@@ -933,57 +933,6 @@ app.filter('statusChange', function () {
     });
 }());
 
-Date.prototype.Format = function(fmt) {
-    var o = {
-        "M+": this.getMonth() + 1, //月份
-        "d+": this.getDate(), //日
-        "h+": this.getHours(), //小时
-        "m+": this.getMinutes(), //分
-        "s+": this.getSeconds(), //秒
-        "q+": Math.floor((this.getMonth() + 3) / 3), //季度
-        "S": this.getMilliseconds() //毫秒
-    };
-    if (/(y+)/.test(fmt))
-        fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
-    for (var k in o)
-        if (new RegExp("(" + k + ")").test(fmt))
-            fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
-    return fmt;
-};
-(function() {
-    "use strict";
-    angular.module('modules', [
-        'LoginModule',
-        'WxLoginModule',
-        'childrenSteamModule',
-        'registerModule',
-        'tabsModule',
-        'childrenModule',
-        'nearbyModule',
-        'orderModule',
-        'profileModule',
-        'organizerModule',
-        'messageModule',
-        'parentModule',
-        'childrenSettingModule',
-        'teacherModule',
-        'teacherSettingModule',
-        'depositChildrenModule',
-        'vipBuyModule',
-        'vipRecordModule',
-        'vipTipsModule',
-        'commentModule',
-        'exitModule',
-        'photoModule',
-        'MapModule',
-        'eshopEntryModule',
-        'estimateModule',
-        'helpModule',
-        'settingsModule'
-    ]);
-
-}());
-
 (function() {
     "use strict";
     angular.module('directive', [
@@ -2852,6 +2801,57 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
 
 }());
 
+Date.prototype.Format = function(fmt) {
+    var o = {
+        "M+": this.getMonth() + 1, //月份
+        "d+": this.getDate(), //日
+        "h+": this.getHours(), //小时
+        "m+": this.getMinutes(), //分
+        "s+": this.getSeconds(), //秒
+        "q+": Math.floor((this.getMonth() + 3) / 3), //季度
+        "S": this.getMilliseconds() //毫秒
+    };
+    if (/(y+)/.test(fmt))
+        fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+    for (var k in o)
+        if (new RegExp("(" + k + ")").test(fmt))
+            fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+    return fmt;
+};
+(function() {
+    "use strict";
+    angular.module('modules', [
+        'LoginModule',
+        'WxLoginModule',
+        'childrenSteamModule',
+        'registerModule',
+        'tabsModule',
+        'childrenModule',
+        'nearbyModule',
+        'orderModule',
+        'profileModule',
+        'organizerModule',
+        'messageModule',
+        'parentModule',
+        'childrenSettingModule',
+        'teacherModule',
+        'teacherSettingModule',
+        'depositChildrenModule',
+        'vipBuyModule',
+        'vipRecordModule',
+        'vipTipsModule',
+        'commentModule',
+        'exitModule',
+        'photoModule',
+        'MapModule',
+        'eshopEntryModule',
+        'estimateModule',
+        'helpModule',
+        'settingsModule'
+    ]);
+
+}());
+
 (function() {
   "use strict";
   angular.module('tools', []).service('tools', tools);
@@ -3752,37 +3752,6 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
 
 (function() {
   "use strict";
-  angular.module('commentModule', [
-    'commentService'
-  ]);
-
-}());
-
-(function() {
-  'use strict';
-
-  angular.module('commentService', [])
-    .factory('commentService', commentService);
-
-  function commentService($q, $http, Constants, ResultHandler) {
-    'ngInject';
-    var service = {
-        queryDepositComment:queryDepositComment
-    };
-
-    //http://172.18.1.166/api/v1/comment/deposit/fetch/:depositid
-    function queryDepositComment(id) {
-        var url = Constants.serverUrl + 'comment/deposit/fetch/'+id;
-        return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
-    };
-
-    return service;
-  }
-
-}());
-
-(function() {
-  "use strict";
   angular.module('childrenSteamModule', [
     'childrenSteamCtrl',
     'childrenSteamRouter',
@@ -4564,6 +4533,37 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
                 StateService.back();
             };
         });
+}());
+
+(function() {
+  "use strict";
+  angular.module('commentModule', [
+    'commentService'
+  ]);
+
+}());
+
+(function() {
+  'use strict';
+
+  angular.module('commentService', [])
+    .factory('commentService', commentService);
+
+  function commentService($q, $http, Constants, ResultHandler) {
+    'ngInject';
+    var service = {
+        queryDepositComment:queryDepositComment
+    };
+
+    //http://172.18.1.166/api/v1/comment/deposit/fetch/:depositid
+    function queryDepositComment(id) {
+        var url = Constants.serverUrl + 'comment/deposit/fetch/'+id;
+        return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
+    };
+
+    return service;
+  }
+
 }());
 
 (function() {
@@ -8885,30 +8885,35 @@ angular.module('eshopService', [])
                                 sign: result.pay_sign, // signed string
                             };
 
-                            //alert(JSON.stringify(params));
-                            Wechat.sendPaymentRequest(params, function () {
-                                //alert("Success");
-                                //check order make sure user had pay the order ready.
-                                //alert("orderId="+orderId);
-                                vipBuyService.checkOrder(orderId).then(
-                                    function(result) {
-                                        //{"errno":0,"error":"",
-                                        // "data":{"orderId":"139630530220161103152842","wechatOrderId":"4003682001201611038611986947",
-                                        // "totalFee":"1","payState":"SUCCESS","payTime":"20161103152851"}}
-                                        //alert(JSON.stringify(result));
-                                        if(result.errno == 0 ){
-                                            MessageToaster.info("微信支付完成");
-                                            StateService.clearAllAndGo(AuthService.getNextPath());
-                                        }
-                                      },
-                                      function (reason) {
-                                          alert("checkOrder error "+JSON.stringify(reason));
-                                      }
-                                  );
-                            }, function (reason) {
-                                //alert("Failed: " + reason);
-                                MessageToaster.error(reason);
-                            });
+                            alert(JSON.stringify(params));
+                            try{
+                                Wechat.sendPaymentRequest(params, function () {
+                                    //alert("Success");
+                                    //check order make sure user had pay the order ready.
+                                    //alert("orderId="+orderId);
+                                    vipBuyService.checkOrder(orderId).then(
+                                        function(result) {
+                                            //{"errno":0,"error":"",
+                                            // "data":{"orderId":"139630530220161103152842","wechatOrderId":"4003682001201611038611986947",
+                                            // "totalFee":"1","payState":"SUCCESS","payTime":"20161103152851"}}
+                                            //alert(JSON.stringify(result));
+                                            if(result.errno == 0 ){
+                                                MessageToaster.info("微信支付完成");
+                                                StateService.clearAllAndGo(AuthService.getNextPath());
+                                            }
+                                        },
+                                          function (reason) {
+                                              alert("checkOrder error "+JSON.stringify(reason));
+                                          }
+                                      );
+                                }, function (reason) {
+                                    //alert("Failed: " + reason);
+                                    MessageToaster.error(reason);
+                                });
+                            } catch (e) {
+                                alert(e.message);
+                            }
+
                           }else{
                             MessageToaster.error(response.error);
                           }

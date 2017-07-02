@@ -40,10 +40,6 @@
         "cordova-plugin-whitelist": {
             "PACKAGE_NAME": "com.trusteeship"
         },
-        "cordova-plugin-wechat": {
-            "WECHATAPPID": "wx3814600bfd67bfe6",
-            "PACKAGE_NAME": "com.trusteeship"
-        },
         "jpush-phonegap-plugin": {
             "APP_KEY": "db6eb3016636e4b8d5a6fd69",
             "PACKAGE_NAME": "com.trusteeship"
@@ -58,6 +54,10 @@
             "PACKAGE_NAME": "com.trusteeship"
         },
         "cordova-plugin-app-update": {
+            "PACKAGE_NAME": "com.trusteeship"
+        },
+        "cordova-plugin-wechat": {
+            "WECHATAPPID": "wx216b1a8a32606170",
             "PACKAGE_NAME": "com.trusteeship"
         }
     },

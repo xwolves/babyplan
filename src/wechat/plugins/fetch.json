@@ -104,16 +104,6 @@
         "is_top_level": true,
         "variables": {}
     },
-    "cordova-plugin-wechat": {
-        "source": {
-            "type": "registry",
-            "id": "cordova-plugin-wechat@^1.4.0"
-        },
-        "is_top_level": true,
-        "variables": {
-            "WECHATAPPID": "wx3814600bfd67bfe6"
-        }
-    },
     "jpush-phonegap-plugin": {
         "source": {
             "type": "registry",
@@ -159,5 +149,15 @@
         },
         "is_top_level": false,
         "variables": {}
+    },
+    "cordova-plugin-wechat": {
+        "source": {
+            "type": "registry",
+            "id": "cordova-plugin-wechat@^1.4.0"
+        },
+        "is_top_level": true,
+        "variables": {
+            "WECHATAPPID": "wx216b1a8a32606170"
+        }
     }
 }
