@@ -21,7 +21,15 @@
                 vm.activated = true;
                 vm.version = Constants.buildID;
                 vm.lat=Session.getData('latitude');
-                vm.long=Session.getData('longitude');
+                vm.long = Session.getData('longitude');
+
+                vm.dailyType = '3';
+                vm.desc = "";
+                vm.imgPosition = 0;
+                vm.imgCal = 0;
+                vm.imgs = [];
+                vm.imgshow = [];
+
                 teacherService.queryTeacherDeposit(vm.id).then(function(data) {
                     console.log(data);
                     if(data!=null && data.data !=null && data.data.length>0)vm.deposit=data.data[0];
