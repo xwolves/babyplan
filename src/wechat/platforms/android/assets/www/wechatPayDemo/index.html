@@ -1,0 +1,24 @@
+<!doctype html>
+
+<html  ng-app="wechatPayApp">
+
+    <head>
+        <meta charset="UTF-8">
+        <title>wechat pay demo</title>
+        <script src="angular.min.js"></script>
+        <script src="wechatPayControllers.js"></script>
+    </head>
+
+    <body ng-controller="wechatPayCtrl">
+
+        <div >
+            <h3>商品信息</h3>
+            <p>付款0.1元</p>
+            <button ng-click="pay()">付款</button>
+            <hr>
+            <p>{{information}}</p>
+        </div>
+
+    </body>
+
+</html>
