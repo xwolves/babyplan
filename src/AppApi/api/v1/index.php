@@ -1177,10 +1177,12 @@ $app->get(
         //    $response->setBody(rspData(10005));
         //    return;
         //}
+        $keys = $app->request()->params("keys");
+        $app->getLog()->debug("Debug ".date('Y-m-d H:i:s')." longitude = ".$longitude.", latitude = " . $latitude." keys = ".$keys);
         $info = new Info($sql_db);
-        $deps = $info->getNearbyDepositList($longitude, $latitude);
+        $deps = $info->getNearbyDepositList($app, $longitude, $latitude);
         if(gettype($deps) != "array"){
-            $app->getLog()->debug("Error ".date('Y-m-d H:i:s')." longitude : ".$longitude.", latitude" . $latitude." rsp = ".rspData($deps));
+            $app->getLog()->debug("Error ".date('Y-m-d H:i:s')." longitude = ".$longitude.", latitude = " . $latitude." rsp = ".rspData($deps));
             $response->setBody(rspData($deps));
         }else{
             $comment = new Comment($sql_db);
@@ -1195,7 +1197,7 @@ $app->get(
                 $v['Scores'] = $sc;
                 $ret[] = $v;
             }
-            $app->getLog()->debug("Debug ".date('Y-m-d H:i:s')." longitude : ".$longitude.", latitude" . $latitude." rsp = ".rspData(0,$ret));
+            $app->getLog()->debug("Debug ".date('Y-m-d H:i:s')." longitude = ".$longitude.", latitude = " . $latitude.", keys = ".$keys." rsp = ".rspData(0,$ret));
             $response->setBody(rspData(0, $ret));
         }
     }

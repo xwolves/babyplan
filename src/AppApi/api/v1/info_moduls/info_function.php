@@ -525,18 +525,64 @@ class Info{
         }
     }
 
-    public function getNearbyDepositList($longitude, $latitude){
+    public function getNearbyDepositList($app,$longitude, $latitude){
         try{
             $rsp_data = array();
             $sql_str = "SELECT AccountID, Longitude, Latitude, OrgName, Address, FrontDeskLink,
                 ROUND( 6378.138*2*ASIN(SQRT( POW(SIN(($latitude*PI()/180-Latitude*PI()/180)/2),2)+COS($latitude*PI()/180)*COS(Latitude*PI()/180)*POW(SIN(($longitude*PI()/180-Longitude*PI()/180)/2),2)))*1000) AS Dist
-                FROM tb_accnt_deposit WHERE longitude IS NOT NULL AND latitude ORDER BY Dist ASC";
+                FROM tb_accnt_deposit WHERE longitude IS NOT NULL AND latitude IS NOT NULL ORDER BY Dist ASC";
             $stmt = $this->DB->prepare($sql_str);
             if(!$stmt->execute())
                 return 10001;
             $info = array();
-            while($row = $stmt->fetch(PDO::FETCH_ASSOC))
-                $rsp_data[] = $row;
+            $rsp_data = array();
+
+            // 获取关键字列表
+            $keys = $app->request()->params('keys');
+
+            $keysArr = array();
+            if (!empty($keys)) {
+                $keysArr = explode(';',$keys);
+            }
+
+            while($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                // 过滤5公里范围
+                if ($row['Dist'] > 5000) {
+                    $app->getLog()->debug("Debug ".date('Y-m-d H:i:s')." longitude = $longitude, latitude = $latitude, keys = $keys, skip. dist = ".$row['Dist'] );
+                    continue;
+                }
+
+                // 名字没有登记的，默认展示，但这种情况线上环境应该不会出现
+                if (!isset($row['OrgName'])){
+                    $rsp_data[] = $row;
+                    $app->getLog()->debug("Debug ".date('Y-m-d H:i:s')." longitude = $longitude, latitude = $latitude, keys = $keys, ok. orgname is empty");
+                    continue;
+                }
+
+                // 搜索时没有输入关键字则直接返回所有
+                if (empty($keysArr)) {
+                    $rsp_data[] = $row;
+                    $app->getLog()->debug("Debug ".date('Y-m-d H:i:s')." longitude = $longitude, latitude = $latitude, keys = $keys, ok. no keys. orgname = ".$row['OrgName']);
+                    continue;
+                }
+
+                // 按关键字过滤
+                $matched = false;
+                foreach($keysArr as $k) {
+                    // 只要有一个关键字存在就需要展示，关键字之间是或的关系
+                    // 过滤OrgName
+                    if (stripos($row['OrgName'], $k) !== false){
+                        $rsp_data[] = $row;
+                        $app->getLog()->debug("Debug ".date('Y-m-d H:i:s')." longitude = $longitude, latitude = $latitude, keys = $keys, ok. orgname matched, orgname = ".$row['OrgName']);
+                        $matched  = true;
+                        break;
+                    }
+                }
+
+                if(!$matched) {
+                    $app->getLog()->debug("Debug ".date('Y-m-d H:i:s')." longitude = $longitude, latitude = $latitude, keys = $keys, skip. orgname not matched keys, orgname = ".$row['OrgName']);
+                }
+            }
 
             return $rsp_data;
 
