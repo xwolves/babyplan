@@ -135,6 +135,99 @@
 
 (function() {
   "use strict";
+  angular.module('config', [
+    'environmentConfig',
+    'constant',
+    'httpRelConfig'
+  ]);
+
+}());
+
+(function() {
+    "use strict";
+    angular.module('constant', [])
+        .constant('Path',{
+            'ParentRolePath':'tabs.childrenSteam',
+            'OrganizerRolePath':'tabs.organizer',
+            'TeacherRolePath':'tabs.message',
+            'VisitorRolePath':'tabs.map'
+        })
+        .constant('Role',{
+            'visitor':'-1',
+            'Organizer':'1',
+            'Parent':'2',
+            'Teacher':'3',
+            'Children':'4',
+            'ThirdParty':'5',
+            'Consultant':'6'
+        })
+        .constant('Weixin', {
+        })
+        .constant('AUTH_EVENTS', {
+            loginSuccess: 'auth-login-success',
+            loginFailed: 'auth-login-failed',
+            logoutSuccess: 'auth-logout-success',
+            sessionTimeout: 'auth-session-timeout',
+            notAuthenticated: 'auth-not-authenticated',
+            notAuthorized: 'auth-not-authorized'
+        })
+        .constant('ErrorMessage', {
+            ACCESS_FAIL: '通讯异常，请稍后再试！',
+            TOKEN_INVALID: '连接超时，请重新登录！'
+        })
+        .constant('SuccessMessage', {
+            SUBMIT_SUCESS: '提交成功',
+            OPERATION_SUCESS:'操作完成'
+        });
+}());
+
+(function() {
+    "use strict";
+    angular.module('environmentConfig', [])
+        .constant('Constants', {
+            'appTitle':'肯特育园',
+            'company':'深圳知行信息技术开发有限公司',
+            'serverUrl': 'http://wx.zxing-tech.cn/api/v1/',
+            'eshopApiUrl': 'http://api.mall.zxing-tech.cn/v2/',
+            'dfsUrl': 'http://wx.zxing-tech.cn/',
+            'versionUpdateUrl': 'http://wx.zxing-tech.cn/',
+            'buildID': '20170614v1',
+            'ENVIRONMENT':'release'
+        });
+}());
+//'serverUrl': 'http://120.76.226.47/api/v2/',
+//    'dfsUrl': 'http://120.76.226.47/',
+//http://localhost:8090/
+//http://wx.zxing-tech.cn
+
+(function() {
+    "use strict";
+    angular.module('httpDevConfig', [])
+        .config(function($httpProvider) {
+            $httpProvider.defaults.headers.post["Content-Type"] = "application/x-www-form-urlencoded";
+            $httpProvider.defaults.headers.put["Content-Type"] = "application/x-www-form-urlencoded";
+        });
+}());
+
+(function() {
+    "use strict";
+    angular.module('httpRelConfig', [])
+    .config(function($httpProvider) {
+        $httpProvider.defaults.cache = false;
+        if (!$httpProvider.defaults.headers.get) {
+           $httpProvider.defaults.headers.get = {};
+        }
+        // disable IE ajax request caching
+        $httpProvider.defaults.headers.get['If-Modified-Since'] = '0';
+
+        // Disable IE ajax request caching
+        $httpProvider.defaults.headers.get['Cache-Control'] = 'no-cache';
+        $httpProvider.defaults.headers.get['Pragma'] = 'no-cache';
+    });
+}());
+
+(function() {
+  "use strict";
   angular.module('AuthService', []).factory('AuthService', function(Session,Path,Role) {
     'ngInject';
 
@@ -841,133 +934,6 @@ app.filter('statusChange', function () {
 }());
 
 (function() {
-  "use strict";
-  angular.module('config', [
-    'environmentConfig',
-    'constant',
-    'httpRelConfig'
-  ]);
-
-}());
-
-(function() {
-    "use strict";
-    angular.module('constant', [])
-        .constant('Path',{
-            'ParentRolePath':'tabs.childrenSteam',
-            'OrganizerRolePath':'tabs.organizer',
-            'TeacherRolePath':'tabs.message',
-            'VisitorRolePath':'tabs.map'
-        })
-        .constant('Role',{
-            'visitor':'-1',
-            'Organizer':'1',
-            'Parent':'2',
-            'Teacher':'3',
-            'Children':'4',
-            'ThirdParty':'5',
-            'Consultant':'6'
-        })
-        .constant('Weixin', {
-        })
-        .constant('AUTH_EVENTS', {
-            loginSuccess: 'auth-login-success',
-            loginFailed: 'auth-login-failed',
-            logoutSuccess: 'auth-logout-success',
-            sessionTimeout: 'auth-session-timeout',
-            notAuthenticated: 'auth-not-authenticated',
-            notAuthorized: 'auth-not-authorized'
-        })
-        .constant('ErrorMessage', {
-            ACCESS_FAIL: '通讯异常，请稍后再试！',
-            TOKEN_INVALID: '连接超时，请重新登录！'
-        })
-        .constant('SuccessMessage', {
-            SUBMIT_SUCESS: '提交成功',
-            OPERATION_SUCESS:'操作完成'
-        });
-}());
-
-(function() {
-    "use strict";
-    angular.module('environmentConfig', [])
-        .constant('Constants', {
-            'appTitle':'肯特育园',
-            'company':'深圳知行信息技术开发有限公司',
-            'serverUrl': 'http://wx.zxing-tech.cn/api/v1/',
-            'eshopApiUrl': 'http://api.mall.zxing-tech.cn/v2/',
-            'dfsUrl': 'http://wx.zxing-tech.cn/',
-            'versionUpdateUrl': 'http://wx.zxing-tech.cn/',
-            'buildID': '20170614v1',
-            'ENVIRONMENT':'release'
-        });
-}());
-//'serverUrl': 'http://120.76.226.47/api/v2/',
-//    'dfsUrl': 'http://120.76.226.47/',
-//http://localhost:8090/
-//http://wx.zxing-tech.cn
-
-(function() {
-    "use strict";
-    angular.module('httpDevConfig', [])
-        .config(function($httpProvider) {
-            $httpProvider.defaults.headers.post["Content-Type"] = "application/x-www-form-urlencoded";
-            $httpProvider.defaults.headers.put["Content-Type"] = "application/x-www-form-urlencoded";
-        });
-}());
-
-(function() {
-    "use strict";
-    angular.module('httpRelConfig', [])
-    .config(function($httpProvider) {
-        $httpProvider.defaults.cache = false;
-        if (!$httpProvider.defaults.headers.get) {
-           $httpProvider.defaults.headers.get = {};
-        }
-        // disable IE ajax request caching
-        $httpProvider.defaults.headers.get['If-Modified-Since'] = '0';
-
-        // Disable IE ajax request caching
-        $httpProvider.defaults.headers.get['Cache-Control'] = 'no-cache';
-        $httpProvider.defaults.headers.get['Pragma'] = 'no-cache';
-    });
-}());
-
-(function() {
-    "use strict";
-    angular.module('modules', [
-        'LoginModule',
-        'WxLoginModule',
-        'childrenSteamModule',
-        'registerModule',
-        'tabsModule',
-        'childrenModule',
-        'nearbyModule',
-        'orderModule',
-        'profileModule',
-        'organizerModule',
-        'messageModule',
-        'parentModule',
-        'childrenSettingModule',
-        'teacherModule',
-        'teacherSettingModule',
-        'depositChildrenModule',
-        'vipBuyModule',
-        'vipRecordModule',
-        'vipTipsModule',
-        'commentModule',
-        'exitModule',
-        'photoModule',
-        'MapModule',
-        'eshopEntryModule',
-        'estimateModule',
-        'helpModule',
-        'settingsModule'
-    ]);
-
-}());
-
-(function() {
     "use strict";
     angular.module('directive', [
       'BaiduMapDirective'
@@ -1002,9 +968,9 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
       function loadMap(apiKey) {
 
           // 判断是否执行过加载过程
-          if ($window.loadBaiduPromise) {
-              return $window.loadBaiduPromise;
-          }
+          //if ($window.loadBaiduPromise) {
+          //    return $window.loadBaiduPromise;
+          //}
 
           var deferred = $q.defer(),
             resolve = function () {
@@ -1042,10 +1008,10 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
               bdscript.src = 'http://api.map.baidu.com/api?v=' + params.v + '&ak=' + params.ak + '&callback=' + params.callback;
               head.appendChild(bdscript);
           }
-          $window.loadBaiduPromise = deferred.promise;
+         // $window.loadBaiduPromise = deferred.promise;
 
           // 返回异步任务对象
-          return $window.loadBaiduPromise;
+          return deferred.promise
       }
 
       /**
@@ -2853,6 +2819,40 @@ Date.prototype.Format = function(fmt) {
     return fmt;
 };
 (function() {
+    "use strict";
+    angular.module('modules', [
+        'LoginModule',
+        'WxLoginModule',
+        'childrenSteamModule',
+        'registerModule',
+        'tabsModule',
+        'childrenModule',
+        'nearbyModule',
+        'orderModule',
+        'profileModule',
+        'organizerModule',
+        'messageModule',
+        'parentModule',
+        'childrenSettingModule',
+        'teacherModule',
+        'teacherSettingModule',
+        'depositChildrenModule',
+        'vipBuyModule',
+        'vipRecordModule',
+        'vipTipsModule',
+        'commentModule',
+        'exitModule',
+        'photoModule',
+        'MapModule',
+        'eshopEntryModule',
+        'estimateModule',
+        'helpModule',
+        'settingsModule'
+    ]);
+
+}());
+
+(function() {
   "use strict";
   angular.module('tools', []).service('tools', tools);
     function tools() {
@@ -3752,37 +3752,6 @@ Date.prototype.Format = function(fmt) {
 
 (function() {
   "use strict";
-  angular.module('commentModule', [
-    'commentService'
-  ]);
-
-}());
-
-(function() {
-  'use strict';
-
-  angular.module('commentService', [])
-    .factory('commentService', commentService);
-
-  function commentService($q, $http, Constants, ResultHandler) {
-    'ngInject';
-    var service = {
-        queryDepositComment:queryDepositComment
-    };
-
-    //http://172.18.1.166/api/v1/comment/deposit/fetch/:depositid
-    function queryDepositComment(id) {
-        var url = Constants.serverUrl + 'comment/deposit/fetch/'+id;
-        return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
-    };
-
-    return service;
-  }
-
-}());
-
-(function() {
-  "use strict";
   angular.module('childrenSteamModule', [
     'childrenSteamCtrl',
     'childrenSteamRouter',
@@ -4568,6 +4537,188 @@ Date.prototype.Format = function(fmt) {
 
 (function() {
   "use strict";
+  angular.module('commentModule', [
+    'commentService'
+  ]);
+
+}());
+
+(function() {
+  'use strict';
+
+  angular.module('commentService', [])
+    .factory('commentService', commentService);
+
+  function commentService($q, $http, Constants, ResultHandler) {
+    'ngInject';
+    var service = {
+        queryDepositComment:queryDepositComment
+    };
+
+    //http://172.18.1.166/api/v1/comment/deposit/fetch/:depositid
+    function queryDepositComment(id) {
+        var url = Constants.serverUrl + 'comment/deposit/fetch/'+id;
+        return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
+    };
+
+    return service;
+  }
+
+}());
+
+(function() {
+  "use strict";
+  angular.module('depositChildrenModule', [
+    'depositChildrenCtrl',
+    'teacherDepositChildrenCtrl',
+    'depositChildrenRouter',
+    'depositChildrenService'
+  ]);
+
+}());
+
+(function() {
+    "use strict";
+    angular.module('depositChildrenCtrl', [])
+        .controller('depositChildrenCtrl', function($scope,Constants,StateService,depositChildrenService,AuthService,MessageToaster) {
+            'ngInject';
+            var vm = this;
+            vm.activated = false;
+            $scope.$on('$ionicView.afterEnter', activate);
+
+            function activate() {
+                vm.activated = true;
+                vm.version = Constants.buildID;
+                vm.queryChildren();
+            }
+
+            vm.back=function(){
+                StateService.back();
+            };
+
+            vm.goTo=function(id,item){
+                //查看孩子的更多家长信息列表
+                StateService.go('teacherEdit',{cid:id,type:0});
+            };
+
+            vm.queryChildren = function(){
+                depositChildrenService.queryDepositChildren(AuthService.getLoginID()).then(function(data) {
+                    if (data.errno == 0) {
+                        console.log(data.data);
+                        vm.children = data.data;
+                    }else{
+                        MessageToaster.error("查不到任何数据 "+response.error);
+                    }
+                });
+            };
+        });
+}());
+
+(function() {
+  'use strict';
+
+  angular.module('depositChildrenRouter', [])
+    .config(myRouter);
+
+
+  function myRouter($stateProvider, $urlRouterProvider) {
+    'ngInject';
+    $stateProvider
+      .state('tabs.depositChildren', {
+        url: "/depositChildren",
+        views: {
+          'tab-depositChildren': {
+            templateUrl: 'depositChildren/depositChildren.html',
+            controller: 'teacherDepositChildrenCtrl',
+            controllerAs: 'vm'
+          }
+        }
+      })
+      .state('depositChildren', {
+        url: "/depositChildren",
+        templateUrl: 'depositChildren/depositChildren.html',
+        controller: 'depositChildrenCtrl',
+        controllerAs: 'vm'
+      })
+    ;
+  }
+}());
+
+(function() {
+  'use strict';
+
+  angular.module('depositChildrenService', [])
+    .factory('depositChildrenService', depositChildrenService);
+
+  function depositChildrenService( $q, $http, Constants, ResultHandler) {
+    'ngInject';
+    var service = {
+      queryDepositChildren:queryDepositChildren
+    };
+
+    //'/deposit/children/:depositid',
+    function queryDepositChildren(id) {
+      var url = Constants.serverUrl + 'deposit/children/'+id;
+      return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
+    };
+
+    return service;
+
+
+  }
+
+}());
+
+(function() {
+    "use strict";
+    angular.module('teacherDepositChildrenCtrl', [])
+        .controller('teacherDepositChildrenCtrl', function($scope,Constants,StateService,depositChildrenService,AuthService,MessageToaster,teacherService) {
+            'ngInject';
+            var vm = this;
+            vm.activated = false;
+            $scope.$on('$ionicView.afterEnter', activate);
+
+            function activate() {
+                vm.activated = true;
+                vm.version = Constants.buildID;
+                teacherService.queryTeacherDeposit(AuthService.getLoginID()).then(function(data) {
+                    if (data.errno == 0) {
+                        console.log(data.data);
+                        if(data.data!=null&&data.data.length>0) {
+                            vm.teacher = data.data[0];
+                            vm.queryChildren(vm.teacher.depositid);
+                        }
+                    } else {
+                        MessageToaster.error("查不到任何数据 " + data.error);
+                    }
+                });
+
+            }
+
+            vm.back=function(){
+                StateService.back();
+            };
+
+            vm.goTo=function(id,item){
+                //查看孩子的更多家长信息列表
+                StateService.go('teacherEdit',{cid:id,type:0});
+            };
+
+            vm.queryChildren = function(id){
+                depositChildrenService.queryDepositChildren(id).then(function(data) {
+                    if (data.errno == 0) {
+                        console.log(data.data);
+                        vm.children = data.data;
+                    }else{
+                        MessageToaster.error("查不到任何数据 "+response.error);
+                    }
+                });
+            };
+        });
+}());
+
+(function() {
+  "use strict";
   angular.module('eshopEntryModule', [
     'eshopEntryRouter',
     'eshopEntryCtrl',
@@ -4751,6 +4902,120 @@ angular.module('eshopService', [])
           signout: _signout
       };
   });
+
+(function() {
+  "use strict";
+  angular.module('estimateModule', [
+    'estimateCtrl',
+    'estimateDepositCtrl',
+    'estimateRouter'
+  ]);
+
+}());
+
+(function() {
+    "use strict";
+    angular.module('estimateCtrl', [])
+        .controller('estimateCtrl', function($scope, Constants, StateService) {
+            'ngInject';
+            var vm = this;
+            vm.activated = false;
+            $scope.$on('$ionicView.afterEnter', activate);
+
+            function activate() {
+                vm.activated = true;
+                vm.version = Constants.buildID;
+            };
+
+            vm.goTo = function(addr){
+                console.log('go to path : '+addr);
+                StateService.go(addr);
+            };
+
+            vm.back=function(){
+                StateService.back();
+            };
+        });
+}());
+
+(function() {
+    "use strict";
+    angular.module('estimateDepositCtrl', [])
+        .controller('estimateDepositCtrl', function($scope, Constants, StateService, BaiduService, AuthService, childrenSteamService, MessageToaster, $ionicModal) {
+            'ngInject';
+            var vm = this;
+            vm.activated = false;
+
+            $scope.$on('$ionicView.afterEnter', activate);
+            function activate() {
+                vm.activated = true;
+                vm.version = Constants.buildID;
+                vm.list=[];
+                vm.getChildrenDeposit();
+            };
+
+            vm.getChildrenDeposit = function(){
+              childrenSteamService.getChildrenDeposit(AuthService.getLoginID()).then(function(data) {
+                  if (data.errno == 0) {
+                      console.log(data.data);
+                      var de=data.data;
+                      for(var i=0;i<de.length;i++){
+                        console.log(de[i]);
+                        if(de[i].DepositID!=null){
+                          BaiduService.getDepositInfoWithComments(de[i].DepositID).then(function (depositInfo) {
+                              console.log(depositInfo);
+                              depositInfo.show=false;
+                              vm.list.push(depositInfo);
+                          }, function (err) {
+                              //ionicToast.show('获取机构详情信息失败!', 'middle', false, 3000);
+                              //MessageToaster.error("获取机构详情信息失败!");
+                          })
+                        }
+                      }
+                  }
+              });
+            };
+
+            vm.back=function(){
+                StateService.back();
+            };
+
+            vm.gotoEdit=function(did){
+              StateService.go('depositComment', {id: did,type:1});
+            };
+        });
+}());
+
+(function() {
+  'use strict';
+
+  angular.module('estimateRouter', [])
+    .config(myRouter);
+
+
+  function myRouter($stateProvider, $urlRouterProvider) {
+    'ngInject';
+    $stateProvider
+        .state('estimate', {
+          url: "/estimate",
+          templateUrl: 'estimate/estimate.html',
+          controller: 'estimateCtrl',
+          controllerAs: 'vm'
+        })
+        .state('myEstimate', {
+          url: "/myEstimate",
+          templateUrl: 'estimate/myEstimateDeposit.html',
+          controller: 'estimateDepositCtrl',
+          controllerAs: 'vm'
+        })
+        .state('estimateDeposit', {
+          url: "/estimateDeposit",
+          templateUrl: 'estimate/estimateDeposit.html',
+          controller: 'estimateDepositCtrl',
+          controllerAs: 'vm'
+        })
+  }
+}());
 
 (function() {
   "use strict";
@@ -4939,120 +5204,6 @@ angular.module('eshopService', [])
           url: "/helpDoc",
           templateUrl: 'help/helpDoc.html',
           controller: 'helpDocCtrl',
-          controllerAs: 'vm'
-        })
-  }
-}());
-
-(function() {
-  "use strict";
-  angular.module('estimateModule', [
-    'estimateCtrl',
-    'estimateDepositCtrl',
-    'estimateRouter'
-  ]);
-
-}());
-
-(function() {
-    "use strict";
-    angular.module('estimateCtrl', [])
-        .controller('estimateCtrl', function($scope, Constants, StateService) {
-            'ngInject';
-            var vm = this;
-            vm.activated = false;
-            $scope.$on('$ionicView.afterEnter', activate);
-
-            function activate() {
-                vm.activated = true;
-                vm.version = Constants.buildID;
-            };
-
-            vm.goTo = function(addr){
-                console.log('go to path : '+addr);
-                StateService.go(addr);
-            };
-
-            vm.back=function(){
-                StateService.back();
-            };
-        });
-}());
-
-(function() {
-    "use strict";
-    angular.module('estimateDepositCtrl', [])
-        .controller('estimateDepositCtrl', function($scope, Constants, StateService, BaiduService, AuthService, childrenSteamService, MessageToaster, $ionicModal) {
-            'ngInject';
-            var vm = this;
-            vm.activated = false;
-
-            $scope.$on('$ionicView.afterEnter', activate);
-            function activate() {
-                vm.activated = true;
-                vm.version = Constants.buildID;
-                vm.list=[];
-                vm.getChildrenDeposit();
-            };
-
-            vm.getChildrenDeposit = function(){
-              childrenSteamService.getChildrenDeposit(AuthService.getLoginID()).then(function(data) {
-                  if (data.errno == 0) {
-                      console.log(data.data);
-                      var de=data.data;
-                      for(var i=0;i<de.length;i++){
-                        console.log(de[i]);
-                        if(de[i].DepositID!=null){
-                          BaiduService.getDepositInfoWithComments(de[i].DepositID).then(function (depositInfo) {
-                              console.log(depositInfo);
-                              depositInfo.show=false;
-                              vm.list.push(depositInfo);
-                          }, function (err) {
-                              //ionicToast.show('获取机构详情信息失败!', 'middle', false, 3000);
-                              //MessageToaster.error("获取机构详情信息失败!");
-                          })
-                        }
-                      }
-                  }
-              });
-            };
-
-            vm.back=function(){
-                StateService.back();
-            };
-
-            vm.gotoEdit=function(did){
-              StateService.go('depositComment', {id: did,type:1});
-            };
-        });
-}());
-
-(function() {
-  'use strict';
-
-  angular.module('estimateRouter', [])
-    .config(myRouter);
-
-
-  function myRouter($stateProvider, $urlRouterProvider) {
-    'ngInject';
-    $stateProvider
-        .state('estimate', {
-          url: "/estimate",
-          templateUrl: 'estimate/estimate.html',
-          controller: 'estimateCtrl',
-          controllerAs: 'vm'
-        })
-        .state('myEstimate', {
-          url: "/myEstimate",
-          templateUrl: 'estimate/myEstimateDeposit.html',
-          controller: 'estimateDepositCtrl',
-          controllerAs: 'vm'
-        })
-        .state('estimateDeposit', {
-          url: "/estimateDeposit",
-          templateUrl: 'estimate/estimateDeposit.html',
-          controller: 'estimateDepositCtrl',
           controllerAs: 'vm'
         })
   }
@@ -9269,83 +9420,6 @@ angular.module('eshopService', [])
 }());
 
 (function() {
-  "use strict";
-  angular.module('vipTipsModule', [
-    'vipTipsCtrl',
-    'vipTipsRouter',
-    'vipTipsService'
-  ]);
-
-}());
-
-(function() {
-    "use strict";
-    angular.module('vipTipsCtrl', [])
-        .controller('vipTipsCtrl', function($scope, $state, Constants, StateService) {
-            'ngInject';
-            var vm = this;
-            vm.activated = false;
-            $scope.$on('$ionicView.afterEnter', activate);
-            vm.expend1=false;
-            function activate() {
-                vm.activated = true;
-                vm.version = Constants.buildID;
-            }
-
-            vm.back=function(){
-                StateService.back();
-            };
-
-            vm.test=function(){
-                console.log('test');
-            }
-        });
-}());
-
-(function() {
-  'use strict';
-
-  angular.module('vipTipsRouter', [])
-    .config(myRouter);
-
-
-  function myRouter($stateProvider, $urlRouterProvider) {
-    'ngInject';
-    $stateProvider
-        .state('vipTips', {
-          url: "/vipTips",
-          templateUrl: 'vipTips/vipTips.html',
-          controller: 'vipTipsCtrl',
-          controllerAs: 'vm'
-        })
-  }
-}());
-
-(function() {
-  'use strict';
-
-  angular.module('vipTipsService', [])
-    .factory('vipTipsService', eService);
-
-  function eService( $q, $http,Constants,ResultHandler) {
-    'ngInject';
-    var service = {
-      exit:exit
-    };
-
-    function exit(id) {
-      var url = Constants.serverUrl + 'account/exit/'+id;
-      return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
-    };
-
-    return service;
-
-
-  }
-
-}());
-
-(function() {
     "use strict";
     angular.module('WxLoginModule', [
         'WxLoginCtrl',
@@ -9645,97 +9719,71 @@ angular.module('eshopService', [])
 
 (function() {
   "use strict";
-  angular.module('depositChildrenModule', [
-    'depositChildrenCtrl',
-    'teacherDepositChildrenCtrl',
-    'depositChildrenRouter',
-    'depositChildrenService'
+  angular.module('vipTipsModule', [
+    'vipTipsCtrl',
+    'vipTipsRouter',
+    'vipTipsService'
   ]);
 
 }());
 
 (function() {
     "use strict";
-    angular.module('depositChildrenCtrl', [])
-        .controller('depositChildrenCtrl', function($scope,Constants,StateService,depositChildrenService,AuthService,MessageToaster) {
+    angular.module('vipTipsCtrl', [])
+        .controller('vipTipsCtrl', function($scope, $state, Constants, StateService) {
             'ngInject';
             var vm = this;
             vm.activated = false;
             $scope.$on('$ionicView.afterEnter', activate);
-
+            vm.expend1=false;
             function activate() {
                 vm.activated = true;
                 vm.version = Constants.buildID;
-                vm.queryChildren();
             }
 
             vm.back=function(){
                 StateService.back();
             };
 
-            vm.goTo=function(id,item){
-                //查看孩子的更多家长信息列表
-                StateService.go('teacherEdit',{cid:id,type:0});
-            };
-
-            vm.queryChildren = function(){
-                depositChildrenService.queryDepositChildren(AuthService.getLoginID()).then(function(data) {
-                    if (data.errno == 0) {
-                        console.log(data.data);
-                        vm.children = data.data;
-                    }else{
-                        MessageToaster.error("查不到任何数据 "+response.error);
-                    }
-                });
-            };
+            vm.test=function(){
+                console.log('test');
+            }
         });
 }());
 
 (function() {
   'use strict';
 
-  angular.module('depositChildrenRouter', [])
+  angular.module('vipTipsRouter', [])
     .config(myRouter);
 
 
   function myRouter($stateProvider, $urlRouterProvider) {
     'ngInject';
     $stateProvider
-      .state('tabs.depositChildren', {
-        url: "/depositChildren",
-        views: {
-          'tab-depositChildren': {
-            templateUrl: 'depositChildren/depositChildren.html',
-            controller: 'teacherDepositChildrenCtrl',
-            controllerAs: 'vm'
-          }
-        }
-      })
-      .state('depositChildren', {
-        url: "/depositChildren",
-        templateUrl: 'depositChildren/depositChildren.html',
-        controller: 'depositChildrenCtrl',
-        controllerAs: 'vm'
-      })
-    ;
+        .state('vipTips', {
+          url: "/vipTips",
+          templateUrl: 'vipTips/vipTips.html',
+          controller: 'vipTipsCtrl',
+          controllerAs: 'vm'
+        })
   }
 }());
 
 (function() {
   'use strict';
 
-  angular.module('depositChildrenService', [])
-    .factory('depositChildrenService', depositChildrenService);
+  angular.module('vipTipsService', [])
+    .factory('vipTipsService', eService);
 
-  function depositChildrenService( $q, $http, Constants, ResultHandler) {
+  function eService( $q, $http,Constants,ResultHandler) {
     'ngInject';
     var service = {
-      queryDepositChildren:queryDepositChildren
+      exit:exit
     };
 
-    //'/deposit/children/:depositid',
-    function queryDepositChildren(id) {
-      var url = Constants.serverUrl + 'deposit/children/'+id;
+    function exit(id) {
+      var url = Constants.serverUrl + 'account/exit/'+id;
       return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
     };
 
@@ -9744,54 +9792,6 @@ angular.module('eshopService', [])
 
   }
 
-}());
-
-(function() {
-    "use strict";
-    angular.module('teacherDepositChildrenCtrl', [])
-        .controller('teacherDepositChildrenCtrl', function($scope,Constants,StateService,depositChildrenService,AuthService,MessageToaster,teacherService) {
-            'ngInject';
-            var vm = this;
-            vm.activated = false;
-            $scope.$on('$ionicView.afterEnter', activate);
-
-            function activate() {
-                vm.activated = true;
-                vm.version = Constants.buildID;
-                teacherService.queryTeacherDeposit(AuthService.getLoginID()).then(function(data) {
-                    if (data.errno == 0) {
-                        console.log(data.data);
-                        if(data.data!=null&&data.data.length>0) {
-                            vm.teacher = data.data[0];
-                            vm.queryChildren(vm.teacher.depositid);
-                        }
-                    } else {
-                        MessageToaster.error("查不到任何数据 " + data.error);
-                    }
-                });
-
-            }
-
-            vm.back=function(){
-                StateService.back();
-            };
-
-            vm.goTo=function(id,item){
-                //查看孩子的更多家长信息列表
-                StateService.go('teacherEdit',{cid:id,type:0});
-            };
-
-            vm.queryChildren = function(id){
-                depositChildrenService.queryDepositChildren(id).then(function(data) {
-                    if (data.errno == 0) {
-                        console.log(data.data);
-                        vm.children = data.data;
-                    }else{
-                        MessageToaster.error("查不到任何数据 "+response.error);
-                    }
-                });
-            };
-        });
 }());
 
 //# sourceMappingURL=app.js.map

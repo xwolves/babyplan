@@ -25,9 +25,9 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
       function loadMap(apiKey) {
 
           // 判断是否执行过加载过程
-          if ($window.loadBaiduPromise) {
-              return $window.loadBaiduPromise;
-          }
+          //if ($window.loadBaiduPromise) {
+          //    return $window.loadBaiduPromise;
+          //}
 
           var deferred = $q.defer(),
             resolve = function () {
@@ -65,10 +65,10 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
               bdscript.src = 'http://api.map.baidu.com/api?v=' + params.v + '&ak=' + params.ak + '&callback=' + params.callback;
               head.appendChild(bdscript);
           }
-          $window.loadBaiduPromise = deferred.promise;
+         // $window.loadBaiduPromise = deferred.promise;
 
           // 返回异步任务对象
-          return $window.loadBaiduPromise;
+          return deferred.promise
       }
 
       /**
@@ -282,7 +282,7 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
                       var result = results[j];
                       if (!result.vr) continue;
 
-                      for (let i = 0; i < result.vr.length; i++) {
+                      for (var i = 0; i < result.vr.length; i++) {
                           var poi = result.getPoi(i),
                             tempPoi = {
                                 AccountID: 0,
