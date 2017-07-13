@@ -14,9 +14,9 @@ var app = angular.module('BaiduMapDirective', []);
       function loadMap(apiKey) {
 
           // 判断是否执行过加载过程
-          if (window.loadBaiduPromise) {
-              return window.loadBaiduPromise;
-          }
+          //if (window.loadBaiduPromise) {
+          //    return window.loadBaiduPromise;
+          //}
 
           var deferred = $q.defer(),
             resolve = function () {
@@ -55,10 +55,10 @@ var app = angular.module('BaiduMapDirective', []);
               bdscript.src = 'http://api.map.baidu.com/api?v=' + params.v + '&ak=' + params.ak + '&callback=' + params.callback;
               head.appendChild(bdscript);
           }
-          window.loadBaiduPromise = deferred.promise;
+          //window.loadBaiduPromise = deferred.promise;
 
           // 返回异步任务对象
-          return window.loadBaiduPromise;
+          return deferred.promise;
       }
 
       /**
@@ -212,7 +212,7 @@ var app = angular.module('BaiduMapDirective', []);
                   }
                   for (var j = 0; j < results.length; j++) {
                       var result = results[j];
-                      for (let i = 0; i < result.ur.length; i++) {
+                      for (var i = 0; i < result.ur.length; i++) {
                           var poi = result.getPoi(i),
                             tempPoi = {
                                 AccountID: 0,
