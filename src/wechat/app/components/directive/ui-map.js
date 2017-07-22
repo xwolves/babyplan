@@ -1,7 +1,7 @@
 (function() {
     'use strict';
 
-   
+
 
 
 var app = angular.module('BaiduMapDirective', []);
@@ -176,7 +176,7 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
 
           return mk;
       }
-     
+
 
       /**
        * 添加地图导航控件
@@ -228,7 +228,7 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
                   deferred.resolve(point);
               }
           } catch (e) {
-              alert(e.message);
+              //alert(e.message);
               var point = new BMap.Point(options.center.longitude, options.center.latitude); // 定义一个中心点坐标
               deferred.resolve(point);
           }
@@ -687,7 +687,7 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
                           MessageToaster.error("获取位置信息失败!");
                       })
                   } catch (err) {
-                      alert("error" + err.message);
+                      //alert("error" + err.message);
                   }
 
                   // 通知地图加载完成
@@ -792,7 +792,7 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
            * @param {Any} source 目标参数
            * @shortcut isString
            * @meta standard
-           *             
+           *
            * @returns {boolean} 类型判断结果
            */
           baidu.lang.isString = function (source) {
@@ -836,7 +836,7 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
            * @param 	{string}   type         自定义事件的名称
            * @param 	{Function} handler      自定义事件被触发时应该调用的回调函数
            * @param 	{string}   [key]		为事件监听函数指定的名称，可在移除时使用。如果不提供，方法会默认为它生成一个全局唯一的key。
-           * @remark 	事件类型区分大小写。如果自定义事件名称不是以小写"on"开头，该方法会给它加上"on"再进行判断，即"click"和"onclick"会被认为是同一种事件。 
+           * @remark 	事件类型区分大小写。如果自定义事件名称不是以小写"on"开头，该方法会给它加上"on"再进行判断，即"click"和"onclick"会被认为是同一种事件。
            */
           baidu.lang.Class.prototype.addEventListener = function (type, handler, key) {
               if (!baidu.lang.isFunction(handler)) {
@@ -914,7 +914,7 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
 
           /**
            * @ignore
-           * @namespace baidu.dom 
+           * @namespace baidu.dom
            * 操作dom的方法
            */
           baidu.dom = baidu.dom || {};
@@ -922,7 +922,7 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
           /**
            * 从文档中获取指定的DOM元素
            * **内部方法**
-           * 
+           *
            * @param {string|HTMLElement} id 元素的id或DOM元素
            * @meta standard
            * @return {HTMLElement} DOM元素，如果不存在，返回null，如果参数不合法，直接返回参数
@@ -961,10 +961,10 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
            * @param {string} type 事件类型
            * @param {Function} listener 需要添加的监听器
            * @remark
-           * 
+           *
           1. 不支持跨浏览器的鼠标滚轮事件监听器添加<br>
           2. 改方法不为监听器灌入事件对象，以防止跨iframe事件挂载的事件对象获取失败
-              
+
            * @shortcut on
            * @meta standard
            * @see baidu.event.un
@@ -1007,7 +1007,7 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
            * @shortcut un
            * @meta standard
            * @see baidu.event.on
-           *             
+           *
            * @returns {HTMLElement|window} 目标元素
            */
           baidu.event.un = function (element, type, listener) {
@@ -1053,14 +1053,14 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
           };
 
 
-          /** 
-           * @exports RichMarker as BMapLib.RichMarker 
+          /**
+           * @exports RichMarker as BMapLib.RichMarker
            */
           var RichMarker =
           /**
            * RichMarker类的构造函数
            * @class 富Marker定义类，实现丰富的Marker展现效果。
-           * 
+           *
            * @constructor
            * @param {String | HTMLElement} content 用户自定义的Marker内容，可以是字符串，也可以是dom节点
            * @param {BMap.Point} position marker的位置
@@ -1151,7 +1151,7 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
           /**
            * 初始化，实现自定义覆盖物的initialize方法
            * 主要生成Marker的主容器，填充自定义的内容，并附加事件
-           * 
+           *
            * @private
            * @param {BMap} map map实例对象
            * @return {Dom} 返回自定义生成的dom节点
@@ -1180,7 +1180,7 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
 
           /**
            * 为自定义的Marker设定显示位置，实现自定义覆盖物的draw方法
-           * 
+           *
            * @private
            */
           RichMarker.prototype.draw = function () {
@@ -1194,7 +1194,7 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
           /**
            * 设置Marker可以拖拽
            * @return 无返回值
-           * 
+           *
            * @example <b>参考示例：</b>
            * myRichMarkerObject.enableDragging();
            */
@@ -1205,7 +1205,7 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
           /**
            * 设置Marker不能拖拽
            * @return 无返回值
-           * 
+           *
            * @example <b>参考示例：</b>
            * myRichMarkerObject.disableDragging();
            */
@@ -1216,7 +1216,7 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
           /**
            * 获取Marker是否能被拖拽的状态
            * @return {Boolean} true为可以拖拽，false为不能被拖拽
-           * 
+           *
            * @example <b>参考示例：</b>
            * myRichMarkerObject.isDraggable();
            */
@@ -1227,7 +1227,7 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
           /**
            * 获取Marker的显示位置
            * @return {BMap.Point} 显示的位置
-           * 
+           *
            * @example <b>参考示例：</b>
            * myRichMarkerObject.getPosition();
            */
@@ -1239,7 +1239,7 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
            * 设置Marker的显示位置
            * @param {BMap.Point} position 需要设置的位置
            * @return 无返回值
-           * 
+           *
            * @example <b>参考示例：</b>
            * myRichMarkerObject.setPosition(new BMap.Point(116.30816, 40.056863));
            */
@@ -1254,7 +1254,7 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
           /**
            * 获取Marker的偏移量
            * @return {BMap.Size} Marker的偏移量
-           * 
+           *
            * @example <b>参考示例：</b>
            * myRichMarkerObject.getAnchor();
            */
@@ -1266,7 +1266,7 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
            * 设置Marker的偏移量
            * @param {BMap.Size} anchor 需要设置的偏移量
            * @return 无返回值
-           * 
+           *
            * @example <b>参考示例：</b>
            * myRichMarkerObject.setAnchor(new BMap.Size(-72, -84));
            */
@@ -1280,7 +1280,7 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
 
           /**
            * 添加用户的自定义的内容
-           * 
+           *
            * @private
            * @return 无返回值
            */
@@ -1307,7 +1307,7 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
           /**
            * 获取Marker的内容
            * @return {String | HTMLElement} 当前内容
-           * 
+           *
            * @example <b>参考示例：</b>
            * myRichMarkerObject.getContent();
            */
@@ -1319,7 +1319,7 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
            * 设置Marker的内容
            * @param {String | HTMLElement} content 需要设置的内容
            * @return 无返回值
-           * 
+           *
            * @example <b>参考示例：</b>
            * var htm = "&lt;div style='background:#E7F0F5;color:#0082CB;border:1px solid #333'&gt;"
            *              +     "欢迎使用百度地图API！"
@@ -1339,7 +1339,7 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
 
           /**
            * 获取Marker的高宽
-           * 
+           *
            * @private
            * @return {BMap.Size} 当前高宽
            */
@@ -1355,7 +1355,7 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
           /**
            * 获取Marker的宽度
            * @return {Number} 当前宽度
-           * 
+           *
            * @example <b>参考示例：</b>
            * myRichMarkerObject.getWidth();
            */
@@ -1370,7 +1370,7 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
            * 设置Marker的宽度
            * @param {Number} width 需要设置的宽度
            * @return 无返回值
-           * 
+           *
            * @example <b>参考示例：</b>
            * myRichMarkerObject.setWidth(300);
            */
@@ -1385,7 +1385,7 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
           /**
            * 获取Marker的高度
            * @return {Number} 当前高度
-           * 
+           *
            * @example <b>参考示例：</b>
            * myRichMarkerObject.getHeight();
            */
@@ -1400,7 +1400,7 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
            * 设置Marker的高度
            * @param {Number} height 需要设置的高度
            * @return 无返回值
-           * 
+           *
            * @example <b>参考示例：</b>
            * myRichMarkerObject.setHeight(200);
            */
@@ -1414,7 +1414,7 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
 
           /**
            * 设置Marker的各种事件
-           * 
+           *
            * @private
            * @return 无返回值
            */
@@ -1423,7 +1423,7 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
                   div = me._container,
                   isMouseDown = false,
                   // 鼠标是否按下，用以判断鼠标移动过程中的拖拽计算
-                  startPosition = null; // 拖拽时，鼠标按下的初始位置，拖拽的辅助计算参数   
+                  startPosition = null; // 拖拽时，鼠标按下的初始位置，拖拽的辅助计算参数
 
               // 通过e参数获取当前鼠标所在位置
               function _getPositionByEvent(e) {
@@ -1449,8 +1449,8 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
                    * <br />"<b>type</b>：{String} 事件类型}
                    *
                    * @example <b>参考示例：</b>
-                   * myRichMarkerObject.addEventListener("onclick", function(e) { 
-                   *     alert(e.type);  
+                   * myRichMarkerObject.addEventListener("onclick", function(e) {
+                   *     alert(e.type);
                    * });
                    */
                   _dispatchEvent(me, "onclick");
@@ -1468,8 +1468,8 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
                    * <br />"<b>type</b>：{String} 事件类型}
                    *
                    * @example <b>参考示例：</b>
-                   * myRichMarkerObject.addEventListener("onclick", function(e) { 
-                   *     alert(e.type);  
+                   * myRichMarkerObject.addEventListener("onclick", function(e) {
+                   *     alert(e.type);
                    * });
                    */
                   _dispatchEvent(me, "ontouchend");
@@ -1490,8 +1490,8 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
                    * <br />"<b>pixel</b>：{BMap.Pixel} 鼠标的像素坐标}
                    *
                    * @example <b>参考示例：</b>
-                   * myRichMarkerObject.addEventListener("ondblclick", function(e) { 
-                   *     alert(e.type);  
+                   * myRichMarkerObject.addEventListener("ondblclick", function(e) {
+                   *     alert(e.type);
                    * });
                    */
                   _dispatchEvent(me, "ondblclick", {
@@ -1515,8 +1515,8 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
                    * <br />"<b>pixel</b>：{BMap.Pixel} 鼠标的像素坐标}
                    *
                    * @example <b>参考示例：</b>
-                   * myRichMarkerObject.addEventListener("onmouseover", function(e) { 
-                   *     alert(e.type);  
+                   * myRichMarkerObject.addEventListener("onmouseover", function(e) {
+                   *     alert(e.type);
                    * });
                    */
                   _dispatchEvent(me, "onmouseover", {
@@ -1540,8 +1540,8 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
                    * <br />"<b>pixel</b>：{BMap.Pixel} 鼠标的像素坐标}
                    *
                    * @example <b>参考示例：</b>
-                   * myRichMarkerObject.addEventListener("onmouseout", function(e) { 
-                   *     alert(e.type);  
+                   * myRichMarkerObject.addEventListener("onmouseout", function(e) {
+                   *     alert(e.type);
                    * });
                    */
                   _dispatchEvent(me, "onmouseout", {
@@ -1565,8 +1565,8 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
                    * <br />"<b>pixel</b>：{BMap.Pixel} 鼠标的像素坐标}
                    *
                    * @example <b>参考示例：</b>
-                   * myRichMarkerObject.addEventListener("onmouseup", function(e) { 
-                   *     alert(e.type);  
+                   * myRichMarkerObject.addEventListener("onmouseup", function(e) {
+                   *     alert(e.type);
                    * });
                    */
                   _dispatchEvent(me, "onmouseup", {
@@ -1600,8 +1600,8 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
                    * <br />"<b>pixel</b>：{BMap.Pixel} 鼠标的像素坐标}
                    *
                    * @example <b>参考示例：</b>
-                   * myRichMarkerObject.addEventListener("ondragend", function(e) { 
-                   *     alert(e.type);  
+                   * myRichMarkerObject.addEventListener("ondragend", function(e) {
+                   *     alert(e.type);
                    * });
                    */
                   _dispatchEvent(me, "ondragend", {
@@ -1651,8 +1651,8 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
                    * <br />"<b>pixel</b>：{BMap.Pixel} 鼠标的像素坐标}
                    *
                    * @example <b>参考示例：</b>
-                   * myRichMarkerObject.addEventListener("ondragging", function(e) { 
-                   *     alert(e.type);  
+                   * myRichMarkerObject.addEventListener("ondragging", function(e) {
+                   *     alert(e.type);
                    * });
                    */
                   _dispatchEvent(me, "ondragging", {
@@ -1676,8 +1676,8 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
                    * <br />"<b>pixel</b>：{BMap.Pixel} 鼠标的像素坐标}
                    *
                    * @example <b>参考示例：</b>
-                   * myRichMarkerObject.addEventListener("onmousedown", function(e) { 
-                   *     alert(e.type);  
+                   * myRichMarkerObject.addEventListener("onmousedown", function(e) {
+                   *     alert(e.type);
                    * });
                    */
                   _dispatchEvent(me, "onmousedown", {
@@ -1710,8 +1710,8 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
                    * <br />"<b>pixel</b>：{BMap.Pixel} 鼠标的像素坐标}
                    *
                    * @example <b>参考示例：</b>
-                   * myRichMarkerObject.addEventListener("ondragstart", function(e) { 
-                   *     alert(e.type);  
+                   * myRichMarkerObject.addEventListener("ondragstart", function(e) {
+                   *     alert(e.type);
                    * });
                    */
                   _dispatchEvent(me, "ondragstart", {
@@ -1738,7 +1738,7 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
           /**
            * 设置拖拽过程中的手型
            *
-           * @private 
+           * @private
            * @param {string} cursorType 需要设置的手型类型
            */
           RichMarker.prototype._setCursor = function (cursorType) {
@@ -1769,7 +1769,7 @@ app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $io
 
           /**
            * 删除Marker
-           * 
+           *
            * @private
            * @return 无返回值
            */

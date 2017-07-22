@@ -21,6 +21,7 @@
                         if (data.errno == 0) {
                             console.log(data.data);
                             vm.parent = data.data;
+                            if(!vm.parent.avatarlink)vm.parent.avatarlink='img/teacher.png';
                         }
                     });
                 };
