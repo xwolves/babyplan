@@ -687,7 +687,7 @@ class Account{
         }
     }
 
-    public function teacherLogin($params, $redis){
+    public function teacherLogin($app, $params, $redis){
       try{
           $userId = $params['username'];
           $psw = $params['password'];
@@ -696,10 +696,14 @@ class Account{
           $info = array();
           $redisInfo = array();
           $sql_str = "" ;
+          $typestr = "未知";
           if($type==1){
             $sql_str = "select accountid, OrgName as name, ContactPhone as mobile  from tb_accnt_deposit where password = :psw and ( ContactPhone = :userId or AccountID = :userId )" ;
+            $typestr = "机构";
           }else if($type==3){
             $sql_str = "select accountid, name, mobile from tb_accnt_teacher where password = :psw and ( mobile = :userId or AccountID = :userId )" ;
+            //$sql_str = "select accountid, name, mobile from tb_accnt_teacher where password = :psw and mobile = :userId" ;
+            $typestr = "老师";
           }else{
             return 10007;
           }
@@ -716,21 +720,26 @@ class Account{
               $redisInfo['uid'] = $row['accountid'];
               $redisInfo['name'] = $row['name'];
               $redisInfo['mobile'] = $row['mobile'];
-              $token = strtolower($this->guid());
+             // $token = strtolower($this->guid());
+              $token = $info['uid'].":".strtolower($this->guid());
               if(!$redis->set($token, json_encode($redisInfo)))
                   return 10004;
               $info['token'] = $token;
               //eshop login
-              $eshopData = array('username' => $row['accountid'],'password' => $psw);
-              $infoObj = new Info($this->DB);
-              $eshop = $infoObj->eshopLogin(json_encode($eshopData));
-              $info['eshop']=$eshop;
+              // 老师端不需要登录商城
+              //$eshopData = array('username' => $row['accountid'],'password' => $psw);
+              //$infoObj = new Info($this->DB);
+              //$eshop = $infoObj->eshopLogin(json_encode($eshopData));
+              //$info['eshop']=$eshop;
+              $app->getLog()->debug(date('Y-m-d H:i:s')." Debug : $typestr login ok. username = $userId, psw = $psw");
               return $info;
           }else{
+            $app->getLog()->debug(date('Y-m-d H:i:s')." Error : $typestr login fail. 帐号或密码错误, username = $userId, psw = $psw");
             return 10003;
           }
       }catch (PDOException $e) {
           $errs = $e->getMessage();
+          $app->getLog()->debug(date('Y-m-d H:i:s')." Error : $typestr login fail. $errs, username = $userId, psw = $psw");
           return 10000;
       }
     }
@@ -782,9 +791,10 @@ class Account{
                     return 10004;
                 $info['token'] = $token;
 
+                $app->getLog()->debug(date('Y-m-d H:i:s')." Debug : 家长 login ok. userId = $userId");
                 return $info;
             }else{
-                $app->getLog()->debug(date('Y-m-d H:i:s')." Error : user login fail. user not exist in database, userId = $userId");
+                $app->getLog()->debug(date('Y-m-d H:i:s')." Error : 家长 login fail. user not exist in database, userId = $userId");
                 return 10003;
             }
         }catch (PDOException $e) {

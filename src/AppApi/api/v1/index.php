@@ -1489,7 +1489,7 @@ $app->post(
             return;
         }
         $account = new Account($sql_db);
-        $ret = $account->teacherLogin($a_request, $redis);
+        $ret = $account->teacherLogin($app, $a_request, $redis);
         if(gettype($ret) != "array"){
             $response->setBody(rspData($ret));
         }else{
