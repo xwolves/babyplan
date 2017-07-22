@@ -167,6 +167,7 @@ $app->post(
         $account = new Account($sql_db);
         $ret = $account->createAccount($app, $a_request, 4);
         $rsp_data['uid'] = $ret;
+        $app->getLog()->debug("Debug ".date('Y-m-d H:i:s')." : parent = ".$a_request['p_uid']." create child ok, uid = $ret, name = ".$a_request['name']);
         $response->setBody(rspData($ret, $rsp_data));
     }
 );
@@ -264,6 +265,7 @@ $app->post(
         $ret = $account->createAccount($app, $a_request, 3);
         $rsp_data['uid'] = $ret;
         $rsp_data['passwd'] = substr($a_request['mobile'], strlen($a_request['mobile']) - 6);
+        $app->getLog()->debug("Debug ".date('Y-m-d H:i:s')." : deposit id = $deposit_accnt_id create teacher ok, id = $ret, mobile = ".$a_request['mobile'].", psw = ".$rsp_data['passwd']);
         $response->setBody(rspData($ret, $rsp_data));
     }
 );

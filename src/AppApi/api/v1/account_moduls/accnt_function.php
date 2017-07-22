@@ -696,14 +696,14 @@ class Account{
           $info = array();
           $redisInfo = array();
           $sql_str = "" ;
-          $typestr = "未知";
+          $typestr = "unknown";
           if($type==1){
             $sql_str = "select accountid, OrgName as name, ContactPhone as mobile  from tb_accnt_deposit where password = :psw and ( ContactPhone = :userId or AccountID = :userId )" ;
-            $typestr = "机构";
+            $typestr = "deposit";
           }else if($type==3){
             $sql_str = "select accountid, name, mobile from tb_accnt_teacher where password = :psw and ( mobile = :userId or AccountID = :userId )" ;
             //$sql_str = "select accountid, name, mobile from tb_accnt_teacher where password = :psw and mobile = :userId" ;
-            $typestr = "老师";
+            $typestr = "teacher";
           }else{
             return 10007;
           }
@@ -791,10 +791,10 @@ class Account{
                     return 10004;
                 $info['token'] = $token;
 
-                $app->getLog()->debug(date('Y-m-d H:i:s')." Debug : 家长 login ok. userId = $userId");
+                $app->getLog()->debug(date('Y-m-d H:i:s')." Debug : parent login ok. userId = $userId");
                 return $info;
             }else{
-                $app->getLog()->debug(date('Y-m-d H:i:s')." Error : 家长 login fail. user not exist in database, userId = $userId");
+                $app->getLog()->debug(date('Y-m-d H:i:s')." Error : parent login fail. user not exist in database, userId = $userId");
                 return 10003;
             }
         }catch (PDOException $e) {
