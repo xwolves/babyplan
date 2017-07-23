@@ -1,6 +1,6 @@
 (function() {
     "use strict";
-    angular.module('Session', []).service('Session', function ($http, $window, JPushService) {
+    angular.module('Session', []).service('Session', function ($http, $window, JPushService,Constants,ResultHandler) {
         'ngInject';
 
         var session = {
@@ -10,6 +10,7 @@
             setData:setData,
             getData:getData,
             rmData:rmData,
+            checkToken:checkToken
         };
 
         function create(token, eshop, userId, roles, wechat) {
@@ -24,7 +25,7 @@
                 $http.defaults.headers.common.token = token;
             }
 
-            //设置用户ID做为通知别名
+            //锟斤拷锟斤拷锟矫伙拷ID锟斤拷为通知锟斤拷锟斤拷
             JPushService.setAlias(userId);
 
             //    $httpProvider.defaults.headers.common["Authorization"] = "Bearer-"+token;
@@ -55,6 +56,11 @@
         function rmData(name) {
             $window.localStorage.removeItem(name);
         }
+
+        function checkToken() {
+            var url = Constants.serverUrl + 'checkToken';
+            return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
+        };
 
         return session;
     });

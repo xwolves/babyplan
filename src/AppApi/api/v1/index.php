@@ -1659,7 +1659,7 @@ $app->post(
         }
         //$eshopToken=$eshop['token'];
         //getToken
-    
+
         $app->getLog()->debug(date('Y-m-d H:i:s')." Debug : user eshop register ok. mobile = ".$a_request['mobile'].", name = ".$a_request['name'].", email = ".$a_request['name']);
 
         $my_request=array('username' => $ret,'password' => $a_request['password']);
@@ -1751,6 +1751,21 @@ $app->post(
         $info = new Account($sql_db);
         $ret = $info->resetPsw($parent_accnt_id,$token);
         $response->setBody(rspData($ret));
+    }
+);
+
+$app->get(
+    '/checkToken',
+    function () use ($app, $redis) {
+        $response = $app->response;
+        $request = $app->request->getBody();
+        $token = $app->request->headers('token');
+        $depositInfo = $redis->get($token);
+        if(!$depositInfo){
+            $response->setBody(rspData(10005));
+            return;
+        }
+        $response->setBody(rspData(0));
     }
 );
 

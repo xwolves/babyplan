@@ -12,8 +12,20 @@
             function validate() {
                 if (Session.getData('userId') && Session.getData('token') && Session.getData('userId') != '-1') {
                     //AuthService.setSession(response.data.uid, response.data.token, response.data.eshop, response.data.type);
+                    //并且token有效
                     $http.defaults.headers.common.token = Session.getData('token');
-                    StateService.clearAllAndGo(AuthService.getNextPath());
+                    Session.checkToken().then(function (response) {
+                        console.log(response);
+                        if(response.errno==0){
+                          //token exist
+                          StateService.clearAllAndGo(AuthService.getNextPath());
+                        }else {
+                            console.log("token not exist,need login again");
+                        }
+                    },
+                    function (error) {
+                        console.log("get error in checkToken api,so goto login page");
+                    });
                 } else {
                     console.log("normal login");
                 }
