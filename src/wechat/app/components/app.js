@@ -10,18 +10,25 @@
     ])
 
     .run(function ($ionicPlatform, $state, $ionicHistory, AuthService, JPushService, Constants) {
-        $ionicPlatform.registerBackButtonAction(function (event) {
-           // alert("cur：" + JSON.stringify($state.current));
-            if ($state.current.name.indexOf("tabs")>-1) {
-                event.preventDefault();
-                cordova.plugins.backgroundMode.moveToBackground();
-            } else  if ($ionicHistory.backView()) {
+        if (!ionic.Platform.isIOS()) {
+            $ionicPlatform.registerBackButtonAction(function (event) {
+                // alert("curÔºö" + JSON.stringify($state.current));
+                if ($state.current.name.indexOf("tabs") > -1) {
+                    event.preventDefault();
+                    cordova.plugins.backgroundMode.moveToBackground();
+                } else if ($ionicHistory.backView()) {
                     $ionicHistory.goBack();
-            }
-            return false;
-        }, 100);
+                }
+                return false;
+            }, 100);
+        }
 
         $ionicPlatform.ready(function () {
+           
+            if (ionic.Platform.isIOS()) {
+                ionic.Platform.fullScreen();
+            }
+
             // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
             // for form inputs)
             if (window.cordova && window.cordova.plugins && window.cordova.plugins.Keyboard) {
@@ -36,28 +43,27 @@
          
             //版本更新
             function checkAppUpdate() {
-                window.AppUpdate && window.AppUpdate.checkAppUpdate(function () {
-                    //console.log('success', JSON.stringify(arguments), arguments);
-                   // alert("success" + JSON.stringify(arguments));
-                }, function () {
-                    //console.log('fail', JSON.stringify(arguments), arguments);
-                   // alert("fail" + JSON.stringify(arguments));
-                }, Constants.versionUpdateUrl + "apk-pub/ktyy.version.xml");
+                if (!ionic.Platform.isIOS()) {
+                    window.AppUpdate && window.AppUpdate.checkAppUpdate(function () {
+                        // alert("success" + JSON.stringify(arguments));
+                    }, function () {
+                        // alert("fail" + JSON.stringify(arguments));
+                    }, Constants.versionUpdateUrl + "apk-pub/ktyy.version.xml");
+                }
             }
 
             //应用可以进入后台运行
             //cordova.plugins.backgroundMode.enable();
             //cordova.plugins.backgroundMode.overrideBackButton();
-            cordova.plugins.backgroundMode.on('activate', function () {
-                checkAppUpdate();
-            });
+            if (ionic.Platform.isAndroid() && typeof cordova !== "undefined") {
+                cordova && cordova.plugins.backgroundMode.on('activate', function () {
+                    checkAppUpdate();
+                });
+            }
 
            
             checkAppUpdate();
 
-            //cordova.getAppVersion.getVersionNumber(function (version) {
-            //    alert(version);
-            //});
 
             //推送初始化
             var onOpenNotificationInAndroidCallback = function (data) {
@@ -68,6 +74,8 @@
             };
             //启动极光推送服务
             JPushService.init(config);
+
+            navigator.splashscreen && navigator.splashscreen.hide();
         });
     })
 
