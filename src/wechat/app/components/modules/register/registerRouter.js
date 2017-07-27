@@ -16,6 +16,16 @@
         templateUrl: 'register/register.html',
         controller: 'registerCtrl',
         controllerAs: 'vm'
+      })
+      .state('tabs.register', {
+          url: "/register?:index",
+          views: {
+            'tab-register': {
+              templateUrl: 'register/register.html',
+              controller: 'registerCtrl',
+              controllerAs: 'vm'
+            }
+          }
       });
   }
 }());

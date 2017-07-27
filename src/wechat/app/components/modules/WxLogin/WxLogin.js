@@ -44,20 +44,24 @@
           }else{
             if (Session.getData('userId') && Session.getData('token')) {
                 //login successed
-                Session.checkToken().then(function (response) {
-                    console.log(response);
-                    if(response.errno==0){
-                      //token exist
-                      //StateService.clearAllAndGo(AuthService.getNextPath());
-                    }else {
-                        console.log("token not exist,need login again");
-                        StateService.clearAllAndGo('login');
-                    }
-                },
-                function (error) {
-                    console.log("get error in checkToken api,so goto login page");
-                    StateService.clearAllAndGo('login');
-                });
+                if(Session.getData('userId')==-1){
+                  console.log('游客浏览');
+                }else{
+                  Session.checkToken().then(function (response) {
+                      console.log(response);
+                      if(response.errno==0){
+                        //token exist
+                        //StateService.clearAllAndGo(AuthService.getNextPath());
+                      }else {
+                          console.log("token not exist,need login again");
+                          StateService.clearAllAndGo('login');
+                      }
+                  },
+                  function (error) {
+                      console.log("get error in checkToken api,so goto login page");
+                      StateService.clearAllAndGo('login');
+                  });
+              }
             } else {
                 console.log("user not login with ");
                 event.preventDefault();
