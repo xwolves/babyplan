@@ -10,18 +10,25 @@
     ])
 
     .run(function ($ionicPlatform, $state, $ionicHistory, AuthService, JPushService, Constants) {
-        $ionicPlatform.registerBackButtonAction(function (event) {
-           // alert("cur：" + JSON.stringify($state.current));
-            if ($state.current.name.indexOf("tabs")>-1) {
-                event.preventDefault();
-                cordova.plugins.backgroundMode.moveToBackground();
-            } else  if ($ionicHistory.backView()) {
+        if (!ionic.Platform.isIOS()) {
+            $ionicPlatform.registerBackButtonAction(function (event) {
+                // alert("curÔºö" + JSON.stringify($state.current));
+                if ($state.current.name.indexOf("tabs") > -1) {
+                    event.preventDefault();
+                    cordova.plugins.backgroundMode.moveToBackground();
+                } else if ($ionicHistory.backView()) {
                     $ionicHistory.goBack();
-            }
-            return false;
-        }, 100);
+                }
+                return false;
+            }, 100);
+        }
 
         $ionicPlatform.ready(function () {
+           
+            if (ionic.Platform.isIOS()) {
+                ionic.Platform.fullScreen();
+            }
+
             // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
             // for form inputs)
             if (window.cordova && window.cordova.plugins && window.cordova.plugins.Keyboard) {
@@ -36,28 +43,27 @@
          
             //版本更新
             function checkAppUpdate() {
-                window.AppUpdate && window.AppUpdate.checkAppUpdate(function () {
-                    //console.log('success', JSON.stringify(arguments), arguments);
-                   // alert("success" + JSON.stringify(arguments));
-                }, function () {
-                    //console.log('fail', JSON.stringify(arguments), arguments);
-                   // alert("fail" + JSON.stringify(arguments));
-                }, Constants.versionUpdateUrl + "apk-pub/ktyy.version.xml");
+                if (!ionic.Platform.isIOS()) {
+                    window.AppUpdate && window.AppUpdate.checkAppUpdate(function () {
+                        // alert("success" + JSON.stringify(arguments));
+                    }, function () {
+                        // alert("fail" + JSON.stringify(arguments));
+                    }, Constants.versionUpdateUrl + "apk-pub/ktyy.version.xml");
+                }
             }
 
             //应用可以进入后台运行
             //cordova.plugins.backgroundMode.enable();
             //cordova.plugins.backgroundMode.overrideBackButton();
-            cordova.plugins.backgroundMode.on('activate', function () {
-                checkAppUpdate();
-            });
+            if (ionic.Platform.isAndroid() && typeof cordova !== "undefined") {
+                cordova && cordova.plugins.backgroundMode.on('activate', function () {
+                    checkAppUpdate();
+                });
+            }
 
            
             checkAppUpdate();
 
-            //cordova.getAppVersion.getVersionNumber(function (version) {
-            //    alert(version);
-            //});
 
             //推送初始化
             var onOpenNotificationInAndroidCallback = function (data) {
@@ -68,6 +74,8 @@
             };
             //启动极光推送服务
             JPushService.init(config);
+
+            navigator.splashscreen && navigator.splashscreen.hide();
         });
     })
 
@@ -131,99 +139,6 @@
             'baiduMap',
             'ionic-ratings'
         ]);
-}());
-
-(function() {
-  "use strict";
-  angular.module('config', [
-    'environmentConfig',
-    'constant',
-    'httpRelConfig'
-  ]);
-
-}());
-
-(function() {
-    "use strict";
-    angular.module('constant', [])
-        .constant('Path',{
-            'ParentRolePath':'tabs.childrenSteam',
-            'OrganizerRolePath':'tabs.organizer',
-            'TeacherRolePath':'tabs.message',
-            'VisitorRolePath':'tabs.map'
-        })
-        .constant('Role',{
-            'visitor':'-1',
-            'Organizer':'1',
-            'Parent':'2',
-            'Teacher':'3',
-            'Children':'4',
-            'ThirdParty':'5',
-            'Consultant':'6'
-        })
-        .constant('Weixin', {
-        })
-        .constant('AUTH_EVENTS', {
-            loginSuccess: 'auth-login-success',
-            loginFailed: 'auth-login-failed',
-            logoutSuccess: 'auth-logout-success',
-            sessionTimeout: 'auth-session-timeout',
-            notAuthenticated: 'auth-not-authenticated',
-            notAuthorized: 'auth-not-authorized'
-        })
-        .constant('ErrorMessage', {
-            ACCESS_FAIL: '通讯异常，请稍后再试！',
-            TOKEN_INVALID: '连接超时，请重新登录！'
-        })
-        .constant('SuccessMessage', {
-            SUBMIT_SUCESS: '提交成功',
-            OPERATION_SUCESS:'操作完成'
-        });
-}());
-
-(function() {
-    "use strict";
-    angular.module('environmentConfig', [])
-        .constant('Constants', {
-            'appTitle':'肯特育园',
-            'company':'深圳知行信息技术开发有限公司',
-            'serverUrl': 'http://wx.zxing-tech.cn/api/v1/',
-            'eshopApiUrl': 'http://api.mall.zxing-tech.cn/v2/',
-            'dfsUrl': 'http://wx.zxing-tech.cn/',
-            'versionUpdateUrl': 'http://wx.zxing-tech.cn/',
-            'buildID': '20170614v1',
-            'ENVIRONMENT':'release'
-        });
-}());
-//'serverUrl': 'http://120.76.226.47/api/v2/',
-//    'dfsUrl': 'http://120.76.226.47/',
-//http://localhost:8090/
-//http://wx.zxing-tech.cn
-
-(function() {
-    "use strict";
-    angular.module('httpDevConfig', [])
-        .config(function($httpProvider) {
-            $httpProvider.defaults.headers.post["Content-Type"] = "application/x-www-form-urlencoded";
-            $httpProvider.defaults.headers.put["Content-Type"] = "application/x-www-form-urlencoded";
-        });
-}());
-
-(function() {
-    "use strict";
-    angular.module('httpRelConfig', [])
-    .config(function($httpProvider) {
-        $httpProvider.defaults.cache = false;
-        if (!$httpProvider.defaults.headers.get) {
-           $httpProvider.defaults.headers.get = {};
-        }
-        // disable IE ajax request caching
-        $httpProvider.defaults.headers.get['If-Modified-Since'] = '0';
-
-        // Disable IE ajax request caching
-        $httpProvider.defaults.headers.get['Cache-Control'] = 'no-cache';
-        $httpProvider.defaults.headers.get['Pragma'] = 'no-cache';
-    });
 }());
 
 (function() {
@@ -773,7 +688,7 @@ app.filter('statusChange', function () {
 }());
 (function() {
     "use strict";
-    angular.module('Session', []).service('Session', function ($http, $window, JPushService) {
+    angular.module('Session', []).service('Session', function ($http, $window, JPushService,Constants,ResultHandler) {
         'ngInject';
 
         var session = {
@@ -783,6 +698,7 @@ app.filter('statusChange', function () {
             setData:setData,
             getData:getData,
             rmData:rmData,
+            checkToken:checkToken
         };
 
         function create(token, eshop, userId, roles, wechat) {
@@ -797,7 +713,7 @@ app.filter('statusChange', function () {
                 $http.defaults.headers.common.token = token;
             }
 
-            //�����û�ID��Ϊ֪ͨ����
+            //�����û�ID��Ϊ֪ͨ����
             JPushService.setAlias(userId);
 
             //    $httpProvider.defaults.headers.common["Authorization"] = "Bearer-"+token;
@@ -828,6 +744,11 @@ app.filter('statusChange', function () {
         function rmData(name) {
             $window.localStorage.removeItem(name);
         }
+
+        function checkToken() {
+            var url = Constants.serverUrl + 'checkToken';
+            return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
+        };
 
         return session;
     });
@@ -934,6 +855,99 @@ app.filter('statusChange', function () {
 }());
 
 (function() {
+  "use strict";
+  angular.module('config', [
+    'environmentConfig',
+    'constant',
+    'httpRelConfig'
+  ]);
+
+}());
+
+(function() {
+    "use strict";
+    angular.module('constant', [])
+        .constant('Path',{
+            'ParentRolePath':'tabs.childrenSteam',
+            'OrganizerRolePath':'tabs.organizer',
+            'TeacherRolePath':'tabs.message',
+            'VisitorRolePath':'tabs.map'
+        })
+        .constant('Role',{
+            'visitor':'-1',
+            'Organizer':'1',
+            'Parent':'2',
+            'Teacher':'3',
+            'Children':'4',
+            'ThirdParty':'5',
+            'Consultant':'6'
+        })
+        .constant('Weixin', {
+        })
+        .constant('AUTH_EVENTS', {
+            loginSuccess: 'auth-login-success',
+            loginFailed: 'auth-login-failed',
+            logoutSuccess: 'auth-logout-success',
+            sessionTimeout: 'auth-session-timeout',
+            notAuthenticated: 'auth-not-authenticated',
+            notAuthorized: 'auth-not-authorized'
+        })
+        .constant('ErrorMessage', {
+            ACCESS_FAIL: '通讯异常，请稍后再试！',
+            TOKEN_INVALID: '连接超时，请重新登录！'
+        })
+        .constant('SuccessMessage', {
+            SUBMIT_SUCESS: '提交成功',
+            OPERATION_SUCESS:'操作完成'
+        });
+}());
+
+(function() {
+    "use strict";
+    angular.module('environmentConfig', [])
+        .constant('Constants', {
+            'appTitle':'肯特育园',
+            'company':'深圳知行信息技术开发有限公司',
+            'serverUrl': 'http://wx.zxing-tech.cn/api/v1/',
+            'eshopApiUrl': 'http://api.mall.zxing-tech.cn/v2/',
+            'dfsUrl': 'http://wx.zxing-tech.cn/',
+            'versionUpdateUrl': 'http://wx.zxing-tech.cn/',
+            'buildID': '20170614v1',
+            'ENVIRONMENT':'release'
+        });
+}());
+//'serverUrl': 'http://120.76.226.47/api/v2/',
+//    'dfsUrl': 'http://120.76.226.47/',
+//http://localhost:8090/
+//http://wx.zxing-tech.cn
+
+(function() {
+    "use strict";
+    angular.module('httpDevConfig', [])
+        .config(function($httpProvider) {
+            $httpProvider.defaults.headers.post["Content-Type"] = "application/x-www-form-urlencoded";
+            $httpProvider.defaults.headers.put["Content-Type"] = "application/x-www-form-urlencoded";
+        });
+}());
+
+(function() {
+    "use strict";
+    angular.module('httpRelConfig', [])
+    .config(function($httpProvider) {
+        $httpProvider.defaults.cache = false;
+        if (!$httpProvider.defaults.headers.get) {
+           $httpProvider.defaults.headers.get = {};
+        }
+        // disable IE ajax request caching
+        $httpProvider.defaults.headers.get['If-Modified-Since'] = '0';
+
+        // Disable IE ajax request caching
+        $httpProvider.defaults.headers.get['Cache-Control'] = 'no-cache';
+        $httpProvider.defaults.headers.get['Pragma'] = 'no-cache';
+    });
+}());
+
+(function() {
     "use strict";
     angular.module('directive', [
       'BaiduMapDirective'
@@ -941,1863 +955,1987 @@ app.filter('statusChange', function () {
 
 }());
 
-(function() {
+(function () {
     'use strict';
 
-   
 
 
-var app = angular.module('BaiduMapDirective', []);
 
-app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $ionicSlideBoxDelegate,RichMarkerFactory, MessageToaster, BaiduService) {
-    'ngInject';
+    var app = angular.module('BaiduMapDirective', []);
 
-    var MARKER_TYPES = {
-        CURRENT: 0,
-        CUSTOM: 1,
-        BAIDU: 2
-    };
+    app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $ionicSlideBoxDelegate,$document, RichMarkerFactory, MessageToaster, BaiduService) {
+        'ngInject';
+
+        var MARKER_TYPES = {
+            CURRENT: 0,
+            CUSTOM: 1,
+            BAIDU: 2
+        };
 
 
-      /**
-       * 加载百度地图
-       * @param {object}  $q angular $q
-       * @param {string} apiKey 百度apiKey
-       * @param {string} version 版本号
-       */
-      function loadMap(apiKey) {
+        /**
+         * 加载百度地图
+         * @param {object}  $q angular $q
+         * @param {string} apiKey 百度apiKey
+         * @param {string} version 版本号
+         */
+        function loadMap(apiKey) {
 
-          // 判断是否执行过加载过程
-          //if ($window.loadBaiduPromise) {
-          //    return $window.loadBaiduPromise;
-          //}
+            // 判断是否执行过加载过程
+            //if ($window.loadBaiduPromise) {
+            //    return $window.loadBaiduPromise;
+            //}
 
-          var deferred = $q.defer(),
-            resolve = function () {
-                deferred.resolve($window.BMap ? $window.BMap : false);
-            },
-            callbackName = 'loadBaiduMaps_' + (new Date().getTime()),
-            params = {
-                'ak': apiKey
-            };
-          if ($window.BMap) {
-              resolve();
-          } else {
-              angular.extend(params, {
-                  'v': '2.0',
-                  'callback': callbackName
-              });
-
-              // 百度地图加载成功后回调用方法
-              $window[callbackName] = function () {
-                  // 标识异步任务完成
-                  resolve();
-
-                  // 成功后删除全局回调方法
-                  $timeout(function () {
-                      try {
-                          delete $window[callbackName];
-                      } catch (e) { }
-                  }, 20);
-              }
-
-              // 加载百度地图脚本
-              var head = document.getElementsByTagName('HEAD').item(0);
-              var bdscript = document.createElement('script');
-              bdscript.type = 'text/javascript';
-              bdscript.src = 'http://api.map.baidu.com/api?v=' + params.v + '&ak=' + params.ak + '&callback=' + params.callback;
-              head.appendChild(bdscript);
-          }
-         // $window.loadBaiduPromise = deferred.promise;
-
-          // 返回异步任务对象
-          return deferred.promise
-      }
-
-      /**
-       * 绑定地图事件，以便地图上触发的事件都转换为地图元素触发的对应事件
-       * @param {*} scope  范围
-       * @param {*} eventsStr 事件
-       * @param {*} baiduObject 百度地图对象
-       * @param {*} element 元素
-       * @param {*} prefix 地图事件前缀
-       */
-      function bindMapEvents(scope, baiduObject) {
-          var events = scope.$eval(attrs.mapEvent);
-          angular.forEach(events, function (uiEvent, eventName) {
-              var fn = $parse(uiEvent);
-
-              baiduObject.addEventListener(eventName, function (event) {
-                  var params = Array.prototype.slice.call(arguments);
-                  params = params.splice(1);
-                  fn(scope, {
-                      $event: evt,
-                      $params: params
-                  });
-                  if (!scope.$$phase) {
-                      scope.$apply();
-                  }
-              })
-          })
-      }
-
-      /**
-       * 在指定容器中构建渲染百度地图组件
-       * @param {*} container
-       * @param {*} options
-       */
-      function buildMap(container, options) {
-          if (!options.apiKey) {
-              throw new Error('请设置apiKey!');
-          }
-
-          var map = new window.BMap.Map(container, {
-              enableMapClick: false
-          });
-
-          if (options.enableScrollWheelZoom) {
-              map.enableScrollWheelZoom();
-          }
-
-          return map;
-      }
-
-      /**
-       * 根据位置做标记
-       * @param {*} map
-       * @param {*} point
-       * @param {*} clickCallback
-       * @param {*} poInfo
-       */
-      function addMapMarker(map, point, options) {
-
-          //{} clickCallback, poInfo, icon,markText
-
-          var ovs = map.getOverlays();
-          var isExist = false;
-          for (var i = 0; i < ovs.length; i++) {
-              var pt = ovs[i].getPosition();
-              if (pt.equals(point)) {
-                  isExist = true;
-                  break;
-              }
-          }
-
-          if (isExist) return;
-
-          options = options || {};
-          var mk;
-
-          if (options.type == MARKER_TYPES.CURRENT) {
-              var label = new BMap.Label(options.text, { offset: new BMap.Size(-15, 25) });
-              mk = new BMap.Marker(point, { icon: options.icon });
-              mk.setLabel(label)
-          } else if (options.type == MARKER_TYPES.CUSTOM) {
-              options.data = options.data || {};
-
-              var htm = "<div class='custom-marker'>"
-                        + "<div class='header'>" + options.data.Scores + "</div><div class='content'>" + options.data.OrgName + "</div>"
-                        + "</div>";
-
-               mk = RichMarkerFactory.buildRichMarker(htm, point, {
-                  "anchor": new BMap.Size(-72, -84),
-                  "enableDragging": true
-               });
-
-               if (options.onClick) {
-                   mk.addEventListener('ontouchend', options.onClick);
-               }
-          } else {
-              mk = new BMap.Marker(point);
-              if (options.onClick) {
-                  mk.addEventListener('click', options.onClick);
-              }
-          }
-
-          mk.babyPoi = options.data;
-          map.addOverlay(mk);
-
-          return mk;
-      }
-     
-
-      /**
-       * 添加地图导航控件
-       * @param {*} map
-       * @param {*} anchor
-       */
-      function addMapNavigation(map, anchor) {
-          var navigation = new window.BMap.NavigationControl({
-              anchor: anchor
-          });
-          map.addControl(navigation);
-      }
-
-      /**
-       * 获取当前位置
-       * @param {*} map
-       * @param {*} options
-       */
-      function getCurrentPosition(map, options) {
-          var deferred = $q.defer();
-          try {
-              if (baidumap_location) {
-                  // 获取GPS当前位置
-                  baidumap_location.getCurrentPosition(function (result) {
-                    // alert(JSON.stringify(result));
-                     // alert(result.locType);
-                      var point;
-                      if (result.locType == 161) {
-                          point = new BMap.Point(result.lontitude, result.latitude);
-                          $window.localStorage.setItem("current_pos", JSON.stringify(result));
-                      } else {
-                          //var curPos = $window.localStorage.getItem("current_pos");
-                          //curPos = JSON.parse(curPos);
-                          //point = new BMap.Point(curPos.lontitude, curPos.latitude);
-
-                          var point = new BMap.Point(options.center.longitude, options.center.latitude); // 定义一个中心点坐标
-                          deferred.resolve(point);
-                      }
-
-                      deferred.resolve(point);
-                  }, function (error) {
-                      var point = new BMap.Point(options.center.longitude, options.center.latitude); // 定义一个中心点坐标
-                      deferred.resolve(point);
-                      //alert(error.message);
-                      //deferred.reject(error);
-                  });
-              } else {
-                  var point = new BMap.Point(options.center.longitude, options.center.latitude); // 定义一个中心点坐标
-                  deferred.resolve(point);
-              }
-          } catch (e) {
-              alert(e.message);
-              var point = new BMap.Point(options.center.longitude, options.center.latitude); // 定义一个中心点坐标
-              deferred.resolve(point);
-          }
-          return deferred.promise;
-      }
-
-      /**
-       * 添加搜索框自动完成功能
-       * @param {*} map
-       * @param {*} scope
-       */
-      function addMapAutoComplete(map, scope) {
-          function onConfirm(e) {
-              var selectedVal = e.item.value;
-              var keywrod = selectedVal.province + selectedVal.city + selectedVal.district + selectedVal.street + selectedVal.business;
-              baiDuLocalSearchAndMark(map, keywrod).then(function (results) {
-                  scope.baiDuSearchResults = results;
-              }, function (err) {
-                  //ionicToast.show('检索异常!', 'middle', false, 3000);
-                  MessageToaster.error("检索异常!");
-              });
-          }
-          var ac = new BMap.Autocomplete({
-              'input': 'mech-map-searchbox',
-              'location': map
-          });
-          ac.addEventListener('onconfirm', onConfirm);
-
-          var ac1 = new BMap.Autocomplete({
-              'input': 'mech-list-searchbox',
-              'location': map
-          });
-          ac1.addEventListener('onconfirm', onConfirm);
-      }
-
-      /**
-       * 根据关键字在百度搜索位置信息
-       * @param {*} map
-       * @param {*} keyword
-       */
-      function baiDuLocalSearch(map, keyword) {
-          var deferred = $q.defer();
-
-          function onSearchComplete(results) {
-              try {
-                  var pois = [];
-                  if (!angular.isArray(results)) {
-                      results = [results];
-                  }
-                  for (var j = 0; j < results.length; j++) {
-                      var result = results[j];
-                      if (!result.vr) continue;
-
-                      for (let i = 0; i < result.vr.length; i++) {
-                          var poi = result.getPoi(i),
-                            tempPoi = {
-                                AccountID: 0,
-                                OrgName: poi.title,
-                                Address: poi.address,
-                                Tel: poi.phoneNumber,
-                                Latitude: poi.point.lat,
-                                Longitude: poi.point.lng
-                            };
-
-                          if (!!map.scope.currentPosition) {
-                              tempPoi["Dist"] = map.getDistance(poi.point, map.scope.currentPosition);
-                          }
-
-                          //只看5公里内的数据
-                          if (tempPoi["Dist"] && tempPoi["Dist"] < 5000) {
-                              pois.push(tempPoi);
-                          }
-                      }
-                  }
-
-                  deferred.resolve(pois);
-              } catch (err) {
-                  deferred.reject(err);
-              }
-          }
-          var local = new BMap.LocalSearch(map, {
-              onSearchComplete: onSearchComplete,
-              pageCapacity: 30
-          });
-          local.search(keyword);
-          return deferred.promise;
-      }
-
-      /**
-       * 根据关键字搜索百度数据并打标记
-       * @param {*} map
-       * @param {*} keyword
-       */
-      function baiDuLocalSearchAndMark(map, keyword) {
-          var deferred = $q.defer();
-
-          baiDuLocalSearch(map, keyword).then(function (results) {
-              map.clearOverlays();
-              var point;
-              for (var i = 0; i < results.length; i++) {
-                  point = new BMap.Point(results[i].Longitude, results[i].Latitude);
-                  addMapMarker(map, point,{onClick:openInfoWindow,type:MARKER_TYPES.BAIDU,data:results[i]});
-              }
-              point && map.panTo(point);
-
-              deferred.resolve(results);
-          }, function (err) {
-              deferred.reject(err);
-          });
-
-          return deferred.promise;
-      }
-
-      /**
-       * 根据位置搜索本地系统维护的后台数据
-       * @param {*} point
-       */
-      function babyPlanLocalSearch(point) {
-          return BaiduService.getNearbyDeposits(point.lng, point.lat);
-      }
-
-      /**
-       * 打开当前位置标记的详情页面
-       * @param {*} e
-       */
-      function openInfoWindow(e) {
-          var p = e.target,
-            map = e.target._map || e.target.map;
-
-          if (!p.babyPoi) {
-              return;
-          }
-
-          if (p.babyPoi.AccountID > 0) {
-              map.scope.openDepositInfoForm(p.babyPoi);
-          } else {
-              var opts = {
-                  width: 250, // 信息窗口宽度
-                  height: 80, // 信息窗口高度
-                  title: p.babyPoi.OrgName,
-                  enableMessage: true // 设置允许信息窗发送短息
+            var deferred = $q.defer(),
+              resolve = function () {
+                  deferred.resolve($window.BMap ? $window.BMap : false);
               },
-                content = p.babyPoi.Address;
-              var point = new BMap.Point(p.babyPoi.Longitude, p.babyPoi.Latitude);
-              var infoWindow = new BMap.InfoWindow(content, opts);
-              map.openInfoWindow(infoWindow, point);
-          }
-      }
-
-
-      return {
-          restrict: 'EA',
-          scope: {
-              mapOptions: '='
-          },
-          templateUrl: 'ui-map.html',
-          replace: true,
-          link: function (scope, elm, attrs) {
-              var opts = angular.extend({}, scope.mapOptions);
-
-              var MAP_MODES = scope.MAP_MODES = {
-                  MAP_SHOW: 0,
-                  MAP_SEARCH: 1,
-                  LIST_SHOW: 2,
-                  LIST_SEARCH: 3,
+              callbackName = 'loadBaiduMaps_' + (new Date().getTime()),
+              params = {
+                  'ak': apiKey
               };
-              if(opts.mode){
-                scope.currMode = opts.mode;
-              }else{
-                scope.currMode = MAP_MODES.MAP_SHOW;
-              }
+            if ($window.BMap) {
+                resolve();
+            } else {
+                angular.extend(params, {
+                    'v': '2.0',
+                    'callback': callbackName
+                });
 
-              scope.only_show_list = false;
-              if (!!opts.onlyShowList) {
-                  scope.only_show_list = opts.onlyShowList;
-              }
-              scope.baiDuSearchResults = [];
-              scope.babyPlanSearchResults = [];
-              scope.keyword1 = '';
-              scope.keyword2 = '';
-              scope.depositInfo = {};
-              // scope.depositInfo = {
-              //   OrgName: '南科大',
-              //   Address: '学苑大道1088号',
-              //   FrontDeskLink1: 'http://120.76.226.47/group1/M00/00/03/Ci5ek1jxwpWAD29ZAC84O4JhWyE096.jpg',
-              //   LicenseType: null,
-              //   ContactPhone: '1311111111',
-              //   Score: 50,
-              //   Remark: '宝宝的托管机构，宝宝的安全托管机构',
-              //   Images: ['http://120.76.226.47/group1/M00/00/03/Ci5ek1jxwpWAD29ZAC84O4JhWyE096.jpg', null],
-              //   Comments: [{comment: '对于缩略图视图，您可以在文件夹上放一个图片来提醒您它的内容。',create_date: '2017-4-23 12:00:00',creator: 'X*'}, {comment: '机构不错',create_date: '2017-4-21 12:00:00',creator: 'X*'}]
-              // }
+                // 百度地图加载成功后回调用方法
+                $window[callbackName] = function () {
+                    // 标识异步任务完成
+                    resolve();
 
-              /**
-               * 拨打电话
-               */
-              scope.dial = function (tel) {
-                  $window.location.href = 'tel:' + tel;
-              };
+                    // 成功后删除全局回调方法
+                    $timeout(function () {
+                        try {
+                            delete $window[callbackName];
+                        } catch (e) { }
+                    }, 20);
+                }
 
-              /**
-               * 定位
-               */
-              scope.location = function (poi) {
-                  // 切换到地图模式
-                  scope.currMode = MAP_MODES.MAP_SHOW;
+                // 加载百度地图脚本
+                var head = document.getElementsByTagName('HEAD').item(0);
+                var bdscript = document.createElement('script');
+                bdscript.type = 'text/javascript';
+                bdscript.src = 'http://api.map.baidu.com/api?v=' + params.v + '&ak=' + params.ak + '&callback=' + params.callback;
+                head.appendChild(bdscript);
+            }
+            // $window.loadBaiduPromise = deferred.promise;
 
-                  // 清除所有标记，并添加当前位置标记
-                 // scope.map.clearOverlays();
-                  var point = new BMap.Point(poi.Longitude, poi.Latitude);
-                  if (poi.AccountID === 0) {
-                      addMapMarker(scope.map, point, { onClick: openInfoWindow, type: MARKER_TYPES.BAIDU, data: poi });
-                  } else {
-                      addMapMarker(scope.map, point, { onClick: openInfoWindow, type: MARKER_TYPES.CUSTOM, data: poi });
-                  }
-                 // addMapMarker(scope.map, point, openInfoWindow, poi);
-                  $timeout(function () {
-                      scope.map.panTo(point);
-                  }, 20);
-              };
+            // 返回异步任务对象
+            return deferred.promise
+        }
 
-              /**
-               * 定位到当前位置
-               */
-              scope.locationCurrent = function () {
-                  $timeout(function () {
+        /**
+         * 绑定地图事件，以便地图上触发的事件都转换为地图元素触发的对应事件
+         * @param {*} scope  范围
+         * @param {*} eventsStr 事件
+         * @param {*} baiduObject 百度地图对象
+         * @param {*} element 元素
+         * @param {*} prefix 地图事件前缀
+         */
+        function bindMapEvents(scope, baiduObject) {
+            var events = scope.$eval(attrs.mapEvent);
+            angular.forEach(events, function (uiEvent, eventName) {
+                var fn = $parse(uiEvent);
 
-                      // 指定Marker的icon属性为Symbol
-                      var icon = new BMap.Symbol(BMap_Symbol_SHAPE_POINT, {
-                          scale: 1,//图标缩放大小
-                          fillColor: "orange",//填充颜色
-                          fillOpacity: 0.8//填充透明度
-                      });
-                     // scope.map.clearOverlays();
-                      addMapMarker(scope.map, scope.currentPosition, { type: MARKER_TYPES.CURRENT, icon: icon, text: '我的位置' });
-                      scope.currentPosition && scope.map.panTo(scope.currentPosition);
-                  }, 20);
-              };
+                baiduObject.addEventListener(eventName, function (event) {
+                    var params = Array.prototype.slice.call(arguments);
+                    params = params.splice(1);
+                    fn(scope, {
+                        $event: evt,
+                        $params: params
+                    });
+                    if (!scope.$$phase) {
+                        scope.$apply();
+                    }
+                })
+            })
+        }
 
-              /**
-               * 定位标记所有位置
-               */
-              scope.locationAll = function () {
-                  // 切换到地图模式
-                  scope.currMode = MAP_MODES.MAP_SHOW;
+        /**
+         * 在指定容器中构建渲染百度地图组件
+         * @param {*} container
+         * @param {*} options
+         */
+        function buildMap(container, options) {
+            if (!options.apiKey) {
+                throw new Error('请设置apiKey!');
+            }
 
-                  // 清除所有标记，并添加当前位置标记
-                  scope.map.clearOverlays();
+            var map = new window.BMap.Map(container, {
+                enableMapClick: false
+            });
 
-                  var poi, point;
-                  for (var i = 0; i < scope.baiDuSearchResults.length; i++) {
-                      poi = scope.baiDuSearchResults[i];
-                      point = new BMap.Point(poi.Longitude, poi.Latitude);
-                      // addMapMarker(scope.map, point, openInfoWindow, poi);
+            if (options.enableScrollWheelZoom) {
+                map.enableScrollWheelZoom();
+            }
 
-                      addMapMarker(scope.map, point, { onClick: openInfoWindow, type: MARKER_TYPES.BAIDU, data: poi });
-                  }
+            return map;
+        }
 
-                  for (var i = 0; i < scope.babyPlanSearchResults.length; i++) {
-                      poi = scope.babyPlanSearchResults[i];
-                      point = new BMap.Point(poi.Longitude, poi.Latitude);
-                      //  addMapCustomMarker(scope.map, point, openInfoWindow, poi,poi.OrgName);
-                      addMapMarker(scope.map, point, { onClick: openInfoWindow, type: MARKER_TYPES.CUSTOM, data: poi });
-                  }
+        /**
+         * 根据位置做标记
+         * @param {*} map
+         * @param {*} point
+         * @param {*} clickCallback
+         * @param {*} poInfo
+         */
+        function addMapMarker(map, point, options) {
 
-                  $timeout(function () {
-                      try {
-                          point && scope.map.panTo(point);
-                      } catch (e) { }
-                  }, 20);
-              };
+            //{} clickCallback, poInfo, icon,markText
 
-              /**
-               * 关闭详情页面
-               */
-              scope.closeDepositInfoForm = function () {
-                  scope.modal.hide();
-              };
+            var ovs = map.getOverlays();
+            var isExist = false;
+            for (var i = 0; i < ovs.length; i++) {
+                var pt = ovs[i].getPosition();
+                if (pt.equals(point)) {
+                    isExist = true;
+                    break;
+                }
+            }
 
-              /**
-               * 打开详情页面
-               */
-              scope.openDepositInfoForm = function (deposit) {
-                  if (!deposit || deposit.AccountID == 0) return;
+            if (isExist) return;
 
-                  // 根据ID获取机构详情和评论信息
-                  BaiduService.getDepositInfoWithComments(deposit.AccountID).then(function (depositInfo) {
-                      scope.depositInfo = depositInfo;
+            options = options || {};
+            var mk;
 
-                      // 判断详情页面是否已经加载，如果已经加载过直接打开，否则加载并打开页面
-                      if (!scope.modal) {
-                          $ionicModal.fromTemplateUrl('ui-map-info.html', {
-                              scope: scope,
-                              animation: 'slide-in-up'
-                          }).then(function (modal) {
-                              scope.modal = modal;
-                              scope.modal.show();
-                          });
-                      } else {
-                          scope.modal.show();
-                      }
-                  }, function (err) {
-                      //ionicToast.show('获取机构详情信息失败!', 'middle', false, 3000);
-                      MessageToaster.error("获取机构详情信息失败!");
-                  })
-              };
-
-              /**
-               * 回退到地图模式
-               */
-              scope.backToMapView = function () {
-                  scope.currMode = MAP_MODES.MAP_SHOW;
-              };
-
-              /**
-               * 切换模式
-               */
-              scope.switchMode = function (mode) {
-                  //
-                  if (scope.currMode === mode) return;
-
-                  // 如果切换的目标模式为空，根据当前模式修正为正确目标模式
-                  if (!mode) {
-                      switch (scope.currMode) {
-                          case MAP_MODES.MAP_SEARCH:
-                              mode = MAP_MODES.MAP_SHOW;
-                              break;
-                          case MAP_MODES.MAP_SHOW:
-                              mode = MAP_MODES.LIST_SHOW;
-                              break;
-
-                          case MAP_MODES.LIST_SEARCH:
-                              mode = MAP_MODES.LIST_SHOW;
-                              break;
-                          case MAP_MODES.LIST_SHOW:
-                              mode = MAP_MODES.MAP_SHOW;
-                              break;
-                      }
-                  }
-
-                  // 切换关键字
-                  // if (scope.currMode <= MAP_MODES.MAP_SEARCH && mode > MAP_MODES.MAP_SEARCH) {
-                  //   scope.keyword2 = scope.keyword1
-                  // } else if (scope.currMode > MAP_MODES.MAP_SEARCH && mode <= MAP_MODES.MAP_SEARCH) {
-                  //   scope.keyword1 = scope.keyword2
-                  // }
-                  //
-
-                  // 根据当前模式不同触发不同的行为
-                  switch (scope.currMode) {
-                      case MAP_MODES.MAP_SEARCH:
-                          // if (!scope.keyword1) {
-                          //  // ionicToast.show('请录入搜索关键字!', 'middle', false, 3000)
-                          //   return
-                          // }
-                          !!scope.keyword1 && baiDuLocalSearchAndMark(scope.map, scope.keyword1).then(function (results) {
-                              scope.baiDuSearchResults = results;
-                          }, function (err) {
-                              //ionicToast.show('百度本地搜索失败!', 'middle', false, 3000);
-                              MessageToaster.error("百度本地搜索失败!");
-                          });
-                          break;
-                      case MAP_MODES.LIST_SEARCH:
-                          // if (!scope.keyword2) {
-                          //   ionicToast.show('请录入搜索关键字!', 'middle', false, 3000)
-                          //   return
-                          // }
-                          !!scope.keyword2 && baiDuLocalSearchAndMark(scope.map, scope.keyword2).then(function (results) {
-                              scope.baiDuSearchResults = results;
-                          }, function (err) {
-                              //ionicToast.show('百度本地搜索失败!', 'middle', false, 3000);
-                              MessageToaster.error("百度本地搜索失败!");
-                          });
-                          break;
-                      case MAP_MODES.LIST_SHOW:
-                          mode === MAP_MODES.MAP_SHOW && scope.locationAll();
-                          break;
-                  }
-
-                  scope.currMode = mode;
-              };
-
-              /**
-               * 地图组件销毁时处理逻辑
-               */
-              scope.$on('$destroy', function () {
-                  $window.BMap = null;
-                  // document.getElementById('map').remove();
-                  elm.remove();
-                  scope.modal && scope.modal.remove();
-              });
-
-              var onLoadMapSuccessed = function () {
-
-                  try{
-
-                      // 创建百度地图
-                   // var map = scope.map = buildMap(document.getElementById('map'), opts);
-                      var map = scope.map = buildMap(elm.children().eq(0).children()[1], opts);
-                      map.scope = scope;
-
-                      // 添加导航栏
-                      addMapNavigation(map, BMAP_ANCHOR_BOTTOM_RIGHT);
-
-                      // 添加地图搜索框自动完成功能
-                      addMapAutoComplete(map, scope);
-
-                      // 设置地图可视区中心位置
-                      getCurrentPosition(map, opts).then(function (p) {
-                          // 记录当前位置并标记
-                          scope.currentPosition = p;
-
-                          // 指定Marker的icon属性为Symbol
-                          var symbol = new BMap.Symbol(BMap_Symbol_SHAPE_POINT, {
-                              scale: 1,//图标缩放大小
-                              fillColor: "orange",//填充颜色
-                              fillOpacity: 0.8//填充透明度
-                          });
-
-                          addMapMarker(map, p, { onClick: openInfoWindow, type: MARKER_TYPES.CURRENT, icon: symbol, text: '我的位置'});
-
-                         //  addMapMarker(map, p, openInfoWindow, null, symbol,'我的位置');
-                          // 设置为中心
-                          map.centerAndZoom(p, 16);
-
-                          // 根据关键字检索百度相关位置数据和根据当前位置检索后台维护附近数据
-                          var bpSearchDeferred = babyPlanLocalSearch(p);
-                          var bdSearchDeferred = baiDuLocalSearch(map, opts.keywords);
-                          $q.all([bpSearchDeferred, bdSearchDeferred]).then(function (results) {
-
-                              // 缓存结果
-                              var baiDuSearchResults= scope.baiDuSearchResults = results[1].sort(function (a, b) { return parseFloat(a.Dist) - parseFloat(b.Dist); });
-                              var babyPlanSearchResults=  scope.babyPlanSearchResults = results[0];
-
-                              // 对满足条件的位置进行标记，
-                              var point;
-                              for (var i = 0; i < baiDuSearchResults.length; i++) {
-                                  point = new BMap.Point(baiDuSearchResults[i].Longitude, baiDuSearchResults[i].Latitude);
-                                  addMapMarker(map, point, { onClick: openInfoWindow, type: MARKER_TYPES.BAIDU, data: baiDuSearchResults[i] });
-                              }
-
-                              for (var i = 0; i < babyPlanSearchResults.length; i++) {
-                                  point = new BMap.Point(babyPlanSearchResults[i].Longitude, babyPlanSearchResults[i].Latitude);
-                                  addMapMarker(map, point, { onClick: openInfoWindow, type: MARKER_TYPES.CUSTOM, data: babyPlanSearchResults[i] });
-                              }
-
-
-                              // 把最后一个位置移动到地图中心
-                              // point && map.panTo(point)
-                          }, function (err) {
-                              //ionicToast.show('获取位置信息失败!', 'middle', false, 3000);
-                              MessageToaster.error("获取位置信息失败!");
-                          })
-                      }, function (err) {
-                          //ionicToast.show('获取位置信息失败!', 'middle', false, 3000);
-                          MessageToaster.error("获取位置信息失败!");
-                      })
-                  } catch (err) {
-                      alert("error" + err.message);
-                  }
-
-                  // 通知地图加载完成
-                  elm.triggerHandler('map-loaded', {
-                      bmap: map
-                  });
-              };
-
-              // 加载地图失败处理逻辑
-              var onLoadMapFailed = function () {
-                  opts.onMapLoadFailded();
-              };
-
-              // 加载地图
-              loadMap(opts.apiKey).then(onLoadMapSuccessed, onLoadMapFailed);
-          }
-      }
-  });
-  app.factory('RichMarkerFactory', function () {
-      function _getRichMarkerClass(BMap) {
-
-          var BMapLib = window.BMapLib = BMapLib || {};
-          if (BMapLib.RichMarker) return BMapLib.RichMarker;
-
-          /**
-           * 声明baidu包
-           */
-          var baidu = baidu || {
-              guid: "$BAIDU$"
-          };
-
-          // 一些页面级别唯一的属性，需要挂载在window[baidu.guid]上
-          window[baidu.guid] = {};
-
-          /**
-           * 将源对象的所有属性拷贝到目标对象中
-           * @name baidu.extend
-           * @function
-           * @grammar baidu.extend(target, source)
-           * @param {Object} target 目标对象
-           * @param {Object} source 源对象
-           * @returns {Object} 目标对象
-           */
-          baidu.extend = function (target, source) {
-              for (var p in source) {
-                  if (source.hasOwnProperty(p)) {
-                      target[p] = source[p];
-                  }
-              }
-              return target;
-          };
-
-          /**
-           * @ignore
-           * @namespace
-           * @baidu.lang 对语言层面的封装，包括类型判断、模块扩展、继承基类以及对象自定义事件的支持。
-           * @property guid 对象的唯一标识
-           */
-          baidu.lang = baidu.lang || {};
-
-          /**
-           * 返回一个当前页面的唯一标识字符串。
-           * @function
-           * @grammar baidu.lang.guid()
-           * @returns {String} 当前页面的唯一标识字符串
-           */
-          baidu.lang.guid = function () {
-              return "TANGRAM__" + (window[baidu.guid]._counter++).toString(36);
-          };
-
-          window[baidu.guid]._counter = window[baidu.guid]._counter || 1;
-
-          /**
-           * 所有类的实例的容器
-           * key为每个实例的guid
-           */
-          window[baidu.guid]._instances = window[baidu.guid]._instances || {};
-
-          /**
-           * Tangram继承机制提供的一个基类，用户可以通过继承baidu.lang.Class来获取它的属性及方法。
-           * @function
-           * @name baidu.lang.Class
-           * @grammar baidu.lang.Class(guid)
-           * @param {string} guid	对象的唯一标识
-           * @meta standard
-           * @remark baidu.lang.Class和它的子类的实例均包含一个全局唯一的标识guid。
-           * guid是在构造函数中生成的，因此，继承自baidu.lang.Class的类应该直接或者间接调用它的构造函数。<br>
-           * baidu.lang.Class的构造函数中产生guid的方式可以保证guid的唯一性，及每个实例都有一个全局唯一的guid。
-           */
-          baidu.lang.Class = function (guid) {
-              this.guid = guid || baidu.lang.guid();
-              window[baidu.guid]._instances[this.guid] = this;
-          };
-
-          window[baidu.guid]._instances = window[baidu.guid]._instances || {};
-
-          /**
-           * 判断目标参数是否string类型或String对象
-           * @name baidu.lang.isString
-           * @function
-           * @grammar baidu.lang.isString(source)
-           * @param {Any} source 目标参数
-           * @shortcut isString
-           * @meta standard
-           *             
-           * @returns {boolean} 类型判断结果
-           */
-          baidu.lang.isString = function (source) {
-              return '[object String]' == Object.prototype.toString.call(source);
-          };
-          baidu.isString = baidu.lang.isString;
-
-          /**
-           * 判断目标参数是否为function或Function实例
-           * @name baidu.lang.isFunction
-           * @function
-           * @grammar baidu.lang.isFunction(source)
-           * @param {Any} source 目标参数
-           * @returns {boolean} 类型判断结果
-           */
-          baidu.lang.isFunction = function (source) {
-              return '[object Function]' == Object.prototype.toString.call(source);
-          };
-
-          /**
-           * 自定义的事件对象。
-           * @function
-           * @name baidu.lang.Event
-           * @grammar baidu.lang.Event(type[, target])
-           * @param {string} type	 事件类型名称。为了方便区分事件和一个普通的方法，事件类型名称必须以"on"(小写)开头。
-           * @param {Object} [target]触发事件的对象
-           * @meta standard
-           * @remark 引入该模块，会自动为Class引入3个事件扩展方法：addEventListener、removeEventListener和dispatchEvent。
-           * @see baidu.lang.Class
-           */
-          baidu.lang.Event = function (type, target) {
-              this.type = type;
-              this.returnValue = true;
-              this.target = target || null;
-              this.currentTarget = null;
-          };
-
-          /**
-           * 注册对象的事件监听器。引入baidu.lang.Event后，Class的子类实例才会获得该方法。
-           * @grammar obj.addEventListener(type, handler[, key])
-           * @param 	{string}   type         自定义事件的名称
-           * @param 	{Function} handler      自定义事件被触发时应该调用的回调函数
-           * @param 	{string}   [key]		为事件监听函数指定的名称，可在移除时使用。如果不提供，方法会默认为它生成一个全局唯一的key。
-           * @remark 	事件类型区分大小写。如果自定义事件名称不是以小写"on"开头，该方法会给它加上"on"再进行判断，即"click"和"onclick"会被认为是同一种事件。 
-           */
-          baidu.lang.Class.prototype.addEventListener = function (type, handler, key) {
-              if (!baidu.lang.isFunction(handler)) {
-                  return;
-              } !this.__listeners && (this.__listeners = {});
-              var t = this.__listeners,
-                  id;
-              if (typeof key == "string" && key) {
-                  if (/[^\w\-]/.test(key)) {
-                      throw ("nonstandard key:" + key);
-                  } else {
-                      handler.hashCode = key;
-                      id = key;
-                  }
-              }
-              type.indexOf("on") != 0 && (type = "on" + type);
-              typeof t[type] != "object" && (t[type] = {});
-              id = id || baidu.lang.guid();
-              handler.hashCode = id;
-              t[type][id] = handler;
-          };
-
-          /**
-           * 移除对象的事件监听器。引入baidu.lang.Event后，Class的子类实例才会获得该方法。
-           * @grammar obj.removeEventListener(type, handler)
-           * @param {string}   type     事件类型
-           * @param {Function|string} handler  要移除的事件监听函数或者监听函数的key
-           * @remark 	如果第二个参数handler没有被绑定到对应的自定义事件中，什么也不做。
-           */
-          baidu.lang.Class.prototype.removeEventListener = function (type, handler) {
-              if (baidu.lang.isFunction(handler)) {
-                  handler = handler.hashCode;
-              } else if (!baidu.lang.isString(handler)) {
-                  return;
-              } !this.__listeners && (this.__listeners = {});
-              type.indexOf("on") != 0 && (type = "on" + type);
-              var t = this.__listeners;
-              if (!t[type]) {
-                  return;
-              }
-              t[type][handler] && delete t[type][handler];
-          };
-
-          /**
-           * 派发自定义事件，使得绑定到自定义事件上面的函数都会被执行。引入baidu.lang.Event后，Class的子类实例才会获得该方法。
-           * @grammar obj.dispatchEvent(event, options)
-           * @param {baidu.lang.Event|String} event 	Event对象，或事件名称(1.1.1起支持)
-           * @param {Object} options 扩展参数,所含属性键值会扩展到Event对象上(1.2起支持)
-           * @remark 处理会调用通过addEventListenr绑定的自定义事件回调函数之外，还会调用直接绑定到对象上面的自定义事件。
-           * 例如：<br>
-           * myobj.onMyEvent = function(){}<br>
-           * myobj.addEventListener("onMyEvent", function(){});
-           */
-          baidu.lang.Class.prototype.dispatchEvent = function (event, options) {
-              if (baidu.lang.isString(event)) {
-                  event = new baidu.lang.Event(event);
-              } !this.__listeners && (this.__listeners = {});
-              options = options || {};
-              for (var i in options) {
-                  event[i] = options[i];
-              }
-              var i, t = this.__listeners,
-                  p = event.type;
-              event.target = event.target || this;
-              event.currentTarget = this;
-              p.indexOf("on") != 0 && (p = "on" + p);
-              baidu.lang.isFunction(this[p]) && this[p].apply(this, arguments);
-              if (typeof t[p] == "object") {
-                  for (i in t[p]) {
-                      t[p][i].apply(this, arguments);
-                  }
-              }
-              return event.returnValue;
-          };
-
-          /**
-           * @ignore
-           * @namespace baidu.dom 
-           * 操作dom的方法
-           */
-          baidu.dom = baidu.dom || {};
-
-          /**
-           * 从文档中获取指定的DOM元素
-           * **内部方法**
-           * 
-           * @param {string|HTMLElement} id 元素的id或DOM元素
-           * @meta standard
-           * @return {HTMLElement} DOM元素，如果不存在，返回null，如果参数不合法，直接返回参数
-           */
-          baidu.dom._g = function (id) {
-              if (baidu.lang.isString(id)) {
-                  return document.getElementById(id);
-              }
-              return id;
-          };
-          baidu._g = baidu.dom._g;
-
-          /**
-           * @ignore
-           * @namespace baidu.event 屏蔽浏览器差异性的事件封装。
-           * @property target 	事件的触发元素
-           * @property pageX 		鼠标事件的鼠标x坐标
-           * @property pageY 		鼠标事件的鼠标y坐标
-           * @property keyCode 	键盘事件的键值
-           */
-          baidu.event = baidu.event || {};
-
-          /**
-           * 事件监听器的存储表
-           * @private
-           * @meta standard
-           */
-          baidu.event._listeners = baidu.event._listeners || [];
-
-          /**
-           * 为目标元素添加事件监听器
-           * @name baidu.event.on
-           * @function
-           * @grammar baidu.event.on(element, type, listener)
-           * @param {HTMLElement|string|window} element 目标元素或目标元素id
-           * @param {string} type 事件类型
-           * @param {Function} listener 需要添加的监听器
-           * @remark
-           * 
-          1. 不支持跨浏览器的鼠标滚轮事件监听器添加<br>
-          2. 改方法不为监听器灌入事件对象，以防止跨iframe事件挂载的事件对象获取失败
+            if (options.type == MARKER_TYPES.CURRENT ) {
               
-           * @shortcut on
-           * @meta standard
-           * @see baidu.event.un
-           * @returns {HTMLElement|window} 目标元素
-           */
-          baidu.event.on = function (element, type, listener) {
-              type = type.replace(/^on/i, '');
-              element = baidu.dom._g(element);
+               mk = new BMap.Marker(point, { icon: options.icon });
+               if (options.text) {
+                   var label = new BMap.Label(options.text, { offset: new BMap.Size(-15, 25) });
+                   mk.setLabel(label)
+               }
+            } else if (options.type == MARKER_TYPES.CUSTOM) {
+                options.data = options.data || {};
 
-              var realListener = function (ev) {
-                  listener.call(element, ev);
-              },
-                  lis = baidu.event._listeners,
-                  filter = baidu.event._eventFilter,
-                  afterFilter, realType = type;
-              type = type.toLowerCase();
-              if (filter && filter[type]) {
-                  afterFilter = filter[type](element, type, realListener);
-                  realType = afterFilter.type;
-                  realListener = afterFilter.listener;
-              }
-              if (element.addEventListener) {
-                  element.addEventListener(realType, realListener, false);
-              } else if (element.attachEvent) {
-                  element.attachEvent('on' + realType, realListener);
-              }
-              lis[lis.length] = [element, type, listener, realListener, realType];
-              return element;
-          };
-          baidu.on = baidu.event.on;
+                var htm = "<div class='custom-marker'>"
+                          + "<div class='header'>" + options.data.Scores + "</div><div class='content'>" + options.data.OrgName + "</div>"
+                          + "</div>";
 
-          /**
-           * 为目标元素移除事件监听器
-           * @name baidu.event.un
-           * @function
-           * @grammar baidu.event.un(element, type, listener)
-           * @param {HTMLElement|string|window} element 目标元素或目标元素id
-           * @param {string} type 事件类型
-           * @param {Function} listener 需要移除的监听器
-           * @shortcut un
-           * @meta standard
-           * @see baidu.event.on
-           *             
-           * @returns {HTMLElement|window} 目标元素
-           */
-          baidu.event.un = function (element, type, listener) {
-              element = baidu.dom._g(element);
-              type = type.replace(/^on/i, '').toLowerCase();
+                mk = RichMarkerFactory.buildRichMarker(htm, point, {
+                    "anchor": new BMap.Size(-72, -84),
+                    "enableDragging": false
+                });
 
-              var lis = baidu.event._listeners,
-                  len = lis.length,
-                  isRemoveAll = !listener,
-                  item, realType, realListener;
-              while (len--) {
-                  item = lis[len];
-                  if (item[1] === type && item[0] === element && (isRemoveAll || item[2] === listener)) {
-                      realType = item[4];
-                      realListener = item[3];
-                      if (element.removeEventListener) {
-                          element.removeEventListener(realType, realListener, false);
-                      } else if (element.detachEvent) {
-                          element.detachEvent('on' + realType, realListener);
-                      }
-                      lis.splice(len, 1);
-                  }
-              }
+                if (options.onClick) {
+                    mk.addEventListener('ontouchend', options.onClick);
+                }
+            } else {
+                mk = new BMap.Marker(point);
+                if (options.onClick) {
+                    mk.addEventListener('click', options.onClick);
+                }
+            }
 
-              return element;
-          };
-          baidu.un = baidu.event.un;
+            mk.babyPoi = options.data;
+            map.addOverlay(mk);
 
-          /**
-           * 阻止事件的默认行为
-           * @name baidu.event.preventDefault
-           * @function
-           * @grammar baidu.event.preventDefault(event)
-           * @param {Event} event 事件对象
-           * @meta standard
-           */
-          baidu.preventDefault = baidu.event.preventDefault = function (event) {
-              if (event.preventDefault) {
-                  event.preventDefault();
-              } else {
-                  event.returnValue = false;
-              }
-          };
+            return mk;
+        }
 
 
-          /** 
-           * @exports RichMarker as BMapLib.RichMarker 
-           */
-          var RichMarker =
-          /**
-           * RichMarker类的构造函数
-           * @class 富Marker定义类，实现丰富的Marker展现效果。
-           * 
-           * @constructor
-           * @param {String | HTMLElement} content 用户自定义的Marker内容，可以是字符串，也可以是dom节点
-           * @param {BMap.Point} position marker的位置
-           * @param {Json} RichMarkerOptions 可选的输入参数，非必填项。可输入选项包括：<br />
-           * {"<b>anchor</b>" : {BMap.Size} Marker的的位置偏移值,
-           * <br />"<b>enableDragging</b>" : {Boolean} 是否启用拖拽，默认为false}
-           *
-           * @example <b>参考示例：</b>
-           * var map = new BMap.Map("container");
-           * map.centerAndZoom(new BMap.Point(116.309965, 40.058333), 17);
-           * var htm = "&lt;div style='background:#E7F0F5;color:#0082CB;border:1px solid #333'&gt;"
-           *              +     "欢迎使用百度地图！"
-           *              +     "&lt;img src='http://map.baidu.com/img/logo-map.gif' border='0' /&gt;"
-           *              + "&lt;/div&gt;";
-           * var point = new BMap.Point(116.30816, 40.056863);
-           * var myRichMarkerObject = new BMapLib.RichMarker(htm, point, {"anchor": new BMap.Size(-72, -84), "enableDragging": true});
-           * map.addOverlay(myRichMarkerObject);
-           */
-          BMapLib.RichMarker = function (content, position, opts) {
-              if (!content || !position || !(position instanceof BMap.Point)) {
-                  return;
-              }
+        /**
+         * 添加地图导航控件
+         * @param {*} map
+         * @param {*} anchor
+         */
+        function addMapNavigation(map, anchor) {
+            var navigation = new window.BMap.NavigationControl({
+                anchor: anchor
+            });
+            map.addControl(navigation);
+        }
 
-              /**
-               * map对象
-               * @private
-               * @type {Map}
-               */
-              this._map = null;
+        /**
+         * 获取当前位置
+         * @param {*} map
+         * @param {*} options
+         */
+        function getCurrentPosition(map, options) {
+            var deferred = $q.defer();
+            try {
+                if (baidumap_location) {
+                    // 获取GPS当前位置
+                    baidumap_location.getCurrentPosition(function (result) {
+                        // alert(JSON.stringify(result));
+                        // alert(result.locType);
+                        var point;
+                        if (!ionic.Platform.isIOS()) {
+                            if (result.locType == 161) {
+                                point = new BMap.Point(result.lontitude, result.latitude);
+                                $window.localStorage.setItem("current_pos", JSON.stringify(result));
+                            } else {
+                                point = new BMap.Point(options.center.longitude, options.center.latitude); // 定义一个中心点坐标
+                                deferred.resolve(point);
+                            }
+                        } else {
+                            point = new BMap.Point(result.longitude, result.latitude);
+                            $window.localStorage.setItem("current_pos", JSON.stringify(result));
+                        }
 
-              /**
-               * Marker内容
-               * @private
-               * @type {String | HTMLElement}
-               */
-              this._content = content;
+                        deferred.resolve(point);
+                    }, function (error) {
+                        var point = new BMap.Point(options.center.longitude, options.center.latitude); // 定义一个中心点坐标
+                        deferred.resolve(point);
+                    });
 
-              /**
-               * marker显示位置
-               * @private
-               * @type {BMap.Point}
-               */
-              this._position = position;
+                } else {
+                    var point = new BMap.Point(options.center.longitude, options.center.latitude); // 定义一个中心点坐标
+                    deferred.resolve(point);
+                }
+            } catch (e) {
+                var point = new BMap.Point(options.center.longitude, options.center.latitude); // 定义一个中心点坐标
+                deferred.resolve(point);
+            }
+            return deferred.promise;
+        }
 
-              /**
-               * marker主容器
-               * @private
-               * @type {HTMLElement}
-               */
-              this._container = null;
 
-              /**
-               * marker主容器的尺寸
-               * @private
-               * @type {BMap.Size}
-               */
-              this._size = null;
 
-              opts = opts || {};
-              /**
-               * _opts是默认参数赋值。
-               * 下面通过用户输入的opts，对默认参数赋值
-               * @private
-               * @type {Json}
-               */
-              this._opts = baidu.extend(
-              baidu.extend(this._opts || {}, {
+        /**
+         * 添加搜索框自动完成功能
+         * @param {*} map
+         * @param {*} scope
+         */
+        function addMapAutoComplete(map, scope) {
+            function onConfirm(e) {
 
-                  /**
-                   * Marker是否可以拖拽
-                   * @private
-                   * @type {Boolean}
-                   */
-                  enableDragging: false,
+                var input= document.getElementById(e.currentTarget.ng.w_);
+                input.blur();
 
-                  /**
-                   * Marker的偏移量
-                   * @private
-                   * @type {BMap.Size}
-                   */
-                  anchor: new BMap.Size(0, 0)
-              }), opts);
-          }
+                var selectedVal = e.item.value;
+                var keywrod =   selectedVal.province + selectedVal.city + selectedVal.district + selectedVal.street + selectedVal.business;
+                baiDuLocalSearch(map, keywrod).then(function (results) {
 
-          // 继承覆盖物类
-          RichMarker.prototype = new BMap.Overlay();
+                    if (e.currentTarget.ng.w_ === "mech-list-searchbox") {
+                        scope.keyword2 = keywrod;
+                    } else {
+                        scope.keyword1 = keywrod;
+                    }
 
-          /**
-           * 初始化，实现自定义覆盖物的initialize方法
-           * 主要生成Marker的主容器，填充自定义的内容，并附加事件
-           * 
-           * @private
-           * @param {BMap} map map实例对象
-           * @return {Dom} 返回自定义生成的dom节点
-           */
-          RichMarker.prototype.initialize = function (map) {
-              var me = this,
-                  div = me._container = document.createElement("div");
-              me._map = map;
-              baidu.extend(div.style, {
-                  position: "absolute",
-                  zIndex: BMap.Overlay.getZIndex(me._position.lat),
-                  background: "#FFF",
-                  cursor: "pointer"
-              });
-              map.getPanes().labelPane.appendChild(div);
+                    if (results && results.length > 0) {
 
-              // 给主容器添加上用户自定义的内容
-              me._appendContent();
-              // 给主容器添加事件处理
-              me._setEventDispath();
-              // 获取主容器的高宽
-              me._getContainerSize();
+                        // 清除所有标记，并添加当前位置标记
+                       scope.map.clearOverlays();
 
-              return div;
-          }
+                        // 记录当前位置并标记
+                        scope.currentPosition  = new BMap.Point(results[0].Longitude, results[0].Latitude);
 
-          /**
-           * 为自定义的Marker设定显示位置，实现自定义覆盖物的draw方法
-           * 
-           * @private
-           */
-          RichMarker.prototype.draw = function () {
-              var map = this._map,
-                  anchor = this._opts.anchor,
-                  pixel = map.pointToOverlayPixel(this._position);
-              this._container.style.left = pixel.x + anchor.width + "px";
-              this._container.style.top = pixel.y + anchor.height + "px";
-          }
+                        if (scope.currMode == scope.MAP_MODES.MAP_SHOW) {
+                            // 指定Marker的icon属性为Symbol
+                            var symbol = new BMap.Symbol(BMap_Symbol_SHAPE_POINT, {
+                                scale: 1,//图标缩放大小
+                                fillColor: "orange",//填充颜色
+                                fillOpacity: 0.8//填充透明度
+                            });
 
-          /**
-           * 设置Marker可以拖拽
-           * @return 无返回值
-           * 
-           * @example <b>参考示例：</b>
-           * myRichMarkerObject.enableDragging();
-           */
-          RichMarker.prototype.enableDragging = function () {
-              this._opts.enableDragging = true;
-          }
+                            addMapMarker(map, scope.currentPosition, { onClick: openInfoWindow, type: MARKER_TYPES.CURRENT, icon: symbol, text: "" });
+                            // 设置为中心
+                            map.centerAndZoom(scope.currentPosition, 16);
+                        }
 
-          /**
-           * 设置Marker不能拖拽
-           * @return 无返回值
-           * 
-           * @example <b>参考示例：</b>
-           * myRichMarkerObject.disableDragging();
-           */
-          RichMarker.prototype.disableDragging = function () {
-              this._opts.enableDragging = false;
-          }
+                        // 根据关键字检索百度相关位置数据和根据当前位置检索后台维护附近数据
+                        var bpSearchDeferred = babyPlanLocalSearch(scope.currentPosition);
+                        var bdSearchDeferred = baiDuLocalSearch(map, scope.mapOptions.keywords);
+                        $q.all([bpSearchDeferred, bdSearchDeferred]).then(function (results) {
 
-          /**
-           * 获取Marker是否能被拖拽的状态
-           * @return {Boolean} true为可以拖拽，false为不能被拖拽
-           * 
-           * @example <b>参考示例：</b>
-           * myRichMarkerObject.isDraggable();
-           */
-          RichMarker.prototype.isDraggable = function () {
-              return this._opts.enableDragging;
-          }
+                            // 缓存结果
+                            var baiDuSearchResults = scope.baiDuSearchResults = results[1].sort(function (a, b) { return parseFloat(a.Dist) - parseFloat(b.Dist); });
+                            var babyPlanSearchResults = scope.babyPlanSearchResults = results[0];
 
-          /**
-           * 获取Marker的显示位置
-           * @return {BMap.Point} 显示的位置
-           * 
-           * @example <b>参考示例：</b>
-           * myRichMarkerObject.getPosition();
-           */
-          RichMarker.prototype.getPosition = function () {
-              return this._position;
-          }
+                            if (scope.currMode == scope.MAP_MODES.MAP_SHOW) {
+                                // 对满足条件的位置进行标记，
+                                var point;
+                                for (var i = 0; i < baiDuSearchResults.length; i++) {
+                                    point = new BMap.Point(baiDuSearchResults[i].Longitude, baiDuSearchResults[i].Latitude);
+                                    addMapMarker(map, point, { onClick: openInfoWindow, type: MARKER_TYPES.BAIDU, data: baiDuSearchResults[i] });
+                                }
 
-          /**
-           * 设置Marker的显示位置
-           * @param {BMap.Point} position 需要设置的位置
-           * @return 无返回值
-           * 
-           * @example <b>参考示例：</b>
-           * myRichMarkerObject.setPosition(new BMap.Point(116.30816, 40.056863));
-           */
-          RichMarker.prototype.setPosition = function (position) {
-              if (!position instanceof BMap.Point) {
-                  return;
-              }
-              this._position = position;
-              this.draw();
-          }
+                                for (var i = 0; i < babyPlanSearchResults.length; i++) {
+                                    point = new BMap.Point(babyPlanSearchResults[i].Longitude, babyPlanSearchResults[i].Latitude);
+                                    addMapMarker(map, point, { onClick: openInfoWindow, type: MARKER_TYPES.CUSTOM, data: babyPlanSearchResults[i] });
+                                }
+                            }
+                            // 把最后一个位置移动到地图中心
+                            // point && map.panTo(point)
+                        }, function (err) {
+                            //ionicToast.show('获取位置信息失败!', 'middle', false, 3000);
+                            MessageToaster.error("获取位置信息失败!");
+                        })
+                    }
 
-          /**
-           * 获取Marker的偏移量
-           * @return {BMap.Size} Marker的偏移量
-           * 
-           * @example <b>参考示例：</b>
-           * myRichMarkerObject.getAnchor();
-           */
-          RichMarker.prototype.getAnchor = function () {
-              return this._opts.anchor;
-          }
+                }, function (err) {
+                    //ionicToast.show('检索异常!', 'middle', false, 3000);
+                    MessageToaster.error("检索异常!");
+                });
 
-          /**
-           * 设置Marker的偏移量
-           * @param {BMap.Size} anchor 需要设置的偏移量
-           * @return 无返回值
-           * 
-           * @example <b>参考示例：</b>
-           * myRichMarkerObject.setAnchor(new BMap.Size(-72, -84));
-           */
-          RichMarker.prototype.setAnchor = function (anchor) {
-              if (!anchor instanceof BMap.Size) {
-                  return;
-              }
-              this._opts.anchor = anchor;
-              this.draw();
-          }
+            }
+            var ac = new BMap.Autocomplete({
+                'input': 'mech-map-searchbox',
+                'location': map
+            });
+            ac.addEventListener('onconfirm', onConfirm);
 
-          /**
-           * 添加用户的自定义的内容
-           * 
-           * @private
-           * @return 无返回值
-           */
-          RichMarker.prototype._appendContent = function () {
-              var content = this._content;
-              // 用户输入的内容是字符串，需要转化成dom节点
-              if (typeof content == "string") {
-                  var div = document.createElement('DIV');
-                  div.innerHTML = content;
-                  if (div.childNodes.length == 1) {
-                      content = (div.removeChild(div.firstChild));
-                  } else {
-                      var fragment = document.createDocumentFragment();
-                      while (div.firstChild) {
-                          fragment.appendChild(div.firstChild);
-                      }
-                      content = fragment;
-                  }
-              }
-              this._container.innerHTML = "";
-              this._container.appendChild(content);
-          }
+            var ac1 = new BMap.Autocomplete({
+                'input': 'mech-list-searchbox',
+                'location': map
+            });
+            ac1.addEventListener('onconfirm', onConfirm);
+        }
 
-          /**
-           * 获取Marker的内容
-           * @return {String | HTMLElement} 当前内容
-           * 
-           * @example <b>参考示例：</b>
-           * myRichMarkerObject.getContent();
-           */
-          RichMarker.prototype.getContent = function () {
-              return this._content;
-          }
+        /**
+         * 根据关键字在百度搜索位置信息
+         * @param {*} map
+         * @param {*} keyword
+         */
+        function baiDuLocalSearch(map, keyword) {
+            var deferred = $q.defer();
 
-          /**
-           * 设置Marker的内容
-           * @param {String | HTMLElement} content 需要设置的内容
-           * @return 无返回值
-           * 
-           * @example <b>参考示例：</b>
-           * var htm = "&lt;div style='background:#E7F0F5;color:#0082CB;border:1px solid #333'&gt;"
-           *              +     "欢迎使用百度地图API！"
-           *              +     "&lt;img src='http://map.baidu.com/img/logo-map.gif' border='0' /&gt;"
-           *              + "&lt;/div&gt;";
-           * myRichMarkerObject.setContent(htm);
-           */
-          RichMarker.prototype.setContent = function (content) {
-              if (!content) {
-                  return;
-              }
-              // 存储用户输入的Marker显示内容
-              this._content = content;
-              // 添加进主容器
-              this._appendContent();
-          }
+            function onSearchComplete(results) {
+                try {
+                    var pois = [];
+                    if (!angular.isArray(results)) {
+                        results = [results];
+                    }
+                    for (var j = 0; j < results.length; j++) {
+                        var result = results[j];
+                        if (!result.vr) continue;
 
-          /**
-           * 获取Marker的高宽
-           * 
-           * @private
-           * @return {BMap.Size} 当前高宽
-           */
-          RichMarker.prototype._getContainerSize = function () {
-              if (!this._container) {
-                  return;
-              }
-              var h = this._container.offsetHeight;
-              var w = this._container.offsetWidth;
-              this._size = new BMap.Size(w, h);
-          }
+                        for (var i = 0; i < result.vr.length; i++) {
+                            var poi = result.getPoi(i),
+                              tempPoi = {
+                                  AccountID: 0,
+                                  OrgName: poi.title,
+                                  Address: poi.address,
+                                  Tel: poi.phoneNumber,
+                                  Latitude: poi.point.lat,
+                                  Longitude: poi.point.lng
+                              };
 
-          /**
-           * 获取Marker的宽度
-           * @return {Number} 当前宽度
-           * 
-           * @example <b>参考示例：</b>
-           * myRichMarkerObject.getWidth();
-           */
-          RichMarker.prototype.getWidth = function () {
-              if (!this._size) {
-                  return;
-              }
-              return this._size.width;
-          }
+                            //如果是根据下拉选项搜索则返回第一条满足位置做中心位置
+                            if (typeof keyword === "string") {
+                                pois.push(tempPoi);
+                                break;
+                            } else {
+                                if (!!map.scope.currentPosition) {
+                                    tempPoi["Dist"] = map.getDistance(poi.point, map.scope.currentPosition);
+                                }
 
-          /**
-           * 设置Marker的宽度
-           * @param {Number} width 需要设置的宽度
-           * @return 无返回值
-           * 
-           * @example <b>参考示例：</b>
-           * myRichMarkerObject.setWidth(300);
-           */
-          RichMarker.prototype.setWidth = function (width) {
-              if (!this._container) {
-                  return;
-              }
-              this._container.style.width = width + "px";
-              this._getContainerSize();
-          }
+                                //只看5公里内的数据
+                                if (tempPoi["Dist"] && tempPoi["Dist"] < 5000) {
+                                    pois.push(tempPoi);
+                                }
+                            }
+                        }
+                    }
 
-          /**
-           * 获取Marker的高度
-           * @return {Number} 当前高度
-           * 
-           * @example <b>参考示例：</b>
-           * myRichMarkerObject.getHeight();
-           */
-          RichMarker.prototype.getHeight = function () {
-              if (!this._size) {
-                  return;
-              }
-              return this._size.height;
-          }
+                    deferred.resolve(pois);
+                } catch (err) {
+                    deferred.reject(err);
+                }
+            }
+            var local = new BMap.LocalSearch(map, {
+                onSearchComplete: onSearchComplete,
+                pageCapacity: 30
+            });
+            local.search(keyword);
+            return deferred.promise;
+        }
 
-          /**
-           * 设置Marker的高度
-           * @param {Number} height 需要设置的高度
-           * @return 无返回值
-           * 
-           * @example <b>参考示例：</b>
-           * myRichMarkerObject.setHeight(200);
-           */
-          RichMarker.prototype.setHeight = function (height) {
-              if (!this._container) {
-                  return;
-              }
-              this._container.style.height = height + "px";
-              this._getContainerSize();
-          }
+        /**
+         * 根据关键字搜索百度数据并打标记
+         * @param {*} map
+         * @param {*} keyword
+         */
+        function baiDuLocalSearchAndMark(map, keyword) {
+            var deferred = $q.defer();
 
-          /**
-           * 设置Marker的各种事件
-           * 
-           * @private
-           * @return 无返回值
-           */
-          RichMarker.prototype._setEventDispath = function () {
-              var me = this,
-                  div = me._container,
-                  isMouseDown = false,
-                  // 鼠标是否按下，用以判断鼠标移动过程中的拖拽计算
-                  startPosition = null; // 拖拽时，鼠标按下的初始位置，拖拽的辅助计算参数   
+            baiDuLocalSearch(map, keyword).then(function (results) {
+                map.clearOverlays();
+                var point;
+                for (var i = 0; i < results.length; i++) {
+                    point = new BMap.Point(results[i].Longitude, results[i].Latitude);
+                    addMapMarker(map, point, { onClick: openInfoWindow, type: MARKER_TYPES.BAIDU, data: results[i] });
+                }
+                point && map.panTo(point);
 
-              // 通过e参数获取当前鼠标所在位置
-              function _getPositionByEvent(e) {
-                  var e = window.event || e,
-                      x = e.pageX || e.clientX || 0,
-                      y = e.pageY || e.clientY || 0,
-                      pixel = new BMap.Pixel(x, y),
-                      point = me._map.pixelToPoint(pixel);
-                  return {
-                      "pixel": pixel,
-                      "point": point
-                  };
-              }
+                deferred.resolve(results);
+            }, function (err) {
+                deferred.reject(err);
+            });
 
-              // 单击事件
-              baidu.on(div, "onclick", function (e) {
-                  /**
-                   * 点击Marker时，派发事件的接口
-                   * @name RichMarker#onclick
-                   * @event
-                   * @param {Event Object} e 回调函数会返回event参数，包括以下返回值：
-                   * <br />{"<b>target</b> : {BMap.Overlay} 触发事件的元素,
-                   * <br />"<b>type</b>：{String} 事件类型}
-                   *
-                   * @example <b>参考示例：</b>
-                   * myRichMarkerObject.addEventListener("onclick", function(e) { 
-                   *     alert(e.type);  
-                   * });
-                   */
-                  _dispatchEvent(me, "onclick");
-                  _stopAndPrevent(e);
-              });
+            return deferred.promise;
+        }
 
-              // 单击事件
-              baidu.on(div, "ontouchend", function (e) {
-                  /**
-                   * 点击Marker时，派发事件的接口
-                   * @name RichMarker#onclick
-                   * @event
-                   * @param {Event Object} e 回调函数会返回event参数，包括以下返回值：
-                   * <br />{"<b>target</b> : {BMap.Overlay} 触发事件的元素,
-                   * <br />"<b>type</b>：{String} 事件类型}
-                   *
-                   * @example <b>参考示例：</b>
-                   * myRichMarkerObject.addEventListener("onclick", function(e) { 
-                   *     alert(e.type);  
-                   * });
-                   */
-                  _dispatchEvent(me, "ontouchend");
-                  _dispatchEvent(me, "onclick");
-                  _stopAndPrevent(e);
-              });
-              // 双击事件
-              baidu.on(div, "ondblclick", function (e) {
-                  var position = _getPositionByEvent(e);
-                  /**
-                   * 双击Marker时，派发事件的接口
-                   * @name RichMarker#ondblclick
-                   * @event
-                   * @param {Event Object} e 回调函数会返回event参数，包括以下返回值：
-                   * <br />{"<b>target</b> : {BMap.Overlay} 触发事件的元素,
-                   * <br />"<b>type</b>：{String} 事件类型,
-                   * <br />"<b>point</b>：{BMap.Point} 鼠标的物理坐标,
-                   * <br />"<b>pixel</b>：{BMap.Pixel} 鼠标的像素坐标}
-                   *
-                   * @example <b>参考示例：</b>
-                   * myRichMarkerObject.addEventListener("ondblclick", function(e) { 
-                   *     alert(e.type);  
-                   * });
-                   */
-                  _dispatchEvent(me, "ondblclick", {
-                      "point": position.point,
-                      "pixel": position.pixel
-                  });
-                  _stopAndPrevent(e);
-              });
+        /**
+         * 根据位置搜索本地系统维护的后台数据
+         * @param {*} point
+         */
+        function babyPlanLocalSearch(point) {
+            return BaiduService.getNearbyDeposits(point.lng, point.lat);
+        }
 
-              // 鼠标移上事件
-              div.onmouseover = function (e) {
-                  var position = _getPositionByEvent(e);
-                  /**
-                   * 鼠标移到Marker上时，派发事件的接口
-                   * @name RichMarker#onmouseover
-                   * @event
-                   * @param {Event Object} e 回调函数会返回event参数，包括以下返回值：
-                   * <br />{"<b>target</b> : {BMap.Overlay} 触发事件的元素,
-                   * <br />"<b>type</b>：{String} 事件类型,
-                   * <br />"<b>point</b>：{BMap.Point} 鼠标的物理坐标,
-                   * <br />"<b>pixel</b>：{BMap.Pixel} 鼠标的像素坐标}
-                   *
-                   * @example <b>参考示例：</b>
-                   * myRichMarkerObject.addEventListener("onmouseover", function(e) { 
-                   *     alert(e.type);  
-                   * });
-                   */
-                  _dispatchEvent(me, "onmouseover", {
-                      "point": position.point,
-                      "pixel": position.pixel
-                  });
-                  _stopAndPrevent(e);
-              }
+        /**
+         * 打开当前位置标记的详情页面
+         * @param {*} e
+         */
+        function openInfoWindow(e) {
+            var p = e.target,
+              map = e.target._map || e.target.map;
 
-              // 鼠标移出事件
-              div.onmouseout = function (e) {
-                  var position = _getPositionByEvent(e);
-                  /**
-                   * 鼠标移出Marker时，派发事件的接口
-                   * @name RichMarker#onmouseout
-                   * @event
-                   * @param {Event Object} e 回调函数会返回event参数，包括以下返回值：
-                   * <br />{"<b>target</b> : {BMap.Overlay} 触发事件的元素,
-                   * <br />"<b>type</b>：{String} 事件类型,
-                   * <br />"<b>point</b>：{BMap.Point} 鼠标的物理坐标,
-                   * <br />"<b>pixel</b>：{BMap.Pixel} 鼠标的像素坐标}
-                   *
-                   * @example <b>参考示例：</b>
-                   * myRichMarkerObject.addEventListener("onmouseout", function(e) { 
-                   *     alert(e.type);  
-                   * });
-                   */
-                  _dispatchEvent(me, "onmouseout", {
-                      "point": position.point,
-                      "pixel": position.pixel
-                  });
-                  _stopAndPrevent(e);
-              }
+            if (!p.babyPoi) {
+                return;
+            }
 
-              // 鼠标弹起事件
-              var mouseUpEvent = function (e) {
-                  var position = _getPositionByEvent(e);
-                  /**
-                   * 在Marker上弹起鼠标时，派发事件的接口
-                   * @name RichMarker#onmouseup
-                   * @event
-                   * @param {Event Object} e 回调函数会返回event参数，包括以下返回值：
-                   * <br />{"<b>target</b> : {BMap.Overlay} 触发事件的元素,
-                   * <br />"<b>type</b>：{String} 事件类型,
-                   * <br />"<b>point</b>：{BMap.Point} 鼠标的物理坐标,
-                   * <br />"<b>pixel</b>：{BMap.Pixel} 鼠标的像素坐标}
-                   *
-                   * @example <b>参考示例：</b>
-                   * myRichMarkerObject.addEventListener("onmouseup", function(e) { 
-                   *     alert(e.type);  
-                   * });
-                   */
-                  _dispatchEvent(me, "onmouseup", {
-                      "point": position.point,
-                      "pixel": position.pixel
-                  });
+            if (p.babyPoi.AccountID > 0) {
+                map.scope.openDepositInfoForm(p.babyPoi);
+            } else {
+                var opts = {
+                    width: 250, // 信息窗口宽度
+                    height: 80, // 信息窗口高度
+                    title: p.babyPoi.OrgName,
+                    enableMessage: true // 设置允许信息窗发送短息
+                },
+                  content = p.babyPoi.Address;
+                var point = new BMap.Point(p.babyPoi.Longitude, p.babyPoi.Latitude);
+                var infoWindow = new BMap.InfoWindow(content, opts);
+                map.openInfoWindow(infoWindow, point);
+            }
+        }
 
-                  if (me._container.releaseCapture) {
-                      baidu.un(div, "onmousemove", mouseMoveEvent);
-                      baidu.un(div, "onmouseup", mouseUpEvent);
-                  } else {
-                      baidu.un(window, "onmousemove", mouseMoveEvent);
-                      baidu.un(window, "onmouseup", mouseUpEvent);
-                  }
 
-                  // 判断是否需要进行拖拽事件的处理
-                  if (!me._opts.enableDragging) {
-                      _stopAndPrevent(e);
-                      return;
-                  }
-                  // 拖拽结束时，释放鼠标捕获
-                  me._container.releaseCapture && me._container.releaseCapture();
-                  /**
-                   * 拖拽Marker结束时，派发事件的接口
-                   * @name RichMarker#ondragend
-                   * @event
-                   * @param {Event Object} e 回调函数会返回event参数，包括以下返回值：
-                   * <br />{"<b>target</b> : {BMap.Overlay} 触发事件的元素,
-                   * <br />"<b>type</b>：{String} 事件类型,
-                   * <br />"<b>point</b>：{BMap.Point} 鼠标的物理坐标,
-                   * <br />"<b>pixel</b>：{BMap.Pixel} 鼠标的像素坐标}
-                   *
-                   * @example <b>参考示例：</b>
-                   * myRichMarkerObject.addEventListener("ondragend", function(e) { 
-                   *     alert(e.type);  
-                   * });
-                   */
-                  _dispatchEvent(me, "ondragend", {
-                      "point": position.point,
-                      "pixel": position.pixel
-                  });
-                  isMouseDown = false;
-                  startPosition = null;
-                  // 设置拖拽结束后的鼠标手型
-                  me._setCursor("dragend");
-                  // 拖拽过程中防止文字被选中
-                  me._container.style['MozUserSelect'] = '';
-                  me._container.style['KhtmlUserSelect'] = '';
-                  me._container.style['WebkitUserSelect'] = '';
-                  me._container['unselectable'] = 'off';
-                  me._container['onselectstart'] = function () { };
+        return {
+            restrict: 'EA',
+            scope: {
+                mapOptions: '='
+            },
+            templateUrl: 'ui-map.html',
+            replace: true,
+            link: function (scope, elm, attrs) {
+                var opts = angular.extend({}, scope.mapOptions);
 
-                  _stopAndPrevent(e);
-              }
+                var MAP_MODES = scope.MAP_MODES = {
+                    MAP_SHOW: 0,
+                    MAP_SEARCH: 1,
+                    LIST_SHOW: 2,
+                    LIST_SEARCH: 3,
+                };
+                if (opts.mode) {
+                    scope.currMode = opts.mode;
+                } else {
+                    scope.currMode = MAP_MODES.MAP_SHOW;
+                }
 
-              // 鼠标移动事件
-              var mouseMoveEvent = function (e) {
-                  // 判断是否需要进行拖拽事件的处理
-                  if (!me._opts.enableDragging || !isMouseDown) {
-                      return;
-                  }
-                  var position = _getPositionByEvent(e);
+                scope.only_show_list = false;
+                if (!!opts.onlyShowList) {
+                    scope.only_show_list = opts.onlyShowList;
+                }
+                scope.baiDuSearchResults = [];
+                scope.babyPlanSearchResults = [];
+                scope.keyword1 = '';
+                scope.keyword2 = '';
+                scope.depositInfo = {};
+                // scope.depositInfo = {
+                //   OrgName: '南科大',
+                //   Address: '学苑大道1088号',
+                //   FrontDeskLink1: 'http://120.76.226.47/group1/M00/00/03/Ci5ek1jxwpWAD29ZAC84O4JhWyE096.jpg',
+                //   LicenseType: null,
+                //   ContactPhone: '1311111111',
+                //   Score: 50,
+                //   Remark: '宝宝的托管机构，宝宝的安全托管机构',
+                //   Images: ['http://120.76.226.47/group1/M00/00/03/Ci5ek1jxwpWAD29ZAC84O4JhWyE096.jpg', null],
+                //   Comments: [{comment: '对于缩略图视图，您可以在文件夹上放一个图片来提醒您它的内容。',create_date: '2017-4-23 12:00:00',creator: 'X*'}, {comment: '机构不错',create_date: '2017-4-21 12:00:00',creator: 'X*'}]
+                // }
 
-                  // 计算当前marker应该所在的位置
-                  var startPixel = me._map.pointToPixel(me._position);
-                  var x = position.pixel.x - startPosition.x + startPixel.x;
-                  var y = position.pixel.y - startPosition.y + startPixel.y;
+                /**
+                 * 拨打电话
+                 */
+                scope.dial = function (tel) {
+                    $window.location.href = 'tel:' + tel;
+                };
 
-                  startPosition = position.pixel;
-                  me._position = me._map.pixelToPoint(new BMap.Pixel(x, y));
-                  me.draw();
-                  // 设置拖拽过程中的鼠标手型
-                  me._setCursor("dragging");
-                  /**
-                   * 拖拽Marker的过程中，派发事件的接口
-                   * @name RichMarker#ondragging
-                   * @event
-                   * @param {Event Object} e 回调函数会返回event参数，包括以下返回值：
-                   * <br />{"<b>target</b> : {BMap.Overlay} 触发事件的元素,
-                   * <br />"<b>type</b>：{String} 事件类型,
-                   * <br />"<b>point</b>：{BMap.Point} 鼠标的物理坐标,
-                   * <br />"<b>pixel</b>：{BMap.Pixel} 鼠标的像素坐标}
-                   *
-                   * @example <b>参考示例：</b>
-                   * myRichMarkerObject.addEventListener("ondragging", function(e) { 
-                   *     alert(e.type);  
-                   * });
-                   */
-                  _dispatchEvent(me, "ondragging", {
-                      "point": position.point,
-                      "pixel": position.pixel
-                  });
-                  _stopAndPrevent(e);
-              }
+                /**
+                 * 定位
+                 */
+                scope.location = function (poi) {
 
-              // 鼠标按下事件
-              baidu.on(div, "onmousedown", function (e) {
-                  var position = _getPositionByEvent(e);
-                  /**
-                   * 在Marker上按下鼠标时，派发事件的接口
-                   * @name RichMarker#onmousedown
-                   * @event
-                   * @param {Event Object} e 回调函数会返回event参数，包括以下返回值：
-                   * <br />{"<b>target</b> : {BMap.Overlay} 触发事件的元素,
-                   * <br />"<b>type</b>：{String} 事件类型,
-                   * <br />"<b>point</b>：{BMap.Point} 鼠标的物理坐标,
-                   * <br />"<b>pixel</b>：{BMap.Pixel} 鼠标的像素坐标}
-                   *
-                   * @example <b>参考示例：</b>
-                   * myRichMarkerObject.addEventListener("onmousedown", function(e) { 
-                   *     alert(e.type);  
-                   * });
-                   */
-                  _dispatchEvent(me, "onmousedown", {
-                      "point": position.point,
-                      "pixel": position.pixel
-                  });
+                    // 切换到地图模式
+                    scope.currMode = MAP_MODES.MAP_SHOW;
+                    $timeout(function () {
+                  
+                    // 清除所有标记，并添加当前位置标记
+                    // scope.map.clearOverlays();
+                    var point = new BMap.Point(poi.Longitude, poi.Latitude);
+                    if (poi.AccountID === 0) {
+                        addMapMarker(scope.map, point, { onClick: openInfoWindow, type: MARKER_TYPES.BAIDU, data: poi });
+                    } else {
+                        addMapMarker(scope.map, point, { onClick: openInfoWindow, type: MARKER_TYPES.CUSTOM, data: poi });
+                    }
+                    scope.map.centerAndZoom(point, 16);
+                    scope.map.panTo(point);
+                    }, 20);
 
-                  if (me._container.setCapture) {
-                      baidu.on(div, "onmousemove", mouseMoveEvent);
-                      baidu.on(div, "onmouseup", mouseUpEvent);
-                  } else {
-                      baidu.on(window, "onmousemove", mouseMoveEvent);
-                      baidu.on(window, "onmouseup", mouseUpEvent);
-                  }
+                };
 
-                  // 判断是否需要进行拖拽事件的处理
-                  if (!me._opts.enableDragging) {
-                      _stopAndPrevent(e);
-                      return;
-                  }
-                  startPosition = position.pixel;
-                  /**
-                   * 开始拖拽Marker时，派发事件的接口
-                   * @name RichMarker#ondragstart
-                   * @event
-                   * @param {Event Object} e 回调函数会返回event参数，包括以下返回值：
-                   * <br />{"<b>target</b> : {BMap.Overlay} 触发事件的元素,
-                   * <br />"<b>type</b>：{String} 事件类型,
-                   * <br />"<b>point</b>：{BMap.Point} 鼠标的物理坐标,
-                   * <br />"<b>pixel</b>：{BMap.Pixel} 鼠标的像素坐标}
-                   *
-                   * @example <b>参考示例：</b>
-                   * myRichMarkerObject.addEventListener("ondragstart", function(e) { 
-                   *     alert(e.type);  
-                   * });
-                   */
-                  _dispatchEvent(me, "ondragstart", {
-                      "point": position.point,
-                      "pixel": position.pixel
-                  });
-                  isMouseDown = true;
-                  // 设置拖拽开始的鼠标手型
-                  me._setCursor("dragstart");
-                  // 拖拽开始时，设置鼠标捕获
-                  me._container.setCapture && me._container.setCapture();
-                  // 拖拽过程中防止文字被选中
-                  me._container.style['MozUserSelect'] = 'none';
-                  me._container.style['KhtmlUserSelect'] = 'none';
-                  me._container.style['WebkitUserSelect'] = 'none';
-                  me._container['unselectable'] = 'on';
-                  me._container['onselectstart'] = function () {
-                      return false;
-                  };
-                  _stopAndPrevent(e);
-              });
-          }
+                /**
+                 * 定位到当前位置
+                 */
+                scope.locationCurrent = function () {
+                    $timeout(function () {
 
-          /**
-           * 设置拖拽过程中的手型
-           *
-           * @private 
-           * @param {string} cursorType 需要设置的手型类型
-           */
-          RichMarker.prototype._setCursor = function (cursorType) {
-              var cursor = '';
-              var cursorStylies = {
-                  "moz": {
-                      "dragstart": "-moz-grab",
-                      "dragging": "-moz-grabbing",
-                      "dragend": "pointer"
-                  },
-                  "other": {
-                      "dragstart": "move",
-                      "dragging": "move",
-                      "dragend": "pointer"
-                  }
-              };
+                        var map = scope.map;
+                       
+                        // 指定Marker的icon属性为Symbol
+                        var icon = new BMap.Symbol(BMap_Symbol_SHAPE_POINT, {
+                            scale: 1,//图标缩放大小
+                            fillColor: "orange",//填充颜色
+                            fillOpacity: 0.8//填充透明度
+                        });
 
-              if (navigator.userAgent.indexOf('Gecko/') !== -1) {
-                  cursor = cursorStylies.moz[cursorType];
-              } else {
-                  cursor = cursorStylies.other[cursorType];
-              }
+                        scope.currentPosition = scope.orgCurrentPosition;
 
-              if (this._container.style.cursor != cursor) {
-                  this._container.style.cursor = cursor;
-              }
-          }
+                        // 清除所有标记，并添加当前位置标记
+                        scope.map.clearOverlays();
 
-          /**
-           * 删除Marker
-           * 
-           * @private
-           * @return 无返回值
-           */
-          RichMarker.prototype.remove = function () {
-              _dispatchEvent(this, "onremove");
-              // 清除主容器上的事件绑定
-              if (this._container) {
-                  _purge(this._container);
-              }
-              // 删除主容器
-              if (this._container && this._container.parentNode) {
-                  this._container.parentNode.removeChild(this._container);
-              }
-          }
 
-          /**
-           * 集中派发事件函数
-           *
-           * @private
-           * @param {Object} instance 派发事件的实例
-           * @param {String} type 派发的事件名
-           * @param {Json} opts 派发事件里添加的参数，可选
-           */
-          function _dispatchEvent(instance, type, opts) {
-              type.indexOf("on") != 0 && (type = "on" + type);
-              var event = new baidu.lang.Event(type);
-              if (!!opts) {
-                  for (var p in opts) {
-                      event[p] = opts[p];
-                  }
-              }
-              instance.dispatchEvent(event);
-          }
+                        // 指定Marker的icon属性为Symbol
+                        var symbol = new BMap.Symbol(BMap_Symbol_SHAPE_POINT, {
+                            scale: 1,//图标缩放大小
+                            fillColor: "orange",//填充颜色
+                            fillOpacity: 0.8//填充透明度
+                        });
 
-          /**
-           * 清理DOM事件，防止循环引用
-           *
-           * @type {DOM} dom 需要清理的dom对象
-           */
-          function _purge(dom) {
-              if (!dom) {
-                  return;
-              }
-              var attrs = dom.attributes,
-                  name = "";
-              if (attrs) {
-                  for (var i = 0, n = attrs.length; i < n; i++) {
-                      name = attrs[i].name;
-                      if (typeof dom[name] === "function") {
-                          dom[name] = null;
-                      }
-                  }
-              }
-              var child = dom.childnodes;
-              if (child) {
-                  for (var i = 0, n = child.length; i < n; i++) {
-                      _purge(dom.childnodes[i]);
-                  }
-              }
-          }
+                        addMapMarker(map, scope.currentPosition, { onClick: openInfoWindow, type: MARKER_TYPES.CURRENT, icon: symbol, text: "我的位置" });
 
-          /**
-           * 停止事件冒泡传播
-           *
-           * @type {Event} e e对象
-           */
-          function _stopAndPrevent(e) {
-              var e = window.event || e;
-              e.stopPropagation ? e.stopPropagation() : e.cancelBubble = true;
-              return baidu.preventDefault(e);
-          }
+                        // 设置为中心
+                        map.centerAndZoom(scope.currentPosition, 16);
+                        scope.orgCurrentPosition && scope.map.panTo(scope.orgCurrentPosition);
 
-          return RichMarker;
+                        // 根据关键字检索百度相关位置数据和根据当前位置检索后台维护附近数据
+                        var bpSearchDeferred = babyPlanLocalSearch(scope.currentPosition);
+                        var bdSearchDeferred = baiDuLocalSearch(map, scope.mapOptions.keywords);
+                        $q.all([bpSearchDeferred, bdSearchDeferred]).then(function (results) {
 
-      }
+                            // 缓存结果
+                            var baiDuSearchResults = scope.baiDuSearchResults = results[1].sort(function (a, b) { return parseFloat(a.Dist) - parseFloat(b.Dist); });
+                            var babyPlanSearchResults = scope.babyPlanSearchResults = results[0];
 
-      function _buildRichMarker(html, point, options) {
-          var RichMarker = _getRichMarkerClass(window.BMap);
-          return new RichMarker(html, point, options);
-      }
+                            // 对满足条件的位置进行标记，
+                            var point;
+                            for (var i = 0; i < baiDuSearchResults.length; i++) {
+                                point = new BMap.Point(baiDuSearchResults[i].Longitude, baiDuSearchResults[i].Latitude);
+                                addMapMarker(map, point, { onClick: openInfoWindow, type: MARKER_TYPES.BAIDU, data: baiDuSearchResults[i] });
+                            }
 
-      return {
-          buildRichMarker: _buildRichMarker
-      }
-  });
+                            for (var i = 0; i < babyPlanSearchResults.length; i++) {
+                                point = new BMap.Point(babyPlanSearchResults[i].Longitude, babyPlanSearchResults[i].Latitude);
+                                addMapMarker(map, point, { onClick: openInfoWindow, type: MARKER_TYPES.CUSTOM, data: babyPlanSearchResults[i] });
+                            }
+
+
+                            // 把最后一个位置移动到地图中心
+                            // point && map.panTo(point)
+                        }, function (err) {
+                            //ionicToast.show('获取位置信息失败!', 'middle', false, 3000);
+                            MessageToaster.error("获取位置信息失败!");
+                        })
+
+                      
+                    }, 20);
+                };
+
+                /**
+                 * 定位标记所有位置
+                 */
+                scope.locationAll = function () {
+                    // 切换到地图模式
+                    scope.currMode = MAP_MODES.MAP_SHOW;
+
+                    // 清除所有标记，并添加当前位置标记
+                    scope.map.clearOverlays();
+
+                    $timeout(function () {
+                        try {
+                            var poi, point;
+                            for (var i = 0; i < scope.baiDuSearchResults.length; i++) {
+                                poi = scope.baiDuSearchResults[i];
+                                point = new BMap.Point(poi.Longitude, poi.Latitude);
+                                // addMapMarker(scope.map, point, openInfoWindow, poi);
+
+                                addMapMarker(scope.map, point, { onClick: openInfoWindow, type: MARKER_TYPES.BAIDU, data: poi });
+                            }
+
+                            for (var i = 0; i < scope.babyPlanSearchResults.length; i++) {
+                                poi = scope.babyPlanSearchResults[i];
+                                point = new BMap.Point(poi.Longitude, poi.Latitude);
+                                //  addMapCustomMarker(scope.map, point, openInfoWindow, poi,poi.OrgName);
+                                addMapMarker(scope.map, point, { onClick: openInfoWindow, type: MARKER_TYPES.CUSTOM, data: poi });
+                            }
+                            point && scope.map.centerAndZoom(point, 16);
+                            point && scope.map.panTo(point);
+                        } catch (e) { }
+                    }, 20);
+                };
+
+                /**
+                 * 关闭详情页面
+                 */
+                scope.closeDepositInfoForm = function () {
+                    scope.modal.hide();
+                };
+
+                /**
+                 * 打开详情页面
+                 */
+                scope.openDepositInfoForm = function (deposit) {
+                    if (!deposit || deposit.AccountID == 0) return;
+
+                    // 根据ID获取机构详情和评论信息
+                    BaiduService.getDepositInfoWithComments(deposit.AccountID).then(function (depositInfo) {
+                        scope.depositInfo = depositInfo;
+
+                        // 判断详情页面是否已经加载，如果已经加载过直接打开，否则加载并打开页面
+                        if (!scope.modal) {
+                            $ionicModal.fromTemplateUrl('ui-map-info.html', {
+                                scope: scope,
+                                animation: 'slide-in-up'
+                            }).then(function (modal) {
+                                scope.modal = modal;
+                                scope.modal.show();
+                            });
+                        } else {
+                            scope.modal.show();
+                        }
+                    }, function (err) {
+                        //ionicToast.show('获取机构详情信息失败!', 'middle', false, 3000);
+                        MessageToaster.error("获取机构详情信息失败!");
+                    })
+                };
+
+                /**
+                 * 回退到地图模式
+                 */
+                scope.backToMapView = function () {
+                    scope.currMode = MAP_MODES.MAP_SHOW;
+                };
+
+                /**
+                 * 切换模式
+                 */
+                scope.switchMode = function (mode) {
+                    //
+                    if (scope.currMode === mode) return;
+
+                    // 如果切换的目标模式为空，根据当前模式修正为正确目标模式
+                    if (!mode) {
+                        switch (scope.currMode) {
+                            case MAP_MODES.MAP_SEARCH:
+                                mode = MAP_MODES.MAP_SHOW;
+                                break;
+                            case MAP_MODES.MAP_SHOW:
+                                mode = MAP_MODES.LIST_SHOW;
+                                break;
+
+                            case MAP_MODES.LIST_SEARCH:
+                                mode = MAP_MODES.LIST_SHOW;
+                                break;
+                            case MAP_MODES.LIST_SHOW:
+                                mode = MAP_MODES.MAP_SHOW;
+                                break;
+                        }
+                    }
+
+                    // 切换关键字
+                    // if (scope.currMode <= MAP_MODES.MAP_SEARCH && mode > MAP_MODES.MAP_SEARCH) {
+                    //   scope.keyword2 = scope.keyword1
+                    // } else if (scope.currMode > MAP_MODES.MAP_SEARCH && mode <= MAP_MODES.MAP_SEARCH) {
+                    //   scope.keyword1 = scope.keyword2
+                    // }
+                    //
+
+                    // 根据当前模式不同触发不同的行为
+                    switch (scope.currMode) {
+                        case MAP_MODES.MAP_SEARCH:
+                            // if (!scope.keyword1) {
+                            //  // ionicToast.show('请录入搜索关键字!', 'middle', false, 3000)
+                            //   return
+                            // }
+                            !!scope.keyword1 && baiDuLocalSearchAndMark(scope.map, scope.keyword1).then(function (results) {
+                                scope.baiDuSearchResults = results;
+                            }, function (err) {
+                                //ionicToast.show('百度本地搜索失败!', 'middle', false, 3000);
+                                MessageToaster.error("百度本地搜索失败!");
+                            });
+                            break;
+                        case MAP_MODES.LIST_SEARCH:
+                            // if (!scope.keyword2) {
+                            //   ionicToast.show('请录入搜索关键字!', 'middle', false, 3000)
+                            //   return
+                            // }
+                            !!scope.keyword2 && baiDuLocalSearchAndMark(scope.map, scope.keyword2).then(function (results) {
+                                scope.baiDuSearchResults = results;
+                            }, function (err) {
+                                //ionicToast.show('百度本地搜索失败!', 'middle', false, 3000);
+                                MessageToaster.error("百度本地搜索失败!");
+                            });
+                            break;
+                        case MAP_MODES.LIST_SHOW:
+                            mode === MAP_MODES.MAP_SHOW && scope.locationAll();
+                            break;
+
+                    }
+
+                    scope.currMode = mode;
+                };
+
+                /**
+                 * 地图组件销毁时处理逻辑
+                 */
+                scope.$on('$destroy', function () {
+                    $window.BMap = null;
+                    // document.getElementById('map').remove();
+                    elm.remove();
+                    scope.modal && scope.modal.remove();
+                });
+
+                var onLoadMapSuccessed = function () {
+
+                    try {
+
+                        // 创建百度地图
+                        // var map = scope.map = buildMap(document.getElementById('map'), opts);
+                        var map = scope.map = buildMap(elm.children().eq(0).children()[1], opts);
+                        map.scope = scope;
+
+                        // 添加导航栏
+                        addMapNavigation(map, BMAP_ANCHOR_BOTTOM_RIGHT);
+
+                        // 添加地图搜索框自动完成功能
+                        addMapAutoComplete(map, scope);
+
+                        // 设置地图可视区中心位置
+                        getCurrentPosition(map, opts).then(function (p) {
+                            // 记录当前位置并标记
+                            scope.currentPosition = scope.orgCurrentPosition = p;
+
+                            // 指定Marker的icon属性为Symbol
+                            var symbol = new BMap.Symbol(BMap_Symbol_SHAPE_POINT, {
+                                scale: 1,//图标缩放大小
+                                fillColor: "orange",//填充颜色
+                                fillOpacity: 0.8//填充透明度
+                            });
+
+                            addMapMarker(map, p, { onClick: openInfoWindow, type: MARKER_TYPES.CURRENT, icon: symbol, text: '我的位置' });
+
+                            //  addMapMarker(map, p, openInfoWindow, null, symbol,'我的位置');
+                            // 设置为中心
+                            map.centerAndZoom(p, 16);
+
+                            // 根据关键字检索百度相关位置数据和根据当前位置检索后台维护附近数据
+                            var bpSearchDeferred = babyPlanLocalSearch(p);
+                            var bdSearchDeferred = baiDuLocalSearch(map, opts.keywords);
+                            $q.all([bpSearchDeferred, bdSearchDeferred]).then(function (results) {
+
+                                // 缓存结果
+                                var baiDuSearchResults = scope.baiDuSearchResults = results[1].sort(function (a, b) { return parseFloat(a.Dist) - parseFloat(b.Dist); });
+                                var babyPlanSearchResults = scope.babyPlanSearchResults = results[0];
+
+                                // 对满足条件的位置进行标记，
+                                var point;
+                                for (var i = 0; i < baiDuSearchResults.length; i++) {
+                                    point = new BMap.Point(baiDuSearchResults[i].Longitude, baiDuSearchResults[i].Latitude);
+                                    addMapMarker(map, point, { onClick: openInfoWindow, type: MARKER_TYPES.BAIDU, data: baiDuSearchResults[i] });
+                                }
+
+                                for (var i = 0; i < babyPlanSearchResults.length; i++) {
+                                    point = new BMap.Point(babyPlanSearchResults[i].Longitude, babyPlanSearchResults[i].Latitude);
+                                    addMapMarker(map, point, { onClick: openInfoWindow, type: MARKER_TYPES.CUSTOM, data: babyPlanSearchResults[i] });
+                                }
+
+
+                                // 把最后一个位置移动到地图中心
+                                // point && map.panTo(point)
+                            }, function (err) {
+                                //ionicToast.show('获取位置信息失败!', 'middle', false, 3000);
+                                MessageToaster.error("获取位置信息失败!");
+                            })
+                        }, function (err) {
+                            //ionicToast.show('获取位置信息失败!', 'middle', false, 3000);
+                            MessageToaster.error("获取位置信息失败!");
+                        })
+                    } catch (err) {
+                        //alert("error" + err.message);
+                    }
+
+                    // 通知地图加载完成
+                    elm.triggerHandler('map-loaded', {
+                        bmap: map
+                    });
+                };
+
+                // 加载地图失败处理逻辑
+                var onLoadMapFailed = function () {
+                    opts.onMapLoadFailded();
+                };
+
+                // 加载地图
+                loadMap(opts.apiKey).then(onLoadMapSuccessed, onLoadMapFailed);
+            }
+        }
+    });
+    app.factory('RichMarkerFactory', function () {
+        function _getRichMarkerClass(BMap) {
+
+            var BMapLib = window.BMapLib || {};
+            if (BMapLib.RichMarker) return BMapLib.RichMarker;
+
+            /**
+             * 声明baidu包
+             */
+            var baidu = baidu || {
+                guid: "$BAIDU$"
+            };
+
+            // 一些页面级别唯一的属性，需要挂载在window[baidu.guid]上
+            window[baidu.guid] =window[baidu.guid] || {};
+
+            /**
+             * 将源对象的所有属性拷贝到目标对象中
+             * @name baidu.extend
+             * @function
+             * @grammar baidu.extend(target, source)
+             * @param {Object} target 目标对象
+             * @param {Object} source 源对象
+             * @returns {Object} 目标对象
+             */
+            baidu.extend = function (target, source) {
+                for (var p in source) {
+                    if (source.hasOwnProperty(p)) {
+                        target[p] = source[p];
+                    }
+                }
+                return target;
+            };
+
+            /**
+             * @ignore
+             * @namespace
+             * @baidu.lang 对语言层面的封装，包括类型判断、模块扩展、继承基类以及对象自定义事件的支持。
+             * @property guid 对象的唯一标识
+             */
+            baidu.lang = baidu.lang || {};
+
+            /**
+             * 返回一个当前页面的唯一标识字符串。
+             * @function
+             * @grammar baidu.lang.guid()
+             * @returns {String} 当前页面的唯一标识字符串
+             */
+            baidu.lang.guid = function () {
+                return "TANGRAM__" + (window[baidu.guid]._counter++).toString(36);
+            };
+
+            window[baidu.guid]._counter = window[baidu.guid]._counter || 1;
+
+            /**
+             * 所有类的实例的容器
+             * key为每个实例的guid
+             */
+            window[baidu.guid]._instances = window[baidu.guid]._instances || {};
+
+            /**
+             * Tangram继承机制提供的一个基类，用户可以通过继承baidu.lang.Class来获取它的属性及方法。
+             * @function
+             * @name baidu.lang.Class
+             * @grammar baidu.lang.Class(guid)
+             * @param {string} guid	对象的唯一标识
+             * @meta standard
+             * @remark baidu.lang.Class和它的子类的实例均包含一个全局唯一的标识guid。
+             * guid是在构造函数中生成的，因此，继承自baidu.lang.Class的类应该直接或者间接调用它的构造函数。<br>
+             * baidu.lang.Class的构造函数中产生guid的方式可以保证guid的唯一性，及每个实例都有一个全局唯一的guid。
+             */
+            baidu.lang.Class = function (guid) {
+                this.guid = guid || baidu.lang.guid();
+                window[baidu.guid]._instances[this.guid] = this;
+            };
+
+            window[baidu.guid]._instances = window[baidu.guid]._instances || {};
+
+            /**
+             * 判断目标参数是否string类型或String对象
+             * @name baidu.lang.isString
+             * @function
+             * @grammar baidu.lang.isString(source)
+             * @param {Any} source 目标参数
+             * @shortcut isString
+             * @meta standard
+             *
+             * @returns {boolean} 类型判断结果
+             */
+            baidu.lang.isString = function (source) {
+                return '[object String]' == Object.prototype.toString.call(source);
+            };
+            baidu.isString = baidu.lang.isString;
+
+            /**
+             * 判断目标参数是否为function或Function实例
+             * @name baidu.lang.isFunction
+             * @function
+             * @grammar baidu.lang.isFunction(source)
+             * @param {Any} source 目标参数
+             * @returns {boolean} 类型判断结果
+             */
+            baidu.lang.isFunction = function (source) {
+                return '[object Function]' == Object.prototype.toString.call(source);
+            };
+
+            /**
+             * 自定义的事件对象。
+             * @function
+             * @name baidu.lang.Event
+             * @grammar baidu.lang.Event(type[, target])
+             * @param {string} type	 事件类型名称。为了方便区分事件和一个普通的方法，事件类型名称必须以"on"(小写)开头。
+             * @param {Object} [target]触发事件的对象
+             * @meta standard
+             * @remark 引入该模块，会自动为Class引入3个事件扩展方法：addEventListener、removeEventListener和dispatchEvent。
+             * @see baidu.lang.Class
+             */
+            baidu.lang.Event = function (type, target) {
+                this.type = type;
+                this.returnValue = true;
+                this.target = target || null;
+                this.currentTarget = null;
+            };
+
+            /**
+             * 注册对象的事件监听器。引入baidu.lang.Event后，Class的子类实例才会获得该方法。
+             * @grammar obj.addEventListener(type, handler[, key])
+             * @param 	{string}   type         自定义事件的名称
+             * @param 	{Function} handler      自定义事件被触发时应该调用的回调函数
+             * @param 	{string}   [key]		为事件监听函数指定的名称，可在移除时使用。如果不提供，方法会默认为它生成一个全局唯一的key。
+             * @remark 	事件类型区分大小写。如果自定义事件名称不是以小写"on"开头，该方法会给它加上"on"再进行判断，即"click"和"onclick"会被认为是同一种事件。
+             */
+            baidu.lang.Class.prototype.addEventListener = function (type, handler, key) {
+                if (!baidu.lang.isFunction(handler)) {
+                    return;
+                } !this.__listeners && (this.__listeners = {});
+                var t = this.__listeners,
+                    id;
+                if (typeof key == "string" && key) {
+                    if (/[^\w\-]/.test(key)) {
+                        throw ("nonstandard key:" + key);
+                    } else {
+                        handler.hashCode = key;
+                        id = key;
+                    }
+                }
+                type.indexOf("on") != 0 && (type = "on" + type);
+                typeof t[type] != "object" && (t[type] = {});
+                id = id || baidu.lang.guid();
+                handler.hashCode = id;
+                t[type][id] = handler;
+            };
+
+            /**
+             * 移除对象的事件监听器。引入baidu.lang.Event后，Class的子类实例才会获得该方法。
+             * @grammar obj.removeEventListener(type, handler)
+             * @param {string}   type     事件类型
+             * @param {Function|string} handler  要移除的事件监听函数或者监听函数的key
+             * @remark 	如果第二个参数handler没有被绑定到对应的自定义事件中，什么也不做。
+             */
+            baidu.lang.Class.prototype.removeEventListener = function (type, handler) {
+                if (baidu.lang.isFunction(handler)) {
+                    handler = handler.hashCode;
+                } else if (!baidu.lang.isString(handler)) {
+                    return;
+                } !this.__listeners && (this.__listeners = {});
+                type.indexOf("on") != 0 && (type = "on" + type);
+                var t = this.__listeners;
+                if (!t[type]) {
+                    return;
+                }
+                t[type][handler] && delete t[type][handler];
+            };
+
+            /**
+             * 派发自定义事件，使得绑定到自定义事件上面的函数都会被执行。引入baidu.lang.Event后，Class的子类实例才会获得该方法。
+             * @grammar obj.dispatchEvent(event, options)
+             * @param {baidu.lang.Event|String} event 	Event对象，或事件名称(1.1.1起支持)
+             * @param {Object} options 扩展参数,所含属性键值会扩展到Event对象上(1.2起支持)
+             * @remark 处理会调用通过addEventListenr绑定的自定义事件回调函数之外，还会调用直接绑定到对象上面的自定义事件。
+             * 例如：<br>
+             * myobj.onMyEvent = function(){}<br>
+             * myobj.addEventListener("onMyEvent", function(){});
+             */
+            baidu.lang.Class.prototype.dispatchEvent = function (event, options) {
+                if (baidu.lang.isString(event)) {
+                    event = new baidu.lang.Event(event);
+                } !this.__listeners && (this.__listeners = {});
+                options = options || {};
+                for (var i in options) {
+                    event[i] = options[i];
+                }
+                var i, t = this.__listeners,
+                    p = event.type;
+                event.target = event.target || this;
+                event.currentTarget = this;
+                p.indexOf("on") != 0 && (p = "on" + p);
+                baidu.lang.isFunction(this[p]) && this[p].apply(this, arguments);
+                if (typeof t[p] == "object") {
+                    for (i in t[p]) {
+                        t[p][i].apply(this, arguments);
+                    }
+                }
+                return event.returnValue;
+            };
+
+            /**
+             * @ignore
+             * @namespace baidu.dom
+             * 操作dom的方法
+             */
+            baidu.dom = baidu.dom || {};
+
+            /**
+             * 从文档中获取指定的DOM元素
+             * **内部方法**
+             *
+             * @param {string|HTMLElement} id 元素的id或DOM元素
+             * @meta standard
+             * @return {HTMLElement} DOM元素，如果不存在，返回null，如果参数不合法，直接返回参数
+             */
+            baidu.dom._g = function (id) {
+                if (baidu.lang.isString(id)) {
+                    return document.getElementById(id);
+                }
+                return id;
+            };
+            baidu._g = baidu.dom._g;
+
+            /**
+             * @ignore
+             * @namespace baidu.event 屏蔽浏览器差异性的事件封装。
+             * @property target 	事件的触发元素
+             * @property pageX 		鼠标事件的鼠标x坐标
+             * @property pageY 		鼠标事件的鼠标y坐标
+             * @property keyCode 	键盘事件的键值
+             */
+            baidu.event = baidu.event || {};
+
+            /**
+             * 事件监听器的存储表
+             * @private
+             * @meta standard
+             */
+            baidu.event._listeners = baidu.event._listeners || [];
+
+            /**
+             * 为目标元素添加事件监听器
+             * @name baidu.event.on
+             * @function
+             * @grammar baidu.event.on(element, type, listener)
+             * @param {HTMLElement|string|window} element 目标元素或目标元素id
+             * @param {string} type 事件类型
+             * @param {Function} listener 需要添加的监听器
+             * @remark
+             *
+            1. 不支持跨浏览器的鼠标滚轮事件监听器添加<br>
+            2. 改方法不为监听器灌入事件对象，以防止跨iframe事件挂载的事件对象获取失败
+  
+             * @shortcut on
+             * @meta standard
+             * @see baidu.event.un
+             * @returns {HTMLElement|window} 目标元素
+             */
+            baidu.event.on = function (element, type, listener) {
+                type = type.replace(/^on/i, '');
+                element = baidu.dom._g(element);
+
+                var realListener = function (ev) {
+                    listener.call(element, ev);
+                },
+                    lis = baidu.event._listeners,
+                    filter = baidu.event._eventFilter,
+                    afterFilter, realType = type;
+                type = type.toLowerCase();
+                if (filter && filter[type]) {
+                    afterFilter = filter[type](element, type, realListener);
+                    realType = afterFilter.type;
+                    realListener = afterFilter.listener;
+                }
+                if (element.addEventListener) {
+                    element.addEventListener(realType, realListener, false);
+                } else if (element.attachEvent) {
+                    element.attachEvent('on' + realType, realListener);
+                }
+                lis[lis.length] = [element, type, listener, realListener, realType];
+                return element;
+            };
+            baidu.on = baidu.event.on;
+
+            /**
+             * 为目标元素移除事件监听器
+             * @name baidu.event.un
+             * @function
+             * @grammar baidu.event.un(element, type, listener)
+             * @param {HTMLElement|string|window} element 目标元素或目标元素id
+             * @param {string} type 事件类型
+             * @param {Function} listener 需要移除的监听器
+             * @shortcut un
+             * @meta standard
+             * @see baidu.event.on
+             *
+             * @returns {HTMLElement|window} 目标元素
+             */
+            baidu.event.un = function (element, type, listener) {
+                element = baidu.dom._g(element);
+                type = type.replace(/^on/i, '').toLowerCase();
+
+                var lis = baidu.event._listeners,
+                    len = lis.length,
+                    isRemoveAll = !listener,
+                    item, realType, realListener;
+                while (len--) {
+                    item = lis[len];
+                    if (item[1] === type && item[0] === element && (isRemoveAll || item[2] === listener)) {
+                        realType = item[4];
+                        realListener = item[3];
+                        if (element.removeEventListener) {
+                            element.removeEventListener(realType, realListener, false);
+                        } else if (element.detachEvent) {
+                            element.detachEvent('on' + realType, realListener);
+                        }
+                        lis.splice(len, 1);
+                    }
+                }
+
+                return element;
+            };
+            baidu.un = baidu.event.un;
+
+            /**
+             * 阻止事件的默认行为
+             * @name baidu.event.preventDefault
+             * @function
+             * @grammar baidu.event.preventDefault(event)
+             * @param {Event} event 事件对象
+             * @meta standard
+             */
+            baidu.preventDefault = baidu.event.preventDefault = function (event) {
+                if (event.preventDefault) {
+                    event.preventDefault();
+                } else {
+                    event.returnValue = false;
+                }
+            };
+
+
+            /**
+             * @exports RichMarker as BMapLib.RichMarker
+             */
+            var RichMarker =
+            /**
+             * RichMarker类的构造函数
+             * @class 富Marker定义类，实现丰富的Marker展现效果。
+             *
+             * @constructor
+             * @param {String | HTMLElement} content 用户自定义的Marker内容，可以是字符串，也可以是dom节点
+             * @param {BMap.Point} position marker的位置
+             * @param {Json} RichMarkerOptions 可选的输入参数，非必填项。可输入选项包括：<br />
+             * {"<b>anchor</b>" : {BMap.Size} Marker的的位置偏移值,
+             * <br />"<b>enableDragging</b>" : {Boolean} 是否启用拖拽，默认为false}
+             *
+             * @example <b>参考示例：</b>
+             * var map = new BMap.Map("container");
+             * map.centerAndZoom(new BMap.Point(116.309965, 40.058333), 17);
+             * var htm = "&lt;div style='background:#E7F0F5;color:#0082CB;border:1px solid #333'&gt;"
+             *              +     "欢迎使用百度地图！"
+             *              +     "&lt;img src='http://map.baidu.com/img/logo-map.gif' border='0' /&gt;"
+             *              + "&lt;/div&gt;";
+             * var point = new BMap.Point(116.30816, 40.056863);
+             * var myRichMarkerObject = new BMapLib.RichMarker(htm, point, {"anchor": new BMap.Size(-72, -84), "enableDragging": true});
+             * map.addOverlay(myRichMarkerObject);
+             */
+            BMapLib.RichMarker = function (content, position, opts) {
+                if (!content || !position || !(position instanceof BMap.Point)) {
+                    return;
+                }
+
+                /**
+                 * map对象
+                 * @private
+                 * @type {Map}
+                 */
+                this._map = null;
+
+                /**
+                 * Marker内容
+                 * @private
+                 * @type {String | HTMLElement}
+                 */
+                this._content = content;
+
+                /**
+                 * marker显示位置
+                 * @private
+                 * @type {BMap.Point}
+                 */
+                this._position = position;
+
+                /**
+                 * marker主容器
+                 * @private
+                 * @type {HTMLElement}
+                 */
+                this._container = null;
+
+                /**
+                 * marker主容器的尺寸
+                 * @private
+                 * @type {BMap.Size}
+                 */
+                this._size = null;
+
+                opts = opts || {};
+                /**
+                 * _opts是默认参数赋值。
+                 * 下面通过用户输入的opts，对默认参数赋值
+                 * @private
+                 * @type {Json}
+                 */
+                this._opts = baidu.extend(
+                baidu.extend(this._opts || {}, {
+
+                    /**
+                     * Marker是否可以拖拽
+                     * @private
+                     * @type {Boolean}
+                     */
+                    enableDragging: false,
+
+                    /**
+                     * Marker的偏移量
+                     * @private
+                     * @type {BMap.Size}
+                     */
+                    anchor: new BMap.Size(0, 0)
+                }), opts);
+            }
+
+            // 继承覆盖物类
+            RichMarker.prototype = new BMap.Overlay();
+
+            /**
+             * 初始化，实现自定义覆盖物的initialize方法
+             * 主要生成Marker的主容器，填充自定义的内容，并附加事件
+             *
+             * @private
+             * @param {BMap} map map实例对象
+             * @return {Dom} 返回自定义生成的dom节点
+             */
+            RichMarker.prototype.initialize = function (map) {
+                var me = this,
+                    div = me._container = document.createElement("div");
+                me._map = map;
+                baidu.extend(div.style, {
+                    position: "absolute",
+                    zIndex: BMap.Overlay.getZIndex(me._position.lat),
+                    background: "#FFF",
+                    cursor: "pointer"
+                });
+                map.getPanes().labelPane.appendChild(div);
+
+                // 给主容器添加上用户自定义的内容
+                me._appendContent();
+                // 给主容器添加事件处理
+                me._setEventDispath();
+                // 获取主容器的高宽
+                me._getContainerSize();
+
+                return div;
+            }
+
+            /**
+             * 为自定义的Marker设定显示位置，实现自定义覆盖物的draw方法
+             *
+             * @private
+             */
+            RichMarker.prototype.draw = function () {
+                var map = this._map,
+                    anchor = this._opts.anchor,
+                    pixel = map.pointToOverlayPixel(this._position);
+                this._container.style.left = pixel.x + anchor.width + "px";
+                this._container.style.top = pixel.y + anchor.height + "px";
+            }
+
+            /**
+             * 设置Marker可以拖拽
+             * @return 无返回值
+             *
+             * @example <b>参考示例：</b>
+             * myRichMarkerObject.enableDragging();
+             */
+            RichMarker.prototype.enableDragging = function () {
+                this._opts.enableDragging = true;
+            }
+
+            /**
+             * 设置Marker不能拖拽
+             * @return 无返回值
+             *
+             * @example <b>参考示例：</b>
+             * myRichMarkerObject.disableDragging();
+             */
+            RichMarker.prototype.disableDragging = function () {
+                this._opts.enableDragging = false;
+            }
+
+            /**
+             * 获取Marker是否能被拖拽的状态
+             * @return {Boolean} true为可以拖拽，false为不能被拖拽
+             *
+             * @example <b>参考示例：</b>
+             * myRichMarkerObject.isDraggable();
+             */
+            RichMarker.prototype.isDraggable = function () {
+                return this._opts.enableDragging;
+            }
+
+            /**
+             * 获取Marker的显示位置
+             * @return {BMap.Point} 显示的位置
+             *
+             * @example <b>参考示例：</b>
+             * myRichMarkerObject.getPosition();
+             */
+            RichMarker.prototype.getPosition = function () {
+                return this._position;
+            }
+
+            /**
+             * 设置Marker的显示位置
+             * @param {BMap.Point} position 需要设置的位置
+             * @return 无返回值
+             *
+             * @example <b>参考示例：</b>
+             * myRichMarkerObject.setPosition(new BMap.Point(116.30816, 40.056863));
+             */
+            RichMarker.prototype.setPosition = function (position) {
+                if (!position instanceof BMap.Point) {
+                    return;
+                }
+                this._position = position;
+                this.draw();
+            }
+
+            /**
+             * 获取Marker的偏移量
+             * @return {BMap.Size} Marker的偏移量
+             *
+             * @example <b>参考示例：</b>
+             * myRichMarkerObject.getAnchor();
+             */
+            RichMarker.prototype.getAnchor = function () {
+                return this._opts.anchor;
+            }
+
+            /**
+             * 设置Marker的偏移量
+             * @param {BMap.Size} anchor 需要设置的偏移量
+             * @return 无返回值
+             *
+             * @example <b>参考示例：</b>
+             * myRichMarkerObject.setAnchor(new BMap.Size(-72, -84));
+             */
+            RichMarker.prototype.setAnchor = function (anchor) {
+                if (!anchor instanceof BMap.Size) {
+                    return;
+                }
+                this._opts.anchor = anchor;
+                this.draw();
+            }
+
+            /**
+             * 添加用户的自定义的内容
+             *
+             * @private
+             * @return 无返回值
+             */
+            RichMarker.prototype._appendContent = function () {
+                var content = this._content;
+                // 用户输入的内容是字符串，需要转化成dom节点
+                if (typeof content == "string") {
+                    var div = document.createElement('DIV');
+                    div.innerHTML = content;
+                    if (div.childNodes.length == 1) {
+                        content = (div.removeChild(div.firstChild));
+                    } else {
+                        var fragment = document.createDocumentFragment();
+                        while (div.firstChild) {
+                            fragment.appendChild(div.firstChild);
+                        }
+                        content = fragment;
+                    }
+                }
+                this._container.innerHTML = "";
+                this._container.appendChild(content);
+            }
+
+            /**
+             * 获取Marker的内容
+             * @return {String | HTMLElement} 当前内容
+             *
+             * @example <b>参考示例：</b>
+             * myRichMarkerObject.getContent();
+             */
+            RichMarker.prototype.getContent = function () {
+                return this._content;
+            }
+
+            /**
+             * 设置Marker的内容
+             * @param {String | HTMLElement} content 需要设置的内容
+             * @return 无返回值
+             *
+             * @example <b>参考示例：</b>
+             * var htm = "&lt;div style='background:#E7F0F5;color:#0082CB;border:1px solid #333'&gt;"
+             *              +     "欢迎使用百度地图API！"
+             *              +     "&lt;img src='http://map.baidu.com/img/logo-map.gif' border='0' /&gt;"
+             *              + "&lt;/div&gt;";
+             * myRichMarkerObject.setContent(htm);
+             */
+            RichMarker.prototype.setContent = function (content) {
+                if (!content) {
+                    return;
+                }
+                // 存储用户输入的Marker显示内容
+                this._content = content;
+                // 添加进主容器
+                this._appendContent();
+            }
+
+            /**
+             * 获取Marker的高宽
+             *
+             * @private
+             * @return {BMap.Size} 当前高宽
+             */
+            RichMarker.prototype._getContainerSize = function () {
+                if (!this._container) {
+                    return;
+                }
+                var h = this._container.offsetHeight;
+                var w = this._container.offsetWidth;
+                this._size = new BMap.Size(w, h);
+            }
+
+            /**
+             * 获取Marker的宽度
+             * @return {Number} 当前宽度
+             *
+             * @example <b>参考示例：</b>
+             * myRichMarkerObject.getWidth();
+             */
+            RichMarker.prototype.getWidth = function () {
+                if (!this._size) {
+                    return;
+                }
+                return this._size.width;
+            }
+
+            /**
+             * 设置Marker的宽度
+             * @param {Number} width 需要设置的宽度
+             * @return 无返回值
+             *
+             * @example <b>参考示例：</b>
+             * myRichMarkerObject.setWidth(300);
+             */
+            RichMarker.prototype.setWidth = function (width) {
+                if (!this._container) {
+                    return;
+                }
+                this._container.style.width = width + "px";
+                this._getContainerSize();
+            }
+
+            /**
+             * 获取Marker的高度
+             * @return {Number} 当前高度
+             *
+             * @example <b>参考示例：</b>
+             * myRichMarkerObject.getHeight();
+             */
+            RichMarker.prototype.getHeight = function () {
+                if (!this._size) {
+                    return;
+                }
+                return this._size.height;
+            }
+
+            /**
+             * 设置Marker的高度
+             * @param {Number} height 需要设置的高度
+             * @return 无返回值
+             *
+             * @example <b>参考示例：</b>
+             * myRichMarkerObject.setHeight(200);
+             */
+            RichMarker.prototype.setHeight = function (height) {
+                if (!this._container) {
+                    return;
+                }
+                this._container.style.height = height + "px";
+                this._getContainerSize();
+            }
+
+            /**
+             * 设置Marker的各种事件
+             *
+             * @private
+             * @return 无返回值
+             */
+            RichMarker.prototype._setEventDispath = function () {
+                var me = this,
+                    div = me._container,
+                    isMouseDown = false,
+                    // 鼠标是否按下，用以判断鼠标移动过程中的拖拽计算
+                    startPosition = null; // 拖拽时，鼠标按下的初始位置，拖拽的辅助计算参数
+
+                // 通过e参数获取当前鼠标所在位置
+                function _getPositionByEvent(e) {
+                    var e = window.event || e,
+                        x = e.pageX || e.clientX || 0,
+                        y = e.pageY || e.clientY || 0,
+                        pixel = new BMap.Pixel(x, y),
+                        point = me._map.pixelToPoint(pixel);
+                    return {
+                        "pixel": pixel,
+                        "point": point
+                    };
+                }
+
+                // 单击事件
+                baidu.on(div, "onclick", function (e) {
+                    /**
+                     * 点击Marker时，派发事件的接口
+                     * @name RichMarker#onclick
+                     * @event
+                     * @param {Event Object} e 回调函数会返回event参数，包括以下返回值：
+                     * <br />{"<b>target</b> : {BMap.Overlay} 触发事件的元素,
+                     * <br />"<b>type</b>：{String} 事件类型}
+                     *
+                     * @example <b>参考示例：</b>
+                     * myRichMarkerObject.addEventListener("onclick", function(e) {
+                     *     alert(e.type);
+                     * });
+                     */
+                    _dispatchEvent(me, "onclick");
+                    _stopAndPrevent(e);
+                });
+
+                // 单击事件
+                baidu.on(div, "ontouchend", function (e) {
+                    /**
+                     * 点击Marker时，派发事件的接口
+                     * @name RichMarker#onclick
+                     * @event
+                     * @param {Event Object} e 回调函数会返回event参数，包括以下返回值：
+                     * <br />{"<b>target</b> : {BMap.Overlay} 触发事件的元素,
+                     * <br />"<b>type</b>：{String} 事件类型}
+                     *
+                     * @example <b>参考示例：</b>
+                     * myRichMarkerObject.addEventListener("onclick", function(e) {
+                     *     alert(e.type);
+                     * });
+                     */
+                    _dispatchEvent(me, "ontouchend");
+                    _dispatchEvent(me, "onclick");
+                    _stopAndPrevent(e);
+                });
+                // 双击事件
+                baidu.on(div, "ondblclick", function (e) {
+                    var position = _getPositionByEvent(e);
+                    /**
+                     * 双击Marker时，派发事件的接口
+                     * @name RichMarker#ondblclick
+                     * @event
+                     * @param {Event Object} e 回调函数会返回event参数，包括以下返回值：
+                     * <br />{"<b>target</b> : {BMap.Overlay} 触发事件的元素,
+                     * <br />"<b>type</b>：{String} 事件类型,
+                     * <br />"<b>point</b>：{BMap.Point} 鼠标的物理坐标,
+                     * <br />"<b>pixel</b>：{BMap.Pixel} 鼠标的像素坐标}
+                     *
+                     * @example <b>参考示例：</b>
+                     * myRichMarkerObject.addEventListener("ondblclick", function(e) {
+                     *     alert(e.type);
+                     * });
+                     */
+                    _dispatchEvent(me, "ondblclick", {
+                        "point": position.point,
+                        "pixel": position.pixel
+                    });
+                    _stopAndPrevent(e);
+                });
+
+                // 鼠标移上事件
+                div.onmouseover = function (e) {
+                    var position = _getPositionByEvent(e);
+                    /**
+                     * 鼠标移到Marker上时，派发事件的接口
+                     * @name RichMarker#onmouseover
+                     * @event
+                     * @param {Event Object} e 回调函数会返回event参数，包括以下返回值：
+                     * <br />{"<b>target</b> : {BMap.Overlay} 触发事件的元素,
+                     * <br />"<b>type</b>：{String} 事件类型,
+                     * <br />"<b>point</b>：{BMap.Point} 鼠标的物理坐标,
+                     * <br />"<b>pixel</b>：{BMap.Pixel} 鼠标的像素坐标}
+                     *
+                     * @example <b>参考示例：</b>
+                     * myRichMarkerObject.addEventListener("onmouseover", function(e) {
+                     *     alert(e.type);
+                     * });
+                     */
+                    _dispatchEvent(me, "onmouseover", {
+                        "point": position.point,
+                        "pixel": position.pixel
+                    });
+                    _stopAndPrevent(e);
+                }
+
+                // 鼠标移出事件
+                div.onmouseout = function (e) {
+                    var position = _getPositionByEvent(e);
+                    /**
+                     * 鼠标移出Marker时，派发事件的接口
+                     * @name RichMarker#onmouseout
+                     * @event
+                     * @param {Event Object} e 回调函数会返回event参数，包括以下返回值：
+                     * <br />{"<b>target</b> : {BMap.Overlay} 触发事件的元素,
+                     * <br />"<b>type</b>：{String} 事件类型,
+                     * <br />"<b>point</b>：{BMap.Point} 鼠标的物理坐标,
+                     * <br />"<b>pixel</b>：{BMap.Pixel} 鼠标的像素坐标}
+                     *
+                     * @example <b>参考示例：</b>
+                     * myRichMarkerObject.addEventListener("onmouseout", function(e) {
+                     *     alert(e.type);
+                     * });
+                     */
+                    _dispatchEvent(me, "onmouseout", {
+                        "point": position.point,
+                        "pixel": position.pixel
+                    });
+                    _stopAndPrevent(e);
+                }
+
+                // 鼠标弹起事件
+                var mouseUpEvent = function (e) {
+                    var position = _getPositionByEvent(e);
+                    /**
+                     * 在Marker上弹起鼠标时，派发事件的接口
+                     * @name RichMarker#onmouseup
+                     * @event
+                     * @param {Event Object} e 回调函数会返回event参数，包括以下返回值：
+                     * <br />{"<b>target</b> : {BMap.Overlay} 触发事件的元素,
+                     * <br />"<b>type</b>：{String} 事件类型,
+                     * <br />"<b>point</b>：{BMap.Point} 鼠标的物理坐标,
+                     * <br />"<b>pixel</b>：{BMap.Pixel} 鼠标的像素坐标}
+                     *
+                     * @example <b>参考示例：</b>
+                     * myRichMarkerObject.addEventListener("onmouseup", function(e) {
+                     *     alert(e.type);
+                     * });
+                     */
+                    _dispatchEvent(me, "onmouseup", {
+                        "point": position.point,
+                        "pixel": position.pixel
+                    });
+
+                    if (me._container.releaseCapture) {
+                        baidu.un(div, "onmousemove", mouseMoveEvent);
+                        baidu.un(div, "onmouseup", mouseUpEvent);
+                    } else {
+                        baidu.un(window, "onmousemove", mouseMoveEvent);
+                        baidu.un(window, "onmouseup", mouseUpEvent);
+                    }
+
+                    // 判断是否需要进行拖拽事件的处理
+                    if (!me._opts.enableDragging) {
+                        _stopAndPrevent(e);
+                        return;
+                    }
+                    // 拖拽结束时，释放鼠标捕获
+                    me._container.releaseCapture && me._container.releaseCapture();
+                    /**
+                     * 拖拽Marker结束时，派发事件的接口
+                     * @name RichMarker#ondragend
+                     * @event
+                     * @param {Event Object} e 回调函数会返回event参数，包括以下返回值：
+                     * <br />{"<b>target</b> : {BMap.Overlay} 触发事件的元素,
+                     * <br />"<b>type</b>：{String} 事件类型,
+                     * <br />"<b>point</b>：{BMap.Point} 鼠标的物理坐标,
+                     * <br />"<b>pixel</b>：{BMap.Pixel} 鼠标的像素坐标}
+                     *
+                     * @example <b>参考示例：</b>
+                     * myRichMarkerObject.addEventListener("ondragend", function(e) {
+                     *     alert(e.type);
+                     * });
+                     */
+                    _dispatchEvent(me, "ondragend", {
+                        "point": position.point,
+                        "pixel": position.pixel
+                    });
+                    isMouseDown = false;
+                    startPosition = null;
+                    // 设置拖拽结束后的鼠标手型
+                    me._setCursor("dragend");
+                    // 拖拽过程中防止文字被选中
+                    me._container.style['MozUserSelect'] = '';
+                    me._container.style['KhtmlUserSelect'] = '';
+                    me._container.style['WebkitUserSelect'] = '';
+                    me._container['unselectable'] = 'off';
+                    me._container['onselectstart'] = function () { };
+
+                    _stopAndPrevent(e);
+                }
+
+                // 鼠标移动事件
+                var mouseMoveEvent = function (e) {
+                    // 判断是否需要进行拖拽事件的处理
+                    if (!me._opts.enableDragging || !isMouseDown) {
+                        return;
+                    }
+                    var position = _getPositionByEvent(e);
+
+                    // 计算当前marker应该所在的位置
+                    var startPixel = me._map.pointToPixel(me._position);
+                    var x = position.pixel.x - startPosition.x + startPixel.x;
+                    var y = position.pixel.y - startPosition.y + startPixel.y;
+
+                    startPosition = position.pixel;
+                    me._position = me._map.pixelToPoint(new BMap.Pixel(x, y));
+                    me.draw();
+                    // 设置拖拽过程中的鼠标手型
+                    me._setCursor("dragging");
+                    /**
+                     * 拖拽Marker的过程中，派发事件的接口
+                     * @name RichMarker#ondragging
+                     * @event
+                     * @param {Event Object} e 回调函数会返回event参数，包括以下返回值：
+                     * <br />{"<b>target</b> : {BMap.Overlay} 触发事件的元素,
+                     * <br />"<b>type</b>：{String} 事件类型,
+                     * <br />"<b>point</b>：{BMap.Point} 鼠标的物理坐标,
+                     * <br />"<b>pixel</b>：{BMap.Pixel} 鼠标的像素坐标}
+                     *
+                     * @example <b>参考示例：</b>
+                     * myRichMarkerObject.addEventListener("ondragging", function(e) {
+                     *     alert(e.type);
+                     * });
+                     */
+                    _dispatchEvent(me, "ondragging", {
+                        "point": position.point,
+                        "pixel": position.pixel
+                    });
+                    _stopAndPrevent(e);
+                }
+
+                // 鼠标按下事件
+                baidu.on(div, "onmousedown", function (e) {
+                    var position = _getPositionByEvent(e);
+                    /**
+                     * 在Marker上按下鼠标时，派发事件的接口
+                     * @name RichMarker#onmousedown
+                     * @event
+                     * @param {Event Object} e 回调函数会返回event参数，包括以下返回值：
+                     * <br />{"<b>target</b> : {BMap.Overlay} 触发事件的元素,
+                     * <br />"<b>type</b>：{String} 事件类型,
+                     * <br />"<b>point</b>：{BMap.Point} 鼠标的物理坐标,
+                     * <br />"<b>pixel</b>：{BMap.Pixel} 鼠标的像素坐标}
+                     *
+                     * @example <b>参考示例：</b>
+                     * myRichMarkerObject.addEventListener("onmousedown", function(e) {
+                     *     alert(e.type);
+                     * });
+                     */
+                    _dispatchEvent(me, "onmousedown", {
+                        "point": position.point,
+                        "pixel": position.pixel
+                    });
+
+                    if (me._container.setCapture) {
+                        baidu.on(div, "onmousemove", mouseMoveEvent);
+                        baidu.on(div, "onmouseup", mouseUpEvent);
+                    } else {
+                        baidu.on(window, "onmousemove", mouseMoveEvent);
+                        baidu.on(window, "onmouseup", mouseUpEvent);
+                    }
+
+                    // 判断是否需要进行拖拽事件的处理
+                    if (!me._opts.enableDragging) {
+                        _stopAndPrevent(e);
+                        return;
+                    }
+                    startPosition = position.pixel;
+                    /**
+                     * 开始拖拽Marker时，派发事件的接口
+                     * @name RichMarker#ondragstart
+                     * @event
+                     * @param {Event Object} e 回调函数会返回event参数，包括以下返回值：
+                     * <br />{"<b>target</b> : {BMap.Overlay} 触发事件的元素,
+                     * <br />"<b>type</b>：{String} 事件类型,
+                     * <br />"<b>point</b>：{BMap.Point} 鼠标的物理坐标,
+                     * <br />"<b>pixel</b>：{BMap.Pixel} 鼠标的像素坐标}
+                     *
+                     * @example <b>参考示例：</b>
+                     * myRichMarkerObject.addEventListener("ondragstart", function(e) {
+                     *     alert(e.type);
+                     * });
+                     */
+                    _dispatchEvent(me, "ondragstart", {
+                        "point": position.point,
+                        "pixel": position.pixel
+                    });
+                    isMouseDown = true;
+                    // 设置拖拽开始的鼠标手型
+                    me._setCursor("dragstart");
+                    // 拖拽开始时，设置鼠标捕获
+                    me._container.setCapture && me._container.setCapture();
+                    // 拖拽过程中防止文字被选中
+                    me._container.style['MozUserSelect'] = 'none';
+                    me._container.style['KhtmlUserSelect'] = 'none';
+                    me._container.style['WebkitUserSelect'] = 'none';
+                    me._container['unselectable'] = 'on';
+                    me._container['onselectstart'] = function () {
+                        return false;
+                    };
+                    _stopAndPrevent(e);
+                });
+            }
+
+            /**
+             * 设置拖拽过程中的手型
+             *
+             * @private
+             * @param {string} cursorType 需要设置的手型类型
+             */
+            RichMarker.prototype._setCursor = function (cursorType) {
+                var cursor = '';
+                var cursorStylies = {
+                    "moz": {
+                        "dragstart": "-moz-grab",
+                        "dragging": "-moz-grabbing",
+                        "dragend": "pointer"
+                    },
+                    "other": {
+                        "dragstart": "move",
+                        "dragging": "move",
+                        "dragend": "pointer"
+                    }
+                };
+
+                if (navigator.userAgent.indexOf('Gecko/') !== -1) {
+                    cursor = cursorStylies.moz[cursorType];
+                } else {
+                    cursor = cursorStylies.other[cursorType];
+                }
+
+                if (this._container.style.cursor != cursor) {
+                    this._container.style.cursor = cursor;
+                }
+            }
+
+            /**
+             * 删除Marker
+             *
+             * @private
+             * @return 无返回值
+             */
+            RichMarker.prototype.remove = function () {
+                _dispatchEvent(this, "onremove");
+                // 清除主容器上的事件绑定
+                if (this._container) {
+                    _purge(this._container);
+                }
+                // 删除主容器
+                if (this._container && this._container.parentNode) {
+                    this._container.parentNode.removeChild(this._container);
+                }
+            }
+
+            /**
+             * 集中派发事件函数
+             *
+             * @private
+             * @param {Object} instance 派发事件的实例
+             * @param {String} type 派发的事件名
+             * @param {Json} opts 派发事件里添加的参数，可选
+             */
+            function _dispatchEvent(instance, type, opts) {
+                type.indexOf("on") != 0 && (type = "on" + type);
+                var event = new baidu.lang.Event(type);
+                if (!!opts) {
+                    for (var p in opts) {
+                        event[p] = opts[p];
+                    }
+                }
+                instance.dispatchEvent(event);
+            }
+
+            /**
+             * 清理DOM事件，防止循环引用
+             *
+             * @type {DOM} dom 需要清理的dom对象
+             */
+            function _purge(dom) {
+                if (!dom) {
+                    return;
+                }
+                var attrs = dom.attributes,
+                    name = "";
+                if (attrs) {
+                    for (var i = 0, n = attrs.length; i < n; i++) {
+                        name = attrs[i].name;
+                        if (typeof dom[name] === "function") {
+                            dom[name] = null;
+                        }
+                    }
+                }
+                var child = dom.childnodes;
+                if (child) {
+                    for (var i = 0, n = child.length; i < n; i++) {
+                        _purge(dom.childnodes[i]);
+                    }
+                }
+            }
+
+            /**
+             * 停止事件冒泡传播
+             *
+             * @type {Event} e e对象
+             */
+            function _stopAndPrevent(e) {
+                var e = window.event || e;
+                e.stopPropagation ? e.stopPropagation() : e.cancelBubble = true;
+                return baidu.preventDefault(e);
+            }
+
+            return RichMarker;
+
+        }
+
+        function _buildRichMarker(html, point, options) {
+            var RichMarker = _getRichMarkerClass(window.BMap);
+            return new RichMarker(html, point, options);
+        }
+
+        return {
+            buildRichMarker: _buildRichMarker
+        }
+    });
 
 }());
 
@@ -5233,8 +5371,20 @@ angular.module('eshopService', [])
             function validate() {
                 if (Session.getData('userId') && Session.getData('token') && Session.getData('userId') != '-1') {
                     //AuthService.setSession(response.data.uid, response.data.token, response.data.eshop, response.data.type);
+                    //并且token有效
                     $http.defaults.headers.common.token = Session.getData('token');
-                    StateService.clearAllAndGo(AuthService.getNextPath());
+                    Session.checkToken().then(function (response) {
+                        console.log(response);
+                        if(response.errno==0){
+                          //token exist
+                          StateService.clearAllAndGo(AuthService.getNextPath());
+                        }else {
+                            console.log("token not exist,need login again");
+                        }
+                    },
+                    function (error) {
+                        console.log("get error in checkToken api,so goto login page");
+                    });
                 } else {
                     console.log("normal login");
                 }
@@ -7683,6 +7833,7 @@ angular.module('eshopService', [])
                         if (data.errno == 0) {
                             console.log(data.data);
                             vm.parent = data.data;
+                            if(!vm.parent.avatarlink)vm.parent.avatarlink='img/teacher.png';
                         }
                     });
                 };
@@ -9420,6 +9571,83 @@ angular.module('eshopService', [])
 }());
 
 (function() {
+  "use strict";
+  angular.module('vipTipsModule', [
+    'vipTipsCtrl',
+    'vipTipsRouter',
+    'vipTipsService'
+  ]);
+
+}());
+
+(function() {
+    "use strict";
+    angular.module('vipTipsCtrl', [])
+        .controller('vipTipsCtrl', function($scope, $state, Constants, StateService) {
+            'ngInject';
+            var vm = this;
+            vm.activated = false;
+            $scope.$on('$ionicView.afterEnter', activate);
+            vm.expend1=false;
+            function activate() {
+                vm.activated = true;
+                vm.version = Constants.buildID;
+            }
+
+            vm.back=function(){
+                StateService.back();
+            };
+
+            vm.test=function(){
+                console.log('test');
+            }
+        });
+}());
+
+(function() {
+  'use strict';
+
+  angular.module('vipTipsRouter', [])
+    .config(myRouter);
+
+
+  function myRouter($stateProvider, $urlRouterProvider) {
+    'ngInject';
+    $stateProvider
+        .state('vipTips', {
+          url: "/vipTips",
+          templateUrl: 'vipTips/vipTips.html',
+          controller: 'vipTipsCtrl',
+          controllerAs: 'vm'
+        })
+  }
+}());
+
+(function() {
+  'use strict';
+
+  angular.module('vipTipsService', [])
+    .factory('vipTipsService', eService);
+
+  function eService( $q, $http,Constants,ResultHandler) {
+    'ngInject';
+    var service = {
+      exit:exit
+    };
+
+    function exit(id) {
+      var url = Constants.serverUrl + 'account/exit/'+id;
+      return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
+    };
+
+    return service;
+
+
+  }
+
+}());
+
+(function() {
     "use strict";
     angular.module('WxLoginModule', [
         'WxLoginCtrl',
@@ -9465,6 +9693,20 @@ angular.module('eshopService', [])
           }else{
             if (Session.getData('userId') && Session.getData('token')) {
                 //login successed
+                Session.checkToken().then(function (response) {
+                    console.log(response);
+                    if(response.errno==0){
+                      //token exist
+                      //StateService.clearAllAndGo(AuthService.getNextPath());
+                    }else {
+                        console.log("token not exist,need login again");
+                        StateService.clearAllAndGo('login');
+                    }
+                },
+                function (error) {
+                    console.log("get error in checkToken api,so goto login page");
+                    StateService.clearAllAndGo('login');
+                });
             } else {
                 console.log("user not login with ");
                 event.preventDefault();
@@ -9714,83 +9956,6 @@ angular.module('eshopService', [])
 
 
     }
-
-}());
-
-(function() {
-  "use strict";
-  angular.module('vipTipsModule', [
-    'vipTipsCtrl',
-    'vipTipsRouter',
-    'vipTipsService'
-  ]);
-
-}());
-
-(function() {
-    "use strict";
-    angular.module('vipTipsCtrl', [])
-        .controller('vipTipsCtrl', function($scope, $state, Constants, StateService) {
-            'ngInject';
-            var vm = this;
-            vm.activated = false;
-            $scope.$on('$ionicView.afterEnter', activate);
-            vm.expend1=false;
-            function activate() {
-                vm.activated = true;
-                vm.version = Constants.buildID;
-            }
-
-            vm.back=function(){
-                StateService.back();
-            };
-
-            vm.test=function(){
-                console.log('test');
-            }
-        });
-}());
-
-(function() {
-  'use strict';
-
-  angular.module('vipTipsRouter', [])
-    .config(myRouter);
-
-
-  function myRouter($stateProvider, $urlRouterProvider) {
-    'ngInject';
-    $stateProvider
-        .state('vipTips', {
-          url: "/vipTips",
-          templateUrl: 'vipTips/vipTips.html',
-          controller: 'vipTipsCtrl',
-          controllerAs: 'vm'
-        })
-  }
-}());
-
-(function() {
-  'use strict';
-
-  angular.module('vipTipsService', [])
-    .factory('vipTipsService', eService);
-
-  function eService( $q, $http,Constants,ResultHandler) {
-    'ngInject';
-    var service = {
-      exit:exit
-    };
-
-    function exit(id) {
-      var url = Constants.serverUrl + 'account/exit/'+id;
-      return $http.get(url).then(ResultHandler.successedFuc, ResultHandler.failedFuc);
-    };
-
-    return service;
-
-
-  }
 
 }());
 

@@ -6,7 +6,7 @@
 
     var app = angular.module('BaiduMapDirective', []);
 
-    app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $ionicSlideBoxDelegate, RichMarkerFactory, MessageToaster, BaiduService) {
+    app.directive('uiMap', function ($parse, $q, $window, $timeout, $ionicModal, $ionicSlideBoxDelegate,$document, RichMarkerFactory, MessageToaster, BaiduService) {
         'ngInject';
 
         var MARKER_TYPES = {
@@ -145,10 +145,13 @@
             options = options || {};
             var mk;
 
-            if (options.type == MARKER_TYPES.CURRENT && options.text) {
-               var label = new BMap.Label(options.text, { offset: new BMap.Size(-15, 25) });
-                mk = new BMap.Marker(point, { icon: options.icon });
-                mk.setLabel(label)
+            if (options.type == MARKER_TYPES.CURRENT ) {
+              
+               mk = new BMap.Marker(point, { icon: options.icon });
+               if (options.text) {
+                   var label = new BMap.Label(options.text, { offset: new BMap.Size(-15, 25) });
+                   mk.setLabel(label)
+               }
             } else if (options.type == MARKER_TYPES.CUSTOM) {
                 options.data = options.data || {};
 
@@ -158,7 +161,7 @@
 
                 mk = RichMarkerFactory.buildRichMarker(htm, point, {
                     "anchor": new BMap.Size(-72, -84),
-                    "enableDragging": true
+                    "enableDragging": false
                 });
 
                 if (options.onClick) {
@@ -243,29 +246,40 @@
          */
         function addMapAutoComplete(map, scope) {
             function onConfirm(e) {
+
+                var input= document.getElementById(e.currentTarget.ng.w_);
+                input.blur();
+
                 var selectedVal = e.item.value;
-                var keywrod = selectedVal.province + selectedVal.city + selectedVal.district + selectedVal.street + selectedVal.business;
+                var keywrod =   selectedVal.province + selectedVal.city + selectedVal.district + selectedVal.street + selectedVal.business;
                 baiDuLocalSearch(map, keywrod).then(function (results) {
+
+                    if (e.currentTarget.ng.w_ === "mech-list-searchbox") {
+                        scope.keyword2 = keywrod;
+                    } else {
+                        scope.keyword1 = keywrod;
+                    }
 
                     if (results && results.length > 0) {
 
                         // 清除所有标记，并添加当前位置标记
-                        scope.map.clearOverlays();
-
+                       scope.map.clearOverlays();
 
                         // 记录当前位置并标记
                         scope.currentPosition  = new BMap.Point(results[0].Longitude, results[0].Latitude);
 
-                        // 指定Marker的icon属性为Symbol
-                        var symbol = new BMap.Symbol(BMap_Symbol_SHAPE_POINT, {
-                            scale: 1,//图标缩放大小
-                            fillColor: "orange",//填充颜色
-                            fillOpacity: 0.8//填充透明度
-                        });
+                        if (scope.currMode == scope.MAP_MODES.MAP_SHOW) {
+                            // 指定Marker的icon属性为Symbol
+                            var symbol = new BMap.Symbol(BMap_Symbol_SHAPE_POINT, {
+                                scale: 1,//图标缩放大小
+                                fillColor: "orange",//填充颜色
+                                fillOpacity: 0.8//填充透明度
+                            });
 
-                        addMapMarker(map, scope.currentPosition, { onClick: openInfoWindow, type: MARKER_TYPES.CURRENT, icon: symbol, text: "" });
-                        // 设置为中心
-                        map.centerAndZoom(scope.currentPosition, 16);
+                            addMapMarker(map, scope.currentPosition, { onClick: openInfoWindow, type: MARKER_TYPES.CURRENT, icon: symbol, text: "" });
+                            // 设置为中心
+                            map.centerAndZoom(scope.currentPosition, 16);
+                        }
 
                         // 根据关键字检索百度相关位置数据和根据当前位置检索后台维护附近数据
                         var bpSearchDeferred = babyPlanLocalSearch(scope.currentPosition);
@@ -276,19 +290,19 @@
                             var baiDuSearchResults = scope.baiDuSearchResults = results[1].sort(function (a, b) { return parseFloat(a.Dist) - parseFloat(b.Dist); });
                             var babyPlanSearchResults = scope.babyPlanSearchResults = results[0];
 
-                            // 对满足条件的位置进行标记，
-                            var point;
-                            for (var i = 0; i < baiDuSearchResults.length; i++) {
-                                point = new BMap.Point(baiDuSearchResults[i].Longitude, baiDuSearchResults[i].Latitude);
-                                addMapMarker(map, point, { onClick: openInfoWindow, type: MARKER_TYPES.BAIDU, data: baiDuSearchResults[i] });
+                            if (scope.currMode == scope.MAP_MODES.MAP_SHOW) {
+                                // 对满足条件的位置进行标记，
+                                var point;
+                                for (var i = 0; i < baiDuSearchResults.length; i++) {
+                                    point = new BMap.Point(baiDuSearchResults[i].Longitude, baiDuSearchResults[i].Latitude);
+                                    addMapMarker(map, point, { onClick: openInfoWindow, type: MARKER_TYPES.BAIDU, data: baiDuSearchResults[i] });
+                                }
+
+                                for (var i = 0; i < babyPlanSearchResults.length; i++) {
+                                    point = new BMap.Point(babyPlanSearchResults[i].Longitude, babyPlanSearchResults[i].Latitude);
+                                    addMapMarker(map, point, { onClick: openInfoWindow, type: MARKER_TYPES.CUSTOM, data: babyPlanSearchResults[i] });
+                                }
                             }
-
-                            for (var i = 0; i < babyPlanSearchResults.length; i++) {
-                                point = new BMap.Point(babyPlanSearchResults[i].Longitude, babyPlanSearchResults[i].Latitude);
-                                addMapMarker(map, point, { onClick: openInfoWindow, type: MARKER_TYPES.CUSTOM, data: babyPlanSearchResults[i] });
-                            }
-
-
                             // 把最后一个位置移动到地图中心
                             // point && map.panTo(point)
                         }, function (err) {
@@ -297,11 +311,11 @@
                         })
                     }
 
-                  //  scope.baiDuSearchResults = results;
                 }, function (err) {
                     //ionicToast.show('检索异常!', 'middle', false, 3000);
                     MessageToaster.error("检索异常!");
                 });
+
             }
             var ac = new BMap.Autocomplete({
                 'input': 'mech-map-searchbox',
@@ -491,9 +505,11 @@
                  * 定位
                  */
                 scope.location = function (poi) {
+
                     // 切换到地图模式
                     scope.currMode = MAP_MODES.MAP_SHOW;
-
+                    $timeout(function () {
+                  
                     // 清除所有标记，并添加当前位置标记
                     // scope.map.clearOverlays();
                     var point = new BMap.Point(poi.Longitude, poi.Latitude);
@@ -502,10 +518,10 @@
                     } else {
                         addMapMarker(scope.map, point, { onClick: openInfoWindow, type: MARKER_TYPES.CUSTOM, data: poi });
                     }
-                    // addMapMarker(scope.map, point, openInfoWindow, poi);
-                    $timeout(function () {
-                        scope.map.panTo(point);
+                    scope.map.centerAndZoom(point, 16);
+                    scope.map.panTo(point);
                     }, 20);
+
                 };
 
                 /**
@@ -514,15 +530,64 @@
                 scope.locationCurrent = function () {
                     $timeout(function () {
 
+                        var map = scope.map;
+                       
                         // 指定Marker的icon属性为Symbol
                         var icon = new BMap.Symbol(BMap_Symbol_SHAPE_POINT, {
                             scale: 1,//图标缩放大小
                             fillColor: "orange",//填充颜色
                             fillOpacity: 0.8//填充透明度
                         });
-                        // scope.map.clearOverlays();
-                        addMapMarker(scope.map, scope.orgCurrentPosition, { type: MARKER_TYPES.CURRENT, icon: icon, text: '我的位置' });
+
+                        scope.currentPosition = scope.orgCurrentPosition;
+
+                        // 清除所有标记，并添加当前位置标记
+                        scope.map.clearOverlays();
+
+
+                        // 指定Marker的icon属性为Symbol
+                        var symbol = new BMap.Symbol(BMap_Symbol_SHAPE_POINT, {
+                            scale: 1,//图标缩放大小
+                            fillColor: "orange",//填充颜色
+                            fillOpacity: 0.8//填充透明度
+                        });
+
+                        addMapMarker(map, scope.currentPosition, { onClick: openInfoWindow, type: MARKER_TYPES.CURRENT, icon: symbol, text: "我的位置" });
+
+                        // 设置为中心
+                        map.centerAndZoom(scope.currentPosition, 16);
                         scope.orgCurrentPosition && scope.map.panTo(scope.orgCurrentPosition);
+
+                        // 根据关键字检索百度相关位置数据和根据当前位置检索后台维护附近数据
+                        var bpSearchDeferred = babyPlanLocalSearch(scope.currentPosition);
+                        var bdSearchDeferred = baiDuLocalSearch(map, scope.mapOptions.keywords);
+                        $q.all([bpSearchDeferred, bdSearchDeferred]).then(function (results) {
+
+                            // 缓存结果
+                            var baiDuSearchResults = scope.baiDuSearchResults = results[1].sort(function (a, b) { return parseFloat(a.Dist) - parseFloat(b.Dist); });
+                            var babyPlanSearchResults = scope.babyPlanSearchResults = results[0];
+
+                            // 对满足条件的位置进行标记，
+                            var point;
+                            for (var i = 0; i < baiDuSearchResults.length; i++) {
+                                point = new BMap.Point(baiDuSearchResults[i].Longitude, baiDuSearchResults[i].Latitude);
+                                addMapMarker(map, point, { onClick: openInfoWindow, type: MARKER_TYPES.BAIDU, data: baiDuSearchResults[i] });
+                            }
+
+                            for (var i = 0; i < babyPlanSearchResults.length; i++) {
+                                point = new BMap.Point(babyPlanSearchResults[i].Longitude, babyPlanSearchResults[i].Latitude);
+                                addMapMarker(map, point, { onClick: openInfoWindow, type: MARKER_TYPES.CUSTOM, data: babyPlanSearchResults[i] });
+                            }
+
+
+                            // 把最后一个位置移动到地图中心
+                            // point && map.panTo(point)
+                        }, function (err) {
+                            //ionicToast.show('获取位置信息失败!', 'middle', false, 3000);
+                            MessageToaster.error("获取位置信息失败!");
+                        })
+
+                      
                     }, 20);
                 };
 
@@ -536,24 +601,24 @@
                     // 清除所有标记，并添加当前位置标记
                     scope.map.clearOverlays();
 
-                    var poi, point;
-                    for (var i = 0; i < scope.baiDuSearchResults.length; i++) {
-                        poi = scope.baiDuSearchResults[i];
-                        point = new BMap.Point(poi.Longitude, poi.Latitude);
-                        // addMapMarker(scope.map, point, openInfoWindow, poi);
-
-                        addMapMarker(scope.map, point, { onClick: openInfoWindow, type: MARKER_TYPES.BAIDU, data: poi });
-                    }
-
-                    for (var i = 0; i < scope.babyPlanSearchResults.length; i++) {
-                        poi = scope.babyPlanSearchResults[i];
-                        point = new BMap.Point(poi.Longitude, poi.Latitude);
-                        //  addMapCustomMarker(scope.map, point, openInfoWindow, poi,poi.OrgName);
-                        addMapMarker(scope.map, point, { onClick: openInfoWindow, type: MARKER_TYPES.CUSTOM, data: poi });
-                    }
-
                     $timeout(function () {
                         try {
+                            var poi, point;
+                            for (var i = 0; i < scope.baiDuSearchResults.length; i++) {
+                                poi = scope.baiDuSearchResults[i];
+                                point = new BMap.Point(poi.Longitude, poi.Latitude);
+                                // addMapMarker(scope.map, point, openInfoWindow, poi);
+
+                                addMapMarker(scope.map, point, { onClick: openInfoWindow, type: MARKER_TYPES.BAIDU, data: poi });
+                            }
+
+                            for (var i = 0; i < scope.babyPlanSearchResults.length; i++) {
+                                poi = scope.babyPlanSearchResults[i];
+                                point = new BMap.Point(poi.Longitude, poi.Latitude);
+                                //  addMapCustomMarker(scope.map, point, openInfoWindow, poi,poi.OrgName);
+                                addMapMarker(scope.map, point, { onClick: openInfoWindow, type: MARKER_TYPES.CUSTOM, data: poi });
+                            }
+                            point && scope.map.centerAndZoom(point, 16);
                             point && scope.map.panTo(point);
                         } catch (e) { }
                     }, 20);
@@ -664,6 +729,7 @@
                         case MAP_MODES.LIST_SHOW:
                             mode === MAP_MODES.MAP_SHOW && scope.locationAll();
                             break;
+
                     }
 
                     scope.currMode = mode;
@@ -767,7 +833,7 @@
     app.factory('RichMarkerFactory', function () {
         function _getRichMarkerClass(BMap) {
 
-            var BMapLib = window.BMapLib = BMapLib || {};
+            var BMapLib = window.BMapLib || {};
             if (BMapLib.RichMarker) return BMapLib.RichMarker;
 
             /**
@@ -778,7 +844,7 @@
             };
 
             // 一些页面级别唯一的属性，需要挂载在window[baidu.guid]上
-            window[baidu.guid] = {};
+            window[baidu.guid] =window[baidu.guid] || {};
 
             /**
              * 将源对象的所有属性拷贝到目标对象中
