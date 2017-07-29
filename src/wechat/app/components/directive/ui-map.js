@@ -247,14 +247,20 @@
         function addMapAutoComplete(map, scope) {
             function onConfirm(e) {
 
-                var input= document.getElementById(e.currentTarget.ng.w_);
-                input.blur();
+                //强制失去焦点
+                var inputId = "mech-map-searchbox";
+                if (scope.currMode == scope.MAP_MODES.LIST_SHOW) {
+                    inputId = "mech-list-searchbox";
+                }
+                var input = document.getElementById(inputId);
+                input && input.blur();
+
 
                 var selectedVal = e.item.value;
                 var keywrod =   selectedVal.province + selectedVal.city + selectedVal.district + selectedVal.street + selectedVal.business;
                 baiDuLocalSearch(map, keywrod).then(function (results) {
 
-                    if (e.currentTarget.ng.w_ === "mech-list-searchbox") {
+                    if (scope.currMode == scope.MAP_MODES.LIST_SHOW) {
                         scope.keyword2 = keywrod;
                     } else {
                         scope.keyword1 = keywrod;
